@@ -91,11 +91,20 @@ class MapDataController extends Controller
             $monthlyQuery->where('year', $year);
         if ($farmType)
             $monthlyQuery->where('farm_type', $farmType);
-        $monthlyData = $monthlyQuery
-            ->select('month', DB::raw('SUM(production) as total_production'))
-            ->groupBy('month')
-            ->orderByRaw("FIELD(month, 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC')")
-            ->get();
+        $monthOrder = "'JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'";
+        if (config('database.default') === 'pgsql') {
+            $monthlyData = $monthlyQuery
+                ->select('month', DB::raw('SUM(production) as total_production'))
+                ->groupBy('month')
+                ->orderByRaw("array_position(ARRAY[$monthOrder], month)")
+                ->get();
+        } else {
+            $monthlyData = $monthlyQuery
+                ->select('month', DB::raw('SUM(production) as total_production'))
+                ->groupBy('month')
+                ->orderByRaw("FIELD(month, $monthOrder)")
+                ->get();
+        }
 
         // Crop distribution (all crops for this municipality and year)
         $cropDistQuery = CropProduction::where('municipality', $municipality);
