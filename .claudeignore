@@ -1,0 +1,15 @@
+*.geojson
+*.csv
+*.json
+data/raw_datasets/
+node_modules/
+venv/
+env/
+vendor/
+dist/
+build/
+.next/
+.env
+.env.local
+keys/
+

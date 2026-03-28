@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Debug Test</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #map { height: 500px; width: 100%; margin: 20px 0; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>BenguetCropMap Debug Test</h1>
+    
+    <h2>Status Checks:</h2>
+    <div id="status-container"></div>
+    
+    <h2>Map Preview:</h2>
+    <div id="map"></div>
+    
+    <h2>Console Output:</h2>
+    <pre id="console-output" style="background: #f5f5f5; padding: 10px; border-radius: 5px;"></pre>
+
+    <script>
+        let output = '';
+        
+        function log(message) {
+            console.log(message);
+            output += message + '\n';
+            document.getElementById('console-output').textContent = output;
+        }
+        
+        function addStatus(message, type) {
+            const div = document.createElement('div');
+            div.className = 'status ' + type;
+            div.textContent = message;
+            document.getElementById('status-container').appendChild(div);
+        }
+        
+        async function runTests() {
+            log('Starting diagnostic tests...\n');
+            
+            // Test 1: API Filters
+            try {
+                log('Test 1: Fetching API filters...');
+                const apiPath = '/capstone/CAPFINAL/public/api/map/filters';
+                log('API Path: ' + apiPath);
+                
+                const response = await fetch(apiPath);
+                log('Response status: ' + response.status);
+                
+                const data = await response.json();
+                log('API Response: ' + JSON.stringify(data, null, 2));
+                
+                addStatus('✓ API Filters: Success - Found ' + data.crops.length + ' crops, ' + data.years.length + ' years', 'success');
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                addStatus('✗ API Filters: Failed - ' + error.message, 'error');
+            }
+            
+            // Test 2: API Data
+            try {
+                log('\nTest 2: Fetching API data...');
+                const apiPath = '/capstone/CAPFINAL/public/api/map/data?year=2024&view=production';
+                log('API Path: ' + apiPath);
+                
+                const response = await fetch(apiPath);
+                const data = await response.json();
+                log('API Data Response: ' + JSON.stringify(data, null, 2).substring(0, 500) + '...');
+                
+                addStatus('✓ API Data: Success - Got data for ' + data.data.length + ' municipalities', 'success');
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                addStatus('✗ API Data: Failed - ' + error.message, 'error');
+            }
+            
+            // Test 3: GeoJSON
+            try {
+                log('\nTest 3: Loading GeoJSON...');
+                const geojsonPath = '/capstone/CAPFINAL/public/data/benguet.geojson';
+                log('GeoJSON Path: ' + geojsonPath);
+                
+                const response = await fetch(geojsonPath);
+                const geojson = await response.json();
+                log('GeoJSON loaded: ' + geojson.features.length + ' features');
+                
+                geojson.features.forEach(f => {
+                    log('  - ' + f.properties.name);
+                });
+                
+                addStatus('✓ GeoJSON: Success - Loaded ' + geojson.features.length + ' municipalities', 'success');
+                
+                // Test 4: Render map
+                log('\nTest 4: Rendering map...');
+                const map = L.map('map').setView([16.5, 120.7], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+                
+                const layer = L.geoJSON(geojson, {
+                    style: { color: '#16a34a', weight: 2, fillOpacity: 0.3 },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(feature.properties.name);
+                    }
+                }).addTo(map);
+                
+                map.fitBounds(layer.getBounds());
+                
+                addStatus('✓ Map Rendering: Success - All boundaries displayed', 'success');
+                log('Map rendered successfully!');
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                addStatus('✗ GeoJSON/Map: Failed - ' + error.message, 'error');
+            }
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>
