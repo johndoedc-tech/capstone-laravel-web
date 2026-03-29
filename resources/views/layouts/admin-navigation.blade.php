@@ -70,6 +70,14 @@
             <span class="font-medium">Users</span>
         </a>
 
+        <!-- Forum Moderation -->
+        <a href="{{ route('forum.index') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('forum.*') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
+            <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+            </svg>
+            <span class="font-medium">Forum</span>
+        </a>
+
         <!-- Divider -->
         <div class="!my-3 border-t border-white/10"></div>
 
