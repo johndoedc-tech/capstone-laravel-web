@@ -2,6 +2,19 @@
 <div x-data="{ open: false }">
 <!-- Sidebar -->
 <aside class="w-64 flex flex-col h-screen fixed left-0 top-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0" style="background-color: #355872;" :class="{ '-translate-x-full': !open, 'translate-x-0': open }">
+    <!-- Sidebar Header -->
+    <div class="p-4 lg:p-6 border-b border-primary-700/30">
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between gap-3">
+            <div>
+                <h1 class="font-bold text-white text-base lg:text-lg leading-tight">GeoMap</h1>
+                <p class="text-xs text-primary-200">Admin Panel</p>
+            </div>
+            <div class="bg-black/20 border border-white/20 w-9 h-9 lg:w-10 lg:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span class="text-white font-bold text-sm lg:text-base">{{ substr(Auth::user()->name, 0, 1) }}</span>
+            </div>
+        </a>
+    </div>
+
     <!-- Navigation Links -->
     <nav class="sidebar-scroll flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto">
         <!-- Main Section -->
@@ -88,22 +101,9 @@
 
     </nav>
 
-    <!-- User Profile -->
+    <!-- Account Actions -->
     <div class="border-t border-white/10 p-3 lg:p-4">
-        <div class="flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2">
-            <div class="bg-black/20 border border-white/20 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-                <span class="text-white font-bold text-sm lg:text-base">{{ substr(Auth::user()->name, 0, 1) }}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-xs lg:text-sm font-medium text-white truncate">{{ Auth::user()->name }}</p>
-                <p class="text-xs text-primary-200 truncate">Administrator</p>
-            </div>
-        </div>
-
-        <!-- Divider -->
-        <div class="!my-2 mx-3 lg:mx-4 border-t border-white/10"></div>
-
-        <div class="mt-2 space-y-1">
+        <div class="space-y-1">
             <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 lg:px-4 py-2 text-xs lg:text-sm text-cream hover:bg-primary-700/50 rounded-lg">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
