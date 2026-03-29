@@ -295,9 +295,9 @@
                 </p>
             </div>
 
-            <div class="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
                 <!-- Developer 1 -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full sm:w-80">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full h-full">
                     <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-lime-400 to-lime-500"></div>
                     <div class="p-4 sm:p-6 md:p-8 text-center">
                         <img src="{{ asset('images/jd.jpg') }}" alt="Johndoe Dela Cruz" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full mx-auto -mt-10 sm:-mt-12 md:-mt-16 mb-3 sm:mb-4 border-4 border-white shadow-lg object-cover">
@@ -322,7 +322,7 @@
                 </div>
 
                 <!-- Developer 2 -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full sm:w-80">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full h-full">
                     <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-lime-400 to-lime-500"></div>
                     <div class="p-4 sm:p-6 md:p-8 text-center">
                         <img src="{{ asset('images/alfrey.jpg') }}" alt="Lord Alfrey Baterina" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full mx-auto -mt-10 sm:-mt-12 md:-mt-16 mb-3 sm:mb-4 border-4 border-white shadow-lg object-cover">
@@ -347,7 +347,7 @@
                 </div>
 
                 <!-- Developer 3 -->
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full sm:w-80">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 w-full h-full">
                     <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-br from-lime-400 to-lime-500"></div>
                     <div class="p-4 sm:p-6 md:p-8 text-center">
                         <img src="{{ asset('images/anonymous-placeholder.svg') }}" alt="Anonymous profile placeholder" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full mx-auto -mt-10 sm:-mt-12 md:-mt-16 mb-3 sm:mb-4 border-4 border-white shadow-lg object-cover">
@@ -369,8 +369,6 @@
                             </a>
                         </div>
                     </div>
-                </div>
-                
                 </div>
             </div>
         </section>
