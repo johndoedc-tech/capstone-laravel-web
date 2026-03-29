@@ -69,13 +69,13 @@
 <body class="font-sans text-gray-800 m-0 p-0">
     <!-- Header -->
     <header class="fixed top-2 sm:top-3 md:top-6 left-0 right-0 z-50 flex justify-center px-2 sm:px-3 md:px-0">
-        <div class="bg-white rounded-full shadow-xl px-2 sm:px-4 md:px-8 py-2 sm:py-3 md:py-4 inline-flex max-w-[calc(100%-16px)] sm:w-full sm:max-w-4xl md:w-auto">
-            <nav class="relative flex flex-nowrap items-center justify-between sm:justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-8 w-full">
-                <div class="flex items-center gap-1 sm:gap-2 md:gap-4 lg:gap-8">
+        <div class="bg-white rounded-full shadow-xl px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 md:py-4 inline-flex max-w-[calc(100%-16px)] sm:w-full sm:max-w-4xl md:w-auto">
+            <nav class="relative flex flex-nowrap items-center justify-between sm:justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-8 w-full">
+                <div class="flex items-center gap-2 sm:gap-2 md:gap-4 lg:gap-8">
                     <button
                         id="mobile-menu-toggle"
                         type="button"
-                        class="sm:hidden w-9 h-9 rounded-full border border-gray-200 bg-white text-gray-900 flex items-center justify-center hover:bg-lime-50 transition-colors duration-300"
+                        class="sm:hidden w-11 h-11 rounded-full border border-gray-200 bg-white text-gray-900 flex items-center justify-center hover:bg-lime-50 transition-colors duration-300"
                         aria-label="Toggle navigation menu"
                         aria-controls="mobile-nav-menu"
                         aria-expanded="false"
@@ -99,19 +99,19 @@
                     </a>
                 </div>
 
-                <div class="flex items-center gap-1 sm:gap-2 md:gap-4">
+                <div class="flex items-center gap-2 sm:gap-2 md:gap-4">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="bg-lime-400 text-gray-900 px-2 sm:px-4 md:px-6 py-1 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs md:text-base whitespace-nowrap">
+                        <a href="{{ route('dashboard') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
                             <span class="hidden min-[400px]:inline">Dashboard</span>
                             <span class="min-[400px]:hidden">🏠</span>
                             <span>→</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-gray-900 text-[10px] sm:text-xs md:text-base font-medium hover:text-lime-400 transition-colors duration-300 relative group whitespace-nowrap">
+                        <a href="{{ route('login') }}" class="text-gray-900 text-xs sm:text-xs md:text-base font-medium hover:text-lime-400 transition-colors duration-300 relative group whitespace-nowrap px-2 py-2 sm:px-0 sm:py-0">
                             Login
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover:w-full transition-all duration-300"></span>
                         </a>
-                        <a href="{{ route('register') }}" class="bg-lime-400 text-gray-900 px-2 sm:px-4 md:px-6 py-1 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs md:text-base whitespace-nowrap">
+                        <a href="{{ route('register') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
                             Sign Up
                             <span>→</span>
                         </a>
@@ -119,9 +119,9 @@
                 </div>
 
                 <div id="mobile-nav-menu" class="hidden sm:hidden absolute left-0 right-0 top-[calc(100%+8px)] bg-white rounded-2xl shadow-xl border border-lime-100 p-3">
-                    <a href="#about" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">About</a>
-                    <a href="#features" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Features</a>
-                    <a href="#developers" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Team</a>
+                    <a href="#about" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">About</a>
+                    <a href="#features" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Features</a>
+                    <a href="#developers" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Team</a>
                 </div>
             </nav>
         </div>
