@@ -717,6 +717,11 @@
                     this.lang = newLang;
                     window.currentLang = newLang;
                     localStorage.setItem('dashboard_language', newLang);
+
+                    if (typeof window.applyAppLanguagePreference === 'function') {
+                        window.applyAppLanguagePreference(newLang, false);
+                    }
+
                     this.showMenu = false;
                 },
                 
@@ -724,6 +729,10 @@
                     // Save language preference
                     localStorage.setItem('dashboard_language', this.lang);
                     window.currentLang = this.lang;
+
+                    if (typeof window.applyAppLanguagePreference === 'function') {
+                        window.applyAppLanguagePreference(this.lang, false);
+                    }
                     
                     // Mark popup as shown for this session
                     sessionStorage.setItem('lang_popup_shown', 'true');
