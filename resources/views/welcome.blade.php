@@ -17,12 +17,19 @@
         
         .hero-section {
             position: relative;
-            background-image: url('{{ asset('images/crop-yield-ant-rozetsky-c0PJUAtpSo-unsplash.jpg') }}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            overflow: hidden;
+            background-color: #dbe7b5;
             margin-top: 0;
             padding-top: 0;
+        }
+
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
         }
         
         .hero-overlay {
@@ -98,6 +105,15 @@
 
     <!-- Hero Section -->
     <section id="hero" class="hero-section min-h-screen flex items-center justify-center px-3 sm:px-4 md:px-6 fade-on-scroll">
+        <img
+            src="{{ asset('images/crop-yield-ant-rozetsky-c0PJUAtpSo-unsplash.jpg') }}"
+            alt=""
+            class="hero-background"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            aria-hidden="true"
+        >
         <div class="hero-overlay"></div>
         <div class="hero-content max-w-5xl mx-auto text-center">
             <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-lg px-2">
