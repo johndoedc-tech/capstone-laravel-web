@@ -15,16 +15,32 @@
 @endif
 
 <style>
+    html,
+    body,
+    body.translated-ltr,
+    body.translated-rtl {
+        top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .goog-te-banner-frame,
     .goog-te-banner-frame.skiptranslate,
+    iframe.goog-te-banner-frame,
+    iframe.goog-te-banner-frame.skiptranslate,
+    iframe.VIpgJd-ZVi9od-ORHb,
+    .VIpgJd-ZVi9od-ORHb,
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
     .goog-te-balloon-frame,
     #goog-gt-tt,
     .goog-tooltip,
     .goog-tooltip:hover {
         display: none !important;
+        visibility: hidden !important;
     }
 
-    body {
-        top: 0 !important;
+    .goog-text-highlight {
+        background-color: transparent !important;
+        box-shadow: none !important;
     }
 
     .app-language-switcher {
@@ -65,6 +81,13 @@
             bottom: 0.75rem;
             padding: 0.35rem 0.65rem;
         }
+
+        body.translated-ltr button.lg\:hidden.fixed.top-3.left-3,
+        body.translated-rtl button.lg\:hidden.fixed.top-3.left-3,
+        body.translated-ltr button.lg\:hidden.fixed.top-4.left-4,
+        body.translated-rtl button.lg\:hidden.fixed.top-4.left-4 {
+            top: 3.75rem !important;
+        }
     }
 </style>
 
@@ -73,10 +96,63 @@
         const STORAGE_KEY = 'preferred_language';
         const LEGACY_KEY = 'dashboard_language';
         const COOKIE_NAME = 'googtrans';
+        const BANNER_SELECTORS = [
+            '.goog-te-banner-frame',
+            '.goog-te-banner-frame.skiptranslate',
+            'iframe.goog-te-banner-frame',
+            'iframe.goog-te-banner-frame.skiptranslate',
+            'iframe.VIpgJd-ZVi9od-ORHb',
+            '.VIpgJd-ZVi9od-ORHb',
+            '.VIpgJd-ZVi9od-aZ2wEe-wOHMyf'
+        ];
         const SUPPORTED_LANGS = {
             en: '/en/en',
             tl: '/en/tl',
         };
+
+        function hideTranslateBanner() {
+            if (document.documentElement) {
+                document.documentElement.style.top = '0px';
+                document.documentElement.style.marginTop = '0px';
+            }
+
+            if (document.body) {
+                document.body.style.top = '0px';
+                document.body.style.marginTop = '0px';
+            }
+
+            BANNER_SELECTORS.forEach(function (selector) {
+                document.querySelectorAll(selector).forEach(function (node) {
+                    node.style.display = 'none';
+                    node.style.visibility = 'hidden';
+                    node.style.top = '-1000px';
+                });
+            });
+        }
+
+        function startBannerGuard() {
+            hideTranslateBanner();
+
+            let ticks = 0;
+            const intervalId = window.setInterval(function () {
+                hideTranslateBanner();
+                ticks += 1;
+
+                if (ticks > 40) {
+                    window.clearInterval(intervalId);
+                }
+            }, 250);
+
+            if (document.body) {
+                const observer = new MutationObserver(hideTranslateBanner);
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['class', 'style']
+                });
+            }
+        }
 
         function normalizeLanguage(lang) {
             return lang === 'tl' ? 'tl' : 'en';
@@ -117,6 +193,8 @@
         const initialLanguage = getPreferredLanguage();
         persistLanguage(initialLanguage);
 
+        window.addEventListener('load', hideTranslateBanner);
+
         window.googleTranslateElementInit = function () {
             new google.translate.TranslateElement(
                 {
@@ -127,9 +205,13 @@
                 },
                 'google_translate_element'
             );
+
+            startBannerGuard();
         };
 
         document.addEventListener('DOMContentLoaded', function () {
+            startBannerGuard();
+
             const select = document.getElementById('app-language-select');
 
             if (!select) {
