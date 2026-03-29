@@ -9,7 +9,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-4 lg:py-6 pr-4 pl-16 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto" x-data="forumPost()">
             
             <!-- Back Link -->

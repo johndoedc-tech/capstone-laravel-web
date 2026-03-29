@@ -9,7 +9,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-4 lg:py-6 pr-4 pl-16 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             
             <!-- Header -->
@@ -114,15 +114,15 @@
                         <div class="space-y-4">
                             @foreach($posts as $post)
                                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                                    <div class="flex gap-4">
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                         <!-- Vote Score -->
-                                        <div class="flex flex-col items-center text-gray-400">
+                                        <div class="flex sm:flex-col items-center justify-center gap-1 sm:gap-0 text-gray-400">
                                             <button class="hover:text-green-600 p-1">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                                                 </svg>
                                             </button>
-                                            <span class="text-sm font-medium {{ $post->vote_score > 0 ? 'text-green-600' : ($post->vote_score < 0 ? 'text-red-600' : 'text-gray-400') }}">
+                                            <span class="text-sm font-medium min-w-[1.5rem] text-center {{ $post->vote_score > 0 ? 'text-green-600' : ($post->vote_score < 0 ? 'text-red-600' : 'text-gray-400') }}">
                                                 {{ $post->vote_score }}
                                             </span>
                                             <button class="hover:text-red-600 p-1">
@@ -155,7 +155,7 @@
 
                                             <p class="text-sm text-gray-600 mt-1 line-clamp-2">{{ $post->excerpt }}</p>
 
-                                            <div class="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-gray-500">
                                                 <div class="flex items-center gap-1">
                                                     <span class="w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-medium">
                                                         {{ strtoupper(substr($post->user->name, 0, 1)) }}
