@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+  <title id="title">Anonymous profile placeholder</title>
+  <desc id="desc">A neutral avatar silhouette used as a placeholder profile picture.</desc>
+  <rect width="240" height="240" rx="120" fill="#e8f3d0"/>
+  <circle cx="120" cy="92" r="44" fill="#9ca3af"/>
+  <path d="M48 210c8-38 36-62 72-62s64 24 72 62" fill="#9ca3af"/>
+  <circle cx="120" cy="120" r="118" fill="none" stroke="#ffffff" stroke-width="4"/>
+</svg>
