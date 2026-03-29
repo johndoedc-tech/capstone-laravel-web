@@ -117,7 +117,7 @@
         <div class="hero-overlay"></div>
         <div class="hero-content max-w-5xl mx-auto text-center">
             <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-lg px-2">
-                BenguetCropMap
+                GeoMap
             </h1>
             <p class="text-base sm:text-lg md:text-xl lg:text-3xl text-gray-800 font-light italic leading-relaxed max-w-4xl mx-auto drop-shadow-md px-4 sm:px-6">
                 "Empowering farmers and decision-makers with intelligent insights for sustainable agriculture in the highlands of Benguet."
@@ -139,7 +139,7 @@
         <section id="about" class="mb-16 sm:mb-20 md:mb-32 fade-section">
             <div class="text-center mb-8 sm:mb-12 md:mb-16">
                 <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
-                    About BenguetCropMap
+                    About GeoMap
                 </h2>
                 <div class="w-16 sm:w-20 md:w-24 h-1 bg-lime-400 mx-auto"></div>
             </div>
@@ -147,7 +147,7 @@
             <div class="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
                 <div class="space-y-3 sm:space-y-4 md:space-y-6 px-2 sm:px-0">
                     <p class="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
-                        BenguetCropMap is a cutting-edge <span class="font-semibold text-lime-600">GIS-Integrated Decision Support System</span> designed to revolutionize agricultural planning in Benguet Province.
+                        GeoMap is a cutting-edge <span class="font-semibold text-lime-600">GIS-Integrated Decision Support System</span> designed to revolutionize agricultural planning in Benguet Province.
                     </p>
                     <p class="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
                         By combining <span class="font-semibold">Geographic Information Systems (GIS)</span>, <span class="font-semibold">Machine Learning</span>, and <span class="font-semibold">real-time data visualization</span>, we empower farmers, agricultural officers, and decision-makers with actionable insights.
@@ -291,7 +291,7 @@
                 </h2>
                 <div class="w-16 sm:w-20 md:w-24 h-1 bg-lime-400 mx-auto mb-3 sm:mb-4"></div>
                 <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-                    The passionate developers behind BenguetCropMap
+                    The passionate developers behind GeoMap
                 </p>
             </div>
 
