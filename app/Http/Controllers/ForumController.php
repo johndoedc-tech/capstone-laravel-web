@@ -218,10 +218,11 @@ class ForumController extends Controller
     public function destroy($id)
     {
         $post = ForumPost::findOrFail($id);
+        $user = Auth::user();
 
-        // Only author can delete
-        if ($post->user_id !== Auth::id()) {
-            return back()->with('error', 'You can only delete your own posts.');
+        // Allow post author or admins to delete posts.
+        if ($post->user_id !== Auth::id() && ! $user->isAdmin()) {
+            return back()->with('error', 'You can only delete your own posts unless you are an admin.');
         }
 
         $post->delete();
@@ -235,10 +236,11 @@ class ForumController extends Controller
     public function destroyComment($id)
     {
         $comment = ForumComment::findOrFail($id);
+        $user = Auth::user();
 
-        // Only author can delete
-        if ($comment->user_id !== Auth::id()) {
-            return back()->with('error', 'You can only delete your own comments.');
+        // Allow comment/reply author or admins to delete comments and replies.
+        if ($comment->user_id !== Auth::id() && ! $user->isAdmin()) {
+            return back()->with('error', 'You can only delete your own comments unless you are an admin.');
         }
 
         $comment->delete();

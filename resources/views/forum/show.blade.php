@@ -87,7 +87,7 @@
                             </div>
                             <div class="flex items-center gap-2 text-sm text-gray-500">
                                 <span>{{ $post->views_count }} views</span>
-                                @if($post->user_id === auth()->id())
+                                @if($post->user_id === auth()->id() || auth()->user()->isAdmin())
                                     <form action="{{ route('forum.destroy', $post->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this post?')">
                                         @csrf
                                         @method('DELETE')
@@ -167,7 +167,7 @@
                                             </button>
                                         @endif
                                         
-                                        @if($comment->user_id === auth()->id())
+                                        @if($comment->user_id === auth()->id() || auth()->user()->isAdmin())
                                             <form action="{{ route('forum.comment.destroy', $comment->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this reply?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -185,6 +185,13 @@
                                                     <div class="flex items-center gap-3 mt-1 text-xs text-gray-500">
                                                         <span>{{ $reply->user->name }}</span>
                                                         <span>{{ $reply->time_ago }}</span>
+                                                        @if($reply->user_id === auth()->id() || auth()->user()->isAdmin())
+                                                            <form action="{{ route('forum.comment.destroy', $reply->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this reply?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                                                            </form>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             @endforeach
