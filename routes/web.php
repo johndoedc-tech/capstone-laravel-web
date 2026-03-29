@@ -32,46 +32,48 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-    // Farmer Dashboard API endpoints
-    Route::prefix('farmer')->name('farmer.')->group(function () {
-        Route::post('/preferences', [FarmerDashboardController::class, 'savePreferences'])->name('preferences.save');
-        Route::get('/recommendations', [FarmerDashboardController::class, 'getRecommendations'])->name('recommendations');
-        Route::get('/compare-crops', [FarmerDashboardController::class, 'compareCrops'])->name('compare');
-        Route::get('/calendar', [FarmerDashboardController::class, 'getCalendarData'])->name('calendar');
-        Route::get('/scenario', [FarmerDashboardController::class, 'calculateScenario'])->name('scenario');
-        Route::get('/options', [FarmerDashboardController::class, 'getOptions'])->name('options');
-        
-        // Farmer Calendar Page
-        Route::get('/my-calendar', [FarmerCalendarController::class, 'index'])->name('calendar.page');
-        
-        // Farmer Calendar Events API
-        Route::get('/calendar-events', [FarmerCalendarController::class, 'getEvents'])->name('calendar.events');
-        Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
-        Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');
-        Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
-        Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');
-        Route::post('/calendar-events/{id}/toggle', [FarmerCalendarController::class, 'toggleComplete'])->name('calendar.toggle');
-        Route::get('/reminders/today', [FarmerCalendarController::class, 'getTodayReminders'])->name('reminders.today');
-        Route::get('/reminders/upcoming', [FarmerCalendarController::class, 'getUpcomingReminders'])->name('reminders.upcoming');
-    });
 
-    // Predictions routes (requires authentication)
-    Route::prefix('predictions')->group(function () {
-        Route::get('/', [CropPredictionController::class, 'index'])->name('predictions.index');
-        Route::get('/predict', [CropPredictionController::class, 'index'])->name('predictions.predict.form');
-        Route::post('/predict', [CropPredictionController::class, 'predict'])->name('predictions.predict');
-        Route::post('/forecast', [CropPredictionController::class, 'forecast'])->name('predictions.forecast');
-        Route::post('/historical', [CropPredictionController::class, 'historical'])->name('predictions.historical');
-        Route::post('/batch-predict', [CropPredictionController::class, 'batchPredict'])->name('predictions.batch');
-        Route::get('/history', [CropPredictionController::class, 'history'])->name('predictions.history');
-        Route::get('/options', [CropPredictionController::class, 'getOptions'])->name('predictions.options');
-        Route::get('/forecast-batch', [CropPredictionController::class, 'getForecastBatch'])->name('predictions.forecast-batch');
-        Route::delete('/clear-history', [CropPredictionController::class, 'clearHistory'])->name('predictions.clear-history');
-    });
+    Route::middleware('farmer')->group(function () {
+        // Farmer Dashboard API endpoints
+        Route::prefix('farmer')->name('farmer.')->group(function () {
+            Route::post('/preferences', [FarmerDashboardController::class, 'savePreferences'])->name('preferences.save');
+            Route::get('/recommendations', [FarmerDashboardController::class, 'getRecommendations'])->name('recommendations');
+            Route::get('/compare-crops', [FarmerDashboardController::class, 'compareCrops'])->name('compare');
+            Route::get('/calendar', [FarmerDashboardController::class, 'getCalendarData'])->name('calendar');
+            Route::get('/scenario', [FarmerDashboardController::class, 'calculateScenario'])->name('scenario');
+            Route::get('/options', [FarmerDashboardController::class, 'getOptions'])->name('options');
 
-    // Interactive Map route
-    Route::get('/map', [MapController::class, 'index'])->name('map.index');
+            // Farmer Calendar Page
+            Route::get('/my-calendar', [FarmerCalendarController::class, 'index'])->name('calendar.page');
+
+            // Farmer Calendar Events API
+            Route::get('/calendar-events', [FarmerCalendarController::class, 'getEvents'])->name('calendar.events');
+            Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
+            Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');
+            Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
+            Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');
+            Route::post('/calendar-events/{id}/toggle', [FarmerCalendarController::class, 'toggleComplete'])->name('calendar.toggle');
+            Route::get('/reminders/today', [FarmerCalendarController::class, 'getTodayReminders'])->name('reminders.today');
+            Route::get('/reminders/upcoming', [FarmerCalendarController::class, 'getUpcomingReminders'])->name('reminders.upcoming');
+        });
+
+        // Farmer Predictions routes
+        Route::prefix('predictions')->group(function () {
+            Route::get('/', [CropPredictionController::class, 'index'])->name('predictions.index');
+            Route::get('/predict', [CropPredictionController::class, 'index'])->name('predictions.predict.form');
+            Route::post('/predict', [CropPredictionController::class, 'predict'])->name('predictions.predict');
+            Route::post('/forecast', [CropPredictionController::class, 'forecast'])->name('predictions.forecast');
+            Route::post('/historical', [CropPredictionController::class, 'historical'])->name('predictions.historical');
+            Route::post('/batch-predict', [CropPredictionController::class, 'batchPredict'])->name('predictions.batch');
+            Route::get('/history', [CropPredictionController::class, 'history'])->name('predictions.history');
+            Route::get('/options', [CropPredictionController::class, 'getOptions'])->name('predictions.options');
+            Route::get('/forecast-batch', [CropPredictionController::class, 'getForecastBatch'])->name('predictions.forecast-batch');
+            Route::delete('/clear-history', [CropPredictionController::class, 'clearHistory'])->name('predictions.clear-history');
+        });
+
+        // Farmer Interactive Map route
+        Route::get('/map', [MapController::class, 'index'])->name('map.index');
+    });
 
     // Forum Routes
     Route::prefix('forum')->name('forum.')->group(function () {

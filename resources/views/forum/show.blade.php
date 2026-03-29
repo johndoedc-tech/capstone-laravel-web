@@ -1,4 +1,8 @@
-<x-app-layout>
+@php
+    $forumLayout = auth()->user()->isAdmin() ? 'admin-layout' : 'app-layout';
+@endphp
+
+<x-dynamic-component :component="$forumLayout">
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
             {{ $post->title }}
@@ -273,4 +277,4 @@
             }
         }
     </script>
-</x-app-layout>
+</x-dynamic-component>
