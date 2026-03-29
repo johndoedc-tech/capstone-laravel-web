@@ -2,23 +2,8 @@
 <div x-data="{ open: false }">
 <!-- Sidebar -->
 <aside class="w-64 flex flex-col h-screen fixed left-0 top-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0" style="background-color: #355872;" :class="{ '-translate-x-full': !open, 'translate-x-0': open }">
-    <!-- Logo -->
-    <div class="p-4 lg:p-6 border-b border-primary-700/30">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-            <div class="bg-primary-dark p-2 rounded-lg">
-                <svg class="w-5 h-5 lg:w-6 lg:h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 18.5c-4.03-1.21-7-5.35-7-9.5V8.52l7-3.12 7 3.12V11c0 4.15-2.97 8.29-7 9.5z"/>
-                </svg>
-            </div>
-            <div>
-                <h1 class="font-bold text-white text-base lg:text-lg">GeoMap</h1>
-                <p class="text-xs text-primary-200">Admin Panel</p>
-            </div>
-        </a>
-    </div>
-
     <!-- Navigation Links -->
-    <nav class="flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto">
+    <nav class="sidebar-scroll flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto">
         <!-- Main Section -->
         <p class="px-3 lg:px-4 pt-1 pb-2 text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary-200/60">Main</p>
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('admin.dashboard') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
