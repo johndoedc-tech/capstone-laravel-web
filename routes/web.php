@@ -17,8 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// Enhanced Farmer Dashboard
-Route::get('/dashboard', [FarmerDashboardController::class, 'index'])
+// Shared dashboard entry point: redirect admins to admin dashboard, keep farmers on farmer dashboard.
+Route::get('/dashboard', function () {
+    if (auth()->user()->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return app(FarmerDashboardController::class)->index();
+})
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

@@ -101,7 +101,7 @@
 
                 <div class="flex items-center gap-2 sm:gap-2 md:gap-4">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
+                        <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
                             <span class="hidden min-[400px]:inline">Dashboard</span>
                             <span class="min-[400px]:hidden">🏠</span>
                             <span>→</span>
