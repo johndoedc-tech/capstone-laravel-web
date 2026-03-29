@@ -373,7 +373,7 @@
                     html += `
                         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
                             <!-- Mobile-friendly card view -->
-                            <div class="block md:hidden">
+                            <div class="block">
                                 <div class="p-4 bg-gray-50 border-b border-gray-200">
                                     <h5 class="text-sm font-semibold text-gray-700 flex items-center">
                                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -430,7 +430,7 @@
                     
                     // Desktop table view
                     html += `
-                            <table class="hidden md:table min-w-full divide-y divide-gray-200">
+                            <table class="hidden min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gradient-to-r from-green-50 to-emerald-50">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
