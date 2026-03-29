@@ -23,7 +23,5 @@
                 {{ $slot }}
             </main>
         </div>
-
-        @include('layouts.language-switcher', ['showControl' => !request()->routeIs('dashboard')])
     </body>
 </html>

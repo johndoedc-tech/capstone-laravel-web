@@ -32,7 +32,5 @@
                 {{ $slot }}
             </main>
         </div>
-
-        @include('layouts.language-switcher')
     </body>
 </html>

@@ -22,6 +22,12 @@
         .quick-action-btn:hover {
             transform: translateY(-1px);
         }
+
+        /* Translation is disabled globally. Keep controls hidden and default language in English. */
+        .lang-toggle,
+        .lang-popup-overlay {
+            display: none !important;
+        }
         
         /* Language Toggle Styles */
         .lang-toggle {
@@ -672,31 +678,21 @@
                 showPopup: false,
                 
                 init() {
-                    // Check if language was previously set
-                    const savedLang = localStorage.getItem('dashboard_language');
+                    this.lang = 'en';
+                    this.showMenu = false;
+                    this.showPopup = false;
+                    localStorage.setItem('dashboard_language', 'en');
+                    localStorage.setItem('preferred_language', 'en');
+                    sessionStorage.setItem('lang_popup_shown', 'true');
                     
-                    if (savedLang) {
-                        this.lang = savedLang;
-                    } else {
-                        // Default to English
-                        this.lang = 'en';
-                    }
-                    
-                    // Show popup on every new session (login)
-                    // sessionStorage is cleared when browser/tab is closed
-                    const popupShownThisSession = sessionStorage.getItem('lang_popup_shown');
-                    if (!popupShownThisSession) {
-                        this.showPopup = true;
-                    }
-                    
-                    // Make translation function globally available
-                    window.currentLang = this.lang;
+                    // Keep helper functions available while forcing English text.
+                    window.currentLang = 'en';
                     window.t = this.t.bind(this);
                     window.getGreeting = this.getGreeting.bind(this);
                 },
                 
                 t(key, params = {}) {
-                    let text = translations[this.lang]?.[key] || translations['en']?.[key] || key;
+                    let text = translations['en']?.[key] || key;
                     
                     // Replace parameters like {month}, {count}
                     Object.keys(params).forEach(param => {
@@ -714,30 +710,20 @@
                 },
                 
                 setLanguage(newLang) {
-                    this.lang = newLang;
-                    window.currentLang = newLang;
-                    localStorage.setItem('dashboard_language', newLang);
-
-                    if (typeof window.applyAppLanguagePreference === 'function') {
-                        window.applyAppLanguagePreference(newLang, false);
-                    }
+                    this.lang = 'en';
+                    window.currentLang = 'en';
+                    localStorage.setItem('dashboard_language', 'en');
+                    localStorage.setItem('preferred_language', 'en');
 
                     this.showMenu = false;
                 },
                 
                 confirmLanguage() {
-                    // Save language preference
-                    localStorage.setItem('dashboard_language', this.lang);
-                    window.currentLang = this.lang;
-
-                    if (typeof window.applyAppLanguagePreference === 'function') {
-                        window.applyAppLanguagePreference(this.lang, false);
-                    }
-                    
-                    // Mark popup as shown for this session
+                    this.lang = 'en';
+                    localStorage.setItem('dashboard_language', 'en');
+                    localStorage.setItem('preferred_language', 'en');
+                    window.currentLang = 'en';
                     sessionStorage.setItem('lang_popup_shown', 'true');
-                    
-                    // Close popup
                     this.showPopup = false;
                 }
             }
