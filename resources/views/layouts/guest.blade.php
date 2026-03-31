@@ -52,11 +52,8 @@
             <!-- Left Panel - Logo / Brand -->
             <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-12 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-green-700 shadow-lg mb-4 sm:mb-6 leaf-icon">
-                        <svg class="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17,8C8,10,5,18.5,3,22c0,0,2.5-2,9-2c0,0-4-1-4-5C8,11.67,10.67,9.33,17,8z"/>
-                            <path d="M20.5,2C20.5,2,14,3,12,8c-2,5,0,7,0,7s2-2,5-4C20,9,21,4,20.5,2z"/>
-                        </svg>
+                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-white shadow-lg mb-4 sm:mb-6 leaf-icon p-2 border border-gray-100">
+                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-full h-full object-contain">
                     </div>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
                         BenguetCrop<span class="text-green-700">Map</span>
