@@ -52,11 +52,11 @@
             <!-- Left Panel - Logo / Brand -->
             <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-12 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-white shadow-lg mb-4 sm:mb-6 leaf-icon p-2 border border-gray-100">
-                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-full h-full object-contain">
+                    <div class="mb-4 sm:mb-6 leaf-icon">
+                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mx-auto">
                     </div>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
-                        BenguetCrop<span class="text-green-700">Map</span>
+                        GeoMap<span class="text-green-700">Map</span>
                     </h1>
                     <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-2">Agricultural Decision Support System</p>
                 </div>
