@@ -43,27 +43,27 @@
 
         <div class="min-h-screen flex flex-col md:flex-row">
             <!-- Left Panel - Logo / Brand -->
-            <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-12 md:py-0 px-6 md:px-12 md:min-h-screen">
+            <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-8 sm:py-10 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="mb-1 sm:mb-2 relative mx-auto w-72 h-40 sm:w-80 sm:h-44 md:w-[33rem] md:h-52 overflow-hidden">
-                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-full h-auto absolute top-0 left-1/2 -translate-x-1/2">
+                    <div class="mb-0 sm:mb-1 relative mx-auto w-72 h-44 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
+                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-[28rem] sm:w-[31rem] md:w-[35rem] h-auto absolute top-0 left-1/2 -translate-x-1/2">
                     </div>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
                         Geo<span class="text-green-700">Map</span>
                     </h1>
-                    <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-2">Agricultural Decision Support System</p>
+                    <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-1 sm:mt-2">Agricultural Decision Support System</p>
                 </div>
                 <!-- Footer (visible on desktop) -->
                 <p class="hidden md:block mt-12 text-xs text-gray-400">&copy; {{ date('Y') }} BenguetCropMap. All rights reserved.</p>
             </div>
 
             <!-- Right Panel - Auth Form -->
-            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-8 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen bg-white/50 md:bg-white/70">
+            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-4 sm:py-6 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen bg-white/50 md:bg-white/70">
                 <div class="w-full max-w-md auth-card px-5 sm:px-8 py-6 sm:py-8 shadow-xl rounded-2xl border border-gray-100 bg-white">
                     {{ $slot }}
                 </div>
                 <!-- Footer (visible on mobile) -->
-                <p class="md:hidden mt-6 text-xs text-gray-400">&copy; {{ date('Y') }} BenguetCropMap. All rights reserved.</p>
+                <p class="md:hidden mt-4 text-xs text-gray-400">&copy; {{ date('Y') }} BenguetCropMap. All rights reserved.</p>
             </div>
         </div>
     </body>
