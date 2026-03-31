@@ -45,7 +45,7 @@
             <!-- Left Panel - Logo / Brand -->
             <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-8 sm:py-10 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="mb-0 relative mx-auto w-72 h-44 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
+                    <div class="mb-0 relative mx-auto w-72 h-36 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
                         <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-[30rem] sm:w-[33rem] md:w-[35rem] h-auto absolute top-0 left-1/2 -translate-x-1/2">
                     </div>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-none -mt-5 sm:-mt-4 md:-mt-2">
