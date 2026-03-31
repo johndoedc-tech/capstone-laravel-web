@@ -23,13 +23,6 @@
                 backdrop-filter: blur(10px);
                 background: rgba(255, 255, 255, 0.95);
             }
-            .leaf-icon {
-                animation: sway 3s ease-in-out infinite;
-            }
-            @keyframes sway {
-                0%, 100% { transform: rotate(-3deg); }
-                50% { transform: rotate(3deg); }
-            }
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
@@ -52,11 +45,11 @@
             <!-- Left Panel - Logo / Brand -->
             <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-12 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="mb-4 sm:mb-6 leaf-icon relative h-24 sm:h-28 md:h-32">
-                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 object-contain absolute left-1/2 bottom-0 -translate-x-1/2">
+                    <div class="mb-4 sm:mb-6 relative h-24 sm:h-28 md:h-32">
+                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 object-contain absolute left-1/2 bottom-0 -translate-x-1/2">
                     </div>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
-                        GeoMap<span class="text-green-700">Map</span>
+                        Geo<span class="text-green-700">Map</span>
                     </h1>
                     <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-2">Agricultural Decision Support System</p>
                 </div>
