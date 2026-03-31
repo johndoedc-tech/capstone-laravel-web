@@ -100,8 +100,35 @@ class FarmerDashboardController extends Controller
             'month' => 'required|string|in:' . implode(',', $this->months),
         ]);
 
-        $municipality = strtoupper($request->municipality);
-        $month = strtoupper($request->month);
+        $municipality = strtoupper(trim($request->municipality));
+        $month = strtoupper(trim($request->month));
+
+        // Handle historical data inconsistencies like "LA TRINIDAD" vs "LATRINIDAD".
+        $normalizedMunicipality = str_replace(' ', '', $municipality);
+        $municipalityVariants = array_values(array_unique([
+            $municipality,
+            $normalizedMunicipality,
+        ]));
+
+        // Support datasets using either abbreviated or full month names.
+        $fullMonthNames = [
+            'JAN' => 'JANUARY',
+            'FEB' => 'FEBRUARY',
+            'MAR' => 'MARCH',
+            'APR' => 'APRIL',
+            'MAY' => 'MAY',
+            'JUN' => 'JUNE',
+            'JUL' => 'JULY',
+            'AUG' => 'AUGUST',
+            'SEP' => 'SEPTEMBER',
+            'OCT' => 'OCTOBER',
+            'NOV' => 'NOVEMBER',
+            'DEC' => 'DECEMBER',
+        ];
+        $monthVariants = array_values(array_unique([
+            $month,
+            $fullMonthNames[$month] ?? $month,
+        ]));
 
         // Get historical production data for the selected municipality and month
         $recommendations = CropProduction::select(
@@ -113,8 +140,11 @@ class FarmerDashboardController extends Controller
                 DB::raw('MAX(production) as max_production'),
                 DB::raw('MIN(production) as min_production')
             )
-            ->where('municipality', $municipality)
-            ->where('month', $month)
+            ->where(function ($query) use ($municipalityVariants, $normalizedMunicipality) {
+                $query->whereIn('municipality', $municipalityVariants)
+                    ->orWhereRaw("REPLACE(municipality, ' ', '') = ?", [$normalizedMunicipality]);
+            })
+            ->whereIn('month', $monthVariants)
             ->where('production', '>', 0) // Only crops that actually produced
             ->groupBy('crop')
             ->orderByDesc('avg_production')
