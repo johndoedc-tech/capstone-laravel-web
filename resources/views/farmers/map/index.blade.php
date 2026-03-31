@@ -324,6 +324,10 @@
             'TUBLAY': [16.5000, 120.6167]
         };
 
+        function normalizeMunicipalityName(name) {
+            return (name || '').toString().toUpperCase().replace(/\s+/g, '');
+        }
+
         // Initialize map
         function initMap() {
             console.log('Initializing map...');
@@ -468,7 +472,7 @@
                         onEachFeature: (feature, layer) => {
                             const municipalityName = feature.properties.name;
                             const municipalityData = data.data.find(d =>
-                                d.municipality.toUpperCase() === municipalityName.toUpperCase()
+                                normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName)
                             );
 
                             // Popup
@@ -521,7 +525,7 @@
 
             geojsonLayer.eachLayer(layer => {
                 const name = layer.feature.properties.name;
-                if (name.toUpperCase() === userPreferredMunicipality.toUpperCase()) {
+                if (normalizeMunicipalityName(name) === normalizeMunicipalityName(userPreferredMunicipality)) {
                     layer.setStyle({
                         weight: 4,
                         color: '#7c3aed', // Purple border for user's location
@@ -536,12 +540,12 @@
         function getStyle(feature, data) {
             const municipalityName = feature.properties.name;
             const municipalityData = data.data.find(d =>
-                d.municipality.toUpperCase() === municipalityName.toUpperCase()
+                normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName)
             );
 
             // Check if this is the user's preferred municipality
             const isUserMunicipality = userPreferredMunicipality &&
-                municipalityName.toUpperCase() === userPreferredMunicipality.toUpperCase();
+                normalizeMunicipalityName(municipalityName) === normalizeMunicipalityName(userPreferredMunicipality);
 
             let fillColor = '#d3d3d3'; // Default gray for no data
 
@@ -721,7 +725,7 @@
             document.getElementById('contribution-crop-badge').textContent = crop;
 
             // Find the selected municipality's value
-            const selected = allMunicipalities.find(d => d.municipality.toUpperCase() === municipalityName.toUpperCase());
+            const selected = allMunicipalities.find(d => normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName));
             const selectedValue = selected ? selected.value : 0;
             const total = allMunicipalities.reduce((sum, d) => sum + d.value, 0);
             const othersValue = total - selectedValue;

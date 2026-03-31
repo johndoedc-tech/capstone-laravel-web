@@ -84,7 +84,8 @@ class MapDataController extends Controller
         $farmType = $request->input('farm_type');
 
         // Monthly production data
-        $monthlyQuery = CropProduction::where('municipality', $municipality);
+        $monthlyQuery = CropProduction::query();
+        $this->applyMunicipalityFilter($monthlyQuery, $municipality);
         if ($crop)
             $monthlyQuery->where('crop', $crop);
         if ($year)
@@ -107,7 +108,8 @@ class MapDataController extends Controller
         }
 
         // Crop distribution (all crops for this municipality and year)
-        $cropDistQuery = CropProduction::where('municipality', $municipality);
+        $cropDistQuery = CropProduction::query();
+        $this->applyMunicipalityFilter($cropDistQuery, $municipality);
         if ($year)
             $cropDistQuery->where('year', $year);
         if ($farmType)
@@ -120,7 +122,8 @@ class MapDataController extends Controller
             ->get();
 
         // Farm type breakdown
-        $farmQuery = CropProduction::where('municipality', $municipality);
+        $farmQuery = CropProduction::query();
+        $this->applyMunicipalityFilter($farmQuery, $municipality);
         if ($crop)
             $farmQuery->where('crop', $crop);
         if ($year)
@@ -138,7 +141,8 @@ class MapDataController extends Controller
             ->get();
 
         // Summary statistics
-        $summaryQuery = CropProduction::where('municipality', $municipality);
+        $summaryQuery = CropProduction::query();
+        $this->applyMunicipalityFilter($summaryQuery, $municipality);
         if ($crop)
             $summaryQuery->where('crop', $crop);
         if ($year)
@@ -292,7 +296,8 @@ class MapDataController extends Controller
         $comparisonData = [];
 
         foreach ($municipalities as $municipality) {
-            $query = CropProduction::where('municipality', trim($municipality));
+            $query = CropProduction::query();
+            $this->applyMunicipalityFilter($query, trim($municipality));
 
             if ($crop) {
                 $query->where('crop', $crop);
@@ -380,6 +385,20 @@ class MapDataController extends Controller
                 'top_crops' => $topCrops
             ]
         ]);
+    }
+
+    /**
+     * Apply resilient municipality filtering (case/spacing insensitive).
+     */
+    private function applyMunicipalityFilter($query, string $municipality): void
+    {
+        $canonicalMunicipality = strtoupper(trim($municipality));
+        $normalizedMunicipality = str_replace(' ', '', $canonicalMunicipality);
+
+        $query->where(function ($innerQuery) use ($canonicalMunicipality, $normalizedMunicipality) {
+            $innerQuery->whereRaw('UPPER(municipality) = ?', [$canonicalMunicipality])
+                ->orWhereRaw("UPPER(REPLACE(municipality, ' ', '')) = ?", [$normalizedMunicipality]);
+        });
     }
 
     /**
