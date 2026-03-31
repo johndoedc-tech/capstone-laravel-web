@@ -45,13 +45,13 @@
             <!-- Left Panel - Logo / Brand -->
             <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-8 sm:py-10 md:py-0 px-6 md:px-12 md:min-h-screen">
                 <div class="text-center">
-                    <div class="mb-0 sm:mb-1 relative mx-auto w-72 h-44 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
-                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-[28rem] sm:w-[31rem] md:w-[35rem] h-auto absolute top-0 left-1/2 -translate-x-1/2">
+                    <div class="mb-0 relative mx-auto w-72 h-44 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
+                        <img src="{{ asset('images/GeoMapLogo.png') }}" alt="GeoMap Logo" class="w-[30rem] sm:w-[33rem] md:w-[35rem] h-auto absolute top-0 left-1/2 -translate-x-1/2">
                     </div>
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-none -mt-5 sm:-mt-4 md:-mt-2">
                         Geo<span class="text-green-700">Map</span>
                     </h1>
-                    <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-1 sm:mt-2">Agricultural Decision Support System</p>
+                    <p class="text-sm sm:text-base md:text-lg text-gray-500 mt-1 leading-tight">Agricultural Decision Support System</p>
                 </div>
                 <!-- Footer (visible on desktop) -->
                 <p class="hidden md:block mt-12 text-xs text-gray-400">&copy; {{ date('Y') }} BenguetCropMap. All rights reserved.</p>
