@@ -207,11 +207,29 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($data->production, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ number_format($data->productivity, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <form method="POST" action="{{ route('admin.crop-data.destroy', $data->id) }}" onsubmit="return confirm('Delete this record?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                                            </form>
+                                            <div class="flex items-center gap-3">
+                                                <button type="button"
+                                                        onclick='openEditModal(@json([
+                                                            "id" => $data->id,
+                                                            "municipality" => $data->municipality,
+                                                            "farm_type" => $data->farm_type,
+                                                            "year" => $data->year,
+                                                            "month" => $data->month,
+                                                            "crop" => $data->crop,
+                                                            "area_planted" => $data->area_planted,
+                                                            "area_harvested" => $data->area_harvested,
+                                                            "production" => $data->production,
+                                                            "productivity" => $data->productivity,
+                                                        ]))'
+                                                        class="text-blue-600 hover:text-blue-900 font-medium">
+                                                    Edit
+                                                </button>
+
+                                                <form method="POST" action="{{ route('admin.crop-data.archive', $data->id) }}" onsubmit="return confirm('Archive this record?');">
+                                                    @csrf
+                                                    <button type="submit" class="text-amber-600 hover:text-amber-900 font-medium">Archive</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -375,5 +393,104 @@
             </form>
         </div>
     </div>
+
+    <!-- Edit Data Modal -->
+    <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 px-4">
+        <div class="relative top-10 mx-auto p-4 lg:p-5 border w-full max-w-2xl shadow-lg rounded-lg bg-white my-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Edit Crop Data</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" id="editForm">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Municipality *</label>
+                        <input type="text" id="edit_municipality" name="municipality" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Farm Type *</label>
+                        <select id="edit_farm_type" name="farm_type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                            <option value="IRRIGATED">IRRIGATED</option>
+                            <option value="RAINFED">RAINFED</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Year *</label>
+                        <input type="number" id="edit_year" name="year" required min="2000" max="2100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Month *</label>
+                        <select id="edit_month" name="month" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                            <option value="JAN">JAN</option><option value="FEB">FEB</option><option value="MAR">MAR</option><option value="APR">APR</option>
+                            <option value="MAY">MAY</option><option value="JUN">JUN</option><option value="JUL">JUL</option><option value="AUG">AUG</option>
+                            <option value="SEP">SEP</option><option value="OCT">OCT</option><option value="NOV">NOV</option><option value="DEC">DEC</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Crop *</label>
+                        <input type="text" id="edit_crop" name="crop" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Area Planted (ha)</label>
+                        <input type="number" step="0.01" id="edit_area_planted" name="area_planted" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Area Harvested (ha)</label>
+                        <input type="number" step="0.01" id="edit_area_harvested" name="area_harvested" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Production (mt)</label>
+                        <input type="number" step="0.01" id="edit_production" name="production" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Productivity (mt/ha)</label>
+                        <input type="number" step="0.01" id="edit_productivity" name="productivity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">
+                        Save Changes
+                    </button>
+                    <button type="button" onclick="closeEditModal()"
+                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const cropDataUpdateRouteTemplate = @json(route('admin.crop-data.update', ['id' => '__ID__']));
+
+        function openEditModal(record) {
+            const form = document.getElementById('editForm');
+            form.action = cropDataUpdateRouteTemplate.replace('__ID__', record.id);
+
+            document.getElementById('edit_municipality').value = record.municipality || '';
+            document.getElementById('edit_farm_type').value = record.farm_type || 'IRRIGATED';
+            document.getElementById('edit_year').value = record.year || '';
+            document.getElementById('edit_month').value = record.month || 'JAN';
+            document.getElementById('edit_crop').value = record.crop || '';
+            document.getElementById('edit_area_planted').value = record.area_planted ?? '';
+            document.getElementById('edit_area_harvested').value = record.area_harvested ?? '';
+            document.getElementById('edit_production').value = record.production ?? '';
+            document.getElementById('edit_productivity').value = record.productivity ?? '';
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+    </script>
 
 </x-admin-layout>

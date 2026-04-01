@@ -101,6 +101,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', [CropDataController::class, 'index'])->name('index');
         Route::post('/import', [CropDataController::class, 'import'])->name('import');
         Route::post('/store', [CropDataController::class, 'store'])->name('store');
+        Route::put('/{id}', [CropDataController::class, 'update'])->name('update');
+        Route::post('/{id}/archive', [CropDataController::class, 'archive'])->name('archive');
         Route::delete('/{id}', [CropDataController::class, 'destroy'])->name('destroy');
         Route::post('/delete-all', [CropDataController::class, 'deleteAll'])->name('delete-all');
         Route::get('/statistics', [CropDataController::class, 'getStatistics'])->name('statistics');

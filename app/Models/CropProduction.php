@@ -17,7 +17,8 @@ class CropProduction extends Model
         'area_planted',
         'area_harvested',
         'production',
-        'productivity'
+        'productivity',
+        'is_archived'
     ];
     
     protected $casts = [
@@ -26,6 +27,7 @@ class CropProduction extends Model
         'area_harvested' => 'float',
         'production' => 'float',
         'productivity' => 'float',
+        'is_archived' => 'boolean',
     ];
     
     // Query scopes for easy filtering

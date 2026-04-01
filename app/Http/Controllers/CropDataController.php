@@ -15,7 +15,7 @@ class CropDataController extends Controller
      */
     public function index(Request $request)
     {
-        $query = CropProduction::query();
+        $query = CropProduction::query()->where('is_archived', false);
 
         // Apply filters
         if ($request->filled('municipality')) {
@@ -47,17 +47,17 @@ class CropDataController extends Controller
                          ->orderBy('month', 'desc')
                          ->paginate(20);
 
-        // Get filter options
-        $municipalities = CropProduction::distinct()->pluck('municipality')->sort()->values();
-        $crops = CropProduction::distinct()->pluck('crop')->sort()->values();
-        $years = CropProduction::distinct()->pluck('year')->sort()->values();
+        // Get filter options from active (non-archived) records
+        $municipalities = CropProduction::where('is_archived', false)->distinct()->pluck('municipality')->sort()->values();
+        $crops = CropProduction::where('is_archived', false)->distinct()->pluck('crop')->sort()->values();
+        $years = CropProduction::where('is_archived', false)->distinct()->pluck('year')->sort()->values();
         
-        // Get statistics
-        $totalRecords = CropProduction::count();
-        $municipalitiesCount = CropProduction::distinct('municipality')->count();
-        $cropTypesCount = CropProduction::distinct('crop')->count();
-        $minYear = CropProduction::min('year');
-        $maxYear = CropProduction::max('year');
+        // Get statistics from active (non-archived) records
+        $totalRecords = CropProduction::where('is_archived', false)->count();
+        $municipalitiesCount = CropProduction::where('is_archived', false)->distinct('municipality')->count();
+        $cropTypesCount = CropProduction::where('is_archived', false)->distinct('crop')->count();
+        $minYear = CropProduction::where('is_archived', false)->min('year');
+        $maxYear = CropProduction::where('is_archived', false)->max('year');
 
         return view('admin.crop-data.index', compact(
             'cropData',
@@ -192,6 +192,45 @@ class CropDataController extends Controller
     }
 
     /**
+     * Update single crop data
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'municipality' => 'required|string|max:100',
+            'farm_type' => 'required|string|in:IRRIGATED,RAINFED',
+            'year' => 'required|integer|min:2000|max:2100',
+            'month' => 'required|string|max:20',
+            'crop' => 'required|string|max:100',
+            'area_planted' => 'nullable|numeric|min:0',
+            'area_harvested' => 'nullable|numeric|min:0',
+            'production' => 'nullable|numeric|min:0',
+            'productivity' => 'nullable|numeric|min:0',
+        ]);
+
+        $validated['municipality'] = strtoupper($validated['municipality']);
+        $validated['farm_type'] = strtoupper($validated['farm_type']);
+        $validated['month'] = strtoupper($validated['month']);
+        $validated['crop'] = strtoupper($validated['crop']);
+
+        $cropData = CropProduction::where('is_archived', false)->findOrFail($id);
+        $cropData->update($validated);
+
+        return redirect()->back()->with('success', 'Crop data updated successfully!');
+    }
+
+    /**
+     * Archive crop data (soft hide from management list)
+     */
+    public function archive($id)
+    {
+        $cropData = CropProduction::where('is_archived', false)->findOrFail($id);
+        $cropData->update(['is_archived' => true]);
+
+        return redirect()->back()->with('success', 'Crop data archived successfully!');
+    }
+
+    /**
      * Delete crop data
      */
     public function destroy($id)
@@ -218,15 +257,15 @@ class CropDataController extends Controller
     public function getStatistics()
     {
         return response()->json([
-            'total_records' => CropProduction::count(),
-            'municipalities' => CropProduction::distinct('municipality')->count(),
-            'crop_types' => CropProduction::distinct('crop')->count(),
+            'total_records' => CropProduction::where('is_archived', false)->count(),
+            'municipalities' => CropProduction::where('is_archived', false)->distinct('municipality')->count(),
+            'crop_types' => CropProduction::where('is_archived', false)->distinct('crop')->count(),
             'years_covered' => [
-                'min' => CropProduction::min('year'),
-                'max' => CropProduction::max('year')
+                'min' => CropProduction::where('is_archived', false)->min('year'),
+                'max' => CropProduction::where('is_archived', false)->max('year')
             ],
-            'total_production' => CropProduction::sum('production'),
-            'total_area' => CropProduction::sum('area_harvested'),
+            'total_production' => CropProduction::where('is_archived', false)->sum('production'),
+            'total_area' => CropProduction::where('is_archived', false)->sum('area_harvested'),
         ]);
     }
 }
