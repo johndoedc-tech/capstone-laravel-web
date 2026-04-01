@@ -64,7 +64,7 @@
                                 
                                 <!-- Event Indicators -->
                                 <div class="mt-1 space-y-1">
-                                    <template x-for="event in (eventsByDay[day.day] || []).slice(0, 2)" :key="event.id">
+                                    <template x-for="event in (eventsByDay[day.date] || []).slice(0, 2)" :key="event.id">
                                         <div 
                                             class="text-[10px] lg:text-xs px-1 py-0.5 rounded truncate"
                                             :class="{
@@ -78,8 +78,8 @@
                                             x-text="event.title">
                                         </div>
                                     </template>
-                                    <div x-show="(eventsByDay[day.day] || []).length > 2" class="text-[10px] text-gray-400">
-                                        +<span x-text="(eventsByDay[day.day] || []).length - 2"></span> more
+                                    <div x-show="(eventsByDay[day.date] || []).length > 2" class="text-[10px] text-gray-400">
+                                        +<span x-text="(eventsByDay[day.date] || []).length - 2"></span> more
                                     </div>
                                 </div>
                             </div>
@@ -375,8 +375,7 @@
 
                 get selectedDayEvents() {
                     if (!this.selectedDate) return [];
-                    const day = new Date(this.selectedDate + 'T00:00:00').getDate();
-                    return this.eventsByDay[day] || [];
+                    return this.eventsByDay[this.selectedDate] || [];
                 },
 
                 goToToday() {

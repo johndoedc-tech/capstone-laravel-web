@@ -47,8 +47,9 @@ class FarmerCalendarController extends Controller
                 ];
             });
 
-        // Group events by day for easy access
-        $eventsByDay = $events->groupBy('day');
+        // Group by full date to avoid leaking events into adjacent-month cells
+        // that share the same day number (e.g., May 1 and June 1).
+        $eventsByDay = $events->groupBy('date');
 
         return response()->json([
             'success' => true,
