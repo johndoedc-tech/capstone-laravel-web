@@ -10,7 +10,7 @@
     </x-slot>
 
     <div class="pt-20 pb-4 lg:py-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-7xl mx-auto" x-data="forumIndexVotes()">
             
             <!-- Header -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-6">
@@ -117,15 +117,18 @@
                                     <div class="flex gap-4">
                                         <!-- Vote Score -->
                                         <div class="flex flex-col items-center text-gray-400">
-                                            <button class="hover:text-green-600 p-1">
+                                            <button type="button" @click="vote({{ $post->id }}, 1)" class="p-1 rounded transition-colors"
+                                                    :class="userVotes.post_{{ $post->id }} === 1 ? 'text-green-600' : 'text-gray-400 hover:text-green-600'">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                                                 </svg>
                                             </button>
-                                            <span class="text-sm font-medium {{ $post->vote_score > 0 ? 'text-green-600' : ($post->vote_score < 0 ? 'text-red-600' : 'text-gray-400') }}">
-                                                {{ $post->vote_score }}
+                                            <span class="text-sm font-medium"
+                                                  :class="scores.post_{{ $post->id }} > 0 ? 'text-green-600' : (scores.post_{{ $post->id }} < 0 ? 'text-red-600' : 'text-gray-400')"
+                                                  x-text="scores.post_{{ $post->id }}">{{ $post->vote_score }}
                                             </span>
-                                            <button class="hover:text-red-600 p-1">
+                                            <button type="button" @click="vote({{ $post->id }}, -1)" class="p-1 rounded transition-colors"
+                                                    :class="userVotes.post_{{ $post->id }} === -1 ? 'text-red-600' : 'text-gray-400 hover:text-red-600'">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
@@ -198,4 +201,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function forumIndexVotes() {
+            return {
+                scores: {
+                    @foreach($posts as $post)
+                    post_{{ $post->id }}: {{ $post->vote_score }},
+                    @endforeach
+                },
+                userVotes: {
+                    @foreach($posts as $post)
+                    post_{{ $post->id }}: {{ $post->getUserVote(auth()->id()) }},
+                    @endforeach
+                },
+
+                async vote(id, value) {
+                    try {
+                        const response = await fetch('{{ route('forum.vote') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                voteable_type: 'post',
+                                voteable_id: id,
+                                vote: value
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.message || 'Failed to submit vote');
+                        }
+
+                        const data = await response.json();
+                        this.scores['post_' + id] = data.score;
+                        this.userVotes['post_' + id] = data.userVote;
+                    } catch (error) {
+                        console.error('Vote failed:', error);
+                    }
+                }
+            }
+        }
+    </script>
 </x-dynamic-component>
