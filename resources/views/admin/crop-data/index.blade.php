@@ -209,18 +209,17 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             <div class="flex items-center gap-3">
                                                 <button type="button"
-                                                        onclick='openEditModal(@json([
-                                                            "id" => $data->id,
-                                                            "municipality" => $data->municipality,
-                                                            "farm_type" => $data->farm_type,
-                                                            "year" => $data->year,
-                                                            "month" => $data->month,
-                                                            "crop" => $data->crop,
-                                                            "area_planted" => $data->area_planted,
-                                                            "area_harvested" => $data->area_harvested,
-                                                            "production" => $data->production,
-                                                            "productivity" => $data->productivity,
-                                                        ]))'
+                                                        onclick="openEditModal(this)"
+                                                        data-id="{{ $data->id }}"
+                                                        data-municipality="{{ $data->municipality }}"
+                                                        data-farm-type="{{ $data->farm_type }}"
+                                                        data-year="{{ $data->year }}"
+                                                        data-month="{{ $data->month }}"
+                                                        data-crop="{{ $data->crop }}"
+                                                        data-area-planted="{{ $data->area_planted ?? '' }}"
+                                                        data-area-harvested="{{ $data->area_harvested ?? '' }}"
+                                                        data-production="{{ $data->production ?? '' }}"
+                                                        data-productivity="{{ $data->productivity ?? '' }}"
                                                         class="text-blue-600 hover:text-blue-900 font-medium">
                                                     Edit
                                                 </button>
@@ -471,7 +470,20 @@
     <script>
         const cropDataUpdateRouteTemplate = @json(route('admin.crop-data.update', ['id' => '__ID__']));
 
-        function openEditModal(record) {
+        function openEditModal(trigger) {
+            const record = {
+                id: trigger.dataset.id,
+                municipality: trigger.dataset.municipality,
+                farm_type: trigger.dataset.farmType,
+                year: trigger.dataset.year,
+                month: trigger.dataset.month,
+                crop: trigger.dataset.crop,
+                area_planted: trigger.dataset.areaPlanted,
+                area_harvested: trigger.dataset.areaHarvested,
+                production: trigger.dataset.production,
+                productivity: trigger.dataset.productivity,
+            };
+
             const form = document.getElementById('editForm');
             form.action = cropDataUpdateRouteTemplate.replace('__ID__', record.id);
 
