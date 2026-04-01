@@ -228,24 +228,48 @@ class ReportController extends Controller
      */
     public function userActivity(Request $request)
     {
-        $query = User::where('role', 'farmer')
-            ->withCount(['predictions' => function($q) {
-                $q->where('status', 'success');
-            }]);
+        $predictionFilter = function ($q) use ($request) {
+            $q->where('status', 'success');
 
-        if ($request->filled('start_date')) {
-            $query->whereHas('predictions', function($q) use ($request) {
+            if ($request->filled('start_date')) {
                 $q->whereDate('created_at', '>=', $request->start_date);
-            });
+            }
+
+            if ($request->filled('end_date')) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            }
+        };
+
+        $query = User::where('role', 'farmer')
+            ->withCount(['predictions' => $predictionFilter]);
+
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            $query->whereHas('predictions', $predictionFilter);
         }
 
         $users = $query->orderBy('predictions_count', 'desc')->paginate(20);
 
+        // PostgreSQL cannot aggregate directly on withCount aliases via avg('predictions_count').
+        // Compute it from the counted result set instead.
+        $avgPredictionsPerUser = User::where('role', 'farmer')
+            ->whereHas('predictions', $predictionFilter)
+            ->withCount(['predictions' => $predictionFilter])
+            ->get()
+            ->avg('predictions_count') ?? 0;
+
+        $totalPredictionsQuery = Prediction::where('status', 'success');
+        if ($request->filled('start_date')) {
+            $totalPredictionsQuery->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $totalPredictionsQuery->whereDate('created_at', '<=', $request->end_date);
+        }
+
         $stats = [
             'total_farmers' => User::where('role', 'farmer')->count(),
-            'active_farmers' => User::where('role', 'farmer')->has('predictions')->count(),
-            'total_predictions' => Prediction::count(),
-            'avg_predictions_per_user' => User::where('role', 'farmer')->has('predictions')->withCount('predictions')->avg('predictions_count'),
+            'active_farmers' => User::where('role', 'farmer')->whereHas('predictions', $predictionFilter)->count(),
+            'total_predictions' => $totalPredictionsQuery->count(),
+            'avg_predictions_per_user' => $avgPredictionsPerUser,
         ];
 
         if ($request->get('format') === 'pdf') {
