@@ -21,7 +21,6 @@
             }
             .auth-card {
                 backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.95);
             }
         </style>
     </head>
@@ -58,8 +57,8 @@
             </div>
 
             <!-- Right Panel - Auth Form -->
-            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-4 sm:py-6 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen bg-white/50 md:bg-white/70">
-                <div class="w-full max-w-md auth-card px-5 sm:px-8 py-6 sm:py-8 shadow-xl rounded-2xl border border-gray-100 bg-white">
+            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-4 sm:py-6 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen">
+                <div class="w-full max-w-md auth-card px-5 sm:px-8 py-6 sm:py-8 shadow-xl rounded-2xl border border-gray-100">
                     {{ $slot }}
                 </div>
                 <!-- Footer (visible on mobile) -->
