@@ -128,11 +128,11 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 lg:p-6 relative">
                     <div id="map" style="height: 500px; width: 100%;"
-                        class="rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
+                        class="relative z-0 rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
 
                     <!-- Legend - Collapsible on mobile -->
                     <div id="legend"
-                        class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-white rounded-lg shadow-lg border-2 border-gray-200 z-[1000] max-w-[200px] sm:max-w-[240px] lg:max-w-[280px]">
+                        class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-white rounded-lg shadow-lg border-2 border-gray-200 z-10 max-w-[200px] sm:max-w-[240px] lg:max-w-[280px]">
                         <!-- Toggle Button (Mobile Only) -->
                         <button id="legend-toggle" onclick="toggleLegend()"
                             class="lg:hidden w-full flex items-center justify-between p-3 font-bold text-gray-800 text-xs uppercase tracking-wide">
@@ -157,7 +157,7 @@
 
                     <!-- Municipality Details Panel - Slides from right -->
                     <div id="details-panel"
-                        class="fixed top-0 right-0 h-full bg-white shadow-2xl z-[2000] transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
+                        class="fixed top-0 right-0 h-full bg-white shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
                         <div class="p-4 lg:p-6">
                             <!-- Close Button -->
                             <button onclick="closeDetailsPanel()"
