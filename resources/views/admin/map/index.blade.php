@@ -89,13 +89,28 @@
                     <div id="map" style="height: 500px; width: 100%;"
                         class="relative z-0 rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
 
-                    <!-- Legend - Positioned on the left side of map -->
+                    <!-- Legend - Collapsible on mobile -->
                     <div id="legend"
-                        class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-white p-3 lg:p-4 rounded-lg shadow-lg border-2 border-gray-200 z-10 max-w-[200px] sm:max-w-[240px] lg:max-w-[280px]">
-                        <h4 class="font-bold text-gray-800 mb-2 lg:mb-3 text-xs lg:text-sm uppercase tracking-wide">
-                            Production Legend</h4>
-                        <div id="legend-content">
-                            <span class="text-xs text-gray-600">Select filters to view data</span>
+                        class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-white rounded-lg shadow-lg border-2 border-gray-200 z-10 max-w-[200px] sm:max-w-[240px] lg:max-w-[280px]">
+                        <!-- Toggle Button (Mobile Only) -->
+                        <button id="legend-toggle" onclick="toggleLegend()"
+                            class="lg:hidden w-full flex items-center justify-between p-3 font-bold text-gray-800 text-xs uppercase tracking-wide">
+                            <span>Legend</span>
+                            <svg id="legend-icon" class="w-4 h-4 transform transition-transform" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Legend Content -->
+                        <div id="legend-wrapper" class="hidden lg:block p-3 lg:p-4">
+                            <h4
+                                class="hidden lg:block font-bold text-gray-800 mb-2 lg:mb-3 text-xs lg:text-sm uppercase tracking-wide">
+                                Production Legend</h4>
+                            <div id="legend-content">
+                                <span class="text-xs text-gray-600">Select filters to view data</span>
+                            </div>
                         </div>
                     </div>
 
@@ -262,6 +277,20 @@
             console.log('Map initialized, loading filters...');
             // Load filters
             loadFilters();
+        }
+
+        // Toggle legend on mobile
+        function toggleLegend() {
+            const wrapper = document.getElementById('legend-wrapper');
+            const icon = document.getElementById('legend-icon');
+
+            if (wrapper.classList.contains('hidden')) {
+                wrapper.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                wrapper.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
         }
 
         // Load filter options from API
