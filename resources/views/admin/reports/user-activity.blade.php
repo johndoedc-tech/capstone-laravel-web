@@ -26,7 +26,7 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 border-l-4 border-green-500">
                     <p class="text-xs text-gray-600">Active Farmers</p>
                     <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['active_farmers']) }}</p>
-                    <p class="text-xs text-gray-500">Made predictions</p>
+                    <p class="text-xs text-gray-500">Currently using website</p>
                 </div>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 border-l-4 border-purple-500">
                     <p class="text-xs text-gray-600">Total Predictions</p>
@@ -126,7 +126,7 @@
                                                 {{ $user->created_at->format('M d, Y') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                @if($user->predictions_count > 0)
+                                                @if($user->is_active)
                                                     <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                         Active
                                                     </span>

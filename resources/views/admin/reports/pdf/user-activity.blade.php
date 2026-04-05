@@ -188,7 +188,7 @@
             <td class="summary-card">
                 <div class="label">Active Farmers</div>
                 <div class="value">{{ number_format($stats['active_farmers']) }}</div>
-                <div class="unit">Made predictions</div>
+                <div class="unit">Currently using website</div>
             </td>
             <td class="summary-card">
                 <div class="label">Total Predictions</div>
@@ -236,7 +236,7 @@
                         </td>
                         <td style="color: #6b7280;">{{ $user->created_at->format('M d, Y') }}</td>
                         <td class="text-center">
-                            @if($user->predictions_count > 0)
+                            @if($user->is_active)
                                 <span class="status-badge status-active">Active</span>
                             @else
                                 <span class="status-badge status-inactive">Inactive</span>

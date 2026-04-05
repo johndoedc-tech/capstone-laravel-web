@@ -240,14 +240,34 @@ class ReportController extends Controller
             }
         };
 
+        $sessionTable = config('session.table', 'sessions');
+        $sessionLifetimeSeconds = (int) config('session.lifetime', 120) * 60;
+        $activeSinceTimestamp = now()->subSeconds($sessionLifetimeSeconds)->timestamp;
+
+        $sessionActivitySubquery = function () use ($sessionTable) {
+            return DB::table($sessionTable)
+                ->select('user_id', DB::raw('MAX(last_activity) as last_activity'))
+                ->whereNotNull('user_id')
+                ->groupBy('user_id');
+        };
+
         $query = User::where('role', 'farmer')
+            ->leftJoinSub($sessionActivitySubquery(), 'session_activity', function ($join) {
+                $join->on('users.id', '=', 'session_activity.user_id');
+            })
+            ->select('users.*')
+            ->selectRaw('COALESCE(session_activity.last_activity, 0) as last_activity_timestamp')
+            ->selectRaw('CASE WHEN COALESCE(session_activity.last_activity, 0) >= ? THEN 1 ELSE 0 END as is_active', [$activeSinceTimestamp])
             ->withCount(['predictions' => $predictionFilter]);
 
         if ($request->filled('start_date') || $request->filled('end_date')) {
             $query->whereHas('predictions', $predictionFilter);
         }
 
-        $users = $query->orderBy('predictions_count', 'desc')->paginate(20);
+        $users = $query
+            ->orderByDesc('is_active')
+            ->orderBy('predictions_count', 'desc')
+            ->paginate(20);
 
         // PostgreSQL cannot aggregate directly on withCount aliases via avg('predictions_count').
         // Compute it from the counted result set instead.
@@ -265,9 +285,16 @@ class ReportController extends Controller
             $totalPredictionsQuery->whereDate('created_at', '<=', $request->end_date);
         }
 
+        $activeFarmersCount = User::where('role', 'farmer')
+            ->joinSub($sessionActivitySubquery(), 'session_activity', function ($join) {
+                $join->on('users.id', '=', 'session_activity.user_id');
+            })
+            ->where('session_activity.last_activity', '>=', $activeSinceTimestamp)
+            ->count();
+
         $stats = [
             'total_farmers' => User::where('role', 'farmer')->count(),
-            'active_farmers' => User::where('role', 'farmer')->whereHas('predictions', $predictionFilter)->count(),
+            'active_farmers' => $activeFarmersCount,
             'total_predictions' => $totalPredictionsQuery->count(),
             'avg_predictions_per_user' => $avgPredictionsPerUser,
         ];
