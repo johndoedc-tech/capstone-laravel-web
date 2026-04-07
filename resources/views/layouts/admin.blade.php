@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        @php
+            $routeName = request()->route()?->getName() ?? '';
+
+            $pageTitle = match ($routeName) {
+                'admin.dashboard' => 'Admin Dashboard',
+                'admin.activities.index' => 'Admin Activity',
+                'admin.crop-data.index' => 'Crop Data',
+                'admin.predictions.index', 'admin.predictions.predict.form' => 'Predictions',
+                'admin.predictions.history' => 'Prediction History',
+                'admin.map.index' => 'Interactive Map',
+                'admin.users.index' => 'Users',
+                'admin.reports.index' => 'Reports',
+                'admin.reports.production-summary' => 'Production Summary',
+                'admin.reports.prediction-analytics' => 'Prediction Analytics',
+                'admin.reports.comparative-analysis' => 'Comparative Analysis',
+                'admin.reports.user-activity' => 'User Activity',
+                'admin.settings.index' => 'Settings',
+                default => 'Admin',
+            };
+        @endphp
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Admin - {{ config('app.name', 'Laravel') }}</title>
+        <title>GeoMap - {{ $pageTitle }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/GeoMapLogo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/GeoMapLogo.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

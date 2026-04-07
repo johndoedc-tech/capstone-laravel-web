@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        @php
+            $routeName = request()->route()?->getName() ?? '';
+
+            $pageTitle = match ($routeName) {
+                'login' => 'Login',
+                'register' => 'Register',
+                'password.request' => 'Password Help',
+                'verification.notice' => 'Verify Email',
+                'password.confirm' => 'Confirm Password',
+                default => 'Authentication',
+            };
+        @endphp
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>GeoMap - {{ $pageTitle }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/GeoMapLogo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/GeoMapLogo.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

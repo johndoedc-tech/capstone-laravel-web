@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        @php
+            $routeName = request()->route()?->getName() ?? '';
+
+            $pageTitle = match ($routeName) {
+                'dashboard' => 'Dashboard',
+                'map.index' => 'Interactive Map',
+                'predictions.index', 'predictions.predict.form' => 'Predictions',
+                'predictions.history' => 'Prediction History',
+                'profile.edit' => 'Profile',
+                'farmer.calendar.page' => 'My Calendar',
+                default => 'Dashboard',
+            };
+        @endphp
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>GeoMap - {{ $pageTitle }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/GeoMapLogo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/GeoMapLogo.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
