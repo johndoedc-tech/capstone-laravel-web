@@ -22,6 +22,69 @@
         .quick-action-btn:hover {
             transform: translateY(-1px);
         }
+        .insight-card {
+            transition: all 0.2s ease;
+        }
+        .insight-card:hover {
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+        }
+        .quiet-stat-card {
+            transition: all 0.2s ease;
+        }
+        .quiet-stat-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        }
+        .insight-heading > .text-xl {
+            display: none;
+        }
+        .insight-heading::before {
+            content: '#';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.75rem;
+            background: #f1f5f9;
+            color: #355872;
+            font-weight: 700;
+        }
+        .farmer-action-grid > a:nth-child(1) .text-3xl,
+        .farmer-action-grid > a:nth-child(2) .text-2xl,
+        .farmer-action-grid > a:nth-child(3) .text-2xl,
+        .farmer-action-grid > a:nth-child(4) .text-2xl {
+            color: transparent;
+            position: relative;
+        }
+        .farmer-action-grid > a:nth-child(1) .text-3xl::before,
+        .farmer-action-grid > a:nth-child(2) .text-2xl::before,
+        .farmer-action-grid > a:nth-child(3) .text-2xl::before,
+        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: currentColor;
+            font-weight: 700;
+        }
+        .farmer-action-grid > a:nth-child(1) .text-3xl::before {
+            content: 'P';
+            color: #ffffff;
+        }
+        .farmer-action-grid > a:nth-child(2) .text-2xl::before {
+            content: 'M';
+            color: #2563eb;
+        }
+        .farmer-action-grid > a:nth-child(3) .text-2xl::before {
+            content: 'H';
+            color: #15803d;
+        }
+        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
+            content: 'F';
+            color: #b45309;
+        }
 
         /* Translation is disabled globally. Keep controls hidden and default language in English. */
         .lang-toggle,
@@ -243,6 +306,11 @@
                     </div>
                 </div>
 
+                <div x-show="selectedMunicipality" class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs text-gray-600 shadow-sm">
+                    <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
+                    <span class="font-semibold text-gray-900" x-text="formatMunicipality(selectedMunicipality)"></span>
+                </div>
+
                 <!-- Loading State -->
                 <div x-show="loading" class="text-center py-8">
                     <svg class="inline-block animate-spin h-8 w-8 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -309,9 +377,155 @@
                             </div>
                         </template>
                     </div>
+
+                    <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
+                        <p class="text-sm text-gray-600">The crop insight below shows why these crops are worth checking in your area this season.</p>
+                    </div>
                 </div>
             </div>
 
+            <!-- ============================================ -->
+            <!-- TOP 5 CROPS INSIGHT -->
+            <!-- ============================================ -->
+            <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                    <div class="space-y-3">
+                        <div class="insight-heading flex items-center gap-2">
+                            <span class="text-xl">ðŸ“Š</span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
+                                <p class="text-sm text-gray-600">See the crops with the strongest production outlook in your area.</p>
+                            </div>
+                        </div>
+                        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                            <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
+                            <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                        </div>
+                    </div>
+
+                    <div x-show="municipality && insightText" class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
+                        <p class="mt-2 text-sm leading-6 text-gray-700" x-text="insightText"></p>
+                    </div>
+                </div>
+
+                <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
+                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight chart.</p>
+                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the chart focused on the same municipality.</p>
+                </div>
+
+                <div x-show="loading" class="text-center py-8">
+                    <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
+                </div>
+
+                <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
+                    <p class="text-sm" x-text="t('load_error')"></p>
+                </div>
+
+                <div x-show="!loading && !error && municipality">
+                    <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
+                        <canvas x-ref="canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- NEXT STEP ACTIONS -->
+            <!-- ============================================ -->
+            <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
+                    <p class="text-sm text-gray-500">Use these tools after reviewing your recommendations and crop trends.</p>
+                </div>
+
+                <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
+                    <a :href="predictionHref" class="quick-action-btn sm:col-span-2 lg:col-span-6 lg:row-span-2 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 p-6 text-white shadow-sm">
+                        <div class="flex h-full flex-col justify-between gap-6">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">Recommended action</span>
+                                    <h3 class="mt-4 text-2xl font-bold" x-text="t('action_predict')"></h3>
+                                    <p class="mt-2 max-w-sm text-sm leading-6 text-white/85" x-text="t('action_predict_desc')"></p>
+                                </div>
+                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
+                            </div>
+                            <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90">
+                                <span x-text="municipality ? 'Use your saved area for a faster start' : 'Start with a quick harvest forecast'"></span>
+                                <span>Open -&gt;</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('map.index') }}" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-blue-100 bg-blue-50 p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_map')"></h3>
+                                <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_map_desc')"></p>
+                            </div>
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">ðŸ—ºï¸</div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('predictions.history') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-3">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900" x-text="t('action_history')"></h3>
+                                <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_history_desc')"></p>
+                            </div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-2xl">ðŸ“Š</div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('forum.index') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-3">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900" x-text="t('action_forum')"></h3>
+                                <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_forum_desc')"></p>
+                            </div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-2xl">ðŸ’¬</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- QUIET STATS -->
+            <!-- ============================================ -->
+            <div class="mb-4 lg:mb-6">
+                <div class="mb-4">
+                    <h2 class="text-base font-semibold text-gray-900">Your snapshot</h2>
+                    <p class="text-sm text-gray-500">Quick numbers you can glance at after exploring the tools above.</p>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
+                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('your_predictions')"></p>
+                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $predictionsCount }}</p>
+                        <p class="mt-1 text-xs text-gray-500">Predictions you have already made</p>
+                    </div>
+                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
+                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('crop_types')"></p>
+                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $cropTypesCount }}</p>
+                        <p class="mt-1 text-xs text-gray-500">Crop options available in the system</p>
+                    </div>
+                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
+                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('municipalities')"></p>
+                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $municipalitiesCount }}</p>
+                        <p class="mt-1 text-xs text-gray-500">Municipalities covered by the data</p>
+                    </div>
+                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
+                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('data_records')"></p>
+                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($totalRecords) }}</p>
+                        <p class="mt-1 text-xs text-gray-500">Historical crop records behind your insights</p>
+                    </div>
+                </div>
+            </div>
+
+            @if (false)
             <!-- ============================================ -->
             <!-- QUICK ACTIONS - Big Friendly Buttons -->
             <!-- ============================================ -->
@@ -420,6 +634,7 @@
                         <p class="text-sm" x-text="t('load_error')"></p>
                     </div>
                 </div>
+            @endif
 
         </div>
     </div>
@@ -449,7 +664,7 @@
                 
                 // My Farm
                 my_farm: 'My Farm',
-                my_farm_desc: 'Set up your location to get the right recommendations',
+                my_farm_desc: 'Set your location so recommendations and crop trends stay focused on your area',
                 saved: 'Saved! ✓',
                 where_is_farm: 'Where is your farm?',
                 select_location: 'Select location...',
@@ -465,20 +680,20 @@
                 predict: 'Predict',
                 
                 // Quick Actions
-                action_predict: 'Predict',
-                action_predict_desc: 'Forecast harvest',
-                action_map: 'Map',
-                action_map_desc: 'View on map',
-                action_history: 'History',
-                action_history_desc: 'Past predictions',
-                action_forum: 'Forum',
-                action_forum_desc: 'Discuss',
+                action_predict: 'Make Prediction',
+                action_predict_desc: 'Start a harvest forecast for your farm',
+                action_map: 'View Map',
+                action_map_desc: 'See crop patterns across municipalities',
+                action_history: 'My History',
+                action_history_desc: 'Review your past predictions',
+                action_forum: 'Ask Community',
+                action_forum_desc: 'Get help and tips from other farmers',
                 
                 // Stats
-                your_predictions: 'Your predictions',
-                crop_types: 'Crop types',
-                municipalities: 'Municipalities',
-                data_records: 'Data records',
+                your_predictions: 'My Predictions',
+                crop_types: 'Available Crops',
+                municipalities: 'Covered Areas',
+                data_records: 'Historical Records',
                 
                 // Advanced Tools
                 advanced_tools: 'Advanced Tools',
@@ -540,9 +755,9 @@
                 loading: 'Loading...',
                 load_error: 'Failed to load data. Please try again.',
                 chart_historical: 'Historical',
-                chart_historical_full: 'Historical Avg (2015-2024)',
-                chart_predicted: 'Predicted',
-                chart_predicted_year: 'Predicted ({year})',
+                chart_historical_full: 'Historical Average',
+                chart_predicted: 'This Year',
+                chart_predicted_year: 'This Year Forecast',
                 
                 // Calendar tooltips
                 no_data_for: 'No data for {crop} in {month}',
@@ -566,7 +781,7 @@
                 
                 // My Farm
                 my_farm: 'Ang Aking Bukid',
-                my_farm_desc: 'I-setup ang iyong lokasyon para makakuha ng tamang rekomendasyon',
+                my_farm_desc: 'I-set ang iyong lokasyon para manatiling naka-focus sa iyong lugar ang rekomendasyon at crop trends',
                 saved: 'Na-save! ✓',
                 where_is_farm: 'Nasaan ang bukid mo?',
                 select_location: 'Pumili ng lugar...',
@@ -582,20 +797,20 @@
                 predict: 'I-predict',
                 
                 // Quick Actions
-                action_predict: 'Mag-predict',
-                action_predict_desc: 'Hulaan ang ani',
-                action_map: 'Mapa',
-                action_map_desc: 'Tingnan sa mapa',
-                action_history: 'History',
-                action_history_desc: 'Mga nakaraang hulaan',
-                action_forum: 'Forum',
-                action_forum_desc: 'Makipag-usap',
+                action_predict: 'Gumawa ng Prediction',
+                action_predict_desc: 'Simulan ang forecast ng ani',
+                action_map: 'Tingnan ang Mapa',
+                action_map_desc: 'Tingnan ang pattern ng pananim sa mga lugar',
+                action_history: 'Aking History',
+                action_history_desc: 'Balikan ang mga nakaraang prediction',
+                action_forum: 'Magtanong sa Komunidad',
+                action_forum_desc: 'Humingi ng payo mula sa ibang magsasaka',
                 
                 // Stats
-                your_predictions: 'Iyong mga prediction',
-                crop_types: 'Uri ng pananim',
-                municipalities: 'Mga bayan',
-                data_records: 'Data records',
+                your_predictions: 'Aking Mga Prediction',
+                crop_types: 'Mga Pananim',
+                municipalities: 'Sakop na Lugar',
+                data_records: 'Mga Historical Record',
                 
                 // Advanced Tools
                 advanced_tools: 'Advanced Tools',
@@ -657,9 +872,9 @@
                 loading: 'Nag-loload...',
                 load_error: 'Hindi ma-load ang data. Subukan ulit.',
                 chart_historical: 'Dati',
-                chart_historical_full: 'Karaniwang Ani (2015-2024)',
-                chart_predicted: 'Hinuhulaan',
-                chart_predicted_year: 'Hinuhulaan ({year})',
+                chart_historical_full: 'Karaniwang Ani',
+                chart_predicted: 'Ngayong Taon',
+                chart_predicted_year: 'Forecast Ngayong Taon',
                 
                 // Calendar tooltips
                 no_data_for: 'Walang data para sa {crop} sa {month}',
@@ -732,6 +947,30 @@
         // ============================================
         // Alpine.js Components
         // ============================================
+
+        function normalizeMunicipalityForApi(municipality) {
+            const normalized = String(municipality || '').trim().toUpperCase();
+            return normalized === 'LA TRINIDAD' ? 'LATRINIDAD' : normalized;
+        }
+
+        function formatMunicipalityName(municipality) {
+            const normalized = normalizeMunicipalityForApi(municipality);
+
+            if (!normalized) {
+                return '';
+            }
+
+            if (normalized === 'LATRINIDAD') {
+                return 'La Trinidad';
+            }
+
+            return normalized
+                .toLowerCase()
+                .split(' ')
+                .filter(Boolean)
+                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+        }
 
         // Farm Preferences Component
         function farmPreferences() {
@@ -811,6 +1050,10 @@
                     return emojis[crop] || '🌱';
                 },
 
+                formatMunicipality(municipality) {
+                    return formatMunicipalityName(municipality);
+                },
+
                 async loadRecommendations() {
                     if (!this.selectedMunicipality) {
                         this.recommendations = [];
@@ -835,6 +1078,220 @@
                         console.error('Failed to load recommendations:', error);
                         this.recommendations = [];
                     } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+
+        function dashboardActions() {
+            return {
+                municipality: '{{ $preferredMunicipality ?? '' }}',
+
+                init() {
+                    window.addEventListener('farm-preferences-updated', (event) => {
+                        this.municipality = event.detail.municipality || '';
+                    });
+                },
+
+                get predictionHref() {
+                    const params = new URLSearchParams({ tab: 'forecast' });
+
+                    if (this.municipality) {
+                        params.append('municipality', this.municipality);
+                    }
+
+                    return `{{ route('predictions.predict.form') }}?${params.toString()}`;
+                }
+            }
+        }
+
+        function topCropsInsight() {
+            return {
+                municipality: '{{ $preferredMunicipality ?? '' }}',
+                loading: false,
+                error: false,
+                chart: null,
+                insightText: '',
+
+                init() {
+                    if (this.municipality) {
+                        this.loadChart();
+                    }
+
+                    window.addEventListener('farm-preferences-updated', (event) => {
+                        this.municipality = event.detail.municipality || '';
+                        this.loadChart();
+                    });
+                },
+
+                get municipalityLabel() {
+                    return formatMunicipalityName(this.municipality);
+                },
+
+                destroyChart() {
+                    if (this.chart) {
+                        this.chart.destroy();
+                        this.chart = null;
+                    }
+                },
+
+                buildTakeaway(crops, predictedData, historicalData) {
+                    if (!crops.length) {
+                        return '';
+                    }
+
+                    const highestPredicted = Math.max(...predictedData);
+                    const highestHistorical = Math.max(...historicalData);
+                    const predictedIndex = highestPredicted > 0 ? predictedData.indexOf(highestPredicted) : -1;
+                    const historicalIndex = historicalData.indexOf(highestHistorical);
+                    const bestIndex = predictedIndex >= 0 ? predictedIndex : historicalIndex;
+                    const bestCrop = crops[bestIndex] || crops[0];
+                    const municipalityLabel = this.municipalityLabel || 'your area';
+
+                    return `${bestCrop} has the strongest outlook in ${municipalityLabel} based on historical average and this year's forecast.`;
+                },
+
+                async loadChart() {
+                    this.destroyChart();
+                    this.error = false;
+                    this.insightText = '';
+
+                    if (!this.municipality) {
+                        this.loading = false;
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    try {
+                        const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch data');
+                        }
+
+                        const data = await response.json();
+
+                        if (!data.success) {
+                            throw new Error('API returned error');
+                        }
+
+                        const currentYear = new Date().getFullYear();
+                        const merged = new Map();
+
+                        (data.historical_top5?.crops || []).forEach((crop) => {
+                            const key = String(crop.crop || '').toUpperCase();
+
+                            if (!merged.has(key)) {
+                                merged.set(key, {
+                                    crop: crop.crop,
+                                    historical: Number(crop.yearly_data?.average || 0),
+                                    predicted: 0,
+                                });
+                            }
+                        });
+
+                        (data.predicted_top5?.crops || []).forEach((crop) => {
+                            const key = String(crop.crop || '').toUpperCase();
+                            const currentYearForecast = (crop.forecasts || []).find((forecast) => Number(forecast.year) === currentYear);
+                            const predictedValue = Number(currentYearForecast?.production || 0);
+
+                            if (!merged.has(key)) {
+                                merged.set(key, {
+                                    crop: crop.crop,
+                                    historical: 0,
+                                    predicted: predictedValue,
+                                });
+                                return;
+                            }
+
+                            merged.get(key).predicted = predictedValue;
+                        });
+
+                        const rows = Array.from(merged.values()).slice(0, 5);
+                        const crops = rows.map((row) => row.crop);
+                        const historicalData = rows.map((row) => row.historical);
+                        const predictedData = rows.map((row) => row.predicted);
+
+                        if (!rows.length) {
+                            throw new Error('No chart data available');
+                        }
+
+                        this.insightText = this.buildTakeaway(crops, predictedData, historicalData);
+                        this.loading = false;
+
+                        await this.$nextTick();
+
+                        const ctx = this.$refs.canvas?.getContext('2d');
+
+                        if (!ctx) {
+                            throw new Error('Chart canvas is unavailable');
+                        }
+
+                        this.chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: crops,
+                                datasets: [
+                                    {
+                                        label: 'Historical Average',
+                                        data: historicalData,
+                                        backgroundColor: 'rgba(34, 197, 94, 0.72)',
+                                        borderColor: 'rgba(34, 197, 94, 1)',
+                                        borderWidth: 2,
+                                        borderRadius: 10,
+                                    },
+                                    {
+                                        label: 'This Year Forecast',
+                                        data: predictedData,
+                                        backgroundColor: 'rgba(59, 130, 246, 0.72)',
+                                        borderColor: 'rgba(59, 130, 246, 1)',
+                                        borderWidth: 2,
+                                        borderRadius: 10,
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            usePointStyle: true,
+                                            boxWidth: 12,
+                                        }
+                                    },
+                                    title: {
+                                        display: false,
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        ticks: {
+                                            autoSkip: false,
+                                        },
+                                        grid: {
+                                            display: false,
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                            color: 'rgba(148, 163, 184, 0.18)',
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error loading chart:', error);
+                        this.error = true;
                         this.loading = false;
                     }
                 }
@@ -1073,109 +1530,5 @@
             }
         }
 
-        // ============================================
-        // Top Crops Chart
-        // ============================================
-        let topCropsChart = null;
-
-        function isMobile() {
-            return window.innerWidth < 768;
-        }
-
-        async function loadTopCropsChart(municipality) {
-            const loadingEl = document.getElementById('chartLoading');
-            const containerEl = document.getElementById('chartContainer');
-            const errorEl = document.getElementById('chartError');
-
-            loadingEl.classList.remove('hidden');
-            containerEl.classList.add('hidden');
-            errorEl.classList.add('hidden');
-
-            try {
-                const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ MUNICIPALITY: municipality })
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch data');
-
-                const data = await response.json();
-                if (!data.success) throw new Error('API returned error');
-
-                const crops = data.historical_top5.crops.map(crop => crop.crop);
-                const historicalData = data.historical_top5.crops.map(crop => crop.yearly_data.average);
-                const currentYear = new Date().getFullYear();
-                const predictedData = data.predicted_top5.crops.map(crop => {
-                    const currentYearForecast = crop.forecasts.find(f => f.year === currentYear);
-                    return currentYearForecast ? currentYearForecast.production : 0;
-                });
-
-                if (topCropsChart) topCropsChart.destroy();
-
-                const mobile = isMobile();
-                const municipalityName = municipality.charAt(0) + municipality.slice(1).toLowerCase().replace('trinidad', ' Trinidad');
-
-                const ctx = document.getElementById('topCropsChart').getContext('2d');
-                topCropsChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: crops,
-                        datasets: [
-                            {
-                                label: mobile ? window.t('chart_historical') : window.t('chart_historical_full'),
-                                data: historicalData,
-                                backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: mobile ? 1 : 2
-                            },
-                            {
-                                label: mobile ? window.t('chart_predicted') : window.t('chart_predicted_year', {year: currentYear}),
-                                data: predictedData,
-                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
-                                borderWidth: mobile ? 1 : 2
-                            }
-                        ]
-                    },
-                    options: {
-                        indexAxis: mobile ? 'y' : 'x',
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: mobile ? 1 : 2,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: mobile ? `Top 5 - ${municipalityName}` : `Top 5 Pananim sa ${municipalityName}`,
-                                font: { size: mobile ? 12 : 16, weight: 'bold' }
-                            },
-                            legend: { display: true, position: 'top' }
-                        },
-                        scales: {
-                            [mobile ? 'x' : 'y']: { beginAtZero: true },
-                            [mobile ? 'y' : 'x']: { ticks: { autoSkip: false } }
-                        }
-                    }
-                });
-
-                loadingEl.classList.add('hidden');
-                containerEl.classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Error loading chart:', error);
-                loadingEl.classList.add('hidden');
-                errorEl.classList.remove('hidden');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const municipalitySelect = document.getElementById('municipalitySelect');
-            if (municipalitySelect) {
-                loadTopCropsChart(municipalitySelect.value);
-                municipalitySelect.addEventListener('change', function() {
-                    loadTopCropsChart(this.value);
-                });
-            }
-        });
     </script>
 </x-app-layout>
