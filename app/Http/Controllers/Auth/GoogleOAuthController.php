@@ -66,6 +66,10 @@ class GoogleOAuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        if ($user->must_change_password) {
+            return redirect()->route('password.change-required');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 }

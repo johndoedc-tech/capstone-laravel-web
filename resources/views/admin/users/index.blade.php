@@ -132,6 +132,10 @@
                             Add User
                         </button>
                     </div>
+
+                    <p class="mt-3 text-xs text-gray-500">
+                        Need to change your own password? Use the password section on your profile page instead of user management.
+                    </p>
                 </div>
             </div>
 
@@ -182,11 +186,18 @@
                                         {{ $user->created_at->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <button onclick="openEditModal({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')" 
+                                        <button type="button" onclick='openEditModal({{ $user->id }}, @js($user->name), @js($user->email), @js($user->role))' 
                                             class="text-blue-600 hover:text-blue-900 mr-3">
                                             Edit
                                         </button>
                                         @if($user->id !== auth()->id())
+                                            <button
+                                                type="button"
+                                                onclick='openResetModal({{ $user->id }}, @js($user->name), @js($user->email))'
+                                                class="text-amber-600 hover:text-amber-800 mr-3"
+                                            >
+                                                Reset Password
+                                            </button>
                                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" 
                                                 onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
                                                 @csrf
@@ -322,16 +333,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">New Password (optional)</label>
-                        <input type="password" name="password" minlength="8"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Leave blank to keep current password</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                        <input type="password" name="password_confirmation" minlength="8"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <p class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-xs text-gray-600">
+                            Password changes now use the dedicated <span class="font-semibold">Reset Password</span> action so administrators can track and enforce required password updates clearly.
+                        </p>
                     </div>
                 </div>
 
@@ -340,6 +344,73 @@
                         Update User
                     </button>
                     <button type="button" onclick="document.getElementById('editUserModal').classList.add('hidden')"
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 px-4">
+        <div class="relative top-10 lg:top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Reset Password</h3>
+                    <p class="text-sm text-gray-500 mt-1">Set a temporary password and require the user to change it after login.</p>
+                </div>
+                <button onclick="document.getElementById('resetPasswordModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <p class="font-semibold">Share this password manually.</p>
+                <p class="mt-1">The user will be signed out of existing sessions and forced to choose a new password after logging in.</p>
+            </div>
+
+            <div class="mb-4 rounded-lg bg-gray-50 px-4 py-3">
+                <p class="text-xs uppercase tracking-wide text-gray-500">Selected User</p>
+                <p id="resetUserNameDisplay" class="text-sm font-semibold text-gray-900 mt-1">User</p>
+                <p id="resetUserEmailDisplay" class="text-sm text-gray-600"></p>
+            </div>
+
+            <form id="resetPasswordForm" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="reset_user_id" id="reset_user_id" value="{{ old('reset_user_id') }}">
+                <input type="hidden" name="reset_user_name" id="reset_user_name" value="{{ old('reset_user_name') }}">
+                <input type="hidden" name="reset_user_email" id="reset_user_email" value="{{ old('reset_user_email') }}">
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">New Password *</label>
+                        <input type="password" name="new_password" required minlength="8"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        <p class="text-xs text-gray-500 mt-1">Use a temporary password the user can change after signing in.</p>
+                        @if($errors->resetPassword->has('new_password'))
+                            <p class="text-xs text-red-600 mt-1">{{ $errors->resetPassword->first('new_password') }}</p>
+                        @endif
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+                        <input type="password" name="new_password_confirmation" required minlength="8"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        @if($errors->resetPassword->has('new_password_confirmation'))
+                            <p class="text-xs text-red-600 mt-1">{{ $errors->resetPassword->first('new_password_confirmation') }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg font-medium transition">
+                        Reset Password
+                    </button>
+                    <button type="button" onclick="document.getElementById('resetPasswordModal').classList.add('hidden')"
                         class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
                         Cancel
                     </button>
@@ -357,11 +428,29 @@
             document.getElementById('editUserModal').classList.remove('hidden');
         }
 
+        function openResetModal(id, name, email) {
+            document.getElementById('reset_user_id').value = id;
+            document.getElementById('reset_user_name').value = name;
+            document.getElementById('reset_user_email').value = email;
+            document.getElementById('resetUserNameDisplay').textContent = name;
+            document.getElementById('resetUserEmailDisplay').textContent = email;
+            document.getElementById('resetPasswordForm').action = `/admin/users/${id}/reset-password`;
+            document.getElementById('resetPasswordModal').classList.remove('hidden');
+        }
+
         // Show validation errors in modal if any
         @if($errors->any())
             @if(old('name') && !request()->has('search'))
                 document.getElementById('addUserModal').classList.remove('hidden');
             @endif
+        @endif
+
+        @if($errors->resetPassword->any() && old('reset_user_id'))
+            openResetModal(
+                {{ old('reset_user_id') }},
+                @js(old('reset_user_name', 'User')),
+                @js(old('reset_user_email', ''))
+            );
         @endif
     </script>
 </x-admin-layout>

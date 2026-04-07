@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
 class UserController extends Controller
@@ -78,20 +81,57 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:admin,farmer'],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($validated['password']);
-        }
-
         $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully!');
+    }
+
+    /**
+     * Reset the password for the specified user.
+     */
+    public function resetPassword(Request $request, User $user)
+    {
+        if ($user->is(auth()->user())) {
+            return redirect()->route('admin.users.index')->with('error', 'Use the profile page to change your own password.');
+        }
+
+        $validated = $request->validateWithBag('resetPassword', [
+            'new_password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        DB::transaction(function () use ($validated, $user) {
+            $user->forceFill([
+                'password' => $validated['new_password'],
+                'must_change_password' => true,
+                'remember_token' => Str::random(60),
+            ])->save();
+
+            if (config('session.driver') === 'database') {
+                DB::table(config('session.table', 'sessions'))
+                    ->where('user_id', $user->id)
+                    ->delete();
+            }
+
+            AdminActivityLog::create([
+                'actor_id' => auth()->id(),
+                'subject_user_id' => $user->id,
+                'action' => 'password_reset',
+                'metadata' => [
+                    'target_name' => $user->name,
+                    'target_email' => $user->email,
+                    'target_role' => $user->role,
+                    'must_change_password' => true,
+                ],
+            ]);
+        });
+
+        return redirect()->route('admin.users.index')->with('success', 'Password reset successfully. Share the temporary password with the user and ask them to change it after signing in.');
     }
 
     /**

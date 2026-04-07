@@ -103,6 +103,28 @@ class GoogleAuthenticationTest extends TestCase
         $response->assertRedirect(route('dashboard', absolute: false));
     }
 
+    public function test_google_user_with_forced_password_change_is_redirected_to_change_required_screen(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'flagged-google@example.com',
+            'role' => 'farmer',
+            'google_id' => 'google-flagged-user',
+            'must_change_password' => true,
+        ]);
+
+        $this->mockGoogleUser(
+            id: 'google-flagged-user',
+            email: 'flagged-google@example.com',
+            name: 'Flagged User',
+            avatar: 'https://example.com/new-avatar.png',
+        );
+
+        $response = $this->get(route('google.callback'));
+
+        $this->assertAuthenticatedAs($user->fresh());
+        $response->assertRedirect(route('password.change-required'));
+    }
+
     public function test_existing_admin_with_matching_email_is_denied_google_sign_in(): void
     {
         User::factory()->create([

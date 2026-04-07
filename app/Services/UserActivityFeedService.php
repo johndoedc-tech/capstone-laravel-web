@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AdminActivityLog;
 use App\Models\FarmerCalendarEvent;
 use App\Models\ForumComment;
 use App\Models\ForumPost;
@@ -50,7 +51,8 @@ class UserActivityFeedService
         $forumCount = ForumPost::count() + ForumComment::count();
         $calendarCount = FarmerCalendarEvent::count();
         $registrationCount = User::count();
-        $totalCount = $predictionCount + $forumCount + $calendarCount + $registrationCount;
+        $adminActionsCount = AdminActivityLog::count();
+        $totalCount = $predictionCount + $forumCount + $calendarCount + $registrationCount + $adminActionsCount;
 
         return [
             'total_activities' => $totalCount,
@@ -58,12 +60,14 @@ class UserActivityFeedService
             'forum_interactions' => $forumCount,
             'calendar_events' => $calendarCount,
             'registrations' => $registrationCount,
+            'admin_actions' => $adminActionsCount,
             'filters' => [
                 'all' => ['label' => 'All', 'count' => $totalCount],
                 'predictions' => ['label' => 'Predictions', 'count' => $predictionCount],
                 'forum' => ['label' => 'Forum', 'count' => $forumCount],
                 'calendar' => ['label' => 'Calendar', 'count' => $calendarCount],
                 'registrations' => ['label' => 'Registrations', 'count' => $registrationCount],
+                'admin_actions' => ['label' => 'Admin Actions', 'count' => $adminActionsCount],
             ],
         ];
     }
@@ -115,7 +119,8 @@ class UserActivityFeedService
             ->unionAll($this->forumPostQuery())
             ->unionAll($this->forumCommentQuery())
             ->unionAll($this->calendarEventQuery())
-            ->unionAll($this->userRegistrationQuery());
+            ->unionAll($this->userRegistrationQuery())
+            ->unionAll($this->adminActivityQuery());
     }
 
     private function applyActivityFilter(QueryBuilder $query, string $activityFilter): QueryBuilder
@@ -136,6 +141,11 @@ class UserActivityFeedService
             $activity->activity_at = Carbon::parse($activity->activity_at);
             $activity->activity_key = $activity->activity_type . '-' . $activity->activity_id;
             $activity->role_label = Str::headline((string) $activity->user_role);
+            $activity->metadata = match (true) {
+                is_array($activity->metadata ?? null) => $activity->metadata,
+                is_string($activity->metadata ?? null) => json_decode($activity->metadata, true) ?: [],
+                default => [],
+            };
             $activity->type_label = $this->typeLabel($activity->activity_type);
             $activity->title = $this->titleFor($activity);
             $activity->description = $this->descriptionFor($activity);
@@ -152,6 +162,7 @@ class UserActivityFeedService
             'forum_comment' => 'Forum Reply',
             'calendar_event' => 'Calendar Event',
             'user_registered' => 'Registration',
+            'admin_password_reset' => 'Admin Action',
             default => 'Activity',
         };
     }
@@ -164,6 +175,7 @@ class UserActivityFeedService
             'forum_comment' => 'Posted a forum reply',
             'calendar_event' => $activity->event_type === 'reminder' ? 'Added a reminder' : 'Added a calendar note',
             'user_registered' => 'Registered an account',
+            'admin_password_reset' => "Reset a user's password",
             default => 'Recorded an activity',
         };
     }
@@ -176,8 +188,18 @@ class UserActivityFeedService
             'forum_comment' => 'Commented on "' . Str::limit((string) $activity->subject, 60) . '"',
             'calendar_event' => 'Added "' . Str::limit((string) $activity->subject, 60) . '" to the calendar',
             'user_registered' => 'Joined the platform as ' . Str::lower($activity->role_label),
+            'admin_password_reset' => $this->adminPasswordResetDescription($activity),
             default => 'Performed an activity in the system',
         };
+    }
+
+    private function adminPasswordResetDescription(object $activity): string
+    {
+        $targetName = $activity->subject
+            ?: data_get($activity->metadata, 'target_name')
+            ?: 'a user';
+
+        return 'Reset password for ' . $targetName;
     }
 
     private function predictionDescription(object $activity): string
@@ -253,6 +275,7 @@ class UserActivityFeedService
             'forum' => ['forum_post', 'forum_comment'],
             'calendar' => ['calendar_event'],
             'registrations' => ['user_registered'],
+            'admin_actions' => ['admin_password_reset'],
         ];
     }
 
@@ -271,7 +294,8 @@ class UserActivityFeedService
             ->selectRaw('predictions.municipality as municipality')
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('NULL as event_type');
+            ->selectRaw('NULL as event_type')
+            ->selectRaw('NULL as metadata');
     }
 
     private function forumPostQuery(): Builder
@@ -289,7 +313,8 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.municipality as municipality')
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
-            ->selectRaw('NULL as event_type');
+            ->selectRaw('NULL as event_type')
+            ->selectRaw('NULL as metadata');
     }
 
     private function forumCommentQuery(): Builder
@@ -308,7 +333,8 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.municipality as municipality')
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
-            ->selectRaw('NULL as event_type');
+            ->selectRaw('NULL as event_type')
+            ->selectRaw('NULL as metadata');
     }
 
     private function calendarEventQuery(): Builder
@@ -326,7 +352,8 @@ class UserActivityFeedService
             ->selectRaw('NULL as municipality')
             ->selectRaw('farmer_calendar_events.title as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('farmer_calendar_events.event_type as event_type');
+            ->selectRaw('farmer_calendar_events.event_type as event_type')
+            ->selectRaw('NULL as metadata');
     }
 
     private function userRegistrationQuery(): Builder
@@ -343,6 +370,27 @@ class UserActivityFeedService
             ->selectRaw('NULL as municipality')
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('NULL as event_type');
+            ->selectRaw('NULL as event_type')
+            ->selectRaw('NULL as metadata');
+    }
+
+    private function adminActivityQuery(): Builder
+    {
+        return AdminActivityLog::query()
+            ->leftJoin('users as actor_users', 'actor_users.id', '=', 'admin_activity_logs.actor_id')
+            ->leftJoin('users as subject_users', 'subject_users.id', '=', 'admin_activity_logs.subject_user_id')
+            ->selectRaw("'admin_password_reset' as activity_type")
+            ->selectRaw('admin_activity_logs.id as activity_id')
+            ->selectRaw('admin_activity_logs.created_at as activity_at')
+            ->selectRaw('admin_activity_logs.actor_id as actor_id')
+            ->selectRaw("COALESCE(actor_users.name, 'Unknown Admin') as user_name")
+            ->selectRaw("COALESCE(actor_users.role, 'admin') as user_role")
+            ->selectRaw('NULL as status')
+            ->selectRaw('NULL as crop')
+            ->selectRaw('NULL as municipality')
+            ->selectRaw('subject_users.name as subject')
+            ->selectRaw('NULL as subject_slug')
+            ->selectRaw('NULL as event_type')
+            ->selectRaw('admin_activity_logs.metadata as metadata');
     }
 }

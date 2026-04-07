@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (Auth::user()->must_change_password) {
+            return redirect()->route('password.change-required');
+        }
+
         // Redirect based on user role
         if (Auth::user()->role === 'admin') {
             return redirect()->intended(route('admin.dashboard', absolute: false));

@@ -273,7 +273,7 @@
                     x-data="{ showAllPredictions: false }">
                     @php
                         $selectedFilterLabel = $activityStats['filters'][$activityFilter]['label'] ?? 'All';
-                        $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel) . ' activity';
+                        $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel);
                     @endphp
 
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">

@@ -74,7 +74,7 @@
 
             @if (Route::has('password.request'))
                 <a class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors duration-200" href="{{ route('password.request') }}">
-                    {{ __('Forgot password?') }}
+                    {{ __('Need password help?') }}
                 </a>
             @endif
         </div>

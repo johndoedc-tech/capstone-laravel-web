@@ -44,14 +44,14 @@
                 <div class="p-4 lg:p-6">
                     @php
                         $selectedFilterLabel = $activityStats['filters'][$activityFilter]['label'] ?? 'All';
-                        $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel) . ' activity';
+                        $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel);
                     @endphp
 
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4">
                         <div>
                             <h3 class="text-base lg:text-lg font-semibold text-gray-900">All Activities</h3>
                             <p class="text-xs lg:text-sm text-gray-500 mt-1">
-                                {{ $selectedFilterLabel === 'All' ? 'Registrations, predictions, forum activity, and calendar actions' : 'Showing ' . $selectedFilterText . ' only' }}
+                                {{ $selectedFilterLabel === 'All' ? 'Registrations, predictions, forum activity, calendar actions, and admin resets' : 'Showing ' . $selectedFilterText . ' only' }}
                             </p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
@@ -68,7 +68,7 @@
                                 </button>
                             </div>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                                {{ number_format($activityStats['registrations']) }} users registered
+                                {{ number_format($activityStats['admin_actions']) }} admin actions
                             </span>
                         </div>
                     </div>
