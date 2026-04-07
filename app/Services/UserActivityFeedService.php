@@ -90,6 +90,9 @@ class UserActivityFeedService
             $activityItem->grouped_prediction_oldest_at = $activityItem->activity_at instanceof Carbon
                 ? $activityItem->activity_at->copy()
                 : null;
+            $activityItem->grouped_prediction_years = $this->uniquePredictionValues($activityItem->prediction_year ?? null);
+            $activityItem->grouped_prediction_months = $this->uniquePredictionValues($activityItem->prediction_month ?? null);
+            $activityItem->grouped_prediction_farm_types = $this->uniquePredictionValues($activityItem->prediction_farm_type ?? null);
 
             if ($activityItem->activity_type !== 'prediction') {
                 $compacted->push($activityItem);
@@ -106,6 +109,18 @@ class UserActivityFeedService
             $lastActivity->is_prediction_group = true;
             $lastActivity->grouped_prediction_count++;
             $lastActivity->grouped_prediction_oldest_at = $activityItem->activity_at->copy();
+            $lastActivity->grouped_prediction_years = $this->mergePredictionValues(
+                $lastActivity->grouped_prediction_years ?? [],
+                $activityItem->prediction_year ?? null
+            );
+            $lastActivity->grouped_prediction_months = $this->mergePredictionValues(
+                $lastActivity->grouped_prediction_months ?? [],
+                $activityItem->prediction_month ?? null
+            );
+            $lastActivity->grouped_prediction_farm_types = $this->mergePredictionValues(
+                $lastActivity->grouped_prediction_farm_types ?? [],
+                $activityItem->prediction_farm_type ?? null
+            );
             $lastActivity->title = $this->predictionGroupTitle($lastActivity);
             $lastActivity->description = $this->predictionGroupDescription($lastActivity);
         }
@@ -220,6 +235,10 @@ class UserActivityFeedService
             return $this->titleFor($activity);
         }
 
+        if ($this->isForecastPredictionGroup($activity)) {
+            return 'Created a forecast batch';
+        }
+
         return $activity->status === 'failed'
             ? 'Attempted ' . $activity->grouped_prediction_count . ' predictions'
             : 'Created ' . $activity->grouped_prediction_count . ' predictions';
@@ -231,6 +250,27 @@ class UserActivityFeedService
 
         if (($activity->grouped_prediction_count ?? 1) <= 1) {
             return $description;
+        }
+
+        if ($this->isForecastPredictionGroup($activity)) {
+            $crop = $activity->crop ?: 'a crop';
+            $municipality = $activity->municipality ?: 'an area';
+            $years = collect($activity->grouped_prediction_years ?? [])
+                ->filter(static fn ($year) => $year !== null && $year !== '')
+                ->map(static fn ($year) => (int) $year)
+                ->unique()
+                ->sort()
+                ->values();
+
+            if ($years->count() >= 2) {
+                return 'Forecasted ' . $crop . ' in ' . $municipality . ' for ' . $years->first() . '-' . $years->last();
+            }
+
+            if ($years->count() === 1) {
+                return 'Forecasted ' . $crop . ' in ' . $municipality . ' for ' . $years->first();
+            }
+
+            return 'Forecasted ' . $crop . ' in ' . $municipality . ' across multiple years';
         }
 
         return $description . ' in a short burst';
@@ -246,16 +286,41 @@ class UserActivityFeedService
             return false;
         }
 
-        $samePredictionContext = (int) $lastActivity->actor_id === (int) $currentActivity->actor_id
+        $sameActorContext = (int) $lastActivity->actor_id === (int) $currentActivity->actor_id
             && (string) $lastActivity->user_role === (string) $currentActivity->user_role
-            && (string) $lastActivity->status === (string) $currentActivity->status
-            && (string) ($lastActivity->crop ?? '') === (string) ($currentActivity->crop ?? '')
-            && (string) ($lastActivity->municipality ?? '') === (string) ($currentActivity->municipality ?? '');
+            && (string) $lastActivity->status === (string) $currentActivity->status;
+
+        if (! $sameActorContext) {
+            return false;
+        }
+
+        $lastBatchId = (string) ($lastActivity->prediction_batch_id ?? '');
+        $currentBatchId = (string) ($currentActivity->prediction_batch_id ?? '');
+
+        if ($lastBatchId !== '' || $currentBatchId !== '') {
+            if ($lastBatchId === '' || $currentBatchId === '' || $lastBatchId !== $currentBatchId) {
+                return false;
+            }
+
+            return $this->predictionActivitiesWithinBurstWindow($lastActivity, $currentActivity);
+        }
+
+        $samePredictionContext =
+            (string) ($lastActivity->crop ?? '') === (string) ($currentActivity->crop ?? '')
+            && (string) ($lastActivity->municipality ?? '') === (string) ($currentActivity->municipality ?? '')
+            && (string) ($lastActivity->prediction_farm_type ?? '') === (string) ($currentActivity->prediction_farm_type ?? '')
+            && (string) ($lastActivity->prediction_year ?? '') === (string) ($currentActivity->prediction_year ?? '')
+            && (string) ($lastActivity->prediction_month ?? '') === (string) ($currentActivity->prediction_month ?? '');
 
         if (! $samePredictionContext) {
             return false;
         }
 
+        return $this->predictionActivitiesWithinBurstWindow($lastActivity, $currentActivity);
+    }
+
+    private function predictionActivitiesWithinBurstWindow(object $lastActivity, object $currentActivity): bool
+    {
         $groupNewestAt = $lastActivity->activity_at instanceof Carbon
             ? $lastActivity->activity_at
             : Carbon::parse($lastActivity->activity_at);
@@ -265,6 +330,32 @@ class UserActivityFeedService
             : Carbon::parse($currentActivity->activity_at);
 
         return $groupNewestAt->diffInMinutes($currentAt) <= 5;
+    }
+
+    private function isForecastPredictionGroup(object $activity): bool
+    {
+        return ($activity->prediction_farm_type ?? null) === 'Forecast'
+            || ! empty($activity->prediction_batch_id ?? null);
+    }
+
+    private function uniquePredictionValues(mixed $value): array
+    {
+        if ($value === null || $value === '') {
+            return [];
+        }
+
+        return [$value];
+    }
+
+    private function mergePredictionValues(array $existingValues, mixed $value): array
+    {
+        if ($value === null || $value === '') {
+            return array_values(array_unique($existingValues, SORT_REGULAR));
+        }
+
+        $existingValues[] = $value;
+
+        return array_values(array_unique($existingValues, SORT_REGULAR));
     }
 
     private function activityTypeGroups(): array
@@ -284,6 +375,8 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('users.role');
         $eventTypeNullExpression = $this->nullForUnionText();
         $metadataNullExpression = $this->nullForUnionText();
+        $farmTypeExpression = $this->castForUnion('predictions.farm_type');
+        $batchIdExpression = $this->castForUnion('predictions.batch_id');
 
         return Prediction::query()
             ->leftJoin('users', 'users.id', '=', 'predictions.user_id')
@@ -299,7 +392,11 @@ class UserActivityFeedService
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
             ->selectRaw($eventTypeNullExpression . ' as event_type')
-            ->selectRaw($metadataNullExpression . ' as metadata');
+            ->selectRaw($metadataNullExpression . ' as metadata')
+            ->selectRaw($farmTypeExpression . ' as prediction_farm_type')
+            ->selectRaw('predictions.year as prediction_year')
+            ->selectRaw('predictions.month as prediction_month')
+            ->selectRaw($batchIdExpression . ' as prediction_batch_id');
     }
 
     private function forumPostQuery(): Builder
@@ -307,6 +404,7 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('users.role');
         $eventTypeNullExpression = $this->nullForUnionText();
         $metadataNullExpression = $this->nullForUnionText();
+        $nullTextExpression = $this->nullForUnionText();
 
         return ForumPost::query()
             ->join('users', 'users.id', '=', 'forum_posts.user_id')
@@ -322,7 +420,11 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
             ->selectRaw($eventTypeNullExpression . ' as event_type')
-            ->selectRaw($metadataNullExpression . ' as metadata');
+            ->selectRaw($metadataNullExpression . ' as metadata')
+            ->selectRaw($nullTextExpression . ' as prediction_farm_type')
+            ->selectRaw('NULL as prediction_year')
+            ->selectRaw('NULL as prediction_month')
+            ->selectRaw($nullTextExpression . ' as prediction_batch_id');
     }
 
     private function forumCommentQuery(): Builder
@@ -330,6 +432,7 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('users.role');
         $eventTypeNullExpression = $this->nullForUnionText();
         $metadataNullExpression = $this->nullForUnionText();
+        $nullTextExpression = $this->nullForUnionText();
 
         return ForumComment::query()
             ->join('users', 'users.id', '=', 'forum_comments.user_id')
@@ -346,7 +449,11 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
             ->selectRaw($eventTypeNullExpression . ' as event_type')
-            ->selectRaw($metadataNullExpression . ' as metadata');
+            ->selectRaw($metadataNullExpression . ' as metadata')
+            ->selectRaw($nullTextExpression . ' as prediction_farm_type')
+            ->selectRaw('NULL as prediction_year')
+            ->selectRaw('NULL as prediction_month')
+            ->selectRaw($nullTextExpression . ' as prediction_batch_id');
     }
 
     private function calendarEventQuery(): Builder
@@ -354,6 +461,7 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('users.role');
         $eventTypeExpression = $this->castForUnion('farmer_calendar_events.event_type');
         $metadataNullExpression = $this->nullForUnionText();
+        $nullTextExpression = $this->nullForUnionText();
 
         return FarmerCalendarEvent::query()
             ->join('users', 'users.id', '=', 'farmer_calendar_events.user_id')
@@ -369,7 +477,11 @@ class UserActivityFeedService
             ->selectRaw('farmer_calendar_events.title as subject')
             ->selectRaw('NULL as subject_slug')
             ->selectRaw($eventTypeExpression . ' as event_type')
-            ->selectRaw($metadataNullExpression . ' as metadata');
+            ->selectRaw($metadataNullExpression . ' as metadata')
+            ->selectRaw($nullTextExpression . ' as prediction_farm_type')
+            ->selectRaw('NULL as prediction_year')
+            ->selectRaw('NULL as prediction_month')
+            ->selectRaw($nullTextExpression . ' as prediction_batch_id');
     }
 
     private function userRegistrationQuery(): Builder
@@ -377,6 +489,7 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('users.role');
         $eventTypeNullExpression = $this->nullForUnionText();
         $metadataNullExpression = $this->nullForUnionText();
+        $nullTextExpression = $this->nullForUnionText();
 
         return User::query()
             ->selectRaw("'user_registered' as activity_type")
@@ -391,7 +504,11 @@ class UserActivityFeedService
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
             ->selectRaw($eventTypeNullExpression . ' as event_type')
-            ->selectRaw($metadataNullExpression . ' as metadata');
+            ->selectRaw($metadataNullExpression . ' as metadata')
+            ->selectRaw($nullTextExpression . ' as prediction_farm_type')
+            ->selectRaw('NULL as prediction_year')
+            ->selectRaw('NULL as prediction_month')
+            ->selectRaw($nullTextExpression . ' as prediction_batch_id');
     }
 
     private function adminActivityQuery(): Builder
@@ -399,6 +516,7 @@ class UserActivityFeedService
         $userRoleExpression = $this->castForUnion('actor_users.role');
         $metadataExpression = $this->castForUnion('admin_activity_logs.metadata');
         $eventTypeNullExpression = $this->nullForUnionText();
+        $nullTextExpression = $this->nullForUnionText();
 
         return AdminActivityLog::query()
             ->leftJoin('users as actor_users', 'actor_users.id', '=', 'admin_activity_logs.actor_id')
@@ -415,7 +533,11 @@ class UserActivityFeedService
             ->selectRaw('subject_users.name as subject')
             ->selectRaw('NULL as subject_slug')
             ->selectRaw($eventTypeNullExpression . ' as event_type')
-            ->selectRaw($metadataExpression . ' as metadata');
+            ->selectRaw($metadataExpression . ' as metadata')
+            ->selectRaw($nullTextExpression . ' as prediction_farm_type')
+            ->selectRaw('NULL as prediction_year')
+            ->selectRaw('NULL as prediction_month')
+            ->selectRaw($nullTextExpression . ' as prediction_batch_id');
     }
 
     private function castForUnion(string $expression): string
