@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-5 sm:mb-6 text-center">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Create Account</h2>
-        <p class="text-sm text-gray-500">Join BenguetCropMap today</p>
+        <p class="text-sm text-gray-500">Join GeoMap today</p>
     </div>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
