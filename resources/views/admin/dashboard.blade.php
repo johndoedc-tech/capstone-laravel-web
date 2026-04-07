@@ -301,6 +301,14 @@
                         </div>
                     </div>
 
+                    @if($activityFeedUnavailable ?? false)
+                        <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                            <p class="text-xs lg:text-sm text-amber-800">
+                                The activity feed is temporarily unavailable on this environment. Core dashboard metrics are still loaded.
+                            </p>
+                        </div>
+                    @endif
+
                     <div class="mb-4 flex flex-wrap gap-2">
                         @foreach($activityStats['filters'] as $filterKey => $filter)
                             <a href="{{ route('admin.dashboard', ['activity_type' => $filterKey]) }}"

@@ -14,6 +14,89 @@ use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+$emptyActivityStats = static fn () => [
+    'total_activities' => 0,
+    'predictions' => 0,
+    'forum_interactions' => 0,
+    'calendar_events' => 0,
+    'registrations' => 0,
+    'admin_actions' => 0,
+    'filters' => [
+        'all' => ['label' => 'All', 'count' => 0],
+        'predictions' => ['label' => 'Predictions', 'count' => 0],
+        'forum' => ['label' => 'Forum', 'count' => 0],
+        'calendar' => ['label' => 'Calendar', 'count' => 0],
+        'registrations' => ['label' => 'Registrations', 'count' => 0],
+        'admin_actions' => ['label' => 'Admin Actions', 'count' => 0],
+    ],
+];
+
+$resolveDashboardActivityContext = static function (Request $request, UserActivityFeedService $activityFeed) use ($emptyActivityStats): array {
+    $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
+
+    try {
+        $activityStats = $activityFeed->summary();
+        $recentActivities = $activityFeed->recent(5, $activityFilter);
+
+        return [
+            'activityFeedUnavailable' => false,
+            'activityFilter' => $activityFilter,
+            'activityStats' => $activityStats,
+            'recentActivities' => $recentActivities,
+            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
+        ];
+    } catch (\Throwable $exception) {
+        report($exception);
+
+        return [
+            'activityFeedUnavailable' => true,
+            'activityFilter' => $activityFilter,
+            'activityStats' => $emptyActivityStats(),
+            'recentActivities' => collect(),
+            'compactRecentActivities' => collect(),
+        ];
+    }
+};
+
+$resolveActivityPageContext = static function (Request $request, UserActivityFeedService $activityFeed) use ($emptyActivityStats): array {
+    $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
+
+    try {
+        $activityStats = $activityFeed->summary();
+        $activities = $activityFeed->paginate(20, $activityFilter);
+
+        return [
+            'activityFeedUnavailable' => false,
+            'activityFilter' => $activityFilter,
+            'activities' => $activities,
+            'compactActivities' => $activityFeed->compactPredictions($activities->getCollection()),
+            'activityStats' => $activityStats,
+        ];
+    } catch (\Throwable $exception) {
+        report($exception);
+
+        $activities = new LengthAwarePaginator(
+            collect(),
+            0,
+            20,
+            LengthAwarePaginator::resolveCurrentPage(),
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return [
+            'activityFeedUnavailable' => true,
+            'activityFilter' => $activityFilter,
+            'activities' => $activities,
+            'compactActivities' => collect(),
+            'activityStats' => $emptyActivityStats(),
+        ];
+    }
+};
 
 Route::get('/', function () {
     return view('welcome');
@@ -92,32 +175,14 @@ Route::middleware(['auth', 'force-password-change'])->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->name('admin.')->group(function () use ($resolveDashboardActivityContext, $resolveActivityPageContext) {
     // Dashboard
-    Route::get('/dashboard', function (Request $request, UserActivityFeedService $activityFeed) {
-        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
-        $activityStats = $activityFeed->summary();
-        $recentActivities = $activityFeed->recent(5, $activityFilter);
-
-        return view('admin.dashboard', [
-            'activityFilter' => $activityFilter,
-            'activityStats' => $activityStats,
-            'recentActivities' => $recentActivities,
-            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
-        ]);
+    Route::get('/dashboard', function (Request $request, UserActivityFeedService $activityFeed) use ($resolveDashboardActivityContext) {
+        return view('admin.dashboard', $resolveDashboardActivityContext($request, $activityFeed));
     })->name('dashboard');
 
-    Route::get('/activities', function (Request $request, UserActivityFeedService $activityFeed) {
-        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
-        $activityStats = $activityFeed->summary();
-        $activities = $activityFeed->paginate(20, $activityFilter);
-
-        return view('admin.activities.index', [
-            'activityFilter' => $activityFilter,
-            'activities' => $activities,
-            'compactActivities' => $activityFeed->compactPredictions($activities->getCollection()),
-            'activityStats' => $activityStats,
-        ]);
+    Route::get('/activities', function (Request $request, UserActivityFeedService $activityFeed) use ($resolveActivityPageContext) {
+        return view('admin.activities.index', $resolveActivityPageContext($request, $activityFeed));
     })->name('activities.index');
 
     // Crop Data Management routes
@@ -166,17 +231,8 @@ Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->
     });
 
     // Settings (placeholder)
-    Route::get('/settings', function (Request $request, UserActivityFeedService $activityFeed) {
-        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
-        $activityStats = $activityFeed->summary();
-        $recentActivities = $activityFeed->recent(5, $activityFilter);
-
-        return view('admin.dashboard', [
-            'activityFilter' => $activityFilter,
-            'activityStats' => $activityStats,
-            'recentActivities' => $recentActivities,
-            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
-        ]); // Placeholder - will create later
+    Route::get('/settings', function (Request $request, UserActivityFeedService $activityFeed) use ($resolveDashboardActivityContext) {
+        return view('admin.dashboard', $resolveDashboardActivityContext($request, $activityFeed)); // Placeholder - will create later
     })->name('settings.index');
 });
 
