@@ -45,7 +45,7 @@ $resolveDashboardActivityContext = static function (Request $request, UserActivi
             'activityFilter' => $activityFilter,
             'activityStats' => $activityStats,
             'recentActivities' => $recentActivities,
-            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
+            'compactRecentActivities' => $activityFeed->recentCompacted(5, $activityFilter),
         ];
     } catch (\Throwable $exception) {
         report($exception);

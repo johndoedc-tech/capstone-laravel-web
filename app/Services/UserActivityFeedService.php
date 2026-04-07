@@ -31,6 +31,15 @@ class UserActivityFeedService
         );
     }
 
+    public function recentCompacted(int $limit = 5, string $activityFilter = 'all', ?int $fetchLimit = null): Collection
+    {
+        $window = $fetchLimit ?? max($limit * 20, 100);
+
+        return $this->compactPredictions($this->recent($window, $activityFilter))
+            ->take($limit)
+            ->values();
+    }
+
     public function paginate(int $perPage = 20, string $activityFilter = 'all'): LengthAwarePaginator
     {
         $query = DB::query()
