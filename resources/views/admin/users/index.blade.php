@@ -124,7 +124,9 @@
                         </form>
 
                         <!-- Add User Button -->
-                        <button onclick="document.getElementById('addUserModal').classList.remove('hidden')"
+                        <button
+                            type="button"
+                            data-open-modal="addUserModal"
                             class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition flex items-center gap-2 justify-center whitespace-nowrap">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -186,14 +188,24 @@
                                         {{ $user->created_at->format('M d, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <button type="button" onclick='openEditModal({{ $user->id }}, @js($user->name), @js($user->email), @js($user->role))' 
-                                            class="text-blue-600 hover:text-blue-900 mr-3">
+                                        <button
+                                            type="button"
+                                            data-open-edit-user
+                                            data-user-id="{{ $user->id }}"
+                                            data-user-name="{{ $user->name }}"
+                                            data-user-email="{{ $user->email }}"
+                                            data-user-role="{{ $user->role }}"
+                                            class="text-blue-600 hover:text-blue-900 mr-3"
+                                        >
                                             Edit
                                         </button>
                                         @if($user->id !== auth()->id())
                                             <button
                                                 type="button"
-                                                onclick='openResetModal({{ $user->id }}, @js($user->name), @js($user->email))'
+                                                data-open-reset-password
+                                                data-user-id="{{ $user->id }}"
+                                                data-user-name="{{ $user->name }}"
+                                                data-user-email="{{ $user->email }}"
                                                 class="text-amber-600 hover:text-amber-800 mr-3"
                                             >
                                                 Reset Password
@@ -239,7 +251,7 @@
         <div class="relative top-10 lg:top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Add New User</h3>
-                <button onclick="document.getElementById('addUserModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                <button type="button" data-close-modal="addUserModal" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -287,7 +299,7 @@
                     <button type="submit" class="flex-1 bg-primary hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition">
                         Create User
                     </button>
-                    <button type="button" onclick="document.getElementById('addUserModal').classList.add('hidden')"
+                    <button type="button" data-close-modal="addUserModal"
                         class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
                         Cancel
                     </button>
@@ -301,7 +313,7 @@
         <div class="relative top-10 lg:top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
-                <button onclick="document.getElementById('editUserModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                <button type="button" data-close-modal="editUserModal" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -314,14 +326,24 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                        <input type="hidden" name="edit_user_id" id="edit_user_id" value="{{ old('edit_user_id') }}">
+                        <input type="hidden" name="edit_user_name" id="edit_user_name" value="{{ old('edit_user_name') }}">
+                        <input type="hidden" name="edit_user_email" id="edit_user_email" value="{{ old('edit_user_email') }}">
+                        <input type="hidden" name="edit_user_role" id="edit_user_role" value="{{ old('edit_user_role') }}">
                         <input type="text" name="name" id="edit_name" required 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        @if($errors->has('name'))
+                            <p class="text-xs text-red-600 mt-1">{{ $errors->first('name') }}</p>
+                        @endif
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                         <input type="email" name="email" id="edit_email" required 
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        @if($errors->has('email'))
+                            <p class="text-xs text-red-600 mt-1">{{ $errors->first('email') }}</p>
+                        @endif
                     </div>
 
                     <div>
@@ -330,6 +352,9 @@
                             <option value="farmer">Farmer</option>
                             <option value="admin">Administrator</option>
                         </select>
+                        @if($errors->has('role'))
+                            <p class="text-xs text-red-600 mt-1">{{ $errors->first('role') }}</p>
+                        @endif
                     </div>
 
                     <div>
@@ -343,7 +368,7 @@
                     <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">
                         Update User
                     </button>
-                    <button type="button" onclick="document.getElementById('editUserModal').classList.add('hidden')"
+                    <button type="button" data-close-modal="editUserModal"
                         class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
                         Cancel
                     </button>
@@ -360,7 +385,7 @@
                     <h3 class="text-lg font-semibold text-gray-900">Reset Password</h3>
                     <p class="text-sm text-gray-500 mt-1">Set a temporary password and require the user to change it after login.</p>
                 </div>
-                <button onclick="document.getElementById('resetPasswordModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                <button type="button" data-close-modal="resetPasswordModal" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -410,7 +435,7 @@
                     <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg font-medium transition">
                         Reset Password
                     </button>
-                    <button type="button" onclick="document.getElementById('resetPasswordModal').classList.add('hidden')"
+                    <button type="button" data-close-modal="resetPasswordModal"
                         class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-medium transition">
                         Cancel
                     </button>
@@ -420,37 +445,104 @@
     </div>
 
     <script>
-        function openEditModal(id, name, email, role) {
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_role').value = role;
-            document.getElementById('editUserForm').action = `/admin/users/${id}`;
-            document.getElementById('editUserModal').classList.remove('hidden');
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const editUserRouteTemplate = @js(route('admin.users.update', ['user' => '__USER__']));
+            const resetPasswordRouteTemplate = @js(route('admin.users.password.reset', ['user' => '__USER__']));
 
-        function openResetModal(id, name, email) {
-            document.getElementById('reset_user_id').value = id;
-            document.getElementById('reset_user_name').value = name;
-            document.getElementById('reset_user_email').value = email;
-            document.getElementById('resetUserNameDisplay').textContent = name;
-            document.getElementById('resetUserEmailDisplay').textContent = email;
-            document.getElementById('resetPasswordForm').action = `/admin/users/${id}/reset-password`;
-            document.getElementById('resetPasswordModal').classList.remove('hidden');
-        }
+            const addUserModal = document.getElementById('addUserModal');
+            const editUserModal = document.getElementById('editUserModal');
+            const resetPasswordModal = document.getElementById('resetPasswordModal');
+            const editUserForm = document.getElementById('editUserForm');
+            const resetPasswordForm = document.getElementById('resetPasswordForm');
 
-        // Show validation errors in modal if any
-        @if($errors->any())
-            @if(old('name') && !request()->has('search'))
-                document.getElementById('addUserModal').classList.remove('hidden');
+            const showModal = (modal) => modal?.classList.remove('hidden');
+            const hideModal = (modal) => modal?.classList.add('hidden');
+
+            const buildRoute = (template, id) => template.replace('__USER__', id);
+
+            const openEditModal = (id, name, email, role) => {
+                document.getElementById('edit_user_id').value = id;
+                document.getElementById('edit_user_name').value = name;
+                document.getElementById('edit_user_email').value = email;
+                document.getElementById('edit_user_role').value = role;
+                document.getElementById('edit_name').value = name;
+                document.getElementById('edit_email').value = email;
+                document.getElementById('edit_role').value = role;
+                editUserForm.action = buildRoute(editUserRouteTemplate, id);
+                showModal(editUserModal);
+            };
+
+            const openResetModal = (id, name, email) => {
+                document.getElementById('reset_user_id').value = id;
+                document.getElementById('reset_user_name').value = name;
+                document.getElementById('reset_user_email').value = email;
+                document.getElementById('resetUserNameDisplay').textContent = name;
+                document.getElementById('resetUserEmailDisplay').textContent = email;
+                resetPasswordForm.action = buildRoute(resetPasswordRouteTemplate, id);
+                showModal(resetPasswordModal);
+            };
+
+            document.querySelectorAll('[data-open-edit-user]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    openEditModal(
+                        button.dataset.userId,
+                        button.dataset.userName,
+                        button.dataset.userEmail,
+                        button.dataset.userRole
+                    );
+                });
+            });
+
+            document.querySelectorAll('[data-open-reset-password]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    openResetModal(
+                        button.dataset.userId,
+                        button.dataset.userName,
+                        button.dataset.userEmail
+                    );
+                });
+            });
+
+            document.querySelectorAll('[data-open-modal]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    showModal(document.getElementById(button.dataset.openModal));
+                });
+            });
+
+            document.querySelectorAll('[data-close-modal]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    hideModal(document.getElementById(button.dataset.closeModal));
+                });
+            });
+
+            document.querySelectorAll('#addUserModal, #editUserModal, #resetPasswordModal').forEach((modal) => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        hideModal(modal);
+                    }
+                });
+            });
+
+            @if($errors->any())
+                @if(old('name') && !request()->has('search') && !old('edit_user_id'))
+                    showModal(addUserModal);
+                @elseif(old('edit_user_id'))
+                    openEditModal(
+                        {{ old('edit_user_id') }},
+                        @js(old('edit_user_name', 'User')),
+                        @js(old('edit_user_email', '')),
+                        @js(old('edit_user_role', 'farmer'))
+                    );
+                @endif
             @endif
-        @endif
 
-        @if($errors->resetPassword->any() && old('reset_user_id'))
-            openResetModal(
-                {{ old('reset_user_id') }},
-                @js(old('reset_user_name', 'User')),
-                @js(old('reset_user_email', ''))
-            );
-        @endif
+            @if($errors->resetPassword->any() && old('reset_user_id'))
+                openResetModal(
+                    {{ old('reset_user_id') }},
+                    @js(old('reset_user_name', 'User')),
+                    @js(old('reset_user_email', ''))
+                );
+            @endif
+        });
     </script>
 </x-admin-layout>
