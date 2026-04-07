@@ -379,7 +379,7 @@
                     </div>
 
                     <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
-                        <p class="text-sm text-gray-600">The crop insight below shows why these crops are worth checking in your area this season.</p>
+                        <p class="text-sm text-gray-600">The chart below shows the broader full-year outlook in your area, so it may not always match this month's top pick exactly.</p>
                     </div>
                 </div>
             </div>
@@ -394,7 +394,7 @@
                             <span class="text-xl">ðŸ“Š</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">See the crops with the strongest production outlook in your area.</p>
+                                <p class="text-sm text-gray-600">This chart shows the broader full-year crop outlook in your area.</p>
                             </div>
                         </div>
                         <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
@@ -672,7 +672,7 @@
                 
                 // Recommendations
                 recommendations: 'Recommendations for You',
-                recommendations_desc: 'Based on your location and current month ({month})',
+                recommendations_desc: 'Best crops to check for {month} in your area',
                 finding_best_crops: 'Finding best crops...',
                 select_location_first: 'Select a location above to see recommendations',
                 best: 'BEST',
@@ -789,7 +789,7 @@
                 
                 // Recommendations
                 recommendations: 'Rekomendasyon para sa Iyo',
-                recommendations_desc: 'Base sa lokasyon mo at sa buwan ngayon ({month})',
+                recommendations_desc: 'Pinakamagandang pananim na tingnan para sa {month} sa iyong lugar',
                 finding_best_crops: 'Naghahanap ng pinakamahusay na pananim...',
                 select_location_first: 'Pumili muna ng lokasyon sa itaas para makita ang rekomendasyon',
                 best: 'PINAKAMAHUSAY',
@@ -1054,9 +1054,39 @@
                     return formatMunicipalityName(municipality);
                 },
 
+                monthLabel() {
+                    const monthNames = {
+                        JAN: 'January',
+                        FEB: 'February',
+                        MAR: 'March',
+                        APR: 'April',
+                        MAY: 'May',
+                        JUN: 'June',
+                        JUL: 'July',
+                        AUG: 'August',
+                        SEP: 'September',
+                        OCT: 'October',
+                        NOV: 'November',
+                        DEC: 'December',
+                    };
+
+                    return monthNames[this.selectedMonth] || this.selectedMonth;
+                },
+
+                emitRecommendationContext() {
+                    window.dispatchEvent(new CustomEvent('farmer-recommendations-updated', {
+                        detail: {
+                            municipality: this.selectedMunicipality || '',
+                            monthLabel: this.monthLabel(),
+                            topCrop: this.recommendations[0]?.crop || '',
+                        }
+                    }));
+                },
+
                 async loadRecommendations() {
                     if (!this.selectedMunicipality) {
                         this.recommendations = [];
+                        this.emitRecommendationContext();
                         return;
                     }
 
@@ -1078,6 +1108,7 @@
                         console.error('Failed to load recommendations:', error);
                         this.recommendations = [];
                     } finally {
+                        this.emitRecommendationContext();
                         this.loading = false;
                     }
                 }
@@ -1113,6 +1144,11 @@
                 error: false,
                 chart: null,
                 insightText: '',
+                recommendedCrop: '',
+                recommendationMonth: '',
+                chartCrops: [],
+                chartHistoricalData: [],
+                chartPredictedData: [],
 
                 init() {
                     if (this.municipality) {
@@ -1122,6 +1158,12 @@
                     window.addEventListener('farm-preferences-updated', (event) => {
                         this.municipality = event.detail.municipality || '';
                         this.loadChart();
+                    });
+
+                    window.addEventListener('farmer-recommendations-updated', (event) => {
+                        this.recommendedCrop = event.detail.topCrop || '';
+                        this.recommendationMonth = event.detail.monthLabel || '';
+                        this.refreshInsightText();
                     });
                 },
 
@@ -1136,6 +1178,10 @@
                     }
                 },
 
+                refreshInsightText() {
+                    this.insightText = this.buildTakeaway(this.chartCrops, this.chartPredictedData, this.chartHistoricalData);
+                },
+
                 buildTakeaway(crops, predictedData, historicalData) {
                     if (!crops.length) {
                         return '';
@@ -1148,14 +1194,27 @@
                     const bestIndex = predictedIndex >= 0 ? predictedIndex : historicalIndex;
                     const bestCrop = crops[bestIndex] || crops[0];
                     const municipalityLabel = this.municipalityLabel || 'your area';
+                    const normalizedBestCrop = String(bestCrop || '').trim().toUpperCase();
+                    const normalizedRecommendedCrop = String(this.recommendedCrop || '').trim().toUpperCase();
 
-                    return `${bestCrop} has the strongest outlook in ${municipalityLabel} based on historical average and this year's forecast.`;
+                    if (normalizedRecommendedCrop && this.recommendationMonth) {
+                        if (normalizedBestCrop === normalizedRecommendedCrop) {
+                            return `${bestCrop} is the strongest pick for ${this.recommendationMonth} and also leads the broader full-year outlook in ${municipalityLabel}.`;
+                        }
+
+                        return `${this.recommendedCrop} is the best crop to check for ${this.recommendationMonth}, while ${bestCrop} leads the broader full-year outlook in ${municipalityLabel}.`;
+                    }
+
+                    return `${bestCrop} leads the broader full-year outlook in ${municipalityLabel} based on historical average and this year's forecast.`;
                 },
 
                 async loadChart() {
                     this.destroyChart();
                     this.error = false;
                     this.insightText = '';
+                    this.chartCrops = [];
+                    this.chartHistoricalData = [];
+                    this.chartPredictedData = [];
 
                     if (!this.municipality) {
                         this.loading = false;
@@ -1222,7 +1281,10 @@
                             throw new Error('No chart data available');
                         }
 
-                        this.insightText = this.buildTakeaway(crops, predictedData, historicalData);
+                        this.chartCrops = crops;
+                        this.chartHistoricalData = historicalData;
+                        this.chartPredictedData = predictedData;
+                        this.refreshInsightText();
                         this.loading = false;
 
                         await this.$nextTick();
@@ -1292,6 +1354,9 @@
                     } catch (error) {
                         console.error('Error loading chart:', error);
                         this.error = true;
+                        this.chartCrops = [];
+                        this.chartHistoricalData = [];
+                        this.chartPredictedData = [];
                         this.loading = false;
                     }
                 }
