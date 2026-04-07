@@ -10,27 +10,32 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UserActivityFeedService
 {
-    public function recent(int $limit = 5): Collection
+    public function recent(int $limit = 5, string $activityFilter = 'all'): Collection
     {
+        $query = DB::query()
+            ->fromSub($this->baseQuery(), 'activities');
+
         return $this->decorate(
-            DB::query()
-                ->fromSub($this->baseQuery(), 'activities')
+            $this->applyActivityFilter($query, $activityFilter)
                 ->orderByDesc('activity_at')
                 ->limit($limit)
                 ->get()
         );
     }
 
-    public function paginate(int $perPage = 20): LengthAwarePaginator
+    public function paginate(int $perPage = 20, string $activityFilter = 'all'): LengthAwarePaginator
     {
-        $activities = DB::query()
-            ->fromSub($this->baseQuery(), 'activities')
+        $query = DB::query()
+            ->fromSub($this->baseQuery(), 'activities');
+
+        $activities = $this->applyActivityFilter($query, $activityFilter)
             ->orderByDesc('activity_at')
             ->paginate($perPage);
 
@@ -41,13 +46,67 @@ class UserActivityFeedService
 
     public function summary(): array
     {
+        $predictionCount = Prediction::count();
+        $forumCount = ForumPost::count() + ForumComment::count();
+        $calendarCount = FarmerCalendarEvent::count();
+        $registrationCount = User::count();
+        $totalCount = $predictionCount + $forumCount + $calendarCount + $registrationCount;
+
         return [
-            'total_activities' => Prediction::count() + ForumPost::count() + ForumComment::count() + FarmerCalendarEvent::count() + User::count(),
-            'predictions' => Prediction::count(),
-            'forum_interactions' => ForumPost::count() + ForumComment::count(),
-            'calendar_events' => FarmerCalendarEvent::count(),
-            'registrations' => User::count(),
+            'total_activities' => $totalCount,
+            'predictions' => $predictionCount,
+            'forum_interactions' => $forumCount,
+            'calendar_events' => $calendarCount,
+            'registrations' => $registrationCount,
+            'filters' => [
+                'all' => ['label' => 'All', 'count' => $totalCount],
+                'predictions' => ['label' => 'Predictions', 'count' => $predictionCount],
+                'forum' => ['label' => 'Forum', 'count' => $forumCount],
+                'calendar' => ['label' => 'Calendar', 'count' => $calendarCount],
+                'registrations' => ['label' => 'Registrations', 'count' => $registrationCount],
+            ],
         ];
+    }
+
+    public function normalizeActivityFilter(?string $activityFilter): string
+    {
+        $filter = Str::lower((string) $activityFilter);
+
+        return array_key_exists($filter, $this->activityTypeGroups()) ? $filter : 'all';
+    }
+
+    public function compactPredictions(Collection $activities): Collection
+    {
+        $compacted = collect();
+
+        foreach ($activities as $activity) {
+            $activityItem = clone $activity;
+            $activityItem->is_prediction_group = false;
+            $activityItem->grouped_prediction_count = 1;
+            $activityItem->grouped_prediction_oldest_at = $activityItem->activity_at instanceof Carbon
+                ? $activityItem->activity_at->copy()
+                : null;
+
+            if ($activityItem->activity_type !== 'prediction') {
+                $compacted->push($activityItem);
+                continue;
+            }
+
+            $lastActivity = $compacted->last();
+
+            if (! $this->shouldMergePredictionActivity($lastActivity, $activityItem)) {
+                $compacted->push($activityItem);
+                continue;
+            }
+
+            $lastActivity->is_prediction_group = true;
+            $lastActivity->grouped_prediction_count++;
+            $lastActivity->grouped_prediction_oldest_at = $activityItem->activity_at->copy();
+            $lastActivity->title = $this->predictionGroupTitle($lastActivity);
+            $lastActivity->description = $this->predictionGroupDescription($lastActivity);
+        }
+
+        return $compacted;
     }
 
     private function baseQuery(): Builder
@@ -57,6 +116,18 @@ class UserActivityFeedService
             ->unionAll($this->forumCommentQuery())
             ->unionAll($this->calendarEventQuery())
             ->unionAll($this->userRegistrationQuery());
+    }
+
+    private function applyActivityFilter(QueryBuilder $query, string $activityFilter): QueryBuilder
+    {
+        $normalizedFilter = $this->normalizeActivityFilter($activityFilter);
+        $activityTypes = $this->activityTypeGroups()[$normalizedFilter] ?? [];
+
+        if (empty($activityTypes)) {
+            return $query;
+        }
+
+        return $query->whereIn('activity_type', $activityTypes);
     }
 
     private function decorate(Collection $activities): Collection
@@ -119,6 +190,70 @@ class UserActivityFeedService
         }
 
         return 'Predicted ' . $crop . ' in ' . $municipality;
+    }
+
+    private function predictionGroupTitle(object $activity): string
+    {
+        if (($activity->grouped_prediction_count ?? 1) <= 1) {
+            return $this->titleFor($activity);
+        }
+
+        return $activity->status === 'failed'
+            ? 'Attempted ' . $activity->grouped_prediction_count . ' predictions'
+            : 'Created ' . $activity->grouped_prediction_count . ' predictions';
+    }
+
+    private function predictionGroupDescription(object $activity): string
+    {
+        $description = $this->predictionDescription($activity);
+
+        if (($activity->grouped_prediction_count ?? 1) <= 1) {
+            return $description;
+        }
+
+        return $description . ' in a short burst';
+    }
+
+    private function shouldMergePredictionActivity(mixed $lastActivity, object $currentActivity): bool
+    {
+        if (! is_object($lastActivity) || $lastActivity->activity_type !== 'prediction') {
+            return false;
+        }
+
+        if ($currentActivity->activity_type !== 'prediction') {
+            return false;
+        }
+
+        $samePredictionContext = (int) $lastActivity->actor_id === (int) $currentActivity->actor_id
+            && (string) $lastActivity->user_role === (string) $currentActivity->user_role
+            && (string) $lastActivity->status === (string) $currentActivity->status
+            && (string) ($lastActivity->crop ?? '') === (string) ($currentActivity->crop ?? '')
+            && (string) ($lastActivity->municipality ?? '') === (string) ($currentActivity->municipality ?? '');
+
+        if (! $samePredictionContext) {
+            return false;
+        }
+
+        $groupNewestAt = $lastActivity->activity_at instanceof Carbon
+            ? $lastActivity->activity_at
+            : Carbon::parse($lastActivity->activity_at);
+
+        $currentAt = $currentActivity->activity_at instanceof Carbon
+            ? $currentActivity->activity_at
+            : Carbon::parse($currentActivity->activity_at);
+
+        return $groupNewestAt->diffInMinutes($currentAt) <= 5;
+    }
+
+    private function activityTypeGroups(): array
+    {
+        return [
+            'all' => [],
+            'predictions' => ['prediction'],
+            'forum' => ['forum_post', 'forum_comment'],
+            'calendar' => ['calendar_event'],
+            'registrations' => ['user_registered'],
+        ];
     }
 
     private function predictionQuery(): Builder

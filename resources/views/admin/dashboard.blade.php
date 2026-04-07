@@ -269,13 +269,91 @@
             <!-- Recent Activity Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
                 <!-- Recent Activity -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-base lg:text-lg font-semibold text-gray-900">Recent Activity</h3>
-                        <a href="{{ route('admin.activities.index') }}"
-                            class="text-xs lg:text-sm text-primary hover:text-primary-700 font-medium">View all</a>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6"
+                    x-data="{ showAllPredictions: false }">
+                    @php
+                        $selectedFilterLabel = $activityStats['filters'][$activityFilter]['label'] ?? 'All';
+                        $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel) . ' activity';
+                    @endphp
+
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                        <div>
+                            <h3 class="text-base lg:text-lg font-semibold text-gray-900">Recent Activity</h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ $selectedFilterLabel === 'All' ? 'Compact mode groups rapid prediction activity' : 'Showing ' . $selectedFilterText }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="inline-flex items-center rounded-lg border border-gray-200 bg-gray-50 p-1">
+                                <button type="button" @click="showAllPredictions = false"
+                                    :class="showAllPredictions ? 'text-gray-500' : 'bg-white text-gray-900 shadow-sm'"
+                                    class="px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors">
+                                    Compact
+                                </button>
+                                <button type="button" @click="showAllPredictions = true"
+                                    :class="showAllPredictions ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'"
+                                    class="px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors">
+                                    Show all
+                                </button>
+                            </div>
+                            <a href="{{ route('admin.activities.index', ['activity_type' => $activityFilter]) }}"
+                                class="text-xs lg:text-sm text-primary hover:text-primary-700 font-medium">View all</a>
+                        </div>
                     </div>
-                    <div class="space-y-3">
+
+                    <div class="mb-4 flex flex-wrap gap-2">
+                        @foreach($activityStats['filters'] as $filterKey => $filter)
+                            <a href="{{ route('admin.dashboard', ['activity_type' => $filterKey]) }}"
+                                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors {{ $activityFilter === $filterKey ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-800' }}">
+                                <span>{{ $filter['label'] }}</span>
+                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] {{ $activityFilter === $filterKey ? 'bg-white text-blue-700' : 'bg-gray-100 text-gray-500' }}">
+                                    {{ number_format($filter['count']) }}
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+
+                    <div x-show="!showAllPredictions" class="space-y-3">
+                        @forelse(($compactRecentActivities ?? collect()) as $activity)
+                            <div
+                                class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div class="flex-shrink-0 mt-0.5">
+                                    @include('admin.activities.partials.icon', ['type' => $activity->activity_type])
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $activity->user_name }}</p>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-white text-gray-600 border border-gray-200">
+                                            {{ $activity->type_label }}
+                                        </span>
+                                        @if(($activity->grouped_prediction_count ?? 1) > 1)
+                                            <span
+                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-100 text-blue-700">
+                                                {{ $activity->grouped_prediction_count }} entries
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-gray-700 mt-0.5">{{ $activity->title }}</p>
+                                    <p class="text-xs text-gray-500 truncate">{{ $activity->description }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">{{ $activity->activity_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-10 text-gray-400">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                                    </path>
+                                </svg>
+                                <p class="text-sm font-medium">No recent {{ $selectedFilterText }}</p>
+                                <p class="text-xs mt-1">Try another activity filter or check back once new actions are recorded</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <div x-show="showAllPredictions" class="space-y-3">
                         @forelse(($recentActivities ?? collect()) as $activity)
                             <div
                                 class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -303,8 +381,8 @@
                                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
                                     </path>
                                 </svg>
-                                <p class="text-sm font-medium">No recent activity</p>
-                                <p class="text-xs mt-1">User actions will appear here once the system starts receiving activity</p>
+                                <p class="text-sm font-medium">No recent {{ $selectedFilterText }}</p>
+                                <p class="text-xs mt-1">Try another activity filter or check back once new actions are recorded</p>
                             </div>
                         @endforelse
                     </div>

@@ -13,6 +13,7 @@ use App\Http\Controllers\ForumController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -93,16 +94,29 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', function (UserActivityFeedService $activityFeed) {
+    Route::get('/dashboard', function (Request $request, UserActivityFeedService $activityFeed) {
+        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
+        $activityStats = $activityFeed->summary();
+        $recentActivities = $activityFeed->recent(5, $activityFilter);
+
         return view('admin.dashboard', [
-            'recentActivities' => $activityFeed->recent(),
+            'activityFilter' => $activityFilter,
+            'activityStats' => $activityStats,
+            'recentActivities' => $recentActivities,
+            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
         ]);
     })->name('dashboard');
 
-    Route::get('/activities', function (UserActivityFeedService $activityFeed) {
+    Route::get('/activities', function (Request $request, UserActivityFeedService $activityFeed) {
+        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
+        $activityStats = $activityFeed->summary();
+        $activities = $activityFeed->paginate(20, $activityFilter);
+
         return view('admin.activities.index', [
-            'activities' => $activityFeed->paginate(),
-            'activityStats' => $activityFeed->summary(),
+            'activityFilter' => $activityFilter,
+            'activities' => $activities,
+            'compactActivities' => $activityFeed->compactPredictions($activities->getCollection()),
+            'activityStats' => $activityStats,
         ]);
     })->name('activities.index');
 
@@ -151,9 +165,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     });
 
     // Settings (placeholder)
-    Route::get('/settings', function (UserActivityFeedService $activityFeed) {
+    Route::get('/settings', function (Request $request, UserActivityFeedService $activityFeed) {
+        $activityFilter = $activityFeed->normalizeActivityFilter($request->query('activity_type'));
+        $activityStats = $activityFeed->summary();
+        $recentActivities = $activityFeed->recent(5, $activityFilter);
+
         return view('admin.dashboard', [
-            'recentActivities' => $activityFeed->recent(),
+            'activityFilter' => $activityFilter,
+            'activityStats' => $activityStats,
+            'recentActivities' => $recentActivities,
+            'compactRecentActivities' => $activityFeed->compactPredictions($recentActivities),
         ]); // Placeholder - will create later
     })->name('settings.index');
 });
