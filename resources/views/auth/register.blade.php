@@ -4,6 +4,22 @@
         <p class="text-sm text-gray-500">Join BenguetCropMap today</p>
     </div>
 
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth-error class="mb-4" :message="session('error')" />
+
+    <div class="space-y-4 mb-6">
+        <x-auth-google-button label="Continue with Google" />
+
+        <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="relative flex justify-center text-xs uppercase">
+                <span class="bg-white px-3 text-gray-400 tracking-wide">Or continue with email</span>
+            </div>
+        </div>
+    </div>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
