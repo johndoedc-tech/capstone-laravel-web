@@ -140,7 +140,7 @@ class UserActivityFeedService
         return $activities->map(function (object $activity) {
             $activity->activity_at = Carbon::parse($activity->activity_at);
             $activity->activity_key = $activity->activity_type . '-' . $activity->activity_id;
-            $activity->role_label = Str::headline((string) $activity->user_role);
+            $activity->role_label = Str::headline((string) ($activity->user_role ?: 'User'));
             $activity->metadata = match (true) {
                 is_array($activity->metadata ?? null) => $activity->metadata,
                 is_string($activity->metadata ?? null) => json_decode($activity->metadata, true) ?: [],
@@ -288,7 +288,7 @@ class UserActivityFeedService
             ->selectRaw('predictions.created_at as activity_at')
             ->selectRaw('predictions.user_id as actor_id')
             ->selectRaw("COALESCE(users.name, 'Unknown User') as user_name")
-            ->selectRaw("COALESCE(users.role, 'user') as user_role")
+            ->selectRaw('users.role as user_role')
             ->selectRaw('predictions.status as status')
             ->selectRaw('predictions.crop as crop')
             ->selectRaw('predictions.municipality as municipality')
@@ -307,7 +307,7 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.created_at as activity_at')
             ->selectRaw('forum_posts.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw("COALESCE(users.role, 'user') as user_role")
+            ->selectRaw('users.role as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('forum_posts.crop as crop')
             ->selectRaw('forum_posts.municipality as municipality')
@@ -327,7 +327,7 @@ class UserActivityFeedService
             ->selectRaw('forum_comments.created_at as activity_at')
             ->selectRaw('forum_comments.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw("COALESCE(users.role, 'user') as user_role")
+            ->selectRaw('users.role as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('forum_posts.crop as crop')
             ->selectRaw('forum_posts.municipality as municipality')
@@ -346,7 +346,7 @@ class UserActivityFeedService
             ->selectRaw('farmer_calendar_events.created_at as activity_at')
             ->selectRaw('farmer_calendar_events.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw("COALESCE(users.role, 'user') as user_role")
+            ->selectRaw('users.role as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('farmer_calendar_events.crop as crop')
             ->selectRaw('NULL as municipality')
@@ -364,7 +364,7 @@ class UserActivityFeedService
             ->selectRaw('users.created_at as activity_at')
             ->selectRaw('users.id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw("COALESCE(users.role, 'user') as user_role")
+            ->selectRaw('users.role as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('NULL as crop')
             ->selectRaw('NULL as municipality')
@@ -384,7 +384,7 @@ class UserActivityFeedService
             ->selectRaw('admin_activity_logs.created_at as activity_at')
             ->selectRaw('admin_activity_logs.actor_id as actor_id')
             ->selectRaw("COALESCE(actor_users.name, 'Unknown Admin') as user_name")
-            ->selectRaw("COALESCE(actor_users.role, 'admin') as user_role")
+            ->selectRaw('actor_users.role as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('NULL as crop')
             ->selectRaw('NULL as municipality')
