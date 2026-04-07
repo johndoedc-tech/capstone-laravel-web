@@ -268,35 +268,31 @@
 
             <!-- Recent Activity Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-                <!-- Recent Predictions -->
+                <!-- Recent Activity -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-base lg:text-lg font-semibold text-gray-900">Recent Activity</h3>
-                        <a href="{{ route('admin.predictions.index') }}"
+                        <a href="{{ route('admin.activities.index') }}"
                             class="text-xs lg:text-sm text-primary hover:text-primary-700 font-medium">View all</a>
                     </div>
                     <div class="space-y-3">
-                        @php
-                            $recentPredictions = \App\Models\Prediction::with('user')->latest()->take(5)->get();
-                        @endphp
-                        @forelse($recentPredictions as $prediction)
+                        @forelse(($recentActivities ?? collect()) as $activity)
                             <div
                                 class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                <div class="bg-blue-100 p-2 rounded-lg flex-shrink-0 mt-0.5">
-                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                        </path>
-                                    </svg>
+                                <div class="flex-shrink-0 mt-0.5">
+                                    @include('admin.activities.partials.icon', ['type' => $activity->activity_type])
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">
-                                        {{ $prediction->user->name ?? 'Unknown User' }}</p>
-                                    <p class="text-xs text-gray-500">Predicted <span
-                                            class="font-medium text-gray-700">{{ $prediction->crop ?? 'N/A' }}</span> in
-                                        {{ $prediction->municipality ?? 'N/A' }}</p>
-                                    <p class="text-xs text-gray-400 mt-1">{{ $prediction->created_at->diffForHumans() }}</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $activity->user_name }}</p>
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-white text-gray-600 border border-gray-200">
+                                            {{ $activity->type_label }}
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-gray-700 mt-0.5">{{ $activity->title }}</p>
+                                    <p class="text-xs text-gray-500 truncate">{{ $activity->description }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">{{ $activity->activity_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         @empty
@@ -307,8 +303,8 @@
                                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
                                     </path>
                                 </svg>
-                                <p class="text-sm font-medium">No recent predictions</p>
-                                <p class="text-xs mt-1">Predictions will appear here once users start making them</p>
+                                <p class="text-sm font-medium">No recent activity</p>
+                                <p class="text-xs mt-1">User actions will appear here once the system starts receiving activity</p>
                             </div>
                         @endforelse
                     </div>

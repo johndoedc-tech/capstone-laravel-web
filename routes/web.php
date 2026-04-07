@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FarmerDashboardController;
 use App\Http\Controllers\FarmerCalendarController;
 use App\Http\Controllers\ForumController;
+use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
 
@@ -92,9 +93,18 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+    Route::get('/dashboard', function (UserActivityFeedService $activityFeed) {
+        return view('admin.dashboard', [
+            'recentActivities' => $activityFeed->recent(),
+        ]);
     })->name('dashboard');
+
+    Route::get('/activities', function (UserActivityFeedService $activityFeed) {
+        return view('admin.activities.index', [
+            'activities' => $activityFeed->paginate(),
+            'activityStats' => $activityFeed->summary(),
+        ]);
+    })->name('activities.index');
 
     // Crop Data Management routes
     Route::prefix('crop-data')->name('crop-data.')->group(function () {
@@ -141,8 +151,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     });
 
     // Settings (placeholder)
-    Route::get('/settings', function () {
-        return view('admin.dashboard'); // Placeholder - will create later
+    Route::get('/settings', function (UserActivityFeedService $activityFeed) {
+        return view('admin.dashboard', [
+            'recentActivities' => $activityFeed->recent(),
+        ]); // Placeholder - will create later
     })->name('settings.index');
 });
 
