@@ -281,6 +281,10 @@ class UserActivityFeedService
 
     private function predictionQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('users.role');
+        $eventTypeNullExpression = $this->nullForUnionText();
+        $metadataNullExpression = $this->nullForUnionText();
+
         return Prediction::query()
             ->leftJoin('users', 'users.id', '=', 'predictions.user_id')
             ->selectRaw("'prediction' as activity_type")
@@ -288,18 +292,22 @@ class UserActivityFeedService
             ->selectRaw('predictions.created_at as activity_at')
             ->selectRaw('predictions.user_id as actor_id')
             ->selectRaw("COALESCE(users.name, 'Unknown User') as user_name")
-            ->selectRaw('users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('predictions.status as status')
             ->selectRaw('predictions.crop as crop')
             ->selectRaw('predictions.municipality as municipality')
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('NULL as event_type')
-            ->selectRaw('NULL as metadata');
+            ->selectRaw($eventTypeNullExpression . ' as event_type')
+            ->selectRaw($metadataNullExpression . ' as metadata');
     }
 
     private function forumPostQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('users.role');
+        $eventTypeNullExpression = $this->nullForUnionText();
+        $metadataNullExpression = $this->nullForUnionText();
+
         return ForumPost::query()
             ->join('users', 'users.id', '=', 'forum_posts.user_id')
             ->selectRaw("'forum_post' as activity_type")
@@ -307,18 +315,22 @@ class UserActivityFeedService
             ->selectRaw('forum_posts.created_at as activity_at')
             ->selectRaw('forum_posts.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw('users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('forum_posts.crop as crop')
             ->selectRaw('forum_posts.municipality as municipality')
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
-            ->selectRaw('NULL as event_type')
-            ->selectRaw('NULL as metadata');
+            ->selectRaw($eventTypeNullExpression . ' as event_type')
+            ->selectRaw($metadataNullExpression . ' as metadata');
     }
 
     private function forumCommentQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('users.role');
+        $eventTypeNullExpression = $this->nullForUnionText();
+        $metadataNullExpression = $this->nullForUnionText();
+
         return ForumComment::query()
             ->join('users', 'users.id', '=', 'forum_comments.user_id')
             ->join('forum_posts', 'forum_posts.id', '=', 'forum_comments.post_id')
@@ -327,18 +339,22 @@ class UserActivityFeedService
             ->selectRaw('forum_comments.created_at as activity_at')
             ->selectRaw('forum_comments.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw('users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('forum_posts.crop as crop')
             ->selectRaw('forum_posts.municipality as municipality')
             ->selectRaw('forum_posts.title as subject')
             ->selectRaw('forum_posts.slug as subject_slug')
-            ->selectRaw('NULL as event_type')
-            ->selectRaw('NULL as metadata');
+            ->selectRaw($eventTypeNullExpression . ' as event_type')
+            ->selectRaw($metadataNullExpression . ' as metadata');
     }
 
     private function calendarEventQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('users.role');
+        $eventTypeExpression = $this->castForUnion('farmer_calendar_events.event_type');
+        $metadataNullExpression = $this->nullForUnionText();
+
         return FarmerCalendarEvent::query()
             ->join('users', 'users.id', '=', 'farmer_calendar_events.user_id')
             ->selectRaw("'calendar_event' as activity_type")
@@ -346,36 +362,44 @@ class UserActivityFeedService
             ->selectRaw('farmer_calendar_events.created_at as activity_at')
             ->selectRaw('farmer_calendar_events.user_id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw('users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('farmer_calendar_events.crop as crop')
             ->selectRaw('NULL as municipality')
             ->selectRaw('farmer_calendar_events.title as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('farmer_calendar_events.event_type as event_type')
-            ->selectRaw('NULL as metadata');
+            ->selectRaw($eventTypeExpression . ' as event_type')
+            ->selectRaw($metadataNullExpression . ' as metadata');
     }
 
     private function userRegistrationQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('users.role');
+        $eventTypeNullExpression = $this->nullForUnionText();
+        $metadataNullExpression = $this->nullForUnionText();
+
         return User::query()
             ->selectRaw("'user_registered' as activity_type")
             ->selectRaw('users.id as activity_id')
             ->selectRaw('users.created_at as activity_at')
             ->selectRaw('users.id as actor_id')
             ->selectRaw('users.name as user_name')
-            ->selectRaw('users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('NULL as crop')
             ->selectRaw('NULL as municipality')
             ->selectRaw('NULL as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('NULL as event_type')
-            ->selectRaw('NULL as metadata');
+            ->selectRaw($eventTypeNullExpression . ' as event_type')
+            ->selectRaw($metadataNullExpression . ' as metadata');
     }
 
     private function adminActivityQuery(): Builder
     {
+        $userRoleExpression = $this->castForUnion('actor_users.role');
+        $metadataExpression = $this->castForUnion('admin_activity_logs.metadata');
+        $eventTypeNullExpression = $this->nullForUnionText();
+
         return AdminActivityLog::query()
             ->leftJoin('users as actor_users', 'actor_users.id', '=', 'admin_activity_logs.actor_id')
             ->leftJoin('users as subject_users', 'subject_users.id', '=', 'admin_activity_logs.subject_user_id')
@@ -384,13 +408,27 @@ class UserActivityFeedService
             ->selectRaw('admin_activity_logs.created_at as activity_at')
             ->selectRaw('admin_activity_logs.actor_id as actor_id')
             ->selectRaw("COALESCE(actor_users.name, 'Unknown Admin') as user_name")
-            ->selectRaw('actor_users.role as user_role')
+            ->selectRaw($userRoleExpression . ' as user_role')
             ->selectRaw('NULL as status')
             ->selectRaw('NULL as crop')
             ->selectRaw('NULL as municipality')
             ->selectRaw('subject_users.name as subject')
             ->selectRaw('NULL as subject_slug')
-            ->selectRaw('NULL as event_type')
-            ->selectRaw('admin_activity_logs.metadata as metadata');
+            ->selectRaw($eventTypeNullExpression . ' as event_type')
+            ->selectRaw($metadataExpression . ' as metadata');
+    }
+
+    private function castForUnion(string $expression): string
+    {
+        return DB::connection()->getDriverName() === 'pgsql'
+            ? '(' . $expression . ')::text'
+            : $expression;
+    }
+
+    private function nullForUnionText(): string
+    {
+        return DB::connection()->getDriverName() === 'pgsql'
+            ? 'NULL::text'
+            : 'NULL';
     }
 }
