@@ -4,15 +4,26 @@
 <aside class="w-64 flex flex-col h-screen fixed left-0 top-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0" style="background-color: #355872;" :class="{ '-translate-x-full': !open, 'translate-x-0': open }">
     <!-- Sidebar Header -->
     <div class="p-4 lg:p-6 border-b border-primary-700/30">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between gap-3">
-            <div>
-                <h1 class="font-bold text-white text-base lg:text-lg leading-tight">GeoMap</h1>
-                <p class="text-xs text-primary-200">Admin Panel</p>
-            </div>
-            <div class="bg-black/20 border border-white/20 w-9 h-9 lg:w-10 lg:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-                <span class="text-white font-bold text-sm lg:text-base">{{ substr(Auth::user()->name, 0, 1) }}</span>
-            </div>
-        </a>
+        <div class="flex items-start gap-3">
+            <button
+                @click="open = false"
+                class="lg:hidden mt-0.5 p-2 rounded-lg border border-white/15 text-white hover:bg-white/10 transition-colors flex-shrink-0"
+                aria-label="Close sidebar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between gap-3 flex-1 min-w-0">
+                <div class="min-w-0">
+                    <h1 class="font-bold text-white text-sm lg:text-lg leading-tight truncate">GeoMap</h1>
+                    <p class="text-[11px] lg:text-xs text-primary-200 leading-tight">Admin Panel</p>
+                </div>
+                <div class="bg-black/20 border border-white/20 w-9 h-9 lg:w-10 lg:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <span class="text-white font-bold text-sm lg:text-base">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                </div>
+            </a>
+        </div>
     </div>
 
     <!-- Navigation Links -->
@@ -118,12 +129,9 @@
 </aside>
 
 <!-- Mobile Menu Button -->
-<button @click="open = !open" class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg shadow-lg border border-primary-700/30 hover:bg-primary-600 active:scale-95 transition-transform" style="background-color: #355872;">
-    <svg x-show="!open" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<button x-show="!open" @click="open = true" class="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded-xl shadow-lg border border-primary-700/30 hover:bg-primary-600 active:scale-95 transition-transform" style="background-color: #355872;">
+    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
-    <svg x-show="open" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
     </svg>
 </button>
 
