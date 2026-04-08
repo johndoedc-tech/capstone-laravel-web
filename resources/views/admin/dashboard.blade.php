@@ -212,36 +212,44 @@
 
             <!-- Top 5 Crops by Production Chart -->
             <div class="mb-5 lg:mb-6">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
                     <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                         <div class="space-y-3">
-                            <div>
-                                <h3 class="text-base lg:text-lg font-semibold text-gray-900">Top 5 Crops by Production</h3>
-                                <p class="text-sm text-gray-600 mt-1">This chart shows the broader full-year crop outlook for the selected municipality.</p>
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-base font-semibold text-gray-700">
+                                    #
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Top 5 Crops</h3>
+                                    <p class="text-sm text-gray-600 mt-1">This chart shows the broader full-year crop outlook for the selected municipality.</p>
+                                </div>
                             </div>
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                                <label for="adminMunicipalitySelect"
-                                    class="text-xs lg:text-sm text-gray-600 whitespace-nowrap">Municipality:</label>
-                                <select id="adminMunicipalitySelect"
-                                    class="w-full sm:w-auto border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 text-xs lg:text-sm">
-                                    <option value="LATRINIDAD">La Trinidad</option>
-                                    <option value="ITOGON">Itogon</option>
-                                    <option value="SABLAN">Sablan</option>
-                                    <option value="TUBA">Tuba</option>
-                                    <option value="TUBLAY">Tublay</option>
-                                    <option value="ATOK">Atok</option>
-                                    <option value="BAKUN">Bakun</option>
-                                    <option value="BOKOD">Bokod</option>
-                                    <option value="BUGUIAS">Buguias</option>
-                                    <option value="KABAYAN">Kabayan</option>
-                                    <option value="KAPANGAN">Kapangan</option>
-                                    <option value="KIBUNGAN">Kibungan</option>
-                                    <option value="MANKAYAN">Mankayan</option>
-                                </select>
-                            </div>
-                            <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                                <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
-                                <span id="adminChartAreaLabel" class="font-semibold text-gray-900">La Trinidad</span>
+                            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                                <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                                    <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
+                                    <span id="adminChartAreaLabel" class="font-semibold text-gray-900">La Trinidad</span>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                    <label for="adminMunicipalitySelect"
+                                        class="text-xs font-medium uppercase tracking-wide text-gray-500 whitespace-nowrap">Switch area</label>
+                                    <select id="adminMunicipalitySelect"
+                                        class="w-full sm:w-auto rounded-full border-gray-300 bg-white px-4 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
+                                        <option value="LATRINIDAD">La Trinidad</option>
+                                        <option value="ITOGON">Itogon</option>
+                                        <option value="SABLAN">Sablan</option>
+                                        <option value="TUBA">Tuba</option>
+                                        <option value="TUBLAY">Tublay</option>
+                                        <option value="ATOK">Atok</option>
+                                        <option value="BAKUN">Bakun</option>
+                                        <option value="BOKOD">Bokod</option>
+                                        <option value="BUGUIAS">Buguias</option>
+                                        <option value="KABAYAN">Kabayan</option>
+                                        <option value="KAPANGAN">Kapangan</option>
+                                        <option value="KIBUNGAN">Kibungan</option>
+                                        <option value="MANKAYAN">Mankayan</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -265,7 +273,7 @@
                         <p class="text-gray-600 mt-2 text-sm">Loading chart data...</p>
                     </div>
                     <div id="adminChartContainer" class="hidden">
-                        <div class="w-full overflow-hidden">
+                        <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
                             <canvas id="adminTopCropsChart"></canvas>
                         </div>
                         <div class="mt-4 text-xs lg:text-sm text-gray-500 border-t border-gray-200 pt-3 space-y-1">
@@ -550,6 +558,41 @@
             return `${predictedLeader} has the strongest ${currentYear} outlook in ${municipalityName}, while ${historicalLeader} leads the historical average.`;
         }
 
+        function mergeAdminTopCropRows(data, currentYear) {
+            const merged = new Map();
+
+            (data.historical_top5?.crops || []).forEach((crop) => {
+                const key = String(crop.crop || '').toUpperCase();
+
+                if (!merged.has(key)) {
+                    merged.set(key, {
+                        crop: crop.crop,
+                        historical: Number(crop.yearly_data?.average || 0),
+                        predicted: 0,
+                    });
+                }
+            });
+
+            (data.predicted_top5?.crops || []).forEach((crop) => {
+                const key = String(crop.crop || '').toUpperCase();
+                const currentYearForecast = (crop.forecasts || []).find((forecast) => Number(forecast.year) === currentYear);
+                const predictedValue = Number(currentYearForecast?.production || 0);
+
+                if (!merged.has(key)) {
+                    merged.set(key, {
+                        crop: crop.crop,
+                        historical: 0,
+                        predicted: predictedValue,
+                    });
+                    return;
+                }
+
+                merged.get(key).predicted = predictedValue;
+            });
+
+            return Array.from(merged.values()).slice(0, 5);
+        }
+
         async function loadAdminTopCropsChart(municipality) {
             const loadingEl = document.getElementById('adminChartLoading');
             const containerEl = document.getElementById('adminChartContainer');
@@ -584,20 +627,20 @@
                     throw new Error('API returned error');
                 }
 
-                const crops = data.historical_top5.crops.map(crop => crop.crop);
-                const historicalData = data.historical_top5.crops.map(crop => crop.yearly_data.average);
-
                 const currentYear = new Date().getFullYear();
-                const predictedData = data.predicted_top5.crops.map(crop => {
-                    const currentYearForecast = crop.forecasts.find(f => f.year === currentYear);
-                    return currentYearForecast ? currentYearForecast.production : 0;
-                });
+                const rows = mergeAdminTopCropRows(data, currentYear);
+                const crops = rows.map((row) => row.crop);
+                const historicalData = rows.map((row) => row.historical);
+                const predictedData = rows.map((row) => row.predicted);
+
+                if (!rows.length) {
+                    throw new Error('No chart data available');
+                }
 
                 if (adminTopCropsChart) {
                     adminTopCropsChart.destroy();
                 }
 
-                const mobile = isAdminMobile();
                 insightTextEl.textContent = buildAdminTopCropsInsight(
                     crops,
                     historicalData,
@@ -613,95 +656,73 @@
                         labels: crops,
                         datasets: [
                             {
-                                label: mobile ? 'Historical Avg' : 'Historical Average',
+                                label: 'Historical Average',
                                 data: historicalData,
-                                backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.72)',
                                 borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: mobile ? 1 : 2
+                                borderWidth: 2,
+                                borderRadius: 10
                             },
                             {
-                                label: mobile ? 'Forecast' : 'This Year Forecast',
+                                label: 'This Year Forecast',
                                 data: predictedData,
-                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.72)',
                                 borderColor: 'rgba(59, 130, 246, 1)',
-                                borderWidth: mobile ? 1 : 2
+                                borderWidth: 2,
+                                borderRadius: 10
                             }
                         ]
                     },
                     options: {
-                        indexAxis: mobile ? 'y' : 'x',
                         responsive: true,
-                        maintainAspectRatio: true,
-                        aspectRatio: mobile ? 1 : 2,
+                        maintainAspectRatio: false,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: mobile ? `Top 5 - ${municipalityName}` : `Top 5 Crops in ${municipalityName}`,
-                                font: {
-                                    size: mobile ? 12 : 16,
-                                    weight: 'bold'
-                                },
-                                padding: {
-                                    top: mobile ? 5 : 10,
-                                    bottom: mobile ? 10 : 20
-                                }
-                            },
                             legend: {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    boxWidth: mobile ? 10 : 40,
+                                    usePointStyle: true,
+                                    boxWidth: 12,
                                     font: {
-                                        size: mobile ? 9 : 12
-                                    },
-                                    padding: mobile ? 8 : 10
+                                        size: isAdminMobile() ? 10 : 12
+                                    }
                                 }
                             },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
                                         const label = context.dataset.label || '';
-                                        const value = mobile ? context.parsed.x : context.parsed.y;
+                                        const value = context.parsed.y;
                                         return label + ': ' + value.toFixed(2) + ' MT';
                                     }
                                 },
                                 titleFont: {
-                                    size: mobile ? 10 : 12
+                                    size: isAdminMobile() ? 10 : 12
                                 },
                                 bodyFont: {
-                                    size: mobile ? 9 : 11
+                                    size: isAdminMobile() ? 9 : 11
                                 }
                             }
                         },
                         scales: {
-                            [mobile ? 'x' : 'y']: {
+                            y: {
                                 beginAtZero: true,
-                                title: {
-                                    display: !mobile,
-                                    text: 'Average Production (MT)',
-                                    font: {
-                                        size: mobile ? 10 : 12
-                                    }
-                                },
                                 ticks: {
                                     callback: function(value) {
                                         return value.toFixed(0);
                                     },
                                     font: {
-                                        size: mobile ? 9 : 11
+                                        size: isAdminMobile() ? 9 : 11
                                     }
                                 },
                                 grid: {
-                                    display: true
+                                    color: 'rgba(148, 163, 184, 0.18)'
                                 }
                             },
-                            [mobile ? 'y' : 'x']: {
-                                title: {
-                                    display: false
-                                },
+                            x: {
                                 ticks: {
                                     font: {
-                                        size: mobile ? 10 : 11
+                                        size: isAdminMobile() ? 10 : 11
                                     },
                                     autoSkip: false,
                                     maxRotation: 0,
@@ -710,14 +731,6 @@
                                 grid: {
                                     display: false
                                 }
-                            }
-                        },
-                        layout: {
-                            padding: {
-                                left: mobile ? 5 : 10,
-                                right: mobile ? 5 : 10,
-                                top: mobile ? 5 : 10,
-                                bottom: mobile ? 5 : 10
                             }
                         }
                     }
