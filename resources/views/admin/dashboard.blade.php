@@ -213,27 +213,44 @@
             <!-- Top 5 Crops by Production Chart -->
             <div class="mb-5 lg:mb-6">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6">
-                    <div class="flex flex-col gap-3 mb-4">
-                        <h3 class="text-base lg:text-lg font-semibold text-gray-900">Top 5 Crops by Production</h3>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <label for="adminMunicipalitySelect"
-                                class="text-xs lg:text-sm text-gray-600 whitespace-nowrap">Municipality:</label>
-                            <select id="adminMunicipalitySelect"
-                                class="w-full sm:w-auto border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 text-xs lg:text-sm">
-                                <option value="LATRINIDAD">La Trinidad</option>
-                                <option value="ITOGON">Itogon</option>
-                                <option value="SABLAN">Sablan</option>
-                                <option value="TUBA">Tuba</option>
-                                <option value="TUBLAY">Tublay</option>
-                                <option value="ATOK">Atok</option>
-                                <option value="BAKUN">Bakun</option>
-                                <option value="BOKOD">Bokod</option>
-                                <option value="BUGUIAS">Buguias</option>
-                                <option value="KABAYAN">Kabayan</option>
-                                <option value="KAPANGAN">Kapangan</option>
-                                <option value="KIBUNGAN">Kibungan</option>
-                                <option value="MANKAYAN">Mankayan</option>
-                            </select>
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                        <div class="space-y-3">
+                            <div>
+                                <h3 class="text-base lg:text-lg font-semibold text-gray-900">Top 5 Crops by Production</h3>
+                                <p class="text-sm text-gray-600 mt-1">This chart shows the broader full-year crop outlook for the selected municipality.</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <label for="adminMunicipalitySelect"
+                                    class="text-xs lg:text-sm text-gray-600 whitespace-nowrap">Municipality:</label>
+                                <select id="adminMunicipalitySelect"
+                                    class="w-full sm:w-auto border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50 text-xs lg:text-sm">
+                                    <option value="LATRINIDAD">La Trinidad</option>
+                                    <option value="ITOGON">Itogon</option>
+                                    <option value="SABLAN">Sablan</option>
+                                    <option value="TUBA">Tuba</option>
+                                    <option value="TUBLAY">Tublay</option>
+                                    <option value="ATOK">Atok</option>
+                                    <option value="BAKUN">Bakun</option>
+                                    <option value="BOKOD">Bokod</option>
+                                    <option value="BUGUIAS">Buguias</option>
+                                    <option value="KABAYAN">Kabayan</option>
+                                    <option value="KAPANGAN">Kapangan</option>
+                                    <option value="KIBUNGAN">Kibungan</option>
+                                    <option value="MANKAYAN">Mankayan</option>
+                                </select>
+                            </div>
+                            <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                                <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
+                                <span id="adminChartAreaLabel" class="font-semibold text-gray-900">La Trinidad</span>
+                            </div>
+                        </div>
+
+                        <div id="adminChartInsightCard"
+                            class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
+                            <p id="adminChartInsightText" class="mt-2 text-sm leading-6 text-gray-700">
+                                Loading the strongest crop outlook for the selected municipality...
+                            </p>
                         </div>
                     </div>
                     <div id="adminChartLoading" class="text-center py-8">
@@ -252,8 +269,8 @@
                             <canvas id="adminTopCropsChart"></canvas>
                         </div>
                         <div class="mt-4 text-xs lg:text-sm text-gray-500 border-t border-gray-200 pt-3 space-y-1">
-                            <p><strong>Historical (2015-2024):</strong> Average annual production from actual data</p>
-                            <p><strong>Predicted:</strong> Current year forecast using ML models</p>
+                            <p><strong>Historical Average:</strong> Average annual production from actual data between 2015 and 2024</p>
+                            <p><strong>This Year Forecast:</strong> Current year forecast using the ML model</p>
                         </div>
                     </div>
                     <div id="adminChartError" class="hidden text-center py-8 text-red-600">
@@ -498,10 +515,51 @@
             return window.innerWidth < 768;
         }
 
+        function formatAdminMunicipalityName(municipality) {
+            if (!municipality) {
+                return 'the selected municipality';
+            }
+
+            if (municipality === 'LATRINIDAD') {
+                return 'La Trinidad';
+            }
+
+            return municipality.charAt(0) + municipality.slice(1).toLowerCase();
+        }
+
+        function buildAdminTopCropsInsight(crops, historicalData, predictedData, municipalityName, currentYear) {
+            if (!crops.length) {
+                return `No crop outlook data is available for ${municipalityName} yet.`;
+            }
+
+            const predictedLeaderIndex = predictedData.reduce((bestIndex, value, index, values) => {
+                return value > values[bestIndex] ? index : bestIndex;
+            }, 0);
+
+            const historicalLeaderIndex = historicalData.reduce((bestIndex, value, index, values) => {
+                return value > values[bestIndex] ? index : bestIndex;
+            }, 0);
+
+            const predictedLeader = crops[predictedLeaderIndex];
+            const historicalLeader = crops[historicalLeaderIndex];
+
+            if (predictedLeader === historicalLeader) {
+                return `${predictedLeader} remains the strongest full-year crop in ${municipalityName}, leading both the historical average and the ${currentYear} forecast.`;
+            }
+
+            return `${predictedLeader} has the strongest ${currentYear} outlook in ${municipalityName}, while ${historicalLeader} leads the historical average.`;
+        }
+
         async function loadAdminTopCropsChart(municipality) {
             const loadingEl = document.getElementById('adminChartLoading');
             const containerEl = document.getElementById('adminChartContainer');
             const errorEl = document.getElementById('adminChartError');
+            const areaLabelEl = document.getElementById('adminChartAreaLabel');
+            const insightTextEl = document.getElementById('adminChartInsightText');
+            const municipalityName = formatAdminMunicipalityName(municipality);
+
+            areaLabelEl.textContent = municipalityName;
+            insightTextEl.textContent = `Loading the strongest crop outlook for ${municipalityName}...`;
 
             loadingEl.classList.remove('hidden');
             containerEl.classList.add('hidden');
@@ -540,7 +598,13 @@
                 }
 
                 const mobile = isAdminMobile();
-                const municipalityName = municipality.charAt(0) + municipality.slice(1).toLowerCase().replace('trinidad', ' Trinidad');
+                insightTextEl.textContent = buildAdminTopCropsInsight(
+                    crops,
+                    historicalData,
+                    predictedData,
+                    municipalityName,
+                    currentYear
+                );
 
                 const ctx = document.getElementById('adminTopCropsChart').getContext('2d');
                 adminTopCropsChart = new Chart(ctx, {
@@ -549,14 +613,14 @@
                         labels: crops,
                         datasets: [
                             {
-                                label: mobile ? 'Historical' : 'Historical Avg (2015-2024)',
+                                label: mobile ? 'Historical Avg' : 'Historical Average',
                                 data: historicalData,
                                 backgroundColor: 'rgba(34, 197, 94, 0.7)',
                                 borderColor: 'rgba(34, 197, 94, 1)',
                                 borderWidth: mobile ? 1 : 2
                             },
                             {
-                                label: mobile ? `Predicted` : `Predicted (${currentYear})`,
+                                label: mobile ? 'Forecast' : 'This Year Forecast',
                                 data: predictedData,
                                 backgroundColor: 'rgba(59, 130, 246, 0.7)',
                                 borderColor: 'rgba(59, 130, 246, 1)',
@@ -666,6 +730,7 @@
                 console.error('Error loading chart:', error);
                 loadingEl.classList.add('hidden');
                 errorEl.classList.remove('hidden');
+                insightTextEl.textContent = `The outlook summary for ${municipalityName} is temporarily unavailable.`;
             }
         }
 
