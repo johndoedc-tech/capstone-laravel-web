@@ -518,6 +518,12 @@
 
     <script>
         let adminTopCropsChart = null;
+        let adminTopCropsChartState = {
+            municipality: null,
+            municipalityName: '',
+            currentYear: null,
+            rows: []
+        };
 
         function isAdminMobile() {
             return window.innerWidth < 768;
@@ -601,6 +607,140 @@
             return Array.from(merged.values()).slice(0, 5);
         }
 
+        function renderAdminTopCropsChart(rows, municipalityName, currentYear) {
+            const loadingEl = document.getElementById('adminChartLoading');
+            const containerEl = document.getElementById('adminChartContainer');
+            const errorEl = document.getElementById('adminChartError');
+            const insightTextEl = document.getElementById('adminChartInsightText');
+            const crops = rows.map((row) => row.crop);
+            const historicalData = rows.map((row) => row.historical);
+            const predictedData = rows.map((row) => row.predicted);
+            const mobile = isAdminMobile();
+            const chartLabels = crops.map((crop) => mobile ? formatAdminCropAxisLabel(crop) : crop);
+
+            if (!rows.length) {
+                throw new Error('No chart data available');
+            }
+
+            if (adminTopCropsChart) {
+                adminTopCropsChart.destroy();
+            }
+
+            insightTextEl.textContent = buildAdminTopCropsInsight(
+                crops,
+                historicalData,
+                predictedData,
+                municipalityName,
+                currentYear
+            );
+
+            const ctx = document.getElementById('adminTopCropsChart').getContext('2d');
+            adminTopCropsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Historical Average',
+                            data: historicalData,
+                            backgroundColor: 'rgba(34, 197, 94, 0.72)',
+                            borderColor: 'rgba(34, 197, 94, 1)',
+                            borderWidth: 2,
+                            borderRadius: 10,
+                            barPercentage: mobile ? 0.7 : 0.82,
+                            categoryPercentage: mobile ? 0.78 : 0.9
+                        },
+                        {
+                            label: 'This Year Forecast',
+                            data: predictedData,
+                            backgroundColor: 'rgba(59, 130, 246, 0.72)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                            borderRadius: 10,
+                            barPercentage: mobile ? 0.7 : 0.82,
+                            categoryPercentage: mobile ? 0.78 : 0.9
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: mobile ? 'y' : 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 12,
+                                font: {
+                                    size: mobile ? 10 : 12
+                                },
+                                padding: mobile ? 10 : 14
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = mobile ? context.parsed.x : context.parsed.y;
+                                    return label + ': ' + value.toFixed(2) + ' MT';
+                                }
+                            },
+                            titleFont: {
+                                size: mobile ? 10 : 12
+                            },
+                            bodyFont: {
+                                size: mobile ? 9 : 11
+                            }
+                        }
+                    },
+                    scales: {
+                        [mobile ? 'x' : 'y']: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(0);
+                                },
+                                font: {
+                                    size: mobile ? 9 : 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.18)'
+                            }
+                        },
+                        [mobile ? 'y' : 'x']: {
+                            ticks: {
+                                font: {
+                                    size: mobile ? 10 : 11
+                                },
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0,
+                                padding: mobile ? 6 : 8
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: mobile ? 6 : 10,
+                            right: mobile ? 12 : 10,
+                            top: 6,
+                            bottom: mobile ? 6 : 10
+                        }
+                    }
+                }
+            });
+
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            containerEl.classList.remove('hidden');
+        }
+
         async function loadAdminTopCropsChart(municipality) {
             const loadingEl = document.getElementById('adminChartLoading');
             const containerEl = document.getElementById('adminChartContainer');
@@ -637,136 +777,24 @@
 
                 const currentYear = new Date().getFullYear();
                 const rows = mergeAdminTopCropRows(data, currentYear);
-                const crops = rows.map((row) => row.crop);
-                const historicalData = rows.map((row) => row.historical);
-                const predictedData = rows.map((row) => row.predicted);
-                const mobile = isAdminMobile();
-                const chartLabels = crops.map((crop) => mobile ? formatAdminCropAxisLabel(crop) : crop);
 
                 if (!rows.length) {
                     throw new Error('No chart data available');
                 }
 
-                if (adminTopCropsChart) {
-                    adminTopCropsChart.destroy();
-                }
-
-                insightTextEl.textContent = buildAdminTopCropsInsight(
-                    crops,
-                    historicalData,
-                    predictedData,
+                adminTopCropsChartState = {
+                    municipality,
                     municipalityName,
-                    currentYear
-                );
+                    currentYear,
+                    rows
+                };
 
-                const ctx = document.getElementById('adminTopCropsChart').getContext('2d');
-                adminTopCropsChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [
-                            {
-                                label: 'Historical Average',
-                                data: historicalData,
-                                backgroundColor: 'rgba(34, 197, 94, 0.72)',
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: 2,
-                                borderRadius: 10,
-                                barPercentage: mobile ? 0.7 : 0.82,
-                                categoryPercentage: mobile ? 0.78 : 0.9
-                            },
-                            {
-                                label: 'This Year Forecast',
-                                data: predictedData,
-                                backgroundColor: 'rgba(59, 130, 246, 0.72)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
-                                borderWidth: 2,
-                                borderRadius: 10,
-                                barPercentage: mobile ? 0.7 : 0.82,
-                                categoryPercentage: mobile ? 0.78 : 0.9
-                            }
-                        ]
-                    },
-                    options: {
-                        indexAxis: mobile ? 'y' : 'x',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    usePointStyle: true,
-                                    boxWidth: 12,
-                                    font: {
-                                        size: mobile ? 10 : 12
-                                    },
-                                    padding: mobile ? 10 : 14
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.dataset.label || '';
-                                        const value = mobile ? context.parsed.x : context.parsed.y;
-                                        return label + ': ' + value.toFixed(2) + ' MT';
-                                    }
-                                },
-                                titleFont: {
-                                    size: mobile ? 10 : 12
-                                },
-                                bodyFont: {
-                                    size: mobile ? 9 : 11
-                                }
-                            }
-                        },
-                        scales: {
-                            [mobile ? 'x' : 'y']: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return value.toFixed(0);
-                                    },
-                                    font: {
-                                        size: mobile ? 9 : 11
-                                    }
-                                },
-                                grid: {
-                                    color: 'rgba(148, 163, 184, 0.18)'
-                                }
-                            },
-                            [mobile ? 'y' : 'x']: {
-                                ticks: {
-                                    font: {
-                                        size: mobile ? 10 : 11
-                                    },
-                                    autoSkip: false,
-                                    maxRotation: 0,
-                                    minRotation: 0,
-                                    padding: mobile ? 6 : 8
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        layout: {
-                            padding: {
-                                left: mobile ? 6 : 10,
-                                right: mobile ? 12 : 10,
-                                top: 6,
-                                bottom: mobile ? 6 : 10
-                            }
-                        }
-                    }
-                });
-
-                loadingEl.classList.add('hidden');
-                containerEl.classList.remove('hidden');
+                renderAdminTopCropsChart(rows, municipalityName, currentYear);
 
             } catch (error) {
                 console.error('Error loading chart:', error);
                 loadingEl.classList.add('hidden');
+                containerEl.classList.add('hidden');
                 errorEl.classList.remove('hidden');
                 insightTextEl.textContent = `The outlook summary for ${municipalityName} is temporarily unavailable.`;
             }
@@ -774,6 +802,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const municipalitySelect = document.getElementById('adminMunicipalitySelect');
+            const adminMobileLayoutQuery = window.matchMedia('(max-width: 767px)');
 
             loadAdminTopCropsChart(municipalitySelect.value);
 
@@ -781,13 +810,27 @@
                 loadAdminTopCropsChart(this.value);
             });
 
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    loadAdminTopCropsChart(municipalitySelect.value);
-                }, 250);
-            });
+            const rerenderAdminTopCropsChart = function() {
+                if (!adminTopCropsChartState.rows.length) {
+                    return;
+                }
+
+                if (adminTopCropsChartState.municipality !== municipalitySelect.value) {
+                    return;
+                }
+
+                renderAdminTopCropsChart(
+                    adminTopCropsChartState.rows,
+                    adminTopCropsChartState.municipalityName,
+                    adminTopCropsChartState.currentYear
+                );
+            };
+
+            if (typeof adminMobileLayoutQuery.addEventListener === 'function') {
+                adminMobileLayoutQuery.addEventListener('change', rerenderAdminTopCropsChart);
+            } else if (typeof adminMobileLayoutQuery.addListener === 'function') {
+                adminMobileLayoutQuery.addListener(rerenderAdminTopCropsChart);
+            }
         });
     </script>
 </x-admin-layout>
