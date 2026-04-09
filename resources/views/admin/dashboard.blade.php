@@ -273,7 +273,7 @@
                         <p class="text-gray-600 mt-2 text-sm">Loading chart data...</p>
                     </div>
                     <div id="adminChartContainer" class="hidden">
-                        <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
+                        <div class="h-[340px] md:h-[300px] lg:h-[340px]">
                             <canvas id="adminTopCropsChart"></canvas>
                         </div>
                         <div class="mt-4 text-xs lg:text-sm text-gray-500 border-t border-gray-200 pt-3 space-y-1">
@@ -523,6 +523,14 @@
             return window.innerWidth < 768;
         }
 
+        function formatAdminCropAxisLabel(crop) {
+            if (!crop || !crop.includes(' ')) {
+                return crop;
+            }
+
+            return crop.split(' ');
+        }
+
         function formatAdminMunicipalityName(municipality) {
             if (!municipality) {
                 return 'the selected municipality';
@@ -632,6 +640,8 @@
                 const crops = rows.map((row) => row.crop);
                 const historicalData = rows.map((row) => row.historical);
                 const predictedData = rows.map((row) => row.predicted);
+                const mobile = isAdminMobile();
+                const chartLabels = crops.map((crop) => mobile ? formatAdminCropAxisLabel(crop) : crop);
 
                 if (!rows.length) {
                     throw new Error('No chart data available');
@@ -653,7 +663,7 @@
                 adminTopCropsChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: crops,
+                        labels: chartLabels,
                         datasets: [
                             {
                                 label: 'Historical Average',
@@ -661,7 +671,9 @@
                                 backgroundColor: 'rgba(34, 197, 94, 0.72)',
                                 borderColor: 'rgba(34, 197, 94, 1)',
                                 borderWidth: 2,
-                                borderRadius: 10
+                                borderRadius: 10,
+                                barPercentage: mobile ? 0.7 : 0.82,
+                                categoryPercentage: mobile ? 0.78 : 0.9
                             },
                             {
                                 label: 'This Year Forecast',
@@ -669,11 +681,14 @@
                                 backgroundColor: 'rgba(59, 130, 246, 0.72)',
                                 borderColor: 'rgba(59, 130, 246, 1)',
                                 borderWidth: 2,
-                                borderRadius: 10
+                                borderRadius: 10,
+                                barPercentage: mobile ? 0.7 : 0.82,
+                                categoryPercentage: mobile ? 0.78 : 0.9
                             }
                         ]
                     },
                     options: {
+                        indexAxis: mobile ? 'y' : 'x',
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
@@ -684,53 +699,63 @@
                                     usePointStyle: true,
                                     boxWidth: 12,
                                     font: {
-                                        size: isAdminMobile() ? 10 : 12
-                                    }
+                                        size: mobile ? 10 : 12
+                                    },
+                                    padding: mobile ? 10 : 14
                                 }
                             },
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
                                         const label = context.dataset.label || '';
-                                        const value = context.parsed.y;
+                                        const value = mobile ? context.parsed.x : context.parsed.y;
                                         return label + ': ' + value.toFixed(2) + ' MT';
                                     }
                                 },
                                 titleFont: {
-                                    size: isAdminMobile() ? 10 : 12
+                                    size: mobile ? 10 : 12
                                 },
                                 bodyFont: {
-                                    size: isAdminMobile() ? 9 : 11
+                                    size: mobile ? 9 : 11
                                 }
                             }
                         },
                         scales: {
-                            y: {
+                            [mobile ? 'x' : 'y']: {
                                 beginAtZero: true,
                                 ticks: {
                                     callback: function(value) {
                                         return value.toFixed(0);
                                     },
                                     font: {
-                                        size: isAdminMobile() ? 9 : 11
+                                        size: mobile ? 9 : 11
                                     }
                                 },
                                 grid: {
                                     color: 'rgba(148, 163, 184, 0.18)'
                                 }
                             },
-                            x: {
+                            [mobile ? 'y' : 'x']: {
                                 ticks: {
                                     font: {
-                                        size: isAdminMobile() ? 10 : 11
+                                        size: mobile ? 10 : 11
                                     },
                                     autoSkip: false,
                                     maxRotation: 0,
-                                    minRotation: 0
+                                    minRotation: 0,
+                                    padding: mobile ? 6 : 8
                                 },
                                 grid: {
                                     display: false
                                 }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: mobile ? 6 : 10,
+                                right: mobile ? 12 : 10,
+                                top: 6,
+                                bottom: mobile ? 6 : 10
                             }
                         }
                     }
