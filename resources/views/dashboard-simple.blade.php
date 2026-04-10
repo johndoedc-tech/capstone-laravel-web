@@ -404,8 +404,15 @@
                     </div>
 
                     <div x-show="municipality && insightText" class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
-                        <p class="mt-2 text-sm leading-6 text-gray-700" x-text="insightText"></p>
+                        <div class="flex items-start gap-3">
+                            <div class="h-16 w-16 shrink-0 rounded-xl border border-primary-100 bg-white/80 p-1">
+                                <div x-ref="insightAvatar" class="h-full w-full" aria-hidden="true"></div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
+                                <p class="mt-2 text-sm leading-6 text-gray-700" x-text="insightDisplayText" aria-live="polite"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -643,6 +650,7 @@
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     
     <script>
         // ============================================
@@ -1144,13 +1152,22 @@
                 error: false,
                 chart: null,
                 insightText: '',
+                insightDisplayText: '',
                 recommendedCrop: '',
                 recommendationMonth: '',
                 chartCrops: [],
                 chartHistoricalData: [],
                 chartPredictedData: [],
+                insightTypingTimer: null,
+                isTypingInsight: false,
+                insightToken: 0,
+                animationInstance: null,
 
                 init() {
+                    this.$nextTick(() => {
+                        this.initInsightAnimation();
+                    });
+
                     if (this.municipality) {
                         this.loadChart();
                     }
@@ -1178,8 +1195,150 @@
                     }
                 },
 
+                prefersReducedMotion() {
+                    return typeof window.matchMedia === 'function'
+                        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                },
+
+                initInsightAnimation() {
+                    if (this.prefersReducedMotion()) {
+                        this.destroyInsightAnimation();
+                        return;
+                    }
+
+                    if (this.animationInstance || typeof lottie === 'undefined' || !this.$refs.insightAvatar) {
+                        return;
+                    }
+
+                    this.animationInstance = lottie.loadAnimation({
+                        container: this.$refs.insightAvatar,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: false,
+                        path: '{{ asset('animations/talking-character.json') }}',
+                        rendererSettings: {
+                            preserveAspectRatio: 'xMidYMid meet'
+                        }
+                    });
+                },
+
+                playInsightAnimation() {
+                    if (this.prefersReducedMotion()) {
+                        return;
+                    }
+
+                    this.initInsightAnimation();
+
+                    if (!this.animationInstance) {
+                        return;
+                    }
+
+                    this.animationInstance.goToAndPlay(0, true);
+                },
+
+                stopInsightAnimation() {
+                    if (!this.animationInstance) {
+                        return;
+                    }
+
+                    const totalFrames = Number(this.animationInstance.totalFrames || 0);
+
+                    if (totalFrames > 1) {
+                        this.animationInstance.goToAndStop(totalFrames - 1, true);
+                        return;
+                    }
+
+                    this.animationInstance.stop();
+                },
+
+                destroyInsightAnimation() {
+                    if (!this.animationInstance) {
+                        return;
+                    }
+
+                    this.animationInstance.destroy();
+                    this.animationInstance = null;
+                },
+
+                cancelInsightNarration() {
+                    this.insightToken += 1;
+
+                    if (this.insightTypingTimer) {
+                        clearInterval(this.insightTypingTimer);
+                        this.insightTypingTimer = null;
+                    }
+
+                    this.isTypingInsight = false;
+                },
+
+                narrateInsightText(nextText) {
+                    const safeText = String(nextText || '');
+
+                    this.cancelInsightNarration();
+
+                    if (!safeText) {
+                        this.insightText = '';
+                        this.insightDisplayText = '';
+                        this.stopInsightAnimation();
+                        return;
+                    }
+
+                    this.insightText = safeText;
+
+                    if (this.prefersReducedMotion()) {
+                        this.insightDisplayText = safeText;
+                        this.stopInsightAnimation();
+                        return;
+                    }
+
+                    this.insightDisplayText = '';
+                    this.isTypingInsight = true;
+                    this.playInsightAnimation();
+
+                    const token = this.insightToken;
+                    const typingDelay = 24;
+                    let charIndex = 0;
+
+                    const timerId = window.setInterval(() => {
+                        if (token !== this.insightToken) {
+                            clearInterval(timerId);
+
+                            if (this.insightTypingTimer === timerId) {
+                                this.insightTypingTimer = null;
+                            }
+
+                            return;
+                        }
+
+                        charIndex += 1;
+                        this.insightDisplayText = safeText.slice(0, charIndex);
+
+                        if (charIndex < safeText.length) {
+                            return;
+                        }
+
+                        clearInterval(timerId);
+
+                        if (this.insightTypingTimer === timerId) {
+                            this.insightTypingTimer = null;
+                        }
+
+                        this.isTypingInsight = false;
+
+                        window.setTimeout(() => {
+                            if (token === this.insightToken) {
+                                this.stopInsightAnimation();
+                            }
+                        }, 200);
+                    }, typingDelay);
+
+                    this.insightTypingTimer = timerId;
+                },
+
                 refreshInsightText() {
-                    this.insightText = this.buildTakeaway(this.chartCrops, this.chartPredictedData, this.chartHistoricalData);
+                    this.narrateInsightText(
+                        this.buildTakeaway(this.chartCrops, this.chartPredictedData, this.chartHistoricalData)
+                    );
                 },
 
                 buildTakeaway(crops, predictedData, historicalData) {
@@ -1210,8 +1369,11 @@
 
                 async loadChart() {
                     this.destroyChart();
+                    this.cancelInsightNarration();
                     this.error = false;
                     this.insightText = '';
+                    this.insightDisplayText = '';
+                    this.stopInsightAnimation();
                     this.chartCrops = [];
                     this.chartHistoricalData = [];
                     this.chartPredictedData = [];

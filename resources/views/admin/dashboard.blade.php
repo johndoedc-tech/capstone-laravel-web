@@ -255,10 +255,17 @@
 
                         <div id="adminChartInsightCard"
                             class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
-                            <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
-                            <p id="adminChartInsightText" class="mt-2 text-sm leading-6 text-gray-700">
-                                Loading the strongest crop outlook for the selected municipality...
-                            </p>
+                            <div class="flex items-start gap-3">
+                                <div class="h-16 w-16 shrink-0 rounded-xl border border-primary-100 bg-white/80 p-1">
+                                    <div id="adminChartInsightAvatar" class="h-full w-full" aria-hidden="true"></div>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
+                                    <p id="adminChartInsightText" class="mt-2 text-sm leading-6 text-gray-700" aria-live="polite">
+                                        Loading the strongest crop outlook for the selected municipality...
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="adminChartLoading" class="text-center py-8">
@@ -515,6 +522,7 @@
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 
     <script>
         let adminTopCropsChart = null;
@@ -522,7 +530,11 @@
             municipality: null,
             municipalityName: '',
             currentYear: null,
-            rows: []
+            rows: [],
+            insightTypingTimer: null,
+            insightToken: 0,
+            isTyping: false,
+            animationInstance: null
         };
 
         function isAdminMobile() {
@@ -572,6 +584,156 @@
             return `${predictedLeader} has the strongest ${currentYear} outlook in ${municipalityName}, while ${historicalLeader} leads the historical average.`;
         }
 
+        function adminPrefersReducedMotion() {
+            return typeof window.matchMedia === 'function'
+                && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+
+        function initAdminInsightAnimation() {
+            if (adminPrefersReducedMotion()) {
+                destroyAdminInsightAnimation();
+                return;
+            }
+
+            if (adminTopCropsChartState.animationInstance || typeof lottie === 'undefined') {
+                return;
+            }
+
+            const container = document.getElementById('adminChartInsightAvatar');
+
+            if (!container) {
+                return;
+            }
+
+            adminTopCropsChartState.animationInstance = lottie.loadAnimation({
+                container,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false,
+                path: '{{ asset('animations/talking-character.json') }}',
+                rendererSettings: {
+                    preserveAspectRatio: 'xMidYMid meet'
+                }
+            });
+        }
+
+        function playAdminInsightAnimation() {
+            if (adminPrefersReducedMotion()) {
+                return;
+            }
+
+            initAdminInsightAnimation();
+
+            if (!adminTopCropsChartState.animationInstance) {
+                return;
+            }
+
+            adminTopCropsChartState.animationInstance.goToAndPlay(0, true);
+        }
+
+        function stopAdminInsightAnimation() {
+            if (!adminTopCropsChartState.animationInstance) {
+                return;
+            }
+
+            const totalFrames = Number(adminTopCropsChartState.animationInstance.totalFrames || 0);
+
+            if (totalFrames > 1) {
+                adminTopCropsChartState.animationInstance.goToAndStop(totalFrames - 1, true);
+                return;
+            }
+
+            adminTopCropsChartState.animationInstance.stop();
+        }
+
+        function destroyAdminInsightAnimation() {
+            if (!adminTopCropsChartState.animationInstance) {
+                return;
+            }
+
+            adminTopCropsChartState.animationInstance.destroy();
+            adminTopCropsChartState.animationInstance = null;
+        }
+
+        function cancelAdminInsightNarration() {
+            adminTopCropsChartState.insightToken += 1;
+
+            if (!adminTopCropsChartState.insightTypingTimer) {
+                adminTopCropsChartState.isTyping = false;
+                return;
+            }
+
+            clearInterval(adminTopCropsChartState.insightTypingTimer);
+            adminTopCropsChartState.insightTypingTimer = null;
+            adminTopCropsChartState.isTyping = false;
+        }
+
+        function narrateAdminInsightText(nextText) {
+            const insightTextEl = document.getElementById('adminChartInsightText');
+            const safeText = String(nextText || '');
+
+            cancelAdminInsightNarration();
+
+            if (!insightTextEl) {
+                return;
+            }
+
+            if (!safeText) {
+                insightTextEl.textContent = '';
+                stopAdminInsightAnimation();
+                return;
+            }
+
+            if (adminPrefersReducedMotion()) {
+                insightTextEl.textContent = safeText;
+                stopAdminInsightAnimation();
+                return;
+            }
+
+            insightTextEl.textContent = '';
+            adminTopCropsChartState.isTyping = true;
+            playAdminInsightAnimation();
+
+            const token = adminTopCropsChartState.insightToken;
+            const typingDelay = 24;
+            let charIndex = 0;
+
+            const timerId = window.setInterval(() => {
+                if (token !== adminTopCropsChartState.insightToken) {
+                    clearInterval(timerId);
+
+                    if (adminTopCropsChartState.insightTypingTimer === timerId) {
+                        adminTopCropsChartState.insightTypingTimer = null;
+                    }
+
+                    return;
+                }
+
+                charIndex += 1;
+                insightTextEl.textContent = safeText.slice(0, charIndex);
+
+                if (charIndex < safeText.length) {
+                    return;
+                }
+
+                clearInterval(timerId);
+
+                if (adminTopCropsChartState.insightTypingTimer === timerId) {
+                    adminTopCropsChartState.insightTypingTimer = null;
+                }
+
+                adminTopCropsChartState.isTyping = false;
+
+                window.setTimeout(() => {
+                    if (token === adminTopCropsChartState.insightToken) {
+                        stopAdminInsightAnimation();
+                    }
+                }, 200);
+            }, typingDelay);
+
+            adminTopCropsChartState.insightTypingTimer = timerId;
+        }
+
         function mergeAdminTopCropRows(data, currentYear) {
             const merged = new Map();
 
@@ -607,7 +769,7 @@
             return Array.from(merged.values()).slice(0, 5);
         }
 
-        function renderAdminTopCropsChart(rows, municipalityName, currentYear) {
+        function renderAdminTopCropsChart(rows, municipalityName, currentYear, shouldNarrate = true) {
             const loadingEl = document.getElementById('adminChartLoading');
             const containerEl = document.getElementById('adminChartContainer');
             const errorEl = document.getElementById('adminChartError');
@@ -626,13 +788,21 @@
                 adminTopCropsChart.destroy();
             }
 
-            insightTextEl.textContent = buildAdminTopCropsInsight(
+            const insightText = buildAdminTopCropsInsight(
                 crops,
                 historicalData,
                 predictedData,
                 municipalityName,
                 currentYear
             );
+
+            if (shouldNarrate) {
+                narrateAdminInsightText(insightText);
+            } else {
+                cancelAdminInsightNarration();
+                insightTextEl.textContent = insightText;
+                stopAdminInsightAnimation();
+            }
 
             const ctx = document.getElementById('adminTopCropsChart').getContext('2d');
             adminTopCropsChart = new Chart(ctx, {
@@ -749,6 +919,8 @@
             const insightTextEl = document.getElementById('adminChartInsightText');
             const municipalityName = formatAdminMunicipalityName(municipality);
 
+            cancelAdminInsightNarration();
+            stopAdminInsightAnimation();
             areaLabelEl.textContent = municipalityName;
             insightTextEl.textContent = `Loading the strongest crop outlook for ${municipalityName}...`;
 
@@ -783,6 +955,7 @@
                 }
 
                 adminTopCropsChartState = {
+                    ...adminTopCropsChartState,
                     municipality,
                     municipalityName,
                     currentYear,
@@ -804,6 +977,7 @@
             const municipalitySelect = document.getElementById('adminMunicipalitySelect');
             const adminMobileLayoutQuery = window.matchMedia('(max-width: 767px)');
 
+            initAdminInsightAnimation();
             loadAdminTopCropsChart(municipalitySelect.value);
 
             municipalitySelect.addEventListener('change', function() {
@@ -822,7 +996,8 @@
                 renderAdminTopCropsChart(
                     adminTopCropsChartState.rows,
                     adminTopCropsChartState.municipalityName,
-                    adminTopCropsChartState.currentYear
+                    adminTopCropsChartState.currentYear,
+                    false
                 );
             };
 
@@ -831,6 +1006,11 @@
             } else if (typeof adminMobileLayoutQuery.addListener === 'function') {
                 adminMobileLayoutQuery.addListener(rerenderAdminTopCropsChart);
             }
+
+            window.addEventListener('beforeunload', function() {
+                cancelAdminInsightNarration();
+                destroyAdminInsightAnimation();
+            });
         });
     </script>
 </x-admin-layout>
