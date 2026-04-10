@@ -609,8 +609,8 @@
             if (!svg) return;
 
             const isMobile = mode === 'mobile';
-            const scale = isMobile ? 1.42 : 1.46;
-            const offsetY = isMobile ? 12 : 10;
+            const scale = isMobile ? 1.46 : 1.50;
+            const offsetY = isMobile ? 14 : 12;
 
             svg.style.overflow = 'visible';
             svg.style.transformOrigin = '50% 62%';
