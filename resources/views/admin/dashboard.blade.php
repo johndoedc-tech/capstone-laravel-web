@@ -268,7 +268,7 @@
                             </div>
                             {{-- Desktop: horizontal with large character --}}
                             <div class="hidden sm:flex items-end relative">
-                                <div class="shrink-0 relative z-10" style="width: 200px; margin-right: -16px; margin-bottom: -4px;">
+                                <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
                                     <div class="overflow-visible">
                                         <div id="adminChartInsightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
                                     </div>
