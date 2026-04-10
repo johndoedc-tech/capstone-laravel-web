@@ -256,7 +256,7 @@
                         <div id="adminChartInsightCard"
                             class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
                             <div class="flex items-start gap-3">
-                                <div class="h-16 w-16 shrink-0 rounded-xl border border-primary-100 bg-white/80 p-1">
+                                <div class="h-24 w-24 shrink-0 rounded-2xl border border-primary-100 bg-white/85 p-1 sm:h-28 sm:w-28">
                                     <div id="adminChartInsightAvatar" class="h-full w-full" aria-hidden="true"></div>
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -612,7 +612,7 @@
                 autoplay: false,
                 path: '{{ asset('animations/talking-character.json') }}',
                 rendererSettings: {
-                    preserveAspectRatio: 'xMidYMid meet'
+                    preserveAspectRatio: 'xMidYMid slice'
                 }
             });
         }
