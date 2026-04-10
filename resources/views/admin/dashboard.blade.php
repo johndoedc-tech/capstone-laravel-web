@@ -254,15 +254,15 @@
                         </div>
 
                         <div id="adminChartInsightCard" class="w-full lg:max-w-xl">
-                            <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
-                                <div class="inline-flex shrink-0 items-center justify-center rounded-2xl border border-primary-100 bg-white/95 p-2 shadow-sm">
-                                    <div class="h-32 w-32 overflow-hidden rounded-xl sm:h-36 sm:w-36 lg:h-40 lg:w-40">
-                                        <div id="adminChartInsightAvatar" class="h-full w-full" aria-hidden="true"></div>
+                            <div class="flex items-end gap-0 relative">
+                                <div class="shrink-0 relative z-10" style="width: 80px; margin-right: -10px; margin-bottom: -4px;">
+                                    <div class="w-full h-full overflow-visible">
+                                        <div id="adminChartInsightAvatar" class="w-full h-full" style="width: 80px; height: 80px;" aria-hidden="true"></div>
                                     </div>
                                 </div>
-                                <div class="min-w-0 flex-1 rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
-                                    <p id="adminChartInsightText" class="mt-2 text-sm leading-6 text-gray-700" aria-live="polite">
+                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                    <p id="adminChartInsightText" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
                                         Loading the strongest crop outlook for the selected municipality...
                                     </p>
                                 </div>

@@ -628,6 +628,23 @@
                                 <option value="MANKAYAN">Mankayan</option>
                             </select>
                         </div>
+
+                        {{-- Quick Insight Card with animated character --}}
+                        <div id="farmerChartInsightCard" class="w-full lg:max-w-xl">
+                            <div class="flex items-end gap-0 relative">
+                                <div class="shrink-0 relative z-10" style="width: 80px; margin-right: -10px; margin-bottom: -4px;">
+                                    <div class="w-full h-full overflow-visible">
+                                        <div id="farmerChartInsightAvatar" class="w-full h-full" style="width: 80px; height: 80px;" aria-hidden="true"></div>
+                                    </div>
+                                </div>
+                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                    <p id="farmerChartInsightText" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                        Loading the strongest crop outlook for the selected municipality...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div id="chartLoading" class="text-center py-8">
                         <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -795,8 +812,9 @@
         </div>
     </div>
 
-    <!-- Chart.js CDN -->
+    <!-- Chart.js & Lottie CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     
     <script>
         // ============================================
@@ -1274,10 +1292,111 @@
         // Original Top Crops Chart
         // ============================================
         let topCropsChart = null;
+        let farmerInsightState = {
+            insightTypingTimer: null,
+            insightToken: 0,
+            isTyping: false,
+            animationInstance: null
+        };
 
         // Check if mobile device
         function isMobile() {
             return window.innerWidth < 768;
+        }
+
+        function farmerPrefersReducedMotion() {
+            return typeof window.matchMedia === 'function'
+                && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+
+        function initFarmerInsightAnimation() {
+            if (farmerPrefersReducedMotion()) {
+                destroyFarmerInsightAnimation();
+                return;
+            }
+            if (farmerInsightState.animationInstance || typeof lottie === 'undefined') return;
+            const container = document.getElementById('farmerChartInsightAvatar');
+            if (!container) return;
+            farmerInsightState.animationInstance = lottie.loadAnimation({
+                container,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false,
+                path: '{{ asset('animations/talking-character.json') }}',
+                rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
+            });
+        }
+
+        function playFarmerInsightAnimation() {
+            if (farmerPrefersReducedMotion()) return;
+            initFarmerInsightAnimation();
+            if (!farmerInsightState.animationInstance) return;
+            farmerInsightState.animationInstance.goToAndPlay(0, true);
+        }
+
+        function stopFarmerInsightAnimation() {
+            if (!farmerInsightState.animationInstance) return;
+            const totalFrames = Number(farmerInsightState.animationInstance.totalFrames || 0);
+            if (totalFrames > 1) {
+                farmerInsightState.animationInstance.goToAndStop(totalFrames - 1, true);
+                return;
+            }
+            farmerInsightState.animationInstance.stop();
+        }
+
+        function destroyFarmerInsightAnimation() {
+            if (!farmerInsightState.animationInstance) return;
+            farmerInsightState.animationInstance.destroy();
+            farmerInsightState.animationInstance = null;
+        }
+
+        function cancelFarmerInsightNarration() {
+            farmerInsightState.insightToken += 1;
+            if (!farmerInsightState.insightTypingTimer) {
+                farmerInsightState.isTyping = false;
+                return;
+            }
+            clearInterval(farmerInsightState.insightTypingTimer);
+            farmerInsightState.insightTypingTimer = null;
+            farmerInsightState.isTyping = false;
+        }
+
+        function narrateFarmerInsightText(nextText) {
+            const el = document.getElementById('farmerChartInsightText');
+            const safeText = String(nextText || '');
+            cancelFarmerInsightNarration();
+            if (!el) return;
+            if (!safeText) { el.textContent = ''; stopFarmerInsightAnimation(); return; }
+            if (farmerPrefersReducedMotion()) { el.textContent = safeText; stopFarmerInsightAnimation(); return; }
+            el.textContent = '';
+            farmerInsightState.isTyping = true;
+            playFarmerInsightAnimation();
+            const token = farmerInsightState.insightToken;
+            let charIndex = 0;
+            const timerId = window.setInterval(() => {
+                if (token !== farmerInsightState.insightToken) { clearInterval(timerId); return; }
+                charIndex += 1;
+                el.textContent = safeText.slice(0, charIndex);
+                if (charIndex >= safeText.length) {
+                    clearInterval(timerId);
+                    farmerInsightState.insightTypingTimer = null;
+                    farmerInsightState.isTyping = false;
+                    window.setTimeout(() => { if (token === farmerInsightState.insightToken) stopFarmerInsightAnimation(); }, 200);
+                }
+            }, 24);
+            farmerInsightState.insightTypingTimer = timerId;
+        }
+
+        function buildFarmerInsight(crops, historicalData, predictedData, municipalityName, currentYear) {
+            if (!crops.length) return `No crop outlook data is available for ${municipalityName} yet.`;
+            const predictedLeaderIndex = predictedData.reduce((best, val, i, arr) => val > arr[best] ? i : best, 0);
+            const historicalLeaderIndex = historicalData.reduce((best, val, i, arr) => val > arr[best] ? i : best, 0);
+            const predictedLeader = crops[predictedLeaderIndex];
+            const historicalLeader = crops[historicalLeaderIndex];
+            if (predictedLeader === historicalLeader) {
+                return `${predictedLeader} remains the strongest full-year crop in ${municipalityName}, leading both the historical average and the ${currentYear} forecast.`;
+            }
+            return `${predictedLeader} has the strongest ${currentYear} outlook in ${municipalityName}, while ${historicalLeader} leads the historical average.`;
         }
 
         // Load chart data for selected municipality
@@ -1330,6 +1449,10 @@
 
                 const mobile = isMobile();
                 const municipalityName = municipality.charAt(0) + municipality.slice(1).toLowerCase().replace('trinidad', ' Trinidad');
+
+                // Generate and narrate insight
+                const insightText = buildFarmerInsight(crops, historicalData, predictedData, municipalityName, currentYear);
+                narrateFarmerInsightText(insightText);
 
                 // Create new chart
                 const ctx = document.getElementById('topCropsChart').getContext('2d');
