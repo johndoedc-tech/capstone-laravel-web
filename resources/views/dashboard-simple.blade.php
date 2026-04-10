@@ -1180,6 +1180,7 @@
                 isTypingInsight: false,
                 insightToken: 0,
                 animationInstance: null,
+                insightObserver: null,
 
                 init() {
                     this.$nextTick(() => {
@@ -1312,48 +1313,69 @@
                         return;
                     }
 
-                    this.insightDisplayText = '';
-                    this.isTypingInsight = true;
-                    this.playInsightAnimation();
+                    const cardEl = this.$refs.insightAvatar ? this.$refs.insightAvatar.closest('.flex.items-center') : null;
 
-                    const token = this.insightToken;
-                    const typingDelay = 24;
-                    let charIndex = 0;
+                    const startTyping = () => {
+                        this.cancelInsightNarration();
+                        this.insightDisplayText = '';
+                        this.isTypingInsight = true;
+                        this.playInsightAnimation();
 
-                    const timerId = window.setInterval(() => {
-                        if (token !== this.insightToken) {
+                        const token = this.insightToken;
+                        const typingDelay = 24;
+                        let charIndex = 0;
+
+                        const timerId = window.setInterval(() => {
+                            if (token !== this.insightToken) {
+                                clearInterval(timerId);
+
+                                if (this.insightTypingTimer === timerId) {
+                                    this.insightTypingTimer = null;
+                                }
+
+                                return;
+                            }
+
+                            charIndex += 1;
+                            this.insightDisplayText = safeText.slice(0, charIndex);
+
+                            if (charIndex < safeText.length) {
+                                return;
+                            }
+
                             clearInterval(timerId);
 
                             if (this.insightTypingTimer === timerId) {
                                 this.insightTypingTimer = null;
                             }
 
-                            return;
-                        }
+                            this.isTypingInsight = false;
 
-                        charIndex += 1;
-                        this.insightDisplayText = safeText.slice(0, charIndex);
+                            window.setTimeout(() => {
+                                if (token === this.insightToken) {
+                                    this.stopInsightAnimation();
+                                }
+                            }, 200);
+                        }, typingDelay);
 
-                        if (charIndex < safeText.length) {
-                            return;
-                        }
+                        this.insightTypingTimer = timerId;
+                    };
 
-                        clearInterval(timerId);
+                    if (this.insightObserver) {
+                        this.insightObserver.disconnect();
+                    }
 
-                        if (this.insightTypingTimer === timerId) {
-                            this.insightTypingTimer = null;
-                        }
-
-                        this.isTypingInsight = false;
-
-                        window.setTimeout(() => {
-                            if (token === this.insightToken) {
-                                this.stopInsightAnimation();
+                    if (cardEl && typeof IntersectionObserver !== 'undefined') {
+                        this.insightObserver = new IntersectionObserver((entries) => {
+                            if (entries[0].isIntersecting) {
+                                this.insightObserver.disconnect();
+                                startTyping();
                             }
-                        }, 200);
-                    }, typingDelay);
-
-                    this.insightTypingTimer = timerId;
+                        }, { threshold: 0.3 });
+                        this.insightObserver.observe(cardEl);
+                    } else {
+                        startTyping();
+                    }
                 },
 
                 refreshInsightText() {

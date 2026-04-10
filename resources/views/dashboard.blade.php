@@ -1318,7 +1318,8 @@
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
-            animationInstance: null
+            animationInstance: null,
+            insightObserver: null
         };
 
         // Check if mobile device
@@ -1401,33 +1402,76 @@
 
         function narrateFarmerInsightText(nextText) {
             const el = document.getElementById('farmerChartInsightText');
+            const cardEl = document.getElementById('farmerChartInsightCard');
             const safeText = String(nextText || '');
             cancelFarmerInsightNarration();
-            if (!el) return;
+            if (!el || !cardEl) return;
 
             function setAllText(text) {
-                if (el) el.textContent = text;
+                el.textContent = text;
             }
 
-            if (!safeText) { setAllText(''); stopFarmerInsightAnimation(); return; }
-            if (farmerPrefersReducedMotion()) { setAllText(safeText); stopFarmerInsightAnimation(); return; }
+            if (!safeText || farmerPrefersReducedMotion()) {
+                setAllText(safeText);
+                stopFarmerInsightAnimation();
+                return;
+            }
+
             setAllText('');
-            farmerInsightState.isTyping = true;
-            playFarmerInsightAnimation();
-            const token = farmerInsightState.insightToken;
-            let charIndex = 0;
-            const timerId = window.setInterval(() => {
-                if (token !== farmerInsightState.insightToken) { clearInterval(timerId); return; }
-                charIndex += 1;
-                setAllText(safeText.slice(0, charIndex));
-                if (charIndex >= safeText.length) {
-                    clearInterval(timerId);
-                    farmerInsightState.insightTypingTimer = null;
-                    farmerInsightState.isTyping = false;
-                    window.setTimeout(() => { if (token === farmerInsightState.insightToken) stopFarmerInsightAnimation(); }, 200);
-                }
-            }, 24);
-            farmerInsightState.insightTypingTimer = timerId;
+            
+            const startTyping = () => {
+                cancelFarmerInsightNarration();
+                setAllText('');
+                farmerInsightState.isTyping = true;
+                playFarmerInsightAnimation();
+
+                const token = farmerInsightState.insightToken;
+                let charIndex = 0;
+                
+                const timerId = window.setInterval(() => {
+                    if (token !== farmerInsightState.insightToken) {
+                        clearInterval(timerId);
+                        if (farmerInsightState.insightTypingTimer === timerId) {
+                            farmerInsightState.insightTypingTimer = null;
+                        }
+                        return;
+                    }
+                    
+                    charIndex += 1;
+                    setAllText(safeText.slice(0, charIndex));
+                    
+                    if (charIndex >= safeText.length) {
+                        clearInterval(timerId);
+                        if (farmerInsightState.insightTypingTimer === timerId) {
+                            farmerInsightState.insightTypingTimer = null;
+                        }
+                        farmerInsightState.isTyping = false;
+                        
+                        window.setTimeout(() => {
+                            if (token === farmerInsightState.insightToken) {
+                                stopFarmerInsightAnimation();
+                            }
+                        }, 200);
+                    }
+                }, 24);
+                farmerInsightState.insightTypingTimer = timerId;
+            };
+
+            if (farmerInsightState.insightObserver) {
+                farmerInsightState.insightObserver.disconnect();
+            }
+
+            if (typeof IntersectionObserver !== 'undefined') {
+                farmerInsightState.insightObserver = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        farmerInsightState.insightObserver.disconnect();
+                        startTyping();
+                    }
+                }, { threshold: 0.3 });
+                farmerInsightState.insightObserver.observe(cardEl);
+            } else {
+                startTyping();
+            }
         }
 
         function buildFarmerInsight(crops, historicalData, predictedData, municipalityName, currentYear) {

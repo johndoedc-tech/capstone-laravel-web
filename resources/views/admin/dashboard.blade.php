@@ -540,7 +540,8 @@
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
-            animationInstance: null
+            animationInstance: null,
+            insightObserver: null
         };
 
         function isAdminMobile() {
@@ -668,72 +669,84 @@
 
         function narrateAdminInsightText(nextText) {
             const insightTextEl = document.getElementById('adminChartInsightText');
+            const cardEl = document.getElementById('adminChartInsightCard');
             const safeText = String(nextText || '');
 
             cancelAdminInsightNarration();
 
-            if (!insightTextEl) {
+            if (!insightTextEl || !cardEl) {
                 return;
             }
 
             function setAllText(text) {
-                if (insightTextEl) insightTextEl.textContent = text;
+                insightTextEl.textContent = text;
             }
 
-            if (!safeText) {
-                setAllText('');
-                stopAdminInsightAnimation();
-                return;
-            }
-
-            if (adminPrefersReducedMotion()) {
+            if (!safeText || adminPrefersReducedMotion()) {
                 setAllText(safeText);
                 stopAdminInsightAnimation();
                 return;
             }
 
             setAllText('');
-            adminTopCropsChartState.isTyping = true;
-            playAdminInsightAnimation();
+            
+            const startTyping = () => {
+                cancelAdminInsightNarration();
+                setAllText('');
+                adminTopCropsChartState.isTyping = true;
+                playAdminInsightAnimation();
 
-            const token = adminTopCropsChartState.insightToken;
-            const typingDelay = 24;
-            let charIndex = 0;
+                const token = adminTopCropsChartState.insightToken;
+                const typingDelay = 24;
+                let charIndex = 0;
 
-            const timerId = window.setInterval(() => {
-                if (token !== adminTopCropsChartState.insightToken) {
+                const timerId = window.setInterval(() => {
+                    if (token !== adminTopCropsChartState.insightToken) {
+                        clearInterval(timerId);
+                        if (adminTopCropsChartState.insightTypingTimer === timerId) {
+                            adminTopCropsChartState.insightTypingTimer = null;
+                        }
+                        return;
+                    }
+
+                    charIndex += 1;
+                    setAllText(safeText.slice(0, charIndex));
+
+                    if (charIndex < safeText.length) {
+                        return;
+                    }
+
                     clearInterval(timerId);
-
                     if (adminTopCropsChartState.insightTypingTimer === timerId) {
                         adminTopCropsChartState.insightTypingTimer = null;
                     }
+                    adminTopCropsChartState.isTyping = false;
 
-                    return;
-                }
+                    window.setTimeout(() => {
+                        if (token === adminTopCropsChartState.insightToken) {
+                            stopAdminInsightAnimation();
+                        }
+                    }, 200);
+                }, typingDelay);
 
-                charIndex += 1;
-                setAllText(safeText.slice(0, charIndex));
+                adminTopCropsChartState.insightTypingTimer = timerId;
+            };
 
-                if (charIndex < safeText.length) {
-                    return;
-                }
+            if (adminTopCropsChartState.insightObserver) {
+                adminTopCropsChartState.insightObserver.disconnect();
+            }
 
-                clearInterval(timerId);
-
-                if (adminTopCropsChartState.insightTypingTimer === timerId) {
-                    adminTopCropsChartState.insightTypingTimer = null;
-                }
-
-                adminTopCropsChartState.isTyping = false;
-
-                window.setTimeout(() => {
-                    if (token === adminTopCropsChartState.insightToken) {
-                        stopAdminInsightAnimation();
+            if (typeof IntersectionObserver !== 'undefined') {
+                adminTopCropsChartState.insightObserver = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        adminTopCropsChartState.insightObserver.disconnect();
+                        startTyping();
                     }
-                }, 200);
-            }, typingDelay);
-
-            adminTopCropsChartState.insightTypingTimer = timerId;
+                }, { threshold: 0.3 });
+                adminTopCropsChartState.insightObserver.observe(cardEl);
+            } else {
+                startTyping();
+            }
         }
 
         function mergeAdminTopCropRows(data, currentYear) {
