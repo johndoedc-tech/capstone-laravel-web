@@ -648,16 +648,23 @@
                         </div>
 
                         <div id="farmerChartInsightCard" class="flex items-center relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-10 w-[110px] sm:w-[140px] -mr-3 sm:-mr-4">
+                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
                                 <div class="overflow-hidden">
                                     <div id="farmerChartInsightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 p-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 relative z-0">
-                                <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
-                                <p id="farmerChartInsightText" class="text-xs sm:text-sm leading-relaxed text-gray-200" aria-live="polite">
-                                    Loading the strongest crop outlook for the selected municipality...
-                                </p>
+                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
+                                {{-- Thought Bubble Tails --}}
+                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                
+                                {{-- Main Cloud Box --}}
+                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
+                                    <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
+                                    <p id="farmerChartInsightText" class="text-xs sm:text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                        Loading the strongest crop outlook for the selected municipality...
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
