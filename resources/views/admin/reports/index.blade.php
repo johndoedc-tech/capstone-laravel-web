@@ -160,42 +160,84 @@
                 </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Prediction Snapshot -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-4">Recent Predictions Activity</h3>
-                    
-                    @if($recentPredictions->count() > 0)
-                        <div class="space-y-3">
-                            @foreach($recentPredictions as $prediction)
-                                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        {{ strtoupper(substr($prediction->user->name ?? 'U', 0, 1)) }}
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900">{{ $prediction->user->name ?? 'Unknown' }}</p>
-                                        <p class="text-xs text-gray-600">
-                                            Predicted {{ number_format($prediction->predicted_production_mt, 2) }} MT of {{ $prediction->crop }} 
-                                            in {{ $prediction->municipality }}
-                                        </p>
-                                    </div>
-                                    <div class="text-right flex-shrink-0">
-                                        <p class="text-xs text-gray-500">{{ $prediction->created_at->diffForHumans() }}</p>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                            {{ number_format(($prediction->confidence_score ?? 0) * 100, 1) }}% confidence
-                                        </span>
-                                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-base lg:text-lg font-semibold text-gray-900">Prediction Snapshot</h3>
+                            <p class="text-xs lg:text-sm text-gray-600 mt-1">
+                                Quick report signals from recent successful predictions
+                            </p>
+                        </div>
+                        <p class="text-xs text-gray-500">
+                            30-day window since {{ $predictionSummary['window_start']->format('M d, Y') }}
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4">
+                        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">This Week</p>
+                                    <p class="mt-2 text-2xl font-bold text-gray-900">
+                                        {{ number_format($predictionSummary['predictions_this_week']) }}
+                                    </p>
+                                    <p class="mt-1 text-xs text-gray-600">
+                                        Successful predictions since {{ $predictionSummary['week_start']->format('M d') }}
+                                    </p>
                                 </div>
-                            @endforeach
+                                <div class="rounded-xl bg-white/80 p-2 text-blue-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 14l3-3 4 4 5-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                    @else
-                        <div class="text-center py-8 text-gray-500">
-                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <p>No recent predictions</p>
+
+                        <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Avg Confidence</p>
+                                    <p class="mt-2 text-2xl font-bold text-gray-900">
+                                        {{ number_format($predictionSummary['average_confidence'] * 100, 1) }}%
+                                    </p>
+                                    <p class="mt-1 text-xs text-gray-600">
+                                        Mean confidence score over the last 30 days
+                                    </p>
+                                </div>
+                                <div class="rounded-xl bg-white/80 p-2 text-emerald-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                    @endif
+
+                        <div class="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Busiest Municipality</p>
+                                    <p class="mt-2 text-2xl font-bold text-gray-900">
+                                        {{ $predictionSummary['top_municipality']->municipality ?? 'No data yet' }}
+                                    </p>
+                                    <p class="mt-1 text-xs text-gray-600">
+                                        @if($predictionSummary['top_municipality'])
+                                            {{ number_format($predictionSummary['top_municipality']->total) }} successful predictions in the last 30 days
+                                        @else
+                                            No successful predictions recorded in the current 30-day window
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="rounded-xl bg-white/80 p-2 text-amber-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

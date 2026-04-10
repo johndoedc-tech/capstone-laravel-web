@@ -29,14 +29,30 @@ class ReportController extends Controller
             ],
         ];
 
-        // Recent reports activity
-        $recentPredictions = Prediction::with('user')
-            ->where('status', 'success')
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+        $now = now();
+        $startOfWeek = $now->copy()->startOfWeek();
+        $lastThirtyDays = $now->copy()->subDays(30);
 
-        return view('admin.reports.index', compact('stats', 'recentPredictions'));
+        $predictionSummary = [
+            'predictions_this_week' => Prediction::successful()
+                ->where('created_at', '>=', $startOfWeek)
+                ->count(),
+            'average_confidence' => (float) (Prediction::successful()
+                ->whereNotNull('confidence_score')
+                ->where('created_at', '>=', $lastThirtyDays)
+                ->avg('confidence_score') ?? 0),
+            'top_municipality' => Prediction::successful()
+                ->whereNotNull('municipality')
+                ->where('created_at', '>=', $lastThirtyDays)
+                ->select('municipality', DB::raw('COUNT(*) as total'))
+                ->groupBy('municipality')
+                ->orderByDesc('total')
+                ->first(),
+            'window_start' => $lastThirtyDays,
+            'week_start' => $startOfWeek,
+        ];
+
+        return view('admin.reports.index', compact('stats', 'predictionSummary'));
     }
 
     /**
