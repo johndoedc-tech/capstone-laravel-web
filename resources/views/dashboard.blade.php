@@ -631,13 +631,26 @@
 
                         {{-- Quick Insight Card with animated character --}}
                         <div id="farmerChartInsightCard" class="w-full lg:max-w-xl">
-                            <div class="flex items-end gap-0 relative">
-                                <div class="shrink-0 relative z-10" style="width: 80px; margin-right: -10px; margin-bottom: -4px;">
-                                    <div class="w-full h-full overflow-visible">
-                                        <div id="farmerChartInsightAvatar" class="w-full h-full" style="width: 80px; height: 80px;" aria-hidden="true"></div>
+                            {{-- Mobile: stacked vertically --}}
+                            <div class="flex flex-col items-center sm:hidden">
+                                <div class="relative z-10" style="width: 100px; height: 100px; margin-bottom: -18px;">
+                                    <div id="farmerChartInsightAvatarMobile" class="w-full h-full" aria-hidden="true"></div>
+                                </div>
+                                <div class="w-full rounded-2xl bg-gray-800 px-4 pt-6 pb-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                    <p id="farmerChartInsightTextMobile" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                        Loading the strongest crop outlook for the selected municipality...
+                                    </p>
+                                </div>
+                            </div>
+                            {{-- Desktop: horizontal with large character --}}
+                            <div class="hidden sm:flex items-end relative">
+                                <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
+                                    <div class="overflow-visible">
+                                        <div id="farmerChartInsightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
                                     </div>
                                 </div>
-                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-5 py-4 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
                                     <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
                                     <p id="farmerChartInsightText" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
                                         Loading the strongest crop outlook for the selected municipality...
@@ -1296,7 +1309,8 @@
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
-            animationInstance: null
+            animationInstance: null,
+            mobileAnimationInstance: null
         };
 
         // Check if mobile device
@@ -1314,40 +1328,58 @@
                 destroyFarmerInsightAnimation();
                 return;
             }
-            if (farmerInsightState.animationInstance || typeof lottie === 'undefined') return;
-            const container = document.getElementById('farmerChartInsightAvatar');
-            if (!container) return;
-            farmerInsightState.animationInstance = lottie.loadAnimation({
-                container,
+            if (typeof lottie === 'undefined') return;
+
+            const lottieOpts = {
                 renderer: 'svg',
                 loop: true,
                 autoplay: false,
                 path: '{{ asset('animations/talking-character.json') }}',
                 rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
-            });
+            };
+
+            // Desktop container
+            if (!farmerInsightState.animationInstance) {
+                const desktop = document.getElementById('farmerChartInsightAvatar');
+                if (desktop) {
+                    farmerInsightState.animationInstance = lottie.loadAnimation({ container: desktop, ...lottieOpts });
+                }
+            }
+
+            // Mobile container
+            if (!farmerInsightState.mobileAnimationInstance) {
+                const mobile = document.getElementById('farmerChartInsightAvatarMobile');
+                if (mobile) {
+                    farmerInsightState.mobileAnimationInstance = lottie.loadAnimation({ container: mobile, ...lottieOpts });
+                }
+            }
         }
 
         function playFarmerInsightAnimation() {
             if (farmerPrefersReducedMotion()) return;
             initFarmerInsightAnimation();
-            if (!farmerInsightState.animationInstance) return;
-            farmerInsightState.animationInstance.goToAndPlay(0, true);
+            if (farmerInsightState.animationInstance) farmerInsightState.animationInstance.goToAndPlay(0, true);
+            if (farmerInsightState.mobileAnimationInstance) farmerInsightState.mobileAnimationInstance.goToAndPlay(0, true);
         }
 
         function stopFarmerInsightAnimation() {
-            if (!farmerInsightState.animationInstance) return;
-            const totalFrames = Number(farmerInsightState.animationInstance.totalFrames || 0);
-            if (totalFrames > 1) {
-                farmerInsightState.animationInstance.goToAndStop(totalFrames - 1, true);
-                return;
-            }
-            farmerInsightState.animationInstance.stop();
+            [farmerInsightState.animationInstance, farmerInsightState.mobileAnimationInstance].forEach(inst => {
+                if (!inst) return;
+                const totalFrames = Number(inst.totalFrames || 0);
+                if (totalFrames > 1) { inst.goToAndStop(totalFrames - 1, true); }
+                else { inst.stop(); }
+            });
         }
 
         function destroyFarmerInsightAnimation() {
-            if (!farmerInsightState.animationInstance) return;
-            farmerInsightState.animationInstance.destroy();
-            farmerInsightState.animationInstance = null;
+            if (farmerInsightState.animationInstance) {
+                farmerInsightState.animationInstance.destroy();
+                farmerInsightState.animationInstance = null;
+            }
+            if (farmerInsightState.mobileAnimationInstance) {
+                farmerInsightState.mobileAnimationInstance.destroy();
+                farmerInsightState.mobileAnimationInstance = null;
+            }
         }
 
         function cancelFarmerInsightNarration() {
@@ -1363,12 +1395,19 @@
 
         function narrateFarmerInsightText(nextText) {
             const el = document.getElementById('farmerChartInsightText');
+            const elMobile = document.getElementById('farmerChartInsightTextMobile');
             const safeText = String(nextText || '');
             cancelFarmerInsightNarration();
-            if (!el) return;
-            if (!safeText) { el.textContent = ''; stopFarmerInsightAnimation(); return; }
-            if (farmerPrefersReducedMotion()) { el.textContent = safeText; stopFarmerInsightAnimation(); return; }
-            el.textContent = '';
+            if (!el && !elMobile) return;
+
+            function setAllText(text) {
+                if (el) el.textContent = text;
+                if (elMobile) elMobile.textContent = text;
+            }
+
+            if (!safeText) { setAllText(''); stopFarmerInsightAnimation(); return; }
+            if (farmerPrefersReducedMotion()) { setAllText(safeText); stopFarmerInsightAnimation(); return; }
+            setAllText('');
             farmerInsightState.isTyping = true;
             playFarmerInsightAnimation();
             const token = farmerInsightState.insightToken;
@@ -1376,7 +1415,7 @@
             const timerId = window.setInterval(() => {
                 if (token !== farmerInsightState.insightToken) { clearInterval(timerId); return; }
                 charIndex += 1;
-                el.textContent = safeText.slice(0, charIndex);
+                setAllText(safeText.slice(0, charIndex));
                 if (charIndex >= safeText.length) {
                     clearInterval(timerId);
                     farmerInsightState.insightTypingTimer = null;

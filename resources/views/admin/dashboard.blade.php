@@ -254,13 +254,26 @@
                         </div>
 
                         <div id="adminChartInsightCard" class="w-full lg:max-w-xl">
-                            <div class="flex items-end gap-0 relative">
-                                <div class="shrink-0 relative z-10" style="width: 80px; margin-right: -10px; margin-bottom: -4px;">
-                                    <div class="w-full h-full overflow-visible">
-                                        <div id="adminChartInsightAvatar" class="w-full h-full" style="width: 80px; height: 80px;" aria-hidden="true"></div>
+                            {{-- Mobile: stacked vertically --}}
+                            <div class="flex flex-col items-center sm:hidden">
+                                <div class="relative z-10" style="width: 100px; height: 100px; margin-bottom: -18px;">
+                                    <div id="adminChartInsightAvatarMobile" class="w-full h-full" aria-hidden="true"></div>
+                                </div>
+                                <div class="w-full rounded-2xl bg-gray-800 px-4 pt-6 pb-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                    <p id="adminChartInsightTextMobile" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                        Loading the strongest crop outlook for the selected municipality...
+                                    </p>
+                                </div>
+                            </div>
+                            {{-- Desktop: horizontal with large character --}}
+                            <div class="hidden sm:flex items-end relative">
+                                <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
+                                    <div class="overflow-visible">
+                                        <div id="adminChartInsightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
                                     </div>
                                 </div>
-                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-5 py-4 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
                                     <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
                                     <p id="adminChartInsightText" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
                                         Loading the strongest crop outlook for the selected municipality...
@@ -535,7 +548,8 @@
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
-            animationInstance: null
+            animationInstance: null,
+            mobileAnimationInstance: null
         };
 
         function isAdminMobile() {
@@ -596,64 +610,58 @@
                 return;
             }
 
-            if (adminTopCropsChartState.animationInstance || typeof lottie === 'undefined') {
-                return;
-            }
+            if (typeof lottie === 'undefined') return;
 
-            const container = document.getElementById('adminChartInsightAvatar');
-
-            if (!container) {
-                return;
-            }
-
-            adminTopCropsChartState.animationInstance = lottie.loadAnimation({
-                container,
+            const lottieOpts = {
                 renderer: 'svg',
                 loop: true,
                 autoplay: false,
                 path: '{{ asset('animations/talking-character.json') }}',
-                rendererSettings: {
-                    preserveAspectRatio: 'xMidYMid slice'
+                rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
+            };
+
+            // Desktop container
+            if (!adminTopCropsChartState.animationInstance) {
+                const desktop = document.getElementById('adminChartInsightAvatar');
+                if (desktop) {
+                    adminTopCropsChartState.animationInstance = lottie.loadAnimation({ container: desktop, ...lottieOpts });
                 }
-            });
+            }
+
+            // Mobile container
+            if (!adminTopCropsChartState.mobileAnimationInstance) {
+                const mobile = document.getElementById('adminChartInsightAvatarMobile');
+                if (mobile) {
+                    adminTopCropsChartState.mobileAnimationInstance = lottie.loadAnimation({ container: mobile, ...lottieOpts });
+                }
+            }
         }
 
         function playAdminInsightAnimation() {
-            if (adminPrefersReducedMotion()) {
-                return;
-            }
-
+            if (adminPrefersReducedMotion()) return;
             initAdminInsightAnimation();
-
-            if (!adminTopCropsChartState.animationInstance) {
-                return;
-            }
-
-            adminTopCropsChartState.animationInstance.goToAndPlay(0, true);
+            if (adminTopCropsChartState.animationInstance) adminTopCropsChartState.animationInstance.goToAndPlay(0, true);
+            if (adminTopCropsChartState.mobileAnimationInstance) adminTopCropsChartState.mobileAnimationInstance.goToAndPlay(0, true);
         }
 
         function stopAdminInsightAnimation() {
-            if (!adminTopCropsChartState.animationInstance) {
-                return;
-            }
-
-            const totalFrames = Number(adminTopCropsChartState.animationInstance.totalFrames || 0);
-
-            if (totalFrames > 1) {
-                adminTopCropsChartState.animationInstance.goToAndStop(totalFrames - 1, true);
-                return;
-            }
-
-            adminTopCropsChartState.animationInstance.stop();
+            [adminTopCropsChartState.animationInstance, adminTopCropsChartState.mobileAnimationInstance].forEach(inst => {
+                if (!inst) return;
+                const totalFrames = Number(inst.totalFrames || 0);
+                if (totalFrames > 1) { inst.goToAndStop(totalFrames - 1, true); }
+                else { inst.stop(); }
+            });
         }
 
         function destroyAdminInsightAnimation() {
-            if (!adminTopCropsChartState.animationInstance) {
-                return;
+            if (adminTopCropsChartState.animationInstance) {
+                adminTopCropsChartState.animationInstance.destroy();
+                adminTopCropsChartState.animationInstance = null;
             }
-
-            adminTopCropsChartState.animationInstance.destroy();
-            adminTopCropsChartState.animationInstance = null;
+            if (adminTopCropsChartState.mobileAnimationInstance) {
+                adminTopCropsChartState.mobileAnimationInstance.destroy();
+                adminTopCropsChartState.mobileAnimationInstance = null;
+            }
         }
 
         function cancelAdminInsightNarration() {
@@ -671,27 +679,33 @@
 
         function narrateAdminInsightText(nextText) {
             const insightTextEl = document.getElementById('adminChartInsightText');
+            const insightTextMobileEl = document.getElementById('adminChartInsightTextMobile');
             const safeText = String(nextText || '');
 
             cancelAdminInsightNarration();
 
-            if (!insightTextEl) {
+            if (!insightTextEl && !insightTextMobileEl) {
                 return;
             }
 
+            function setAllText(text) {
+                if (insightTextEl) insightTextEl.textContent = text;
+                if (insightTextMobileEl) insightTextMobileEl.textContent = text;
+            }
+
             if (!safeText) {
-                insightTextEl.textContent = '';
+                setAllText('');
                 stopAdminInsightAnimation();
                 return;
             }
 
             if (adminPrefersReducedMotion()) {
-                insightTextEl.textContent = safeText;
+                setAllText(safeText);
                 stopAdminInsightAnimation();
                 return;
             }
 
-            insightTextEl.textContent = '';
+            setAllText('');
             adminTopCropsChartState.isTyping = true;
             playAdminInsightAnimation();
 
@@ -711,7 +725,7 @@
                 }
 
                 charIndex += 1;
-                insightTextEl.textContent = safeText.slice(0, charIndex);
+                setAllText(safeText.slice(0, charIndex));
 
                 if (charIndex < safeText.length) {
                     return;
