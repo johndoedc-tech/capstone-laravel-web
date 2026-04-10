@@ -253,32 +253,17 @@
                             </div>
                         </div>
 
-                        <div id="adminChartInsightCard" class="w-full lg:max-w-xl">
-                            {{-- Mobile: stacked vertically --}}
-                            <div class="flex flex-col items-center sm:hidden">
-                                <div class="relative z-10" style="width: 100px; height: 100px; margin-bottom: -18px;">
-                                    <div id="adminChartInsightAvatarMobile" class="w-full h-full overflow-hidden" aria-hidden="true"></div>
-                                </div>
-                                <div class="w-full rounded-2xl bg-gray-800 px-4 pt-6 pb-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
-                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
-                                    <p id="adminChartInsightTextMobile" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
-                                        Loading the strongest crop outlook for the selected municipality...
-                                    </p>
+                        <div id="adminChartInsightCard" class="flex items-end relative w-full lg:max-w-xl">
+                            <div class="shrink-0 relative z-10 w-[100px] sm:w-[140px] -mr-3 sm:-mr-4 -mb-1">
+                                <div class="overflow-hidden">
+                                    <div id="adminChartInsightAvatar" class="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            {{-- Desktop: horizontal with large character --}}
-                            <div class="hidden sm:flex items-end relative">
-                                <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
-                                    <div class="overflow-hidden">
-                                        <div id="adminChartInsightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
-                                    </div>
-                                </div>
-                                <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-5 py-4 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
-                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
-                                    <p id="adminChartInsightText" class="text-sm leading-relaxed text-gray-200" aria-live="polite">
-                                        Loading the strongest crop outlook for the selected municipality...
-                                    </p>
-                                </div>
+                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 relative z-0">
+                                <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                <p id="adminChartInsightText" class="text-xs sm:text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                    Loading the strongest crop outlook for the selected municipality...
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -548,8 +533,7 @@
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
-            animationInstance: null,
-            mobileAnimationInstance: null
+            animationInstance: null
         };
 
         function isAdminMobile() {
@@ -604,17 +588,13 @@
                 && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         }
 
-        function applyAdminInsightAvatarTrim(instance, mode) {
+        function applyAdminInsightAvatarTrim(instance) {
             const svg = instance?.renderer?.svgElement;
             if (!svg) return;
 
-            const isMobile = mode === 'mobile';
-            const scale = isMobile ? 1.46 : 1.50;
-            const offsetY = isMobile ? 14 : 12;
-
             svg.style.overflow = 'visible';
             svg.style.transformOrigin = '50% 62%';
-            svg.style.transform = `translate(0px, ${offsetY}px) scale(${scale})`;
+            svg.style.transform = `translate(0px, 12%) scale(1.48)`;
         }
 
         function initAdminInsightAnimation() {
@@ -633,27 +613,14 @@
                 rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
             };
 
-            // Desktop container
             if (!adminTopCropsChartState.animationInstance) {
                 const desktop = document.getElementById('adminChartInsightAvatar');
                 if (desktop) {
                     const desktopInstance = lottie.loadAnimation({ container: desktop, ...lottieOpts });
                     desktopInstance.addEventListener('DOMLoaded', function() {
-                        applyAdminInsightAvatarTrim(desktopInstance, 'desktop');
+                        applyAdminInsightAvatarTrim(desktopInstance);
                     });
                     adminTopCropsChartState.animationInstance = desktopInstance;
-                }
-            }
-
-            // Mobile container
-            if (!adminTopCropsChartState.mobileAnimationInstance) {
-                const mobile = document.getElementById('adminChartInsightAvatarMobile');
-                if (mobile) {
-                    const mobileInstance = lottie.loadAnimation({ container: mobile, ...lottieOpts });
-                    mobileInstance.addEventListener('DOMLoaded', function() {
-                        applyAdminInsightAvatarTrim(mobileInstance, 'mobile');
-                    });
-                    adminTopCropsChartState.mobileAnimationInstance = mobileInstance;
                 }
             }
         }
@@ -662,26 +629,20 @@
             if (adminPrefersReducedMotion()) return;
             initAdminInsightAnimation();
             if (adminTopCropsChartState.animationInstance) adminTopCropsChartState.animationInstance.goToAndPlay(0, true);
-            if (adminTopCropsChartState.mobileAnimationInstance) adminTopCropsChartState.mobileAnimationInstance.goToAndPlay(0, true);
         }
 
         function stopAdminInsightAnimation() {
-            [adminTopCropsChartState.animationInstance, adminTopCropsChartState.mobileAnimationInstance].forEach(inst => {
-                if (!inst) return;
-                const totalFrames = Number(inst.totalFrames || 0);
-                if (totalFrames > 1) { inst.goToAndStop(totalFrames - 1, true); }
-                else { inst.stop(); }
-            });
+            const inst = adminTopCropsChartState.animationInstance;
+            if (!inst) return;
+            const totalFrames = Number(inst.totalFrames || 0);
+            if (totalFrames > 1) { inst.goToAndStop(totalFrames - 1, true); }
+            else { inst.stop(); }
         }
 
         function destroyAdminInsightAnimation() {
             if (adminTopCropsChartState.animationInstance) {
                 adminTopCropsChartState.animationInstance.destroy();
                 adminTopCropsChartState.animationInstance = null;
-            }
-            if (adminTopCropsChartState.mobileAnimationInstance) {
-                adminTopCropsChartState.mobileAnimationInstance.destroy();
-                adminTopCropsChartState.mobileAnimationInstance = null;
             }
         }
 
@@ -700,18 +661,16 @@
 
         function narrateAdminInsightText(nextText) {
             const insightTextEl = document.getElementById('adminChartInsightText');
-            const insightTextMobileEl = document.getElementById('adminChartInsightTextMobile');
             const safeText = String(nextText || '');
 
             cancelAdminInsightNarration();
 
-            if (!insightTextEl && !insightTextMobileEl) {
+            if (!insightTextEl) {
                 return;
             }
 
             function setAllText(text) {
                 if (insightTextEl) insightTextEl.textContent = text;
-                if (insightTextMobileEl) insightTextMobileEl.textContent = text;
             }
 
             if (!safeText) {

@@ -404,26 +404,15 @@
                     </div>
 
                     <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
-                        {{-- Mobile: stacked vertically --}}
-                        <div class="flex flex-col items-center sm:hidden">
-                            <div class="relative z-10" style="width: 100px; height: 100px; margin-bottom: -18px;">
-                                <div x-ref="insightAvatarMobile" class="w-full h-full overflow-hidden" aria-hidden="true"></div>
-                            </div>
-                            <div class="w-full rounded-2xl bg-gray-800 px-4 pt-6 pb-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
-                                <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
-                                <p class="text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
-                            </div>
-                        </div>
-                        {{-- Desktop: horizontal with large character --}}
-                        <div class="hidden sm:flex items-end relative">
-                            <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
+                        <div class="flex items-end relative w-full lg:max-w-xl">
+                            <div class="shrink-0 relative z-10 w-[100px] sm:w-[140px] -mr-3 sm:-mr-4 -mb-1">
                                 <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
+                                    <div x-ref="insightAvatar" class="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-5 py-4 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
-                                <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
-                                <p class="text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
+                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 relative z-0">
+                                <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
+                                <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
                             </div>
                         </div>
                     </div>
@@ -1158,17 +1147,13 @@
             }
         }
 
-        function applySimpleInsightAvatarTrim(instance, mode) {
+        function applySimpleInsightAvatarTrim(instance) {
             const svg = instance?.renderer?.svgElement;
             if (!svg) return;
 
-            const isMobile = mode === 'mobile';
-            const scale = isMobile ? 1.46 : 1.50;
-            const offsetY = isMobile ? 14 : 12;
-
             svg.style.overflow = 'visible';
             svg.style.transformOrigin = '50% 62%';
-            svg.style.transform = `translate(0px, ${offsetY}px) scale(${scale})`;
+            svg.style.transform = `translate(0px, 12%) scale(1.48)`;
         }
 
         function topCropsInsight() {
@@ -1188,7 +1173,6 @@
                 isTypingInsight: false,
                 insightToken: 0,
                 animationInstance: null,
-                mobileAnimationInstance: null,
 
                 init() {
                     this.$nextTick(() => {
@@ -1247,28 +1231,15 @@
                         }
                     };
 
-                    // Desktop container
                     if (!this.animationInstance && this.$refs.insightAvatar) {
                         const desktopInstance = lottie.loadAnimation({
                             container: this.$refs.insightAvatar,
                             ...lottieOpts
                         });
                         desktopInstance.addEventListener('DOMLoaded', function() {
-                            applySimpleInsightAvatarTrim(desktopInstance, 'desktop');
+                            applySimpleInsightAvatarTrim(desktopInstance);
                         });
                         this.animationInstance = desktopInstance;
-                    }
-
-                    // Mobile container
-                    if (!this.mobileAnimationInstance && this.$refs.insightAvatarMobile) {
-                        const mobileInstance = lottie.loadAnimation({
-                            container: this.$refs.insightAvatarMobile,
-                            ...lottieOpts
-                        });
-                        mobileInstance.addEventListener('DOMLoaded', function() {
-                            applySimpleInsightAvatarTrim(mobileInstance, 'mobile');
-                        });
-                        this.mobileAnimationInstance = mobileInstance;
                     }
                 },
 
@@ -1282,32 +1253,24 @@
                     if (this.animationInstance) {
                         this.animationInstance.goToAndPlay(0, true);
                     }
-                    if (this.mobileAnimationInstance) {
-                        this.mobileAnimationInstance.goToAndPlay(0, true);
-                    }
                 },
 
                 stopInsightAnimation() {
-                    const instances = [this.animationInstance, this.mobileAnimationInstance].filter(Boolean);
+                    const instance = this.animationInstance;
+                    if (!instance) return;
                     
-                    instances.forEach(instance => {
-                        const totalFrames = Number(instance.totalFrames || 0);
-                        if (totalFrames > 1) {
-                            instance.goToAndStop(totalFrames - 1, true);
-                        } else {
-                            instance.stop();
-                        }
-                    });
+                    const totalFrames = Number(instance.totalFrames || 0);
+                    if (totalFrames > 1) {
+                        instance.goToAndStop(totalFrames - 1, true);
+                    } else {
+                        instance.stop();
+                    }
                 },
 
                 destroyInsightAnimation() {
                     if (this.animationInstance) {
                         this.animationInstance.destroy();
                         this.animationInstance = null;
-                    }
-                    if (this.mobileAnimationInstance) {
-                        this.mobileAnimationInstance.destroy();
-                        this.mobileAnimationInstance = null;
                     }
                 },
 
