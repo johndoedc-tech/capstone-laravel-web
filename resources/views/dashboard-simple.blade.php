@@ -404,13 +404,13 @@
                     </div>
 
                     <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
-                        <div class="flex items-end relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-10 w-[100px] sm:w-[140px] -mr-3 sm:-mr-4 -mb-1">
+                        <div class="flex items-center relative w-full lg:max-w-xl">
+                            <div class="shrink-0 relative z-10 w-[110px] sm:w-[140px] -mr-3 sm:-mr-4">
                                 <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" class="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
+                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 px-4 py-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 relative z-0">
+                            <div class="min-w-0 flex-1 rounded-2xl bg-gray-800 p-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 relative z-0">
                                 <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
                                 <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
                             </div>
