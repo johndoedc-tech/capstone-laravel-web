@@ -257,7 +257,7 @@
                             {{-- Mobile: stacked vertically --}}
                             <div class="flex flex-col items-center sm:hidden">
                                 <div class="relative z-10" style="width: 100px; height: 100px; margin-bottom: -18px;">
-                                    <div id="adminChartInsightAvatarMobile" class="w-full h-full" aria-hidden="true"></div>
+                                    <div id="adminChartInsightAvatarMobile" class="w-full h-full overflow-hidden" aria-hidden="true"></div>
                                 </div>
                                 <div class="w-full rounded-2xl bg-gray-800 px-4 pt-6 pb-3 shadow-lg" style="border: 1px solid rgba(255,255,255,0.1);">
                                     <p class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-1">Quick insight</p>
@@ -269,7 +269,7 @@
                             {{-- Desktop: horizontal with large character --}}
                             <div class="hidden sm:flex items-end relative">
                                 <div class="shrink-0 relative z-10" style="width: 140px; margin-right: -16px; margin-bottom: -4px;">
-                                    <div class="overflow-visible">
+                                    <div class="overflow-hidden">
                                         <div id="adminChartInsightAvatar" style="width: 140px; height: 140px;" aria-hidden="true"></div>
                                     </div>
                                 </div>
@@ -604,6 +604,19 @@
                 && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         }
 
+        function applyAdminInsightAvatarTrim(instance, mode) {
+            const svg = instance?.renderer?.svgElement;
+            if (!svg) return;
+
+            const isMobile = mode === 'mobile';
+            const scale = isMobile ? 1.34 : 1.38;
+            const offsetY = isMobile ? 8 : 6;
+
+            svg.style.overflow = 'visible';
+            svg.style.transformOrigin = '50% 62%';
+            svg.style.transform = `translate(0px, ${offsetY}px) scale(${scale})`;
+        }
+
         function initAdminInsightAnimation() {
             if (adminPrefersReducedMotion()) {
                 destroyAdminInsightAnimation();
@@ -624,7 +637,11 @@
             if (!adminTopCropsChartState.animationInstance) {
                 const desktop = document.getElementById('adminChartInsightAvatar');
                 if (desktop) {
-                    adminTopCropsChartState.animationInstance = lottie.loadAnimation({ container: desktop, ...lottieOpts });
+                    const desktopInstance = lottie.loadAnimation({ container: desktop, ...lottieOpts });
+                    desktopInstance.addEventListener('DOMLoaded', function() {
+                        applyAdminInsightAvatarTrim(desktopInstance, 'desktop');
+                    });
+                    adminTopCropsChartState.animationInstance = desktopInstance;
                 }
             }
 
@@ -632,7 +649,11 @@
             if (!adminTopCropsChartState.mobileAnimationInstance) {
                 const mobile = document.getElementById('adminChartInsightAvatarMobile');
                 if (mobile) {
-                    adminTopCropsChartState.mobileAnimationInstance = lottie.loadAnimation({ container: mobile, ...lottieOpts });
+                    const mobileInstance = lottie.loadAnimation({ container: mobile, ...lottieOpts });
+                    mobileInstance.addEventListener('DOMLoaded', function() {
+                        applyAdminInsightAvatarTrim(mobileInstance, 'mobile');
+                    });
+                    adminTopCropsChartState.mobileAnimationInstance = mobileInstance;
                 }
             }
         }
