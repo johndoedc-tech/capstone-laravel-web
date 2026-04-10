@@ -253,13 +253,14 @@
                             </div>
                         </div>
 
-                        <div id="adminChartInsightCard"
-                            class="w-full lg:max-w-md rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
-                            <div class="flex items-start gap-3">
-                                <div class="h-24 w-24 shrink-0 rounded-2xl border border-primary-100 bg-white/85 p-1 sm:h-28 sm:w-28">
-                                    <div id="adminChartInsightAvatar" class="h-full w-full" aria-hidden="true"></div>
+                        <div id="adminChartInsightCard" class="w-full lg:max-w-xl">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
+                                <div class="inline-flex shrink-0 items-center justify-center rounded-2xl border border-primary-100 bg-white/95 p-2 shadow-sm">
+                                    <div class="h-32 w-32 overflow-hidden rounded-xl sm:h-36 sm:w-36 lg:h-40 lg:w-40">
+                                        <div id="adminChartInsightAvatar" class="h-full w-full" aria-hidden="true"></div>
+                                    </div>
                                 </div>
-                                <div class="min-w-0 flex-1">
+                                <div class="min-w-0 flex-1 rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3">
                                     <p class="text-xs font-semibold uppercase tracking-wide text-primary-dark">Quick insight</p>
                                     <p id="adminChartInsightText" class="mt-2 text-sm leading-6 text-gray-700" aria-live="polite">
                                         Loading the strongest crop outlook for the selected municipality...
