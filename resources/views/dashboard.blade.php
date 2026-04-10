@@ -606,30 +606,47 @@
 
             <!-- Top 5 Crops Chart Section -->
             <div class="mb-4 lg:mb-6">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <div class="flex flex-col gap-3 mb-4">
-                        <h3 class="text-base lg:text-lg font-semibold text-gray-900">Top 5 Crops by Production</h3>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <label for="municipalitySelect" class="text-xs lg:text-sm text-gray-600 whitespace-nowrap">Municipality:</label>
-                            <select id="municipalitySelect" class="w-full sm:w-auto border-gray-300 rounded-md shadow-sm focus:border-primary-dark focus:ring focus:ring-primary-200 focus:ring-opacity-50 text-xs lg:text-sm">
-                                <option value="LATRINIDAD">La Trinidad</option>
-                                
-                                <option value="ITOGON">Itogon</option>
-                                <option value="SABLAN">Sablan</option>
-                                <option value="TUBA">Tuba</option>
-                                <option value="TUBLAY">Tublay</option>
-                                <option value="ATOK">Atok</option>
-                                <option value="BAKUN">Bakun</option>
-                                <option value="BOKOD">Bokod</option>
-                                <option value="BUGUIAS">Buguias</option>
-                                <option value="KABAYAN">Kabayan</option>
-                                <option value="KAPANGAN">Kapangan</option>
-                                <option value="KIBUNGAN">Kibungan</option>
-                                <option value="MANKAYAN">Mankayan</option>
-                            </select>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-base font-semibold text-gray-700">
+                                    #
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Top 5 Crops</h3>
+                                    <p class="text-sm text-gray-600 mt-1">This chart shows the broader full-year crop outlook in your area.</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                                <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                                    <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
+                                    <span id="farmerChartAreaLabel" class="font-semibold text-gray-900">La Trinidad</span>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                    <label for="municipalitySelect"
+                                        class="text-xs font-medium uppercase tracking-wide text-gray-500 whitespace-nowrap">Switch area</label>
+                                    <select id="municipalitySelect"
+                                        class="w-full sm:w-auto rounded-full border-gray-300 bg-white px-4 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
+                                        <option value="LATRINIDAD">La Trinidad</option>
+                                        <option value="ITOGON">Itogon</option>
+                                        <option value="SABLAN">Sablan</option>
+                                        <option value="TUBA">Tuba</option>
+                                        <option value="TUBLAY">Tublay</option>
+                                        <option value="ATOK">Atok</option>
+                                        <option value="BAKUN">Bakun</option>
+                                        <option value="BOKOD">Bokod</option>
+                                        <option value="BUGUIAS">Buguias</option>
+                                        <option value="KABAYAN">Kabayan</option>
+                                        <option value="KAPANGAN">Kapangan</option>
+                                        <option value="KIBUNGAN">Kibungan</option>
+                                        <option value="MANKAYAN">Mankayan</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- Quick Insight Card with animated character --}}
                         <div id="farmerChartInsightCard" class="w-full lg:max-w-xl">
                             {{-- Mobile: stacked vertically --}}
                             <div class="flex flex-col items-center sm:hidden">
@@ -1464,6 +1481,10 @@
             const loadingEl = document.getElementById('chartLoading');
             const containerEl = document.getElementById('chartContainer');
             const errorEl = document.getElementById('chartError');
+            const areaLabelEl = document.getElementById('farmerChartAreaLabel');
+            const municipalityName = municipality.charAt(0) + municipality.slice(1).toLowerCase().replace('trinidad', ' Trinidad');
+
+            if (areaLabelEl) areaLabelEl.textContent = municipalityName;
 
             // Show loading state
             loadingEl.classList.remove('hidden');
