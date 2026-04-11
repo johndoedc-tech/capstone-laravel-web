@@ -1,18 +1,4 @@
 <x-admin-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-                    {{ __('Comparative Analysis Report') }}
-                </h2>
-                <p class="text-xs lg:text-sm text-gray-600 mt-1">Compare metrics across municipalities, crops, or years</p>
-            </div>
-            <a href="{{ route('admin.reports.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
-                ← Back to Reports
-            </a>
-        </div>
-    </x-slot>
-
     <div class="py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             

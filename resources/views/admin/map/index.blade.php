@@ -42,12 +42,6 @@
             background: #e2e8f0;
         }
     </style>
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Interactive Crop Production Map') }}
-        </h2>
-    </x-slot>
-
     <div class="py-4 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-full mx-auto">
             <div class="flex flex-col-reverse lg:flex-col gap-4 lg:gap-6 mb-4 lg:mb-6">

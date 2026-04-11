@@ -1,11 +1,4 @@
 <x-admin-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Crop Data Management') }}
-        </h2>
-        <p class="text-xs lg:text-sm text-gray-600 mt-1">View and manage imported crop data</p>
-    </x-slot>
-
     <div class="py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             
