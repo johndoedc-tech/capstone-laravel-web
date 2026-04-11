@@ -11,69 +11,101 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <!-- Page Header for Farmers (Single view - Forecast only) -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="border-b border-gray-200">
-                    <div class="py-4 px-4 text-center">
-                        <div class="flex items-center justify-center">
-                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
-                            </svg>
-                            <span class="text-lg font-semibold text-green-700">Future Production Forecast</span>
+            <!-- Premium Forecast Widget -->
+            <div class="max-w-5xl mx-auto">
+                <div class="relative bg-white rounded-2xl sm:rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden mb-8 transition-all hover:shadow-2xl duration-300">
+                    
+                    <!-- Vibrant Header Banner -->
+                    <div class="bg-gradient-to-br from-emerald-600 via-green-600 to-green-700 px-6 py-8 sm:py-12 text-center relative overflow-hidden">
+                        <!-- Decorative Shapes -->
+                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-white opacity-10 pointer-events-none"></div>
+                        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-black opacity-10 pointer-events-none"></div>
+                        
+                        <div class="relative z-10 flex flex-col items-center">
+                            <div class="bg-white/20 p-4 rounded-3xl backdrop-blur-sm mb-4 border border-white/20 shadow-lg">
+                                <span class="text-4xl block line-height-none">🔮</span>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">Future Production Forecast</h2>
+                            <p class="text-green-50 mt-1 text-sm sm:text-base max-w-xl mx-auto leading-relaxed opacity-90">Discover year-over-year production trends and unleash the predictive power of our machine learning models.</p>
                         </div>
-                        <span class="block text-sm text-gray-500 mt-1">See year-to-year production trends (2025-2030+)</span>
                     </div>
-                </div>
-            </div>
 
-            <!-- Forecast Tab Content (Main view for Farmers) -->
-            <div id="forecast-content" class="tab-content">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
+                    <!-- Forecast Form Content -->
+                    <div id="forecast-content" class="p-6 sm:p-10 relative z-20 bg-white">
                         <form id="forecastForm">
                             @csrf
                             
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                                
                                 <!-- Municipality -->
-                                <div>
-                                    <label for="forecast_municipality" class="block text-sm font-medium text-gray-700">Municipality</label>
-                                    <select id="forecast_municipality" name="municipality" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                                        <option value="">Select Municipality</option>
-                                        @foreach($options['municipalities'] ?? [] as $municipality)
-                                            <option value="{{ $municipality }}">{{ $municipality }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="relative group">
+                                    <label for="forecast_municipality" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">📍 Municipality</label>
+                                    <div class="relative">
+                                        <select id="forecast_municipality" name="municipality" required
+                                            class="block w-full appearance-none rounded-xl border-0 bg-slate-50 py-3.5 pl-4 pr-10 text-gray-900 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 transition-all duration-200 cursor-pointer shadow-sm hover:bg-white focus:bg-white font-medium">
+                                            <option value="" disabled selected>Choose location...</option>
+                                            @foreach($options['municipalities'] ?? [] as $municipality)
+                                                <option value="{{ $municipality }}">{{ $municipality }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 group-focus-within:text-green-600 transition-colors">
+                                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Crop -->
-                                <div>
-                                    <label for="forecast_crop" class="block text-sm font-medium text-gray-700">Crop</label>
-                                    <select id="forecast_crop" name="crop" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                                        <option value="">Select Crop</option>
-                                        @foreach($options['crops'] ?? [] as $crop)
-                                            <option value="{{ $crop }}">{{ $crop }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="relative group">
+                                    <label for="forecast_crop" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">🌾 Crop Yield</label>
+                                    <div class="relative">
+                                        <select id="forecast_crop" name="crop" required
+                                            class="block w-full appearance-none rounded-xl border-0 bg-slate-50 py-3.5 pl-4 pr-10 text-gray-900 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6 transition-all duration-200 cursor-pointer shadow-sm hover:bg-white focus:bg-white font-medium">
+                                            <option value="" disabled selected>Target crop...</option>
+                                            @foreach($options['crops'] ?? [] as $crop)
+                                                <option value="{{ $crop }}">{{ $crop }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 group-focus-within:text-green-600 transition-colors">
+                                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Forecast Years (Info only - Python API returns all available) -->
-                                <div>
-                                    <label for="forecast_years" class="block text-sm font-medium text-gray-700">Forecast Period</label>
-                                    <select id="forecast_years" name="forecast_years" required disabled
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 bg-gray-100">
-                                        <option value="6" selected>6 Years (2025-2030)</option>
-                                    </select>
-                                    <p class="mt-1 text-xs text-gray-500">Shows year-over-year production trends</p>
+                                <!-- Forecast Years -->
+                                <div class="relative group">
+                                    <label for="forecast_years" class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">⏱️ Timeline</label>
+                                    <div class="relative">
+                                        <select id="forecast_years" name="forecast_years" required disabled
+                                            class="block w-full opacity-60 rounded-xl border-0 bg-gray-100 py-3.5 pl-4 pr-10 text-gray-700 ring-1 ring-inset ring-gray-200 sm:text-sm sm:leading-6 font-semibold cursor-not-allowed">
+                                            <option value="6" selected>6 Years (2025-2030)</option>
+                                        </select>
+                                    </div>
+                                    <p class="absolute -bottom-6 left-0 text-[10px] text-gray-400 mt-1 uppercase tracking-wide">Standard Forecast Limit</p>
                                 </div>
                             </div>
 
-                            <div class="mt-6">
+                            <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end">
                                 <button type="submit" id="forecastBtn"
-                                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50">
-                                    <span id="forecastBtnText">Generate Forecast</span>
-                                    <svg id="forecastSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    class="w-full md:w-auto relative inline-flex items-center justify-center rounded-xl overflow-hidden bg-gradient-to-r from-green-600 to-emerald-500 px-8 py-3.5 text-base font-bold text-white shadow-[0_4px_14px_0_rgba(22,163,74,0.39)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(22,163,74,0.23)] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed group">
+                                    
+                                    <!-- Shine effect -->
+                                    <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                    
+                                    <span id="forecastBtnText" class="drop-shadow-sm flex items-center pr-2">
+                                        Generate 2030 Forecast
+                                    </span>
+                                    
+                                    <!-- Arrow Icon -->
+                                    <svg class="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                    
+                                    <!-- Spinner (Hidden) -->
+                                    <svg id="forecastSpinner" class="hidden absolute right-4 animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
@@ -186,6 +218,10 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
         }
         
         /* Chart type toggle buttons */
