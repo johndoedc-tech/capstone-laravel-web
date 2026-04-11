@@ -242,10 +242,10 @@
             <!-- ============================================ -->
             <!-- SIMPLE GREETING HEADER -->
             <!-- ============================================ -->
-            <div class="rounded-lg shadow-sm p-4 lg:p-6 mb-4 lg:mb-6 text-white" style="background: linear-gradient(135deg, #355872 0%, #4A7399 50%, #5B8FB7 100%);">
+            <div class="rounded-2xl shadow-sm p-4 lg:p-6 mb-4 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <p class="text-primary-100 text-sm" x-text="getGreeting()"></p>
+                        <p class="text-white/80 text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
                         <h1 class="text-2xl lg:text-3xl font-bold mb-1">
                             {{ Auth::user()->name }}! 👋
                         </h1>
