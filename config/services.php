@@ -42,4 +42,10 @@ return [
     'ml_api' => [
         'url' => env('ML_API_URL', 'http://127.0.0.1:5000'),
     ],
+    'weather' => [
+        'base_url' => env('WEATHER_API_BASE_URL', 'https://weather.googleapis.com/v1'),
+        'api_key' => env('WEATHER_API_KEY'),
+        'timeout' => (int) env('WEATHER_API_TIMEOUT', 10),
+        'retries' => (int) env('WEATHER_API_RETRIES', 1),
+    ],
 ];

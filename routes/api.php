@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MapDataController;
+use App\Http\Controllers\Api\MapWeatherController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -18,6 +19,9 @@ Route::prefix('map')->name('api.map.')->group(function () {
     
     // Municipality details
     Route::get('/municipality/{municipality}', [MapDataController::class, 'getMunicipalityDetails'])->name('municipality');
+
+    // Municipality weather (current + hourly + daily)
+    Route::get('/weather/{municipality}', [MapWeatherController::class, 'show'])->name('weather');
     
     // Timeline data for animation
     Route::get('/timeline', [MapDataController::class, 'getTimelineData'])->name('timeline');

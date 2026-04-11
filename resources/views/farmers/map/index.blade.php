@@ -216,6 +216,53 @@
                                     </div>
                                 </div>
 
+                                <!-- Weather Cards -->
+                                <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Outlook</h3>
+                                        <span id="weather-source-badge"
+                                            class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
+                                            Cache</span>
+                                    </div>
+
+                                    <div id="weather-loading" class="hidden text-xs text-sky-700 mb-3">Loading weather data...</div>
+                                    <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
+
+                                    <div id="weather-content" class="hidden space-y-3">
+                                        <div class="bg-white rounded-md border border-sky-100 p-3">
+                                            <div class="flex items-start justify-between gap-2">
+                                                <div>
+                                                    <p class="text-xs uppercase tracking-wide text-gray-500">Current</p>
+                                                    <p id="weather-current-condition" class="text-sm font-semibold text-gray-800">-</p>
+                                                </div>
+                                                <p id="weather-current-temp" class="text-base font-bold text-sky-700">-</p>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
+                                                <p>Humidity: <span id="weather-current-humidity" class="font-medium text-gray-700">-</span></p>
+                                                <p>Wind: <span id="weather-current-wind" class="font-medium text-gray-700">-</span></p>
+                                                <p>Rain Chance: <span id="weather-current-rain" class="font-medium text-gray-700">-</span></p>
+                                                <p>Updated: <span id="weather-current-time" class="font-medium text-gray-700">-</span></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-white rounded-md border border-sky-100 p-3">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly (24h)</p>
+                                                <span id="weather-hourly-count" class="text-[11px] text-gray-500"></span>
+                                            </div>
+                                            <div id="weather-hourly-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                                        </div>
+
+                                        <div class="bg-white rounded-md border border-sky-100 p-3">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily (7d)</p>
+                                                <span id="weather-daily-count" class="text-[11px] text-gray-500"></span>
+                                            </div>
+                                            <div id="weather-daily-list" class="space-y-1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Farm Type Breakdown -->
                                 <div>
                                     <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Farm Type
@@ -298,6 +345,8 @@
         let geojsonLayer;
         let currentData = {};
         let filterOptions = {};
+        let currentMunicipality = null;
+        let detailsRequestToken = 0;
 
         // Base URLs using Laravel's url() helper
         const apiBase = '{{ url("/api/map") }}';
@@ -803,14 +852,185 @@
 
         function closeDetailsPanel() {
             document.getElementById('details-panel').classList.add('translate-x-full');
+            currentMunicipality = null;
+            detailsRequestToken += 1;
+            resetWeatherPanel();
         }
 
         function openDetailsPanel() {
             document.getElementById('details-panel').classList.remove('translate-x-full');
         }
 
+        function resetWeatherPanel() {
+            document.getElementById('weather-loading').classList.add('hidden');
+            document.getElementById('weather-error').classList.add('hidden');
+            document.getElementById('weather-error').textContent = '';
+            document.getElementById('weather-content').classList.add('hidden');
+            document.getElementById('weather-source-badge').classList.add('hidden');
+
+            document.getElementById('weather-current-condition').textContent = '-';
+            document.getElementById('weather-current-temp').textContent = '-';
+            document.getElementById('weather-current-humidity').textContent = '-';
+            document.getElementById('weather-current-wind').textContent = '-';
+            document.getElementById('weather-current-rain').textContent = '-';
+            document.getElementById('weather-current-time').textContent = '-';
+
+            document.getElementById('weather-hourly-count').textContent = '';
+            document.getElementById('weather-daily-count').textContent = '';
+            document.getElementById('weather-hourly-list').innerHTML = '';
+            document.getElementById('weather-daily-list').innerHTML = '';
+        }
+
+        function formatTemperature(value) {
+            if (value === null || value === undefined || value === '') return '-';
+            return `${Number(value).toFixed(1)} C`;
+        }
+
+        function formatPercent(value) {
+            if (value === null || value === undefined || value === '') return '-';
+            return `${Number(value).toFixed(0)}%`;
+        }
+
+        function formatWind(value) {
+            if (value === null || value === undefined || value === '') return '-';
+            return `${Number(value).toFixed(1)} kph`;
+        }
+
+        function formatClock(value) {
+            if (!value) return '-';
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) return '-';
+            return parsed.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+
+        function formatDay(value) {
+            if (!value) return '--';
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) return String(value);
+            return parsed.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            })[char]);
+        }
+
+        function renderWeatherData(weatherPayload, hasErrors) {
+            const loadingEl = document.getElementById('weather-loading');
+            const errorEl = document.getElementById('weather-error');
+            const contentEl = document.getElementById('weather-content');
+            const sourceBadgeEl = document.getElementById('weather-source-badge');
+
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+
+            const staleMap = weatherPayload?.metadata?.stale || {};
+            const hasStaleData = Object.values(staleMap).some(Boolean);
+            if (hasStaleData) {
+                sourceBadgeEl.classList.remove('hidden');
+            } else {
+                sourceBadgeEl.classList.add('hidden');
+            }
+
+            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
+            if (segmentErrors.length > 0) {
+                errorEl.textContent = segmentErrors[0];
+                errorEl.classList.remove('hidden');
+            } else if (hasErrors) {
+                errorEl.textContent = 'Some weather segments are temporarily unavailable.';
+                errorEl.classList.remove('hidden');
+            }
+
+            const current = weatherPayload?.current || {};
+            document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
+            document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
+            document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
+            document.getElementById('weather-current-wind').textContent = formatWind(current.wind_speed_kph);
+            document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
+            document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
+
+            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 6);
+            document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
+            const hourlyListEl = document.getElementById('weather-hourly-list');
+            if (hourlyItems.length === 0) {
+                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly data available.</p>';
+            } else {
+                hourlyListEl.innerHTML = hourlyItems.map(item => `
+                    <div class="rounded border border-sky-100 bg-sky-50 p-2">
+                        <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
+                        <p class="text-xs text-gray-600 truncate">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <p class="text-xs text-gray-800">${escapeHtml(formatTemperature(item.temperature_c))}</p>
+                        <p class="text-[11px] text-gray-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    </div>
+                `).join('');
+            }
+
+            const dailyItems = (weatherPayload?.daily?.items || []).slice(0, 7);
+            document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
+            const dailyListEl = document.getElementById('weather-daily-list');
+            if (dailyItems.length === 0) {
+                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily data available.</p>';
+            } else {
+                dailyListEl.innerHTML = dailyItems.map(item => `
+                    <div class="flex items-center justify-between rounded border border-sky-100 bg-sky-50 px-2 py-1.5">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatDay(item.date))}</p>
+                            <p class="text-[11px] text-gray-500 truncate">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatTemperature(item.temp_min_c))} / ${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-[11px] text-gray-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            contentEl.classList.remove('hidden');
+        }
+
+        async function loadMunicipalityWeather(municipalityName, requestToken) {
+            const weatherLoadingEl = document.getElementById('weather-loading');
+            const weatherErrorEl = document.getElementById('weather-error');
+
+            resetWeatherPanel();
+            weatherLoadingEl.classList.remove('hidden');
+
+            try {
+                const weatherParams = new URLSearchParams({ hours: '24', days: '7' });
+                const response = await fetch(`${apiBase}/weather/${encodeURIComponent(municipalityName)}?${weatherParams}`);
+                const payload = await response.json();
+
+                if (requestToken !== detailsRequestToken) {
+                    return;
+                }
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Weather lookup failed.');
+                }
+
+                renderWeatherData(payload.weather, payload.has_errors);
+            } catch (error) {
+                if (requestToken !== detailsRequestToken) {
+                    return;
+                }
+
+                weatherLoadingEl.classList.add('hidden');
+                weatherErrorEl.textContent = `Weather data unavailable: ${error.message}`;
+                weatherErrorEl.classList.remove('hidden');
+            }
+        }
+
         async function loadMunicipalityDetails(municipalityName) {
             console.log('Loading details for:', municipalityName);
+
+            currentMunicipality = municipalityName;
+            const requestToken = ++detailsRequestToken;
 
             // Show panel
             openDetailsPanel();
@@ -821,6 +1041,8 @@
             // Show loading
             document.getElementById('panel-loading').classList.remove('hidden');
             document.getElementById('panel-content').classList.add('hidden');
+
+            const weatherPromise = loadMunicipalityWeather(municipalityName, requestToken);
 
             try {
                 const crop = document.getElementById('crop-filter').value;
@@ -834,6 +1056,10 @@
 
                 const response = await fetch(`${apiBase}/municipality/${encodeURIComponent(municipalityName)}?${params}`);
                 const data = await response.json();
+
+                if (requestToken !== detailsRequestToken) {
+                    return;
+                }
 
                 console.log('Municipality data:', data);
 
@@ -855,7 +1081,15 @@
                 document.getElementById('panel-loading').classList.add('hidden');
                 document.getElementById('panel-content').classList.remove('hidden');
 
+                weatherPromise.catch(() => {
+                    // Weather errors are rendered in the weather section to avoid blocking crop data.
+                });
+
             } catch (error) {
+                if (requestToken !== detailsRequestToken) {
+                    return;
+                }
+
                 console.error('Error loading municipality details:', error);
                 alert('Error loading details: ' + error.message);
                 closeDetailsPanel();
@@ -998,6 +1232,14 @@
             });
         }
 
+        // Handle filter change: update map + refresh side panel if open
+        function onFilterChange() {
+            loadMapData();
+            if (currentMunicipality) {
+                loadMunicipalityDetails(currentMunicipality);
+            }
+        }
+
         // Toggle boundaries visibility
         function toggleBoundaries(show) {
             if (!geojsonLayer) return;
@@ -1014,10 +1256,10 @@
         }
 
         // Event listeners
-        document.getElementById('crop-filter').addEventListener('change', loadMapData);
-        document.getElementById('year-filter').addEventListener('change', loadMapData);
-        document.getElementById('view-filter').addEventListener('change', loadMapData);
-        document.getElementById('farm-type-filter').addEventListener('change', loadMapData);
+        document.getElementById('crop-filter').addEventListener('change', onFilterChange);
+        document.getElementById('year-filter').addEventListener('change', onFilterChange);
+        document.getElementById('view-filter').addEventListener('change', onFilterChange);
+        document.getElementById('farm-type-filter').addEventListener('change', onFilterChange);
         document.getElementById('toggle-boundaries').addEventListener('change', function () {
             toggleBoundaries(this.checked);
         });
