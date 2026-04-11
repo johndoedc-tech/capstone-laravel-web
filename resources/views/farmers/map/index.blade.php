@@ -12,7 +12,8 @@
             margin: 0 !important;
             padding: 1rem !important;
             width: auto !important;
-            min-width: 170px;
+            min-width: 140px;
+            max-width: 85vw;
         }
         .leaflet-popup-tip {
             box-shadow: none !important;
@@ -572,18 +573,18 @@
                                 const viewType = document.getElementById('view-filter').value;
                                 const unit = getUnit(viewType);
                                 popupContent = `
-                                    <div class="border-b border-gray-100 pb-2 mb-2 pr-6">
-                                        <h4 class="font-bold text-gray-800 text-base m-0">${municipalityName}</h4>
+                                    <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
+                                        <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                                     </div>
-                                    <p class="text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
-                                    <p class="text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
+                                    <p class="text-lg sm:text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-[10px] sm:text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
                                 `;
                             } else {
                                 popupContent = `
-                                    <div class="border-b border-gray-100 pb-2 mb-2 pr-6">
-                                        <h4 class="font-bold text-gray-800 text-base m-0">${municipalityName}</h4>
+                                    <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
+                                        <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                                     </div>
-                                    <p class="text-sm font-medium text-gray-500 m-0">No data available</p>
+                                    <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
                                 `;
                             }
                             layer.bindPopup(popupContent);
