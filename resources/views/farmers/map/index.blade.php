@@ -1,4 +1,46 @@
 <x-app-layout>
+    <style>
+        /* Premium Leaflet Popup Overrides */
+        .leaflet-popup-content-wrapper {
+            border-radius: 1rem !important;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+            padding: 0 !important;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .leaflet-popup-content {
+            margin: 0 !important;
+            padding: 1rem !important;
+            width: auto !important;
+            min-width: 170px;
+        }
+        .leaflet-popup-tip {
+            box-shadow: none !important;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+        }
+        .leaflet-container a.leaflet-popup-close-button {
+            top: 12px;
+            right: 12px;
+            color: #94a3b8;
+            font-weight: bold;
+            padding: 4px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            background: rgba(241, 245, 249, 0.5);
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .leaflet-container a.leaflet-popup-close-button:hover {
+            color: #0f172a;
+            background: #e2e8f0;
+        }
+    </style>
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
             {{ __('Interactive Crop Production Map') }}
@@ -525,13 +567,24 @@
                             );
 
                             // Popup
-                            let popupContent = `<strong>${municipalityName}</strong><br>`;
+                            let popupContent;
                             if (municipalityData) {
                                 const viewType = document.getElementById('view-filter').value;
                                 const unit = getUnit(viewType);
-                                popupContent += `${getViewLabel(viewType)}: ${Number(municipalityData.value).toLocaleString()} ${unit}`;
+                                popupContent = `
+                                    <div class="border-b border-gray-100 pb-2 mb-2 pr-6">
+                                        <h4 class="font-bold text-gray-800 text-base m-0">${municipalityName}</h4>
+                                    </div>
+                                    <p class="text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
+                                    <p class="text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
+                                `;
                             } else {
-                                popupContent += 'No data available';
+                                popupContent = `
+                                    <div class="border-b border-gray-100 pb-2 mb-2 pr-6">
+                                        <h4 class="font-bold text-gray-800 text-base m-0">${municipalityName}</h4>
+                                    </div>
+                                    <p class="text-sm font-medium text-gray-500 m-0">No data available</p>
+                                `;
                             }
                             layer.bindPopup(popupContent);
 
