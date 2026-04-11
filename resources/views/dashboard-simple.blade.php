@@ -469,9 +469,14 @@
                                 </div>
                                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
                             </div>
-                            <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90">
+                            <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
                                 <span x-text="municipality ? 'Use your saved area for a faster start' : 'Start with a quick harvest forecast'"></span>
-                                <span>Open -&gt;</span>
+                                <span class="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-primary-dark shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg">
+                                    Open
+                                    <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </span>
                             </div>
                         </div>
                     </a>
