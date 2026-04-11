@@ -50,8 +50,9 @@
 
     <div class="py-4 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-full mx-auto">
-            <!-- Control Panel -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 lg:mb-6">
+            <div class="flex flex-col-reverse lg:flex-col gap-4 lg:gap-6 mb-4 lg:mb-6">
+                <!-- Control Panel -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 lg:p-6">
                     <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Map Controls</h3>
 
@@ -305,6 +306,7 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- End of flex wrappers -->
 
             <!-- Statistics Panel -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4 lg:mt-6">
