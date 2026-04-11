@@ -295,6 +295,71 @@
             </div>
 
             <!-- ============================================ -->
+            <!-- TOP 5 CROPS INSIGHT -->
+            <!-- ============================================ -->
+            <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                    <div class="space-y-3">
+                        <div class="insight-heading flex items-center gap-2">
+                            <span class="text-xl">📊</span>
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
+                                <p class="text-sm text-gray-600">This chart shows the broader full-year crop outlook in your area.</p>
+                            </div>
+                        </div>
+                        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                            <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
+                            <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                        </div>
+                    </div>
+
+                    <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
+                        <div class="flex items-center relative w-full lg:max-w-xl">
+                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
+                                <div class="overflow-hidden">
+                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
+                                {{-- Thought Bubble Tails --}}
+                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                
+                                {{-- Main Cloud Box --}}
+                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
+                                    <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
+                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
+                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight chart.</p>
+                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the chart focused on the same municipality.</p>
+                </div>
+
+                <div x-show="loading" class="text-center py-8">
+                    <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
+                </div>
+
+                <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
+                    <p class="text-sm" x-text="t('load_error')"></p>
+                </div>
+
+                <div x-show="!loading && !error && municipality">
+                    <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
+                        <canvas x-ref="canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
             <!-- TODAY'S RECOMMENDATION (The Main Focus) -->
             <!-- ============================================ -->
             <div x-data="cropRecommendations()" class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-sm border border-amber-200 p-4 lg:p-6 mb-4 lg:mb-6">
@@ -379,72 +444,7 @@
                     </div>
 
                     <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
-                        <p class="text-sm text-gray-600">The chart below shows the broader full-year outlook in your area, so it may not always match this month's top pick exactly.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ============================================ -->
-            <!-- TOP 5 CROPS INSIGHT -->
-            <!-- ============================================ -->
-            <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-                    <div class="space-y-3">
-                        <div class="insight-heading flex items-center gap-2">
-                            <span class="text-xl">ðŸ“Š</span>
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">This chart shows the broader full-year crop outlook in your area.</p>
-                            </div>
-                        </div>
-                        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                            <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
-                            <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
-                        </div>
-                    </div>
-
-                    <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
-                        <div class="flex items-center relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
-                                <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
-                                </div>
-                            </div>
-                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
-                                {{-- Thought Bubble Tails --}}
-                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                
-                                {{-- Main Cloud Box --}}
-                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
-                                    <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
-                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight chart.</p>
-                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the chart focused on the same municipality.</p>
-                </div>
-
-                <div x-show="loading" class="text-center py-8">
-                    <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
-                </div>
-
-                <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm" x-text="t('load_error')"></p>
-                </div>
-
-                <div x-show="!loading && !error && municipality">
-                    <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
-                        <canvas x-ref="canvas"></canvas>
+                        <p class="text-sm text-gray-600">The chart above shows the broader full-year outlook in your area, so it may not always match this month's top pick exactly.</p>
                     </div>
                 </div>
             </div>
