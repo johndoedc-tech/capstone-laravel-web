@@ -758,7 +758,7 @@
 
         function formatTemperature(value) {
             if (value === null || value === undefined || value === '') return '-';
-            return `${Number(value).toFixed(1)} C`;
+            return `${Math.round(Number(value))} C`;
         }
 
         function formatPercent(value) {
