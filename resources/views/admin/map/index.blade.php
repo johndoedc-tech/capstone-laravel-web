@@ -206,18 +206,18 @@
 
                                         <div class="bg-white rounded-md border border-sky-100 p-3">
                                             <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly (24h)</p>
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly</p>
                                                 <span id="weather-hourly-count" class="text-[11px] text-gray-500"></span>
                                             </div>
-                                            <div id="weather-hourly-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                                            <div id="weather-hourly-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
                                         </div>
 
                                         <div class="bg-white rounded-md border border-sky-100 p-3">
                                             <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily (7d)</p>
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily</p>
                                                 <span id="weather-daily-count" class="text-[11px] text-gray-500"></span>
                                             </div>
-                                            <div id="weather-daily-list" class="space-y-1"></div>
+                                            <div id="weather-daily-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -830,18 +830,18 @@
             document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
             document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
 
-            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 6);
+            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 12);
             document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
             const hourlyListEl = document.getElementById('weather-hourly-list');
             if (hourlyItems.length === 0) {
                 hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly data available.</p>';
             } else {
                 hourlyListEl.innerHTML = hourlyItems.map(item => `
-                    <div class="rounded border border-sky-100 bg-sky-50 p-2">
-                        <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
-                        <p class="text-xs text-gray-600 truncate">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <p class="text-xs text-gray-800">${escapeHtml(formatTemperature(item.temperature_c))}</p>
-                        <p class="text-[11px] text-gray-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[90px] flex-shrink-0 snap-start text-center">
+                        <p class="text-[11px] font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
+                        <p class="text-xs font-bold text-sky-700 my-1">${escapeHtml(formatTemperature(item.temperature_c))}</p>
+                        <p class="text-[10px] text-gray-600 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <p class="text-[10px] text-sky-600 mt-1">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
@@ -853,15 +853,14 @@
                 dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily data available.</p>';
             } else {
                 dailyListEl.innerHTML = dailyItems.map(item => `
-                    <div class="flex items-center justify-between rounded border border-sky-100 bg-sky-50 px-2 py-1.5">
-                        <div>
-                            <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatDay(item.date))}</p>
-                            <p class="text-[11px] text-gray-500 truncate">${escapeHtml(item.condition_text || 'N/A')}</p>
+                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[100px] flex-shrink-0 snap-start text-center">
+                        <p class="text-[11px] font-bold text-gray-800">${escapeHtml(formatDay(item.date))}</p>
+                        <p class="text-[10px] text-gray-500 mb-1 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <div class="bg-white rounded px-2 py-1 shadow-sm border border-sky-100 mb-1 w-full">
+                            <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs font-semibold text-gray-700">${escapeHtml(formatTemperature(item.temp_min_c))} / ${escapeHtml(formatTemperature(item.temp_max_c))}</p>
-                            <p class="text-[11px] text-gray-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
-                        </div>
+                        <p class="text-[10px] text-sky-600">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
