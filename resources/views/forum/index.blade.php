@@ -3,12 +3,6 @@
 @endphp
 
 <x-dynamic-component :component="$forumLayout">
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Community Forum') }}
-        </h2>
-    </x-slot>
-
     <div class="pt-20 pb-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto" x-data="forumIndexVotes()">
             
