@@ -1406,13 +1406,13 @@
 
                     if (normalizedRecommendedCrop && this.recommendationMonth) {
                         if (normalizedBestCrop === normalizedRecommendedCrop) {
-                            return `${bestCrop} is the strongest pick for ${this.recommendationMonth} and also leads the broader full-year outlook in ${municipalityLabel}.`;
+                            return `${bestCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, and it is also expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
                         }
 
-                        return `${this.recommendedCrop} is the best crop to check for ${this.recommendationMonth}, while ${bestCrop} leads the broader full-year outlook in ${municipalityLabel}.`;
+                        return `${this.recommendedCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, while ${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
                     }
 
-                    return `${bestCrop} leads the broader full-year outlook in ${municipalityLabel} based on historical average and this year's forecast.`;
+                    return `${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year, based on historical averages and this year's forecast.`;
                 },
 
                 async loadChart() {

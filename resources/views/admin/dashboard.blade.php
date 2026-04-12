@@ -585,10 +585,10 @@
             const historicalLeader = crops[historicalLeaderIndex];
 
             if (predictedLeader === historicalLeader) {
-                return `${predictedLeader} remains the strongest full-year crop in ${municipalityName}, leading both the historical average and the ${currentYear} forecast.`;
+                return `${predictedLeader} stands out as the strongest crop choice in ${municipalityName} for ${currentYear}, and it is also expected to lead overall performance there for the rest of the year.`;
             }
 
-            return `${predictedLeader} has the strongest ${currentYear} outlook in ${municipalityName}, while ${historicalLeader} leads the historical average.`;
+            return `${predictedLeader} looks like the strongest crop choice in ${municipalityName} for ${currentYear}, while ${historicalLeader} remains the long-term leader based on historical performance.`;
         }
 
         function adminPrefersReducedMotion() {
