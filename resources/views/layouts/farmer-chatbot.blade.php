@@ -1,14 +1,14 @@
 <div
     id="farmer-chatbot-root"
-    class="fixed inset-x-2 bottom-2 sm:inset-x-auto sm:bottom-6 sm:right-6"
-    style="z-index: 45; padding-bottom: env(safe-area-inset-bottom, 0px);"
+    class="fixed bottom-3 right-3 sm:bottom-6 sm:right-6"
+    style="z-index: 45; padding-right: env(safe-area-inset-right, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);"
     data-history-url="{{ route('farmer.chatbot.history') }}"
     data-message-url="{{ route('farmer.chatbot.message') }}"
     data-reset-url="{{ route('farmer.chatbot.reset') }}"
 >
     <div
         id="farmer-chatbot-panel"
-        class="hidden mb-2 sm:mb-3 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex-col w-full sm:w-[22rem] max-w-full h-[70vh] max-h-[calc(100vh-5.5rem)] sm:h-auto sm:max-h-[42rem]"
+        class="hidden flex flex-col bg-white overflow-hidden fixed left-0 right-0 top-14 rounded-t-2xl border border-gray-200 border-b-0 shadow-2xl h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] sm:static sm:mb-3 sm:rounded-2xl sm:border sm:w-[22rem] sm:max-w-[calc(100vw-3rem)] sm:h-[70vh] sm:max-h-[42rem]"
     >
         <div class="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div>
@@ -27,10 +27,10 @@
             </button>
         </div>
 
-        <div id="farmer-chatbot-messages" class="p-3 bg-gray-50 overflow-y-auto flex-1 min-h-0"></div>
+        <div id="farmer-chatbot-messages" class="p-3 bg-gray-50 overflow-y-auto flex-1 min-h-0 overscroll-contain"></div>
 
-        <div class="px-3 py-2 border-t border-gray-200 bg-white">
-            <form id="farmer-chatbot-form" class="flex items-center gap-2">
+        <div class="px-3 pt-2 border-t border-gray-200 bg-white" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));">
+            <form id="farmer-chatbot-form" class="flex items-center gap-1.5 sm:gap-2">
                 <input
                     id="farmer-chatbot-input"
                     type="text"
@@ -44,7 +44,7 @@
                 <button
                     id="farmer-chatbot-send"
                     type="submit"
-                    class="px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 transition-colors shrink-0 min-w-[4.75rem]"
+                    class="px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 transition-colors shrink-0 min-w-[4.25rem] sm:min-w-[4.75rem]"
                 >
                     Send
                 </button>
@@ -108,6 +108,15 @@
     const historyUrl = root.dataset.historyUrl;
     const messageUrl = root.dataset.messageUrl;
     const resetUrl = root.dataset.resetUrl;
+    const appMain = document.querySelector('main');
+    const mobileQuery = window.matchMedia('(max-width: 639px)');
+    const visualViewport = window.visualViewport;
+    const lockState = {
+        htmlOverflow: '',
+        bodyOverflow: '',
+        mainOverflow: '',
+        active: false,
+    };
 
     const state = {
         isOpen: localStorage.getItem(storageKey) === '1',
@@ -126,6 +135,54 @@
         sendButton.textContent = isLoading ? 'Sending...' : 'Send';
     }
 
+    function isMobileViewport() {
+        return mobileQuery.matches;
+    }
+
+    function setDocumentScrollLock(locked) {
+        if (locked && !lockState.active) {
+            lockState.htmlOverflow = document.documentElement.style.overflow;
+            lockState.bodyOverflow = document.body.style.overflow;
+            lockState.mainOverflow = appMain ? appMain.style.overflow : '';
+
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+
+            if (appMain) {
+                appMain.style.overflow = 'hidden';
+            }
+
+            lockState.active = true;
+            return;
+        }
+
+        if (!locked && lockState.active) {
+            document.documentElement.style.overflow = lockState.htmlOverflow;
+            document.body.style.overflow = lockState.bodyOverflow;
+
+            if (appMain) {
+                appMain.style.overflow = lockState.mainOverflow;
+            }
+
+            lockState.active = false;
+        }
+    }
+
+    function updateMobilePanelHeight() {
+        if (!isMobileViewport()) {
+            panel.style.height = '';
+            panel.style.maxHeight = '';
+            return;
+        }
+
+        const viewportHeight = visualViewport ? Math.floor(visualViewport.height) : window.innerHeight;
+        const topOffset = 56;
+        const computedHeight = Math.max(320, viewportHeight - topOffset);
+
+        panel.style.height = `${computedHeight}px`;
+        panel.style.maxHeight = `${computedHeight}px`;
+    }
+
     function setOpen(isOpen) {
         state.isOpen = isOpen;
         panel.classList.toggle('hidden', !isOpen);
@@ -134,12 +191,17 @@
         launcher.classList.toggle('opacity-0', isOpen);
         launcher.classList.toggle('pointer-events-none', isOpen);
 
-        const shouldLockBody = isOpen && window.matchMedia('(max-width: 639px)').matches;
-        document.body.classList.toggle('overflow-hidden', shouldLockBody);
+        const shouldLockBody = isOpen && isMobileViewport();
+        setDocumentScrollLock(shouldLockBody);
+        updateMobilePanelHeight();
 
         if (isOpen) {
-            input.focus();
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            requestAnimationFrame(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                if (!isMobileViewport()) {
+                    input.focus();
+                }
+            });
         }
     }
 
@@ -356,6 +418,17 @@
         sendMessage(messageText);
     });
 
+    input.addEventListener('focus', () => {
+        if (!isMobileViewport()) {
+            return;
+        }
+
+        setTimeout(() => {
+            updateMobilePanelHeight();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 180);
+    });
+
     resetButton.addEventListener('click', () => {
         if (!confirm('Reset this conversation?')) {
             return;
@@ -364,15 +437,23 @@
         resetConversation();
     });
 
-    window.addEventListener('resize', () => {
-        if (!state.isOpen) {
-            return;
-        }
+    function syncViewportState() {
+        updateMobilePanelHeight();
+        setDocumentScrollLock(state.isOpen && isMobileViewport());
 
-        const shouldLockBody = window.matchMedia('(max-width: 639px)').matches;
-        document.body.classList.toggle('overflow-hidden', shouldLockBody);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        if (state.isOpen) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    window.addEventListener('resize', syncViewportState);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(syncViewportState, 120);
     });
+
+    if (visualViewport) {
+        visualViewport.addEventListener('resize', syncViewportState);
+    }
 
     setOpen(state.isOpen);
     loadHistory();
