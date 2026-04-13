@@ -20,10 +20,10 @@ class GeminiChatService
     {
         $this->baseUrl = rtrim((string) config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/');
         $this->apiKey = config('services.gemini.api_key');
-        $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
+        $this->model = (string) config('services.gemini.model', 'gemini-1.5-flash');
         $this->fallbackModels = $this->normalizeFallbackModels(config('services.gemini.fallback_models', []));
         $this->timeout = (int) config('services.gemini.timeout', 20);
-        $this->retries = (int) config('services.gemini.retries', 1);
+        $this->retries = (int) config('services.gemini.retries', 0);
     }
 
     public function generateReply(string $message, array $history = [], array $context = []): array

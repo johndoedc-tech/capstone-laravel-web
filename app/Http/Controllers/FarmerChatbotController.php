@@ -158,6 +158,10 @@ class FarmerChatbotController extends Controller
             return 'The assistant hit a Gemini API rate or quota limit. Enable paid tier/billing for this Gemini project or wait for quota reset, then try again.';
         }
 
+        if (str_contains($normalizedError, 'not_found') || str_contains($normalizedError, '404')) {
+            return 'The configured Gemini model was not found for this API project. Check GEMINI_MODEL and ensure it is available in your project tier.';
+        }
+
         if (str_contains($normalizedError, 'timed out') || str_contains($normalizedError, 'timeout')) {
             return 'The assistant took too long to respond. Please try again.';
         }
