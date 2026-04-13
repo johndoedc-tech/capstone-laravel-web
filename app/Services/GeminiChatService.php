@@ -12,6 +12,7 @@ class GeminiChatService
     private string $baseUrl;
     private ?string $apiKey;
     private string $model;
+    private array $fallbackModels;
     private int $timeout;
     private int $retries;
 
@@ -20,6 +21,7 @@ class GeminiChatService
         $this->baseUrl = rtrim((string) config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/');
         $this->apiKey = config('services.gemini.api_key');
         $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
+        $this->fallbackModels = $this->normalizeFallbackModels(config('services.gemini.fallback_models', []));
         $this->timeout = (int) config('services.gemini.timeout', 20);
         $this->retries = (int) config('services.gemini.retries', 1);
     }
@@ -36,7 +38,6 @@ class GeminiChatService
             throw new RuntimeException('Gemini API key is not configured.');
         }
 
-        $url = "{$this->baseUrl}/models/{$this->model}:generateContent";
         $contents = $this->buildContents($trimmedMessage, $history);
 
         $payload = [
@@ -52,7 +53,36 @@ class GeminiChatService
             ],
         ];
 
+        $modelsToTry = array_values(array_unique(array_merge([$this->model], $this->fallbackModels)));
+        $lastException = null;
+
+        foreach ($modelsToTry as $modelName) {
+            try {
+                return $this->requestWithModel($modelName, $payload);
+            } catch (RuntimeException $exception) {
+                $lastException = $exception;
+
+                if ($this->isQuotaOrRateLimitError($exception->getMessage()) && count($modelsToTry) > 1) {
+                    Log::warning('Gemini chatbot model exhausted. Trying fallback model.', [
+                        'current_model' => $modelName,
+                        'error' => $exception->getMessage(),
+                    ]);
+
+                    continue;
+                }
+
+                throw $exception;
+            }
+        }
+
+        throw $lastException ?? new RuntimeException('Gemini API request failed on all configured models.');
+    }
+
+    private function requestWithModel(string $modelName, array $payload): array
+    {
+        $url = "{$this->baseUrl}/models/{$modelName}:generateContent";
         $attempts = max(1, $this->retries + 1);
+
         $startTime = microtime(true);
 
         try {
@@ -63,7 +93,7 @@ class GeminiChatService
                 ->post($url, $payload);
         } catch (Throwable $exception) {
             Log::error('Gemini chatbot request failed before response.', [
-                'model' => $this->model,
+                'model' => $modelName,
                 'error' => $exception->getMessage(),
             ]);
 
@@ -79,7 +109,7 @@ class GeminiChatService
 
             Log::warning('Gemini chatbot provider returned non-success response.', [
                 'status' => $response->status(),
-                'model' => $this->model,
+                'model' => $modelName,
                 'latency_ms' => $latencyMs,
                 'provider_error' => $providerMessage,
             ]);
@@ -91,7 +121,7 @@ class GeminiChatService
 
         if ($reply === null || trim($reply) === '') {
             Log::warning('Gemini chatbot response missing text candidate.', [
-                'model' => $this->model,
+                'model' => $modelName,
                 'latency_ms' => $latencyMs,
             ]);
 
@@ -105,16 +135,39 @@ class GeminiChatService
         ];
 
         Log::info('Gemini chatbot response generated.', [
-            'model' => $this->model,
+            'model' => $modelName,
             'latency_ms' => $latencyMs,
             'token_usage' => $tokenUsage,
         ]);
 
         return [
             'reply' => trim($reply),
-            'model' => $this->model,
+            'model' => $modelName,
             'tokens' => $tokenUsage,
         ];
+    }
+
+    private function normalizeFallbackModels(mixed $fallbackModels): array
+    {
+        if (is_string($fallbackModels)) {
+            $fallbackModels = array_map('trim', explode(',', $fallbackModels));
+        }
+
+        if (!is_array($fallbackModels)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(static fn ($model) => trim((string) $model), $fallbackModels)));
+    }
+
+    private function isQuotaOrRateLimitError(string $message): bool
+    {
+        $normalizedMessage = strtolower($message);
+
+        return str_contains($normalizedMessage, 'resource_exhausted')
+            || str_contains($normalizedMessage, 'quota')
+            || str_contains($normalizedMessage, 'too many requests')
+            || str_contains($normalizedMessage, '429');
     }
 
     private function buildContents(string $message, array $history): array

@@ -137,7 +137,7 @@ class FarmerChatbotController extends Controller
         }
 
         if (str_contains($normalizedError, 'resource_exhausted') || str_contains($normalizedError, 'quota') || str_contains($normalizedError, '429')) {
-            return 'The assistant is busy right now. Please try again in a minute.';
+            return 'The assistant hit a Gemini API rate or quota limit. Please try again later, or ask the administrator to check API quota/billing and rotate the key if needed.';
         }
 
         if (str_contains($normalizedError, 'timed out') || str_contains($normalizedError, 'timeout')) {
