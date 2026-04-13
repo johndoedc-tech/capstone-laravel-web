@@ -1,15 +1,14 @@
 <div
     id="farmer-chatbot-root"
-    class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6"
-    style="z-index: 45;"
+    class="fixed inset-x-2 bottom-2 sm:inset-x-auto sm:bottom-6 sm:right-6"
+    style="z-index: 45; padding-bottom: env(safe-area-inset-bottom, 0px);"
     data-history-url="{{ route('farmer.chatbot.history') }}"
     data-message-url="{{ route('farmer.chatbot.message') }}"
     data-reset-url="{{ route('farmer.chatbot.reset') }}"
 >
     <div
         id="farmer-chatbot-panel"
-        class="hidden mb-3 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden"
-        style="width: min(22rem, calc(100vw - 1rem));"
+        class="hidden mb-2 sm:mb-3 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex-col w-full sm:w-[22rem] max-w-full h-[70vh] max-h-[calc(100vh-5.5rem)] sm:h-auto sm:max-h-[42rem]"
     >
         <div class="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div>
@@ -28,30 +27,30 @@
             </button>
         </div>
 
-        <div id="farmer-chatbot-messages" class="p-3 bg-gray-50 overflow-y-auto" style="height: 20rem;"></div>
+        <div id="farmer-chatbot-messages" class="p-3 bg-gray-50 overflow-y-auto flex-1 min-h-0"></div>
 
         <div class="px-3 py-2 border-t border-gray-200 bg-white">
-            <form id="farmer-chatbot-form" class="flex gap-2">
+            <form id="farmer-chatbot-form" class="flex items-center gap-2">
                 <input
                     id="farmer-chatbot-input"
                     type="text"
                     name="message"
                     maxlength="2000"
                     placeholder="Ask about crops, map, or predictions"
-                    class="flex-1 rounded-lg border-gray-300 text-sm focus:border-primary focus:ring-primary"
+                    class="flex-1 min-w-0 rounded-lg border-gray-300 text-sm focus:border-primary focus:ring-primary"
                     autocomplete="off"
                     required
                 >
                 <button
                     id="farmer-chatbot-send"
                     type="submit"
-                    class="px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 transition-colors"
+                    class="px-3 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-700 transition-colors shrink-0 min-w-[4.75rem]"
                 >
                     Send
                 </button>
             </form>
 
-            <div class="mt-2 flex items-center justify-between">
+            <div class="mt-2 flex items-center justify-between gap-2">
                 <p id="farmer-chatbot-status" class="text-xs text-gray-500">Ready</p>
                 <button
                     type="button"
@@ -131,6 +130,12 @@
         state.isOpen = isOpen;
         panel.classList.toggle('hidden', !isOpen);
         localStorage.setItem(storageKey, isOpen ? '1' : '0');
+
+        launcher.classList.toggle('opacity-0', isOpen);
+        launcher.classList.toggle('pointer-events-none', isOpen);
+
+        const shouldLockBody = isOpen && window.matchMedia('(max-width: 639px)').matches;
+        document.body.classList.toggle('overflow-hidden', shouldLockBody);
 
         if (isOpen) {
             input.focus();
@@ -226,6 +231,10 @@
     }
 
     async function sendMessage(messageText) {
+        if (state.isLoading) {
+            return;
+        }
+
         if (!messageUrl || !csrfToken) {
             setStatus('Chatbot is not configured yet.');
             return;
@@ -353,6 +362,16 @@
         }
 
         resetConversation();
+    });
+
+    window.addEventListener('resize', () => {
+        if (!state.isOpen) {
+            return;
+        }
+
+        const shouldLockBody = window.matchMedia('(max-width: 639px)').matches;
+        document.body.classList.toggle('overflow-hidden', shouldLockBody);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     });
 
     setOpen(state.isOpen);
