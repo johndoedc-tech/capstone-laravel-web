@@ -231,6 +231,7 @@ class GeminiChatService
             'Use at most 4 short sentences (or one compact list) and always end with a complete sentence.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
+            'For Filipino responses, use complete words and avoid shorthand like "m." or "n.".',
             'Mirror the user language (English or Filipino).',
         ];
 
@@ -338,10 +339,48 @@ class GeminiChatService
             }
         }
 
+        $normalized = $this->expandFilipinoTrailingShorthand($normalized);
+
         if (!preg_match('/[.!?]["\')\]]?$/', $normalized)) {
             $normalized .= '.';
         }
 
         return $normalized;
+    }
+
+    private function expandFilipinoTrailingShorthand(string $text): string
+    {
+        if (!$this->looksLikeFilipino($text)) {
+            return $text;
+        }
+
+        $replacements = [
+            'm' => 'mo',
+            'n' => 'na',
+            'k' => 'ka',
+        ];
+
+        if (!preg_match('/\b([mnk])([.!?])$/iu', $text, $matches)) {
+            return $text;
+        }
+
+        $short = strtolower((string) ($matches[1] ?? ''));
+        $punctuation = (string) ($matches[2] ?? '.');
+
+        if (!isset($replacements[$short])) {
+            return $text;
+        }
+
+        $expanded = $replacements[$short] . $punctuation;
+
+        return preg_replace('/\b([mnk])([.!?])$/iu', $expanded, $text, 1) ?? $text;
+    }
+
+    private function looksLikeFilipino(string $text): bool
+    {
+        return preg_match(
+            '/\b(ang|ng|sa|mga|para|hindi|pwede|paano|ano|ito|iyan|ikaw|ka|ko|mo|natin|tanim|pagtatanim)\b/iu',
+            $text
+        ) === 1;
     }
 }
