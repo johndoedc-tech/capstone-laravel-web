@@ -227,6 +227,7 @@ class GeminiChatService
             'Focus on crop planning, production interpretation, weather-aware decision support, and how to use Harviana map/prediction features.',
             'Keep answers short, clear, and actionable.',
             'Respond in plain text only. Do not use Markdown symbols such as **, *, #, or backticks.',
+            'Do not use markdown bullets. If listing items, use simple plain-text numbering like 1., 2., 3.',
             'Use at most 4 short sentences (or one compact list) and always end with a complete sentence.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',

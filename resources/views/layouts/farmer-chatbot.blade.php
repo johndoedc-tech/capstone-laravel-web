@@ -138,6 +138,23 @@
         }
     }
 
+    function sanitizeAssistantText(text) {
+        if (typeof text !== 'string') {
+            return '';
+        }
+
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '$1')
+            .replace(/`([^`]+)`/g, '$1')
+            .replace(/^\s*#{1,6}\s*/gm, '')
+            .replace(/^\s*[-*]\s+/gm, '')
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+            .replace(/_{1,2}([^_]+)_{1,2}/g, '$1')
+            .replace(/[ \t]+/g, ' ')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+    }
+
     function createBubble(message) {
         const wrapper = document.createElement('div');
         wrapper.className = message.role === 'assistant' ? 'flex justify-start mb-2' : 'flex justify-end mb-2';
@@ -147,7 +164,11 @@
             ? 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700'
             : 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-primary text-white';
 
-        bubble.textContent = message.text;
+        const messageText = message.role === 'assistant'
+            ? sanitizeAssistantText(message.text)
+            : (typeof message.text === 'string' ? message.text : '');
+
+        bubble.textContent = messageText;
         wrapper.appendChild(bubble);
 
         return wrapper;
@@ -188,7 +209,14 @@
             const data = await response.json();
 
             if (response.ok && data.success && Array.isArray(data.history)) {
-                state.messages = data.history;
+                state.messages = data.history
+                    .map((message) => ({
+                        role: message?.role === 'user' ? 'user' : 'assistant',
+                        text: message?.role === 'assistant'
+                            ? sanitizeAssistantText(message?.text)
+                            : (typeof message?.text === 'string' ? message.text : ''),
+                    }))
+                    .filter((message) => message.text !== '');
             }
         } catch (error) {
             console.error('Failed to load chatbot history.', error);
@@ -233,11 +261,18 @@
             }
 
             if (Array.isArray(data.history)) {
-                state.messages = data.history;
+                state.messages = data.history
+                    .map((message) => ({
+                        role: message?.role === 'user' ? 'user' : 'assistant',
+                        text: message?.role === 'assistant'
+                            ? sanitizeAssistantText(message?.text)
+                            : (typeof message?.text === 'string' ? message.text : ''),
+                    }))
+                    .filter((message) => message.text !== '');
             } else if (typeof data.reply === 'string' && data.reply.trim() !== '') {
                 state.messages.push({
                     role: 'assistant',
-                    text: data.reply,
+                    text: sanitizeAssistantText(data.reply),
                 });
             }
 
