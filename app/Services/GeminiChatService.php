@@ -18,9 +18,13 @@ class GeminiChatService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim((string) config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/');
-        $this->apiKey = config('services.gemini.api_key');
-        $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
+        $baseUrl = $this->sanitizeConfigString((string) config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'));
+        $apiKey = $this->sanitizeConfigString((string) config('services.gemini.api_key', ''));
+        $model = $this->sanitizeConfigString((string) config('services.gemini.model', 'gemini-2.0-flash'));
+
+        $this->baseUrl = rtrim($baseUrl !== '' ? $baseUrl : 'https://generativelanguage.googleapis.com/v1beta', '/');
+        $this->apiKey = $apiKey !== '' ? $apiKey : null;
+        $this->model = $model !== '' ? $model : 'gemini-2.0-flash';
         $this->fallbackModels = $this->normalizeFallbackModels(config('services.gemini.fallback_models', []));
         $this->timeout = (int) config('services.gemini.timeout', 20);
         $this->retries = (int) config('services.gemini.retries', 0);
@@ -157,7 +161,12 @@ class GeminiChatService
             return [];
         }
 
-        return array_values(array_filter(array_map(static fn ($model) => trim((string) $model), $fallbackModels)));
+        return array_values(array_filter(array_map(fn ($model) => $this->sanitizeConfigString((string) $model), $fallbackModels)));
+    }
+
+    private function sanitizeConfigString(string $value): string
+    {
+        return trim($value, " \t\n\r\0\x0B\"'");
     }
 
     private function isQuotaOrRateLimitError(string $message): bool
