@@ -53,7 +53,7 @@ class GeminiChatService
             'contents' => $contents,
             'generationConfig' => [
                 'temperature' => 0.4,
-                'maxOutputTokens' => 256,
+                'maxOutputTokens' => 320,
             ],
         ];
 
@@ -132,15 +132,20 @@ class GeminiChatService
             throw new RuntimeException('Gemini response did not include text output.');
         }
 
+        $finishReason = strtoupper((string) data_get($body, 'candidates.0.finishReason', ''));
+
         $tokenUsage = [
             'prompt' => data_get($body, 'usageMetadata.promptTokenCount'),
             'response' => data_get($body, 'usageMetadata.candidatesTokenCount'),
             'total' => data_get($body, 'usageMetadata.totalTokenCount'),
         ];
 
+        $reply = $this->normalizeAssistantReply($reply, $finishReason === 'MAX_TOKENS');
+
         Log::info('Gemini chatbot response generated.', [
             'model' => $modelName,
             'latency_ms' => $latencyMs,
+            'finish_reason' => $finishReason,
             'token_usage' => $tokenUsage,
         ]);
 
@@ -221,6 +226,8 @@ class GeminiChatService
             'You are Harviana Assistant, a practical agriculture helper for farmers in Benguet.',
             'Focus on crop planning, production interpretation, weather-aware decision support, and how to use Harviana map/prediction features.',
             'Keep answers short, clear, and actionable.',
+            'Respond in plain text only. Do not use Markdown symbols such as **, *, #, or backticks.',
+            'Use at most 4 short sentences (or one compact list) and always end with a complete sentence.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
             'Mirror the user language (English or Filipino).',
@@ -305,5 +312,35 @@ class GeminiChatService
         }
 
         return "{$status}: {$message}";
+    }
+
+    private function normalizeAssistantReply(string $reply, bool $wasTruncated): string
+    {
+        $normalized = str_replace(['**', '`'], '', $reply);
+        $normalized = preg_replace('/[ \t]+/', ' ', $normalized) ?? $normalized;
+        $normalized = preg_replace('/\n{3,}/', "\n\n", $normalized) ?? $normalized;
+        $normalized = trim($normalized);
+
+        if ($normalized === '') {
+            return $normalized;
+        }
+
+        if ($wasTruncated) {
+            $lastPunctuation = max(
+                strrpos($normalized, '.'),
+                strrpos($normalized, '!'),
+                strrpos($normalized, '?')
+            );
+
+            if ($lastPunctuation !== false && $lastPunctuation > (int) (strlen($normalized) * 0.55)) {
+                $normalized = trim(substr($normalized, 0, $lastPunctuation + 1));
+            }
+        }
+
+        if (!preg_match('/[.!?]["\')\]]?$/', $normalized)) {
+            $normalized .= '.';
+        }
+
+        return $normalized;
     }
 }
