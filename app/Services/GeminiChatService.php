@@ -1,0 +1,247 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
+use Throwable;
+
+class GeminiChatService
+{
+    private string $baseUrl;
+    private ?string $apiKey;
+    private string $model;
+    private int $timeout;
+    private int $retries;
+
+    public function __construct()
+    {
+        $this->baseUrl = rtrim((string) config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/');
+        $this->apiKey = config('services.gemini.api_key');
+        $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
+        $this->timeout = (int) config('services.gemini.timeout', 20);
+        $this->retries = (int) config('services.gemini.retries', 1);
+    }
+
+    public function generateReply(string $message, array $history = [], array $context = []): array
+    {
+        $trimmedMessage = trim($message);
+
+        if ($trimmedMessage === '') {
+            throw new RuntimeException('Chat message cannot be empty.');
+        }
+
+        if ($this->apiKey === null || trim($this->apiKey) === '') {
+            throw new RuntimeException('Gemini API key is not configured.');
+        }
+
+        $url = "{$this->baseUrl}/models/{$this->model}:generateContent";
+        $contents = $this->buildContents($trimmedMessage, $history);
+
+        $payload = [
+            'systemInstruction' => [
+                'parts' => [
+                    ['text' => $this->buildSystemInstruction($context)],
+                ],
+            ],
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => 0.4,
+                'maxOutputTokens' => 512,
+            ],
+        ];
+
+        $attempts = max(1, $this->retries + 1);
+        $startTime = microtime(true);
+
+        try {
+            $response = Http::timeout($this->timeout)
+                ->retry($attempts, 250)
+                ->withQueryParameters(['key' => $this->apiKey])
+                ->acceptJson()
+                ->post($url, $payload);
+        } catch (Throwable $exception) {
+            Log::error('Gemini chatbot request failed before response.', [
+                'model' => $this->model,
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
+
+        $latencyMs = round((microtime(true) - $startTime) * 1000, 2);
+        $body = $response->json();
+        $body = is_array($body) ? $body : [];
+
+        if (!$response->successful()) {
+            $providerMessage = $this->extractProviderErrorMessage($body);
+
+            Log::warning('Gemini chatbot provider returned non-success response.', [
+                'status' => $response->status(),
+                'model' => $this->model,
+                'latency_ms' => $latencyMs,
+                'provider_error' => $providerMessage,
+            ]);
+
+            throw new RuntimeException("Gemini API request failed ({$response->status()}): {$providerMessage}");
+        }
+
+        $reply = $this->extractReplyText($body);
+
+        if ($reply === null || trim($reply) === '') {
+            Log::warning('Gemini chatbot response missing text candidate.', [
+                'model' => $this->model,
+                'latency_ms' => $latencyMs,
+            ]);
+
+            throw new RuntimeException('Gemini response did not include text output.');
+        }
+
+        $tokenUsage = [
+            'prompt' => data_get($body, 'usageMetadata.promptTokenCount'),
+            'response' => data_get($body, 'usageMetadata.candidatesTokenCount'),
+            'total' => data_get($body, 'usageMetadata.totalTokenCount'),
+        ];
+
+        Log::info('Gemini chatbot response generated.', [
+            'model' => $this->model,
+            'latency_ms' => $latencyMs,
+            'token_usage' => $tokenUsage,
+        ]);
+
+        return [
+            'reply' => trim($reply),
+            'model' => $this->model,
+            'tokens' => $tokenUsage,
+        ];
+    }
+
+    private function buildContents(string $message, array $history): array
+    {
+        $contents = [];
+
+        foreach ($history as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $text = trim((string) ($entry['text'] ?? ''));
+
+            if ($text === '') {
+                continue;
+            }
+
+            $rawRole = strtolower((string) ($entry['role'] ?? 'user'));
+            $role = $rawRole === 'assistant' ? 'model' : 'user';
+
+            $contents[] = [
+                'role' => $role,
+                'parts' => [
+                    ['text' => $text],
+                ],
+            ];
+        }
+
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [
+                ['text' => $message],
+            ],
+        ];
+
+        return $contents;
+    }
+
+    private function buildSystemInstruction(array $context): string
+    {
+        $instruction = [
+            'You are Harviana Assistant, a practical agriculture helper for farmers in Benguet.',
+            'Focus on crop planning, production interpretation, weather-aware decision support, and how to use Harviana map/prediction features.',
+            'Keep answers short, clear, and actionable.',
+            'If data is missing or uncertain, say it clearly and suggest the next best step.',
+            'Do not claim live data access unless the context explicitly includes it.',
+            'Mirror the user language (English or Filipino).',
+        ];
+
+        $contextLines = $this->formatContext($context);
+
+        if ($contextLines !== '') {
+            $instruction[] = 'Farmer context:';
+            $instruction[] = $contextLines;
+        }
+
+        return implode("\n", $instruction);
+    }
+
+    private function formatContext(array $context): string
+    {
+        $lines = [];
+
+        $preferredMunicipality = trim((string) ($context['preferred_municipality'] ?? ''));
+        if ($preferredMunicipality !== '') {
+            $lines[] = "- Preferred municipality: {$preferredMunicipality}";
+        }
+
+        $favoriteCrops = $context['favorite_crops'] ?? [];
+        if (is_array($favoriteCrops) && !empty($favoriteCrops)) {
+            $cropList = implode(', ', array_map('strval', $favoriteCrops));
+            $lines[] = "- Favorite crops: {$cropList}";
+        }
+
+        $recentPredictions = $context['recent_predictions'] ?? [];
+        if (is_array($recentPredictions) && !empty($recentPredictions)) {
+            $lines[] = '- Recent predictions:';
+
+            foreach ($recentPredictions as $prediction) {
+                if (!is_array($prediction)) {
+                    continue;
+                }
+
+                $crop = (string) ($prediction['crop'] ?? 'Unknown crop');
+                $municipality = (string) ($prediction['municipality'] ?? 'Unknown municipality');
+                $production = (string) ($prediction['predicted_production_mt'] ?? 'N/A');
+                $date = (string) ($prediction['created_at'] ?? 'Unknown date');
+
+                $lines[] = "  - {$crop} in {$municipality}: {$production} MT ({$date})";
+            }
+        }
+
+        return implode("\n", $lines);
+    }
+
+    private function extractReplyText(array $responseBody): ?string
+    {
+        $parts = data_get($responseBody, 'candidates.0.content.parts', []);
+
+        if (!is_array($parts)) {
+            return null;
+        }
+
+        $chunks = [];
+
+        foreach ($parts as $part) {
+            if (is_array($part) && isset($part['text']) && is_string($part['text'])) {
+                $chunks[] = $part['text'];
+            }
+        }
+
+        if (empty($chunks)) {
+            return null;
+        }
+
+        return trim(implode("\n", $chunks));
+    }
+
+    private function extractProviderErrorMessage(array $responseBody): string
+    {
+        $message = trim((string) data_get($responseBody, 'error.message', 'Unknown provider error.'));
+        $status = trim((string) data_get($responseBody, 'error.status', ''));
+
+        if ($status === '') {
+            return $message;
+        }
+
+        return "{$status}: {$message}";
+    }
+}

@@ -48,4 +48,11 @@ return [
         'timeout' => (int) env('WEATHER_API_TIMEOUT', 10),
         'retries' => (int) env('WEATHER_API_RETRIES', 1),
     ],
+    'gemini' => [
+        'base_url' => env('GEMINI_API_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta'),
+        'api_key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+        'timeout' => (int) env('GEMINI_API_TIMEOUT', 20),
+        'retries' => (int) env('GEMINI_API_RETRIES', 1),
+    ],
 ];

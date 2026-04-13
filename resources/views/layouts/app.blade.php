@@ -40,5 +40,11 @@
                 {{ $slot }}
             </main>
         </div>
+
+        @auth
+            @if(auth()->user()->isFarmer())
+                @include('layouts.farmer-chatbot')
+            @endif
+        @endauth
     </body>
 </html>

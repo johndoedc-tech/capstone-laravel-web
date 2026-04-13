@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\FarmerDashboardController;
 use App\Http\Controllers\FarmerCalendarController;
 use App\Http\Controllers\ForumController;
+use App\Http\Controllers\FarmerChatbotController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
@@ -140,6 +141,17 @@ Route::middleware(['auth', 'force-password-change'])->group(function () {
             Route::post('/calendar-events/{id}/toggle', [FarmerCalendarController::class, 'toggleComplete'])->name('calendar.toggle');
             Route::get('/reminders/today', [FarmerCalendarController::class, 'getTodayReminders'])->name('reminders.today');
             Route::get('/reminders/upcoming', [FarmerCalendarController::class, 'getUpcomingReminders'])->name('reminders.upcoming');
+
+            // Farmer Chatbot API
+            Route::prefix('chatbot')->name('chatbot.')->group(function () {
+                Route::get('/history', [FarmerChatbotController::class, 'history'])->name('history');
+                Route::post('/message', [FarmerChatbotController::class, 'send'])
+                    ->middleware('throttle:20,1')
+                    ->name('message');
+                Route::post('/reset', [FarmerChatbotController::class, 'reset'])
+                    ->middleware('throttle:10,1')
+                    ->name('reset');
+            });
         });
 
         // Farmer Predictions routes
