@@ -16,7 +16,7 @@
 
             <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between gap-3 flex-1 min-w-0">
                 <div class="min-w-0">
-                    <h1 class="font-bold text-white text-sm lg:text-lg leading-tight truncate">GeoMap</h1>
+                    <h1 class="font-bold text-white text-sm lg:text-lg leading-tight truncate">Harviana</h1>
                     <p class="text-[11px] lg:text-xs text-primary-200 leading-tight">Admin Panel</p>
                 </div>
                 <div class="bg-black/20 border border-white/20 w-9 h-9 lg:w-10 lg:h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
