@@ -6,13 +6,15 @@ use App\Models\Prediction;
 use App\Services\GeminiChatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class FarmerChatbotController extends Controller
 {
     private const SESSION_HISTORY_LIMIT = 20;
-    private const CONTEXT_HISTORY_LIMIT = 10;
+    private const CONTEXT_HISTORY_LIMIT = 6;
+    private const QUOTA_COOLDOWN_SECONDS = 65;
 
     public function history(Request $request): JsonResponse
     {
@@ -24,6 +26,15 @@ class FarmerChatbotController extends Controller
 
     public function send(Request $request, GeminiChatService $chatService): JsonResponse
     {
+        $cooldownSeconds = $this->getQuotaCooldownSeconds($request);
+
+        if ($cooldownSeconds > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "The assistant is temporarily waiting for Gemini quota reset. Please try again in {$cooldownSeconds} seconds.",
+            ], 429);
+        }
+
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],
         ]);
@@ -48,15 +59,22 @@ class FarmerChatbotController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
+            $isQuotaError = $this->isQuotaOrRateLimitError($exception->getMessage());
+
+            if ($isQuotaError) {
+                $this->activateQuotaCooldown($request);
+            }
+
             Log::warning('Farmer chatbot request failed.', [
                 'user_id' => $request->user()?->id,
                 'error' => $exception->getMessage(),
+                'is_quota_error' => $isQuotaError,
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => $this->toFriendlyMessage($exception->getMessage()),
-            ], 503);
+            ], $isQuotaError ? 429 : 503);
         }
 
         $now = now()->toIso8601String();
@@ -137,7 +155,7 @@ class FarmerChatbotController extends Controller
         }
 
         if (str_contains($normalizedError, 'resource_exhausted') || str_contains($normalizedError, 'quota') || str_contains($normalizedError, '429')) {
-            return 'The assistant hit a Gemini API rate or quota limit. Please try again later, or ask the administrator to check API quota/billing and rotate the key if needed.';
+            return 'The assistant hit a Gemini API rate or quota limit. Enable paid tier/billing for this Gemini project or wait for quota reset, then try again.';
         }
 
         if (str_contains($normalizedError, 'timed out') || str_contains($normalizedError, 'timeout')) {
@@ -162,5 +180,42 @@ class FarmerChatbotController extends Controller
     private function putHistory(Request $request, array $history): void
     {
         $request->session()->put($this->historySessionKey($request), $history);
+    }
+
+    private function isQuotaOrRateLimitError(string $rawError): bool
+    {
+        $normalizedError = strtolower($rawError);
+
+        return str_contains($normalizedError, 'resource_exhausted')
+            || str_contains($normalizedError, 'quota')
+            || str_contains($normalizedError, 'too many requests')
+            || str_contains($normalizedError, '429');
+    }
+
+    private function quotaCooldownKey(Request $request): string
+    {
+        return 'farmer_chatbot.quota_cooldown.' . $request->user()->id;
+    }
+
+    private function activateQuotaCooldown(Request $request): void
+    {
+        $unlockTimestamp = now()->addSeconds(self::QUOTA_COOLDOWN_SECONDS)->timestamp;
+
+        Cache::put(
+            $this->quotaCooldownKey($request),
+            $unlockTimestamp,
+            self::QUOTA_COOLDOWN_SECONDS
+        );
+    }
+
+    private function getQuotaCooldownSeconds(Request $request): int
+    {
+        $unlockTimestamp = Cache::get($this->quotaCooldownKey($request));
+
+        if (!is_int($unlockTimestamp)) {
+            return 0;
+        }
+
+        return max(0, $unlockTimestamp - now()->timestamp);
     }
 }

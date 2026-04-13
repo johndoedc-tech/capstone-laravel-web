@@ -49,7 +49,7 @@ class GeminiChatService
             'contents' => $contents,
             'generationConfig' => [
                 'temperature' => 0.4,
-                'maxOutputTokens' => 512,
+                'maxOutputTokens' => 256,
             ],
         ];
 
