@@ -25,3 +25,29 @@
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
 	background-color: #5a7b95;
 }
+
+@media (min-width: 640px) {
+	#farmer-chatbot-messages {
+		scrollbar-width: thin;
+		scrollbar-color: #9ca3af #e5e7eb;
+	}
+
+	#farmer-chatbot-messages::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	#farmer-chatbot-messages::-webkit-scrollbar-track {
+		background: #e5e7eb;
+		border-radius: 9999px;
+	}
+
+	#farmer-chatbot-messages::-webkit-scrollbar-thumb {
+		background-color: #9ca3af;
+		border-radius: 9999px;
+		border: 2px solid #e5e7eb;
+	}
+
+	#farmer-chatbot-messages::-webkit-scrollbar-thumb:hover {
+		background-color: #6b7280;
+	}
+}

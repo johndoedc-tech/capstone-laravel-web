@@ -8,7 +8,7 @@
 >
     <div
         id="farmer-chatbot-panel"
-        class="hidden flex flex-col bg-white overflow-hidden fixed left-0 right-0 top-14 rounded-t-2xl border border-gray-200 border-b-0 shadow-2xl h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] sm:static sm:mb-3 sm:rounded-2xl sm:border sm:w-[22rem] sm:max-w-[calc(100vw-3rem)] sm:h-[70vh] sm:max-h-[42rem]"
+        class="hidden flex flex-col bg-white overflow-hidden fixed left-0 right-0 top-14 rounded-t-2xl border border-gray-200 border-b-0 shadow-2xl h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] sm:flex sm:static sm:mb-3 sm:rounded-2xl sm:border sm:w-[22rem] sm:max-w-[calc(100vw-3rem)] sm:h-[70vh] sm:max-h-[42rem]"
     >
         <div class="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div>
@@ -18,7 +18,7 @@
             <button
                 type="button"
                 id="farmer-chatbot-close"
-                class="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-primary-700 transition-colors"
+                class="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-primary-700 transition-colors sm:hidden"
                 aria-label="Close chatbot"
             >
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -66,7 +66,7 @@
     <button
         type="button"
         id="farmer-chatbot-launcher"
-        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center"
+        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center sm:hidden"
         aria-label="Open chatbot"
     >
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -183,24 +183,41 @@
         panel.style.maxHeight = `${computedHeight}px`;
     }
 
-    function setOpen(isOpen) {
-        state.isOpen = isOpen;
-        panel.classList.toggle('hidden', !isOpen);
-        localStorage.setItem(storageKey, isOpen ? '1' : '0');
+    function applyViewportMode() {
+        const mobileViewport = isMobileViewport();
 
-        launcher.classList.toggle('opacity-0', isOpen);
-        launcher.classList.toggle('pointer-events-none', isOpen);
+        if (mobileViewport) {
+            panel.classList.toggle('hidden', !state.isOpen);
+            launcher.classList.toggle('opacity-0', state.isOpen);
+            launcher.classList.toggle('pointer-events-none', state.isOpen);
+            setDocumentScrollLock(state.isOpen);
+        } else {
+            panel.classList.remove('hidden');
+            launcher.classList.add('opacity-0', 'pointer-events-none');
+            setDocumentScrollLock(false);
+        }
 
-        const shouldLockBody = isOpen && isMobileViewport();
-        setDocumentScrollLock(shouldLockBody);
         updateMobilePanelHeight();
 
-        if (isOpen) {
+        if (!mobileViewport || state.isOpen) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    function setOpen(isOpen) {
+        const wasOpen = state.isOpen;
+        state.isOpen = isOpen;
+
+        if (isMobileViewport()) {
+            localStorage.setItem(storageKey, isOpen ? '1' : '0');
+        }
+
+        applyViewportMode();
+
+        if (isMobileViewport() && isOpen && !wasOpen) {
             requestAnimationFrame(() => {
+                input.focus();
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                if (!isMobileViewport()) {
-                    input.focus();
-                }
             });
         }
     }
@@ -394,10 +411,18 @@
     }
 
     launcher.addEventListener('click', () => {
+        if (!isMobileViewport()) {
+            return;
+        }
+
         setOpen(!state.isOpen);
     });
 
     closeButton.addEventListener('click', () => {
+        if (!isMobileViewport()) {
+            return;
+        }
+
         setOpen(false);
     });
 
@@ -438,12 +463,7 @@
     });
 
     function syncViewportState() {
-        updateMobilePanelHeight();
-        setDocumentScrollLock(state.isOpen && isMobileViewport());
-
-        if (state.isOpen) {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+        applyViewportMode();
     }
 
     window.addEventListener('resize', syncViewportState);
