@@ -15,16 +15,28 @@
                 <p class="text-sm font-semibold">Harviana Assistant</p>
                 <p class="text-xs text-primary-100">Farmer support chat</p>
             </div>
-            <button
-                type="button"
-                id="farmer-chatbot-close"
-                class="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-primary-700 transition-colors sm:hidden"
-                aria-label="Close chatbot"
-            >
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+            <div class="flex items-center gap-1">
+                <button
+                    type="button"
+                    id="farmer-chatbot-minimize"
+                    class="hidden sm:inline-flex w-8 h-8 items-center justify-center rounded-lg hover:bg-primary-700 transition-colors"
+                    aria-label="Minimize chatbot"
+                >
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h12" />
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    id="farmer-chatbot-close"
+                    class="w-8 h-8 inline-flex items-center justify-center rounded-lg hover:bg-primary-700 transition-colors sm:hidden"
+                    aria-label="Close chatbot"
+                >
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div id="farmer-chatbot-messages" class="p-3 bg-gray-50 overflow-y-auto flex-1 min-h-0 overscroll-contain"></div>
@@ -66,7 +78,7 @@
     <button
         type="button"
         id="farmer-chatbot-launcher"
-        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center sm:hidden"
+        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center sm:opacity-0 sm:pointer-events-none"
         aria-label="Open chatbot"
     >
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -90,6 +102,7 @@
 
     const panel = document.getElementById('farmer-chatbot-panel');
     const launcher = document.getElementById('farmer-chatbot-launcher');
+    const minimizeButton = document.getElementById('farmer-chatbot-minimize');
     const closeButton = document.getElementById('farmer-chatbot-close');
     const form = document.getElementById('farmer-chatbot-form');
     const input = document.getElementById('farmer-chatbot-input');
@@ -98,11 +111,12 @@
     const statusLabel = document.getElementById('farmer-chatbot-status');
     const resetButton = document.getElementById('farmer-chatbot-reset');
 
-    if (!panel || !launcher || !closeButton || !form || !input || !messagesContainer || !sendButton || !statusLabel || !resetButton) {
+    if (!panel || !launcher || !minimizeButton || !closeButton || !form || !input || !messagesContainer || !sendButton || !statusLabel || !resetButton) {
         return;
     }
 
-    const storageKey = 'harviana_farmer_chatbot_open';
+    const mobileStorageKey = 'harviana_farmer_chatbot_open';
+    const desktopStorageKey = 'harviana_farmer_chatbot_minimized';
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
     const historyUrl = root.dataset.historyUrl;
@@ -119,7 +133,8 @@
     };
 
     const state = {
-        isOpen: localStorage.getItem(storageKey) === '1',
+        isOpen: localStorage.getItem(mobileStorageKey) === '1',
+        isMinimized: localStorage.getItem(desktopStorageKey) === '1',
         isLoading: false,
         messages: [],
     };
@@ -132,6 +147,9 @@
         state.isLoading = isLoading;
         input.disabled = isLoading;
         sendButton.disabled = isLoading;
+        resetButton.disabled = isLoading;
+        resetButton.classList.toggle('opacity-60', isLoading);
+        resetButton.classList.toggle('pointer-events-none', isLoading);
         sendButton.textContent = isLoading ? 'Sending...' : 'Send';
     }
 
@@ -192,8 +210,9 @@
             launcher.classList.toggle('pointer-events-none', state.isOpen);
             setDocumentScrollLock(state.isOpen);
         } else {
-            panel.classList.remove('hidden');
-            launcher.classList.add('opacity-0', 'pointer-events-none');
+            panel.classList.toggle('hidden', state.isMinimized);
+            launcher.classList.toggle('opacity-0', !state.isMinimized);
+            launcher.classList.toggle('pointer-events-none', !state.isMinimized);
             setDocumentScrollLock(false);
         }
 
@@ -209,12 +228,31 @@
         state.isOpen = isOpen;
 
         if (isMobileViewport()) {
-            localStorage.setItem(storageKey, isOpen ? '1' : '0');
+            localStorage.setItem(mobileStorageKey, isOpen ? '1' : '0');
         }
 
         applyViewportMode();
 
         if (isMobileViewport() && isOpen && !wasOpen) {
+            requestAnimationFrame(() => {
+                input.focus();
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+    }
+
+    function setMinimized(isMinimized) {
+        if (isMobileViewport()) {
+            return;
+        }
+
+        const wasMinimized = state.isMinimized;
+        state.isMinimized = isMinimized;
+        localStorage.setItem(desktopStorageKey, isMinimized ? '1' : '0');
+
+        applyViewportMode();
+
+        if (wasMinimized && !isMinimized) {
             requestAnimationFrame(() => {
                 input.focus();
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -379,6 +417,11 @@
     }
 
     async function resetConversation() {
+        if (state.isLoading) {
+            setStatus('Please wait for the current reply to finish.');
+            return;
+        }
+
         if (!resetUrl || !csrfToken) {
             return;
         }
@@ -411,11 +454,21 @@
     }
 
     launcher.addEventListener('click', () => {
-        if (!isMobileViewport()) {
+        if (isMobileViewport()) {
+            setOpen(!state.isOpen);
             return;
         }
 
-        setOpen(!state.isOpen);
+        setMinimized(false);
+    });
+
+    minimizeButton.addEventListener('click', () => {
+        if (isMobileViewport()) {
+            setOpen(false);
+            return;
+        }
+
+        setMinimized(true);
     });
 
     closeButton.addEventListener('click', () => {

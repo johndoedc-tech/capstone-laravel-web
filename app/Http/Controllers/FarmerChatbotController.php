@@ -15,6 +15,8 @@ class FarmerChatbotController extends Controller
     private const SESSION_HISTORY_LIMIT = 20;
     private const CONTEXT_HISTORY_LIMIT = 6;
     private const QUOTA_COOLDOWN_SECONDS = 65;
+    private const IN_FLIGHT_REQUEST_SECONDS = 30;
+    private const DUPLICATE_RESPONSE_TTL_SECONDS = 12;
 
     public function history(Request $request): JsonResponse
     {
@@ -48,61 +50,89 @@ class FarmerChatbotController extends Controller
             ], 422);
         }
 
-        $history = $this->getHistory($request);
+        $messageFingerprint = $this->messageFingerprint($message);
+        $cachedResponse = Cache::get($this->duplicateResponseCacheKey($request, $messageFingerprint));
 
-        try {
-            $result = $chatService->generateReply(
-                $message,
-                array_slice($history, -self::CONTEXT_HISTORY_LIMIT),
-                $this->buildFarmerContext($request)
-            );
-        } catch (Throwable $exception) {
-            report($exception);
-
-            $isQuotaError = $this->isQuotaOrRateLimitError($exception->getMessage());
-
-            if ($isQuotaError) {
-                $this->activateQuotaCooldown($request);
-            }
-
-            Log::warning('Farmer chatbot request failed.', [
-                'user_id' => $request->user()?->id,
-                'error' => $exception->getMessage(),
-                'is_quota_error' => $isQuotaError,
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => $this->toFriendlyMessage($exception->getMessage()),
-            ], $isQuotaError ? 429 : 503);
+        if (is_array($cachedResponse) && isset($cachedResponse['success']) && $cachedResponse['success'] === true) {
+            return response()->json($cachedResponse);
         }
 
-        $now = now()->toIso8601String();
+        $inFlightKey = $this->inFlightRequestKey($request);
 
-        $history[] = [
-            'role' => 'user',
-            'text' => $message,
-            'at' => $now,
-        ];
+        if (!Cache::add($inFlightKey, now()->timestamp, self::IN_FLIGHT_REQUEST_SECONDS)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please wait for the current assistant reply to finish before sending another question.',
+            ], 429);
+        }
 
-        $history[] = [
-            'role' => 'assistant',
-            'text' => $result['reply'],
-            'at' => $now,
-        ];
+        try {
+            $history = $this->getHistory($request);
 
-        $history = array_slice($history, -self::SESSION_HISTORY_LIMIT);
-        $this->putHistory($request, $history);
+            try {
+                $result = $chatService->generateReply(
+                    $message,
+                    array_slice($history, -self::CONTEXT_HISTORY_LIMIT),
+                    $this->buildFarmerContext($request)
+                );
+            } catch (Throwable $exception) {
+                report($exception);
 
-        return response()->json([
-            'success' => true,
-            'reply' => $result['reply'],
-            'history' => $history,
-            'metadata' => [
-                'model' => $result['model'] ?? null,
-                'tokens' => $result['tokens'] ?? null,
-            ],
-        ]);
+                $isQuotaError = $this->isQuotaOrRateLimitError($exception->getMessage());
+
+                if ($isQuotaError) {
+                    $this->activateQuotaCooldown($request);
+                }
+
+                Log::warning('Farmer chatbot request failed.', [
+                    'user_id' => $request->user()?->id,
+                    'error' => $exception->getMessage(),
+                    'is_quota_error' => $isQuotaError,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $this->toFriendlyMessage($exception->getMessage()),
+                ], $isQuotaError ? 429 : 503);
+            }
+
+            $now = now()->toIso8601String();
+
+            $history[] = [
+                'role' => 'user',
+                'text' => $message,
+                'at' => $now,
+            ];
+
+            $history[] = [
+                'role' => 'assistant',
+                'text' => $result['reply'],
+                'at' => $now,
+            ];
+
+            $history = array_slice($history, -self::SESSION_HISTORY_LIMIT);
+            $this->putHistory($request, $history);
+
+            $responsePayload = [
+                'success' => true,
+                'reply' => $result['reply'],
+                'history' => $history,
+                'metadata' => [
+                    'model' => $result['model'] ?? null,
+                    'tokens' => $result['tokens'] ?? null,
+                ],
+            ];
+
+            Cache::put(
+                $this->duplicateResponseCacheKey($request, $messageFingerprint),
+                $responsePayload,
+                self::DUPLICATE_RESPONSE_TTL_SECONDS
+            );
+
+            return response()->json($responsePayload);
+        } finally {
+            Cache::forget($inFlightKey);
+        }
     }
 
     public function reset(Request $request): JsonResponse
@@ -221,5 +251,20 @@ class FarmerChatbotController extends Controller
         }
 
         return max(0, $unlockTimestamp - now()->timestamp);
+    }
+
+    private function inFlightRequestKey(Request $request): string
+    {
+        return 'farmer_chatbot.in_flight.' . $request->user()->id;
+    }
+
+    private function duplicateResponseCacheKey(Request $request, string $messageFingerprint): string
+    {
+        return 'farmer_chatbot.duplicate_response.' . $request->user()->id . '.' . $messageFingerprint;
+    }
+
+    private function messageFingerprint(string $message): string
+    {
+        return hash('sha256', strtolower(trim($message)));
     }
 }

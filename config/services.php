@@ -55,5 +55,6 @@ return [
         'fallback_models' => env('GEMINI_FALLBACK_MODELS', ''),
         'timeout' => (int) env('GEMINI_API_TIMEOUT', 20),
         'retries' => (int) env('GEMINI_API_RETRIES', 0),
+        'max_output_tokens' => (int) env('GEMINI_MAX_OUTPUT_TOKENS', 480),
     ],
 ];

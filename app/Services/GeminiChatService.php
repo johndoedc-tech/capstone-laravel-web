@@ -15,6 +15,7 @@ class GeminiChatService
     private array $fallbackModels;
     private int $timeout;
     private int $retries;
+    private int $maxOutputTokens;
 
     public function __construct()
     {
@@ -28,6 +29,7 @@ class GeminiChatService
         $this->fallbackModels = $this->normalizeFallbackModels(config('services.gemini.fallback_models', []));
         $this->timeout = (int) config('services.gemini.timeout', 20);
         $this->retries = (int) config('services.gemini.retries', 0);
+        $this->maxOutputTokens = max(160, min(1024, (int) config('services.gemini.max_output_tokens', 480)));
     }
 
     public function generateReply(string $message, array $history = [], array $context = []): array
@@ -53,7 +55,7 @@ class GeminiChatService
             'contents' => $contents,
             'generationConfig' => [
                 'temperature' => 0.4,
-                'maxOutputTokens' => 320,
+                'maxOutputTokens' => $this->maxOutputTokens,
             ],
         ];
 
@@ -328,24 +330,53 @@ class GeminiChatService
         }
 
         if ($wasTruncated) {
-            $lastPunctuation = max(
-                strrpos($normalized, '.'),
-                strrpos($normalized, '!'),
-                strrpos($normalized, '?')
-            );
+            $trimmed = $this->trimToLastCompleteSentence($normalized);
 
-            if ($lastPunctuation !== false && $lastPunctuation > (int) (strlen($normalized) * 0.55)) {
-                $normalized = trim(substr($normalized, 0, $lastPunctuation + 1));
+            if ($trimmed !== '') {
+                $normalized = $trimmed;
             }
         }
 
         $normalized = $this->expandFilipinoTrailingShorthand($normalized);
 
-        if (!preg_match('/[.!?]["\')\]]?$/', $normalized)) {
+        if (!$this->hasTerminalPunctuation($normalized)) {
+            $trimmed = $this->trimToLastCompleteSentence($normalized);
+
+            if ($trimmed !== '') {
+                $normalized = $trimmed;
+            }
+        }
+
+        if (!$this->hasTerminalPunctuation($normalized)) {
             $normalized .= '.';
         }
 
         return $normalized;
+    }
+
+    private function hasTerminalPunctuation(string $text): bool
+    {
+        return preg_match('/[.!?]["\')\]]?$/', $text) === 1;
+    }
+
+    private function trimToLastCompleteSentence(string $text): string
+    {
+        $text = trim($text);
+
+        if ($text === '') {
+            return '';
+        }
+
+        preg_match_all('/[^.!?]*[.!?](?:["\')\]]+)?(?=(?:\s|$))/u', $text, $matches);
+        $sentences = $matches[0] ?? [];
+
+        if (!is_array($sentences) || empty($sentences)) {
+            return '';
+        }
+
+        $completed = trim(implode(' ', array_map(static fn (string $sentence): string => trim($sentence), $sentences)));
+
+        return $completed;
     }
 
     private function expandFilipinoTrailingShorthand(string $text): string
