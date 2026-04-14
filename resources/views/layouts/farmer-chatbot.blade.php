@@ -251,6 +251,8 @@
     };
     const PANEL_ANIMATION_MS = 220;
     const REQUEST_TIMEOUT_MS = 20000;
+    const CONTINUE_PROMPT_EN = 'continue';
+    const CONTINUE_PROMPT_FIL = 'ipagpatuloy';
     let panelHideTimer = null;
     let viewportSyncTimer = null;
     let typingIndicatorElement = null;
@@ -532,6 +534,36 @@
             .trim();
     }
 
+    function looksLikeFilipinoText(text) {
+        if (typeof text !== 'string') {
+            return false;
+        }
+
+        return /\b(ang|ng|sa|mga|para|hindi|pwede|paano|ano|ito|iyan|ikaw|ka|ko|mo|natin|tanim|pagtatanim|ipagpatuloy|hakbang)\b/i.test(text);
+    }
+
+    function resolveContinuePrompt(text) {
+        return looksLikeFilipinoText(text) ? CONTINUE_PROMPT_FIL : CONTINUE_PROMPT_EN;
+    }
+
+    function markLatestAssistantAsTruncated(replyText = '') {
+        for (let index = state.messages.length - 1; index >= 0; index -= 1) {
+            const message = state.messages[index];
+
+            if (!message || message.role !== 'assistant') {
+                continue;
+            }
+
+            const basisText = typeof replyText === 'string' && replyText.trim() !== ''
+                ? replyText
+                : message.text;
+
+            message.truncated = true;
+            message.continuePrompt = resolveContinuePrompt(basisText);
+            return;
+        }
+    }
+
     function createBubble(message, options = {}) {
         const wrapper = document.createElement('div');
         wrapper.className = message.role === 'assistant' ? 'flex justify-start mb-2' : 'flex justify-end mb-2';
@@ -550,6 +582,32 @@
             : (typeof message.text === 'string' ? message.text : '');
 
         bubble.textContent = messageText;
+
+        if (message.role === 'assistant' && message.truncated === true) {
+            const actionRow = document.createElement('div');
+            actionRow.className = 'mt-2 flex';
+
+            const continueButton = document.createElement('button');
+            continueButton.type = 'button';
+            continueButton.className = 'inline-flex items-center rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors';
+            continueButton.textContent = 'Continue';
+            continueButton.disabled = state.isLoading;
+            continueButton.addEventListener('click', () => {
+                if (state.isLoading) {
+                    return;
+                }
+
+                const continuePrompt = typeof message.continuePrompt === 'string' && message.continuePrompt.trim() !== ''
+                    ? message.continuePrompt
+                    : CONTINUE_PROMPT_EN;
+
+                sendMessage(continuePrompt);
+            });
+
+            actionRow.appendChild(continueButton);
+            bubble.appendChild(actionRow);
+        }
+
         wrapper.appendChild(bubble);
 
         return wrapper;
@@ -639,6 +697,8 @@
                         text: message?.role === 'assistant'
                             ? sanitizeAssistantText(message?.text)
                             : (typeof message?.text === 'string' ? message.text : ''),
+                        truncated: false,
+                        continuePrompt: null,
                     }))
                     .filter((message) => message.text !== '');
             }
@@ -710,6 +770,7 @@
             }
 
             state.lastFailedRequest = null;
+            const wasTruncated = data?.metadata?.truncated === true;
 
             if (Array.isArray(data.history)) {
                 state.messages = data.history
@@ -718,17 +779,25 @@
                         text: message?.role === 'assistant'
                             ? sanitizeAssistantText(message?.text)
                             : (typeof message?.text === 'string' ? message.text : ''),
+                        truncated: false,
+                        continuePrompt: null,
                     }))
                     .filter((message) => message.text !== '');
+
+                if (wasTruncated) {
+                    markLatestAssistantAsTruncated(typeof data.reply === 'string' ? data.reply : '');
+                }
             } else if (typeof data.reply === 'string' && data.reply.trim() !== '') {
                 state.messages.push({
                     role: 'assistant',
                     text: sanitizeAssistantText(data.reply),
+                    truncated: wasTruncated,
+                    continuePrompt: wasTruncated ? resolveContinuePrompt(data.reply) : null,
                 });
             }
 
             renderMessages({ animateLast: true });
-            setStatus('Ready');
+            setStatus(wasTruncated ? 'Reply shortened. Tap Continue for more.' : 'Ready');
         } catch (error) {
             if (requestId !== state.activeRequestId) {
                 return;
