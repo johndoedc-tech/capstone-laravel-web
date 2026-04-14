@@ -139,6 +139,8 @@ class FarmerChatbotController extends Controller
                 'history' => $history,
                 'metadata' => [
                     'model' => $result['model'] ?? null,
+                    'finish_reason' => $result['finish_reason'] ?? null,
+                    'truncated' => $result['truncated'] ?? null,
                     'tokens' => $result['tokens'] ?? null,
                     'request_id' => $requestId,
                 ],

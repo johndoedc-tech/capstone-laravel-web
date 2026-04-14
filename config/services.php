@@ -58,5 +58,6 @@ return [
         'allow_http_retry' => (bool) env('GEMINI_ALLOW_HTTP_RETRY', false),
         'model_quota_cooldown_seconds' => (int) env('GEMINI_MODEL_QUOTA_COOLDOWN_SECONDS', 75),
         'max_output_tokens' => (int) env('GEMINI_MAX_OUTPUT_TOKENS', 480),
+        'detailed_max_output_tokens' => (int) env('GEMINI_DETAILED_MAX_OUTPUT_TOKENS', 896),
     ],
 ];

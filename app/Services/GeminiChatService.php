@@ -19,6 +19,7 @@ class GeminiChatService
     private int $retries;
     private bool $allowHttpRetry;
     private int $maxOutputTokens;
+    private int $detailedMaxOutputTokens;
     private int $modelQuotaCooldownSeconds;
 
     public function __construct()
@@ -35,6 +36,10 @@ class GeminiChatService
         $this->retries = (int) config('services.gemini.retries', 0);
         $this->allowHttpRetry = (bool) config('services.gemini.allow_http_retry', false);
         $this->maxOutputTokens = max(160, min(1024, (int) config('services.gemini.max_output_tokens', 480)));
+        $this->detailedMaxOutputTokens = max(
+            $this->maxOutputTokens,
+            min(1024, (int) config('services.gemini.detailed_max_output_tokens', 896))
+        );
         $this->modelQuotaCooldownSeconds = max(30, (int) config('services.gemini.model_quota_cooldown_seconds', 75));
     }
 
@@ -51,6 +56,8 @@ class GeminiChatService
             throw new RuntimeException('Gemini API key is not configured.');
         }
 
+        $maxOutputTokensForRequest = $this->resolveOutputTokenBudget($trimmedMessage);
+
         $contents = $this->buildContents($trimmedMessage, $history);
 
         $payload = [
@@ -62,7 +69,7 @@ class GeminiChatService
             'contents' => $contents,
             'generationConfig' => [
                 'temperature' => 0.4,
-                'maxOutputTokens' => $this->maxOutputTokens,
+                'maxOutputTokens' => $maxOutputTokensForRequest,
             ],
         ];
 
@@ -186,8 +193,48 @@ class GeminiChatService
         return [
             'reply' => trim($reply),
             'model' => $modelName,
+            'finish_reason' => $finishReason,
+            'truncated' => $finishReason === 'MAX_TOKENS',
             'tokens' => $tokenUsage,
         ];
+    }
+
+    private function resolveOutputTokenBudget(string $message): int
+    {
+        if ($this->shouldPreferDetailedBudget($message)) {
+            return $this->detailedMaxOutputTokens;
+        }
+
+        return $this->maxOutputTokens;
+    }
+
+    private function shouldPreferDetailedBudget(string $message): bool
+    {
+        $trimmed = trim($message);
+
+        if ($trimmed === '') {
+            return false;
+        }
+
+        $messageLength = function_exists('mb_strlen') ? mb_strlen($trimmed) : strlen($trimmed);
+
+        if ($messageLength >= 220) {
+            return true;
+        }
+
+        $englishDetailIntent = preg_match(
+            '/\b(full|detailed|detail|in detail|step\s*by\s*step|steps|comprehensive|elaborate|complete guide|all steps|explain fully|deep dive|thorough)\b/i',
+            $trimmed
+        ) === 1;
+
+        if ($englishDetailIntent) {
+            return true;
+        }
+
+        return preg_match(
+            '/\b(detalyado|kumpleto|buong|hakbang|sunod\s*sunod|ipaliwanag|mas\s+detalyado|gabayan\s+mo\s+ako)\b/iu',
+            $trimmed
+        ) === 1;
     }
 
     private function buildModelsToTry(): array
@@ -476,6 +523,7 @@ class GeminiChatService
             'For English explanatory answers, use basic paragraphing with 2 short paragraphs and 2 to 3 sentences per paragraph.',
             'For short factual replies, one short paragraph is acceptable.',
             'Keep normal answers roughly 90 to 140 words unless the user asks for more detail.',
+            'When user asks for best or strongest crop choice, provide one direct recommendation first, then concise reasons and one alternative option.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
             'For Filipino responses, use complete words and avoid shorthand like "m." or "n.".',
@@ -610,6 +658,8 @@ class GeminiChatService
             if ($trimmed !== '') {
                 $normalized = $trimmed;
             }
+
+            $normalized = $this->appendTruncationContinuationHint($normalized, $expectedLanguage);
         }
 
         $normalized = $this->expandFilipinoTrailingShorthand($normalized);
@@ -777,6 +827,25 @@ class GeminiChatService
         }
 
         return $firstParagraph . "\n\n" . $secondParagraph;
+    }
+
+    private function appendTruncationContinuationHint(string $text, string $expectedLanguage): string
+    {
+        $trimmed = trim($text);
+
+        if ($trimmed === '') {
+            return $trimmed;
+        }
+
+        if (stripos($trimmed, 'ask me to continue') !== false || stripos($trimmed, 'ipagpatuloy') !== false) {
+            return $trimmed;
+        }
+
+        $hint = $expectedLanguage === 'filipino'
+            ? ' Para sa natitirang detalye, i-type mo lang: ipagpatuloy.'
+            : ' For the remaining details, just ask me to continue.';
+
+        return rtrim($trimmed, " \t\n\r\0\x0B") . $hint;
     }
 
     private function hasDanglingEnding(string $text): bool

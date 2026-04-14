@@ -153,6 +153,46 @@ class GeminiChatServiceTest extends TestCase
         $this->assertStringContainsString('apcobenguet@gmail.com', $instruction);
     }
 
+    public function test_detailed_prompts_use_higher_output_token_budget(): void
+    {
+        $this->configureGemini();
+
+        $service = new GeminiChatService();
+        $reflection = new \ReflectionClass($service);
+        $method = $reflection->getMethod('resolveOutputTokenBudget');
+        $method->setAccessible(true);
+
+        $shortBudget = $method->invoke($service, 'Best crop for Kabayan this month?');
+        $detailedBudget = $method->invoke(
+            $service,
+            'Please provide a full detailed step-by-step guide for carrot production from land preparation to harvest and post-harvest handling.'
+        );
+
+        $this->assertSame(480, $shortBudget);
+        $this->assertSame(896, $detailedBudget);
+    }
+
+    public function test_truncated_reply_includes_continue_hint_and_metadata(): void
+    {
+        $this->configureGemini();
+        $this->fakeGeminiReply(
+            'Start with soil preparation and proper bed shaping. Maintain steady moisture and monitor pest pressure through the early growth stages. Apply balanced nutrients based on soil condition and crop development phase.',
+            'MAX_TOKENS'
+        );
+
+        $service = new GeminiChatService();
+
+        $result = $service->generateReply(
+            'Give me a full detailed guide for carrot production including complete management notes.',
+            [],
+            []
+        );
+
+        $this->assertSame('MAX_TOKENS', $result['finish_reason']);
+        $this->assertTrue($result['truncated']);
+        $this->assertStringContainsString('ask me to continue', strtolower($result['reply']));
+    }
+
     private function configureGemini(): void
     {
         config()->set('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta');
@@ -163,10 +203,11 @@ class GeminiChatServiceTest extends TestCase
         config()->set('services.gemini.retries', 0);
         config()->set('services.gemini.allow_http_retry', false);
         config()->set('services.gemini.max_output_tokens', 480);
+        config()->set('services.gemini.detailed_max_output_tokens', 896);
         config()->set('services.gemini.model_quota_cooldown_seconds', 75);
     }
 
-    private function fakeGeminiReply(string $replyText): void
+    private function fakeGeminiReply(string $replyText, string $finishReason = 'STOP'): void
     {
         Http::fake([
             'https://generativelanguage.googleapis.com/*' => Http::response([
@@ -177,7 +218,7 @@ class GeminiChatServiceTest extends TestCase
                                 ['text' => $replyText],
                             ],
                         ],
-                        'finishReason' => 'STOP',
+                        'finishReason' => $finishReason,
                     ],
                 ],
                 'usageMetadata' => [
