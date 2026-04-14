@@ -8,7 +8,7 @@
 >
     <div
         id="farmer-chatbot-panel"
-        class="hidden flex flex-col bg-white overflow-hidden fixed left-0 right-0 top-14 rounded-t-2xl border border-gray-200 border-b-0 shadow-2xl h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] sm:flex sm:static sm:mb-3 sm:rounded-2xl sm:border sm:w-[22rem] sm:max-w-[calc(100vw-3rem)] sm:h-[70vh] sm:max-h-[42rem]"
+        class="hidden flex flex-col bg-white overflow-hidden fixed left-0 right-0 top-14 rounded-t-2xl border border-gray-200 border-b-0 shadow-2xl h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] sm:static sm:mb-3 sm:rounded-2xl sm:border sm:w-[22rem] sm:max-w-[calc(100vw-3rem)] sm:h-[70vh] sm:max-h-[42rem]"
     >
         <div class="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div>
@@ -78,7 +78,7 @@
     <button
         type="button"
         id="farmer-chatbot-launcher"
-        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center sm:opacity-0 sm:pointer-events-none"
+        class="w-14 h-14 rounded-full bg-primary text-white shadow-xl hover:bg-primary-700 transition-colors inline-flex items-center justify-center opacity-0 pointer-events-none"
         aria-label="Open chatbot"
     >
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
