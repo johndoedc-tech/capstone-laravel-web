@@ -97,6 +97,25 @@ class GeminiChatServiceTest extends TestCase
         $this->assertNotSame('Here are the steps for planting carrots: 1.', $result['reply']);
     }
 
+    public function test_english_explanatory_reply_is_split_into_two_paragraphs(): void
+    {
+        $this->configureGemini();
+        $this->fakeGeminiReply(
+            'Carrots grow best in loose soil with good drainage and consistent moisture. '
+            . 'Prepare raised beds so heavy rainfall does not cause waterlogging in Benguet farms. '
+            . 'After sowing, water lightly but regularly to support even germination and early root growth. '
+            . 'Thin seedlings at the right stage to improve airflow and allow roots to size up properly.'
+        );
+
+        $service = new GeminiChatService();
+
+        $result = $service->generateReply('How should I manage carrot establishment in a rainy upland field?', [], []);
+
+        $this->assertStringContainsString("\n\n", $result['reply']);
+        $this->assertStringContainsString('Carrots grow best in loose soil with good drainage and consistent moisture.', $result['reply']);
+        $this->assertStringContainsString('Thin seedlings at the right stage to improve airflow and allow roots to size up properly.', $result['reply']);
+    }
+
     public function test_system_instruction_contains_da_car_channels(): void
     {
         $this->configureGemini();
@@ -109,6 +128,8 @@ class GeminiChatServiceTest extends TestCase
         $instruction = $method->invoke($service, [], 'english');
 
         $this->assertIsString($instruction);
+        $this->assertStringContainsString('Use numbered steps only when the user explicitly asks for process, how-to, or step-by-step guidance; otherwise use short paragraphs.', $instruction);
+        $this->assertStringContainsString('For English explanatory answers, use basic paragraphing with 2 short paragraphs and 2 to 3 sentences per paragraph.', $instruction);
         $this->assertStringContainsString('https://car.da.gov.ph/?page_id=374', $instruction);
         $this->assertStringContainsString('ored@car.da.gov.ph', $instruction);
         $this->assertStringContainsString('apcobenguet@gmail.com', $instruction);

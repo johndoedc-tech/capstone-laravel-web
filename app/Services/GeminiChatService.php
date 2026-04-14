@@ -470,8 +470,12 @@ class GeminiChatService
             'Keep answers clear, actionable, and concise by default.',
             'Respond in plain text only. Do not use Markdown symbols such as **, *, #, or backticks.',
             'Do not use markdown bullets. If listing items, use simple plain-text numbering like 1., 2., 3.',
+            'Use numbered steps only when the user explicitly asks for process, how-to, or step-by-step guidance; otherwise use short paragraphs.',
             'Always end with complete thoughts. Never stop at an unfinished list item like "1." only.',
             'If the user asks for full steps, provide a complete numbered list with at least 5 steps and each step must be a full sentence.',
+            'For English explanatory answers, use basic paragraphing with 2 short paragraphs and 2 to 3 sentences per paragraph.',
+            'For short factual replies, one short paragraph is acceptable.',
+            'Keep normal answers roughly 90 to 140 words unless the user asks for more detail.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
             'For Filipino responses, use complete words and avoid shorthand like "m." or "n.".',
@@ -622,6 +626,10 @@ class GeminiChatService
             $normalized .= '.';
         }
 
+        if (!$isNumberedList && $expectedLanguage === 'english') {
+            $normalized = $this->normalizeEnglishParagraphs($normalized);
+        }
+
         if ($this->hasDanglingEnding($normalized)) {
             return $this->fallbackAssistantReply($original, $expectedLanguage);
         }
@@ -697,6 +705,44 @@ class GeminiChatService
         }
 
         return implode("\n", $normalizedLines);
+    }
+
+    private function normalizeEnglishParagraphs(string $text): string
+    {
+        $trimmed = trim($text);
+
+        if ($trimmed === '' || str_contains($trimmed, "\n")) {
+            return $trimmed;
+        }
+
+        preg_match_all('/[^.!?]*[.!?](?:["\')\]]+)?(?=(?:\s|$))/u', $trimmed, $matches);
+        $sentences = $matches[0] ?? [];
+
+        if (!is_array($sentences)) {
+            return $trimmed;
+        }
+
+        $sentences = array_values(array_filter(array_map(static fn (string $sentence): string => trim($sentence), $sentences), static fn (string $sentence): bool => $sentence !== ''));
+
+        if (count($sentences) < 3) {
+            return $trimmed;
+        }
+
+        $wordCount = preg_match_all('/\p{L}+/u', $trimmed);
+
+        if (!is_int($wordCount) || $wordCount < 28) {
+            return $trimmed;
+        }
+
+        $breakIndex = (int) ceil(count($sentences) / 2);
+        $firstParagraph = trim(implode(' ', array_slice($sentences, 0, $breakIndex)));
+        $secondParagraph = trim(implode(' ', array_slice($sentences, $breakIndex)));
+
+        if ($firstParagraph === '' || $secondParagraph === '') {
+            return $trimmed;
+        }
+
+        return $firstParagraph . "\n\n" . $secondParagraph;
     }
 
     private function hasDanglingEnding(string $text): bool
