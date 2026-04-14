@@ -38,7 +38,7 @@ class GeminiChatService
         $this->maxOutputTokens = max(160, min(1024, (int) config('services.gemini.max_output_tokens', 480)));
         $this->detailedMaxOutputTokens = max(
             $this->maxOutputTokens,
-            min(1024, (int) config('services.gemini.detailed_max_output_tokens', 896))
+            min(1024, (int) config('services.gemini.detailed_max_output_tokens', 1024))
         );
         $this->modelQuotaCooldownSeconds = max(30, (int) config('services.gemini.model_quota_cooldown_seconds', 75));
     }
@@ -652,14 +652,16 @@ class GeminiChatService
             $normalized = $this->normalizeNumberedListReply($normalized);
         }
 
-        if ($wasTruncated && !$isNumberedList) {
-            $trimmed = $this->trimToLastCompleteSentence($normalized);
+        if ($wasTruncated) {
+            if (!$isNumberedList) {
+                $trimmed = $this->trimToLastCompleteSentence($normalized);
 
-            if ($trimmed !== '') {
-                $normalized = $trimmed;
+                if ($trimmed !== '') {
+                    $normalized = $trimmed;
+                }
             }
 
-            $normalized = $this->appendTruncationContinuationHint($normalized, $expectedLanguage);
+            $normalized = $this->appendTruncationContinuationHint($normalized, $expectedLanguage, $isNumberedList);
         }
 
         $normalized = $this->expandFilipinoTrailingShorthand($normalized);
@@ -829,7 +831,7 @@ class GeminiChatService
         return $firstParagraph . "\n\n" . $secondParagraph;
     }
 
-    private function appendTruncationContinuationHint(string $text, string $expectedLanguage): string
+    private function appendTruncationContinuationHint(string $text, string $expectedLanguage, bool $isNumberedList = false): string
     {
         $trimmed = trim($text);
 
@@ -841,9 +843,15 @@ class GeminiChatService
             return $trimmed;
         }
 
-        $hint = $expectedLanguage === 'filipino'
-            ? ' Para sa natitirang detalye, i-type mo lang: ipagpatuloy.'
-            : ' For the remaining details, just ask me to continue.';
+        if ($expectedLanguage === 'filipino') {
+            $hint = $isNumberedList
+                ? ' Para sa natitirang mga hakbang, i-type mo lang: ipagpatuloy.'
+                : ' Para sa natitirang detalye, i-type mo lang: ipagpatuloy.';
+        } else {
+            $hint = $isNumberedList
+                ? ' For the remaining steps, just ask me to continue.'
+                : ' For the remaining details, just ask me to continue.';
+        }
 
         return rtrim($trimmed, " \t\n\r\0\x0B") . $hint;
     }

@@ -169,7 +169,7 @@ class GeminiChatServiceTest extends TestCase
         );
 
         $this->assertSame(480, $shortBudget);
-        $this->assertSame(896, $detailedBudget);
+        $this->assertSame(1024, $detailedBudget);
     }
 
     public function test_truncated_reply_includes_continue_hint_and_metadata(): void
@@ -193,6 +193,25 @@ class GeminiChatServiceTest extends TestCase
         $this->assertStringContainsString('ask me to continue', strtolower($result['reply']));
     }
 
+    public function test_truncated_numbered_reply_includes_continue_hint_for_remaining_steps(): void
+    {
+        $this->configureGemini();
+        $this->fakeGeminiReply(
+            "Here are the steps for planting carrots:\n"
+            . "1. Prepare loose and well-drained soil\n"
+            . "2. Sow seeds around 1 cm deep\n"
+            . "3. Water lightly to keep soil moist",
+            'MAX_TOKENS'
+        );
+
+        $service = new GeminiChatService();
+
+        $result = $service->generateReply('Give me full steps in planting carrot.', [], []);
+
+        $this->assertTrue($result['truncated']);
+        $this->assertStringContainsString('remaining steps', strtolower($result['reply']));
+    }
+
     private function configureGemini(): void
     {
         config()->set('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta');
@@ -203,7 +222,7 @@ class GeminiChatServiceTest extends TestCase
         config()->set('services.gemini.retries', 0);
         config()->set('services.gemini.allow_http_retry', false);
         config()->set('services.gemini.max_output_tokens', 480);
-        config()->set('services.gemini.detailed_max_output_tokens', 896);
+        config()->set('services.gemini.detailed_max_output_tokens', 1024);
         config()->set('services.gemini.model_quota_cooldown_seconds', 75);
     }
 
