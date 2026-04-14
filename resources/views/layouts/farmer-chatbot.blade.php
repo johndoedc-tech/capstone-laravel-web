@@ -251,8 +251,8 @@
     };
     const PANEL_ANIMATION_MS = 220;
     const REQUEST_TIMEOUT_MS = 20000;
-    const CONTINUE_PROMPT_EN = 'continue';
-    const CONTINUE_PROMPT_FIL = 'ipagpatuloy';
+    const CONTINUE_PROMPT_EN = 'Continue your previous answer from where it stopped. Do not repeat earlier steps.';
+    const CONTINUE_PROMPT_FIL = 'Ipagpatuloy mo ang naunang sagot mula sa huling bahagi. Huwag ulitin ang naunang mga hakbang.';
     let panelHideTimer = null;
     let viewportSyncTimer = null;
     let typingIndicatorElement = null;
@@ -591,7 +591,6 @@
             continueButton.type = 'button';
             continueButton.className = 'inline-flex items-center rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors';
             continueButton.textContent = 'Continue';
-            continueButton.disabled = state.isLoading;
             continueButton.addEventListener('click', () => {
                 if (state.isLoading) {
                     return;
