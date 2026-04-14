@@ -75,6 +75,45 @@ class GeminiChatServiceTest extends TestCase
         );
     }
 
+    public function test_numbered_steps_are_not_cut_to_first_item_only(): void
+    {
+        $this->configureGemini();
+        $this->fakeGeminiReply(
+            "Here are the steps for planting carrots:\n"
+            . "1. Prepare loose and well-drained soil\n"
+            . "2. Sow seeds around 1 cm deep\n"
+            . "3. Water lightly to keep soil moist\n"
+            . "4. Thin seedlings when true leaves appear\n"
+            . "5. Keep weeds low and monitor pests"
+        );
+
+        $service = new GeminiChatService();
+
+        $result = $service->generateReply('Give me full steps in planting carrot.', [], []);
+
+        $this->assertStringContainsString('1. Prepare loose and well-drained soil.', $result['reply']);
+        $this->assertStringContainsString('3. Water lightly to keep soil moist.', $result['reply']);
+        $this->assertStringContainsString('5. Keep weeds low and monitor pests.', $result['reply']);
+        $this->assertNotSame('Here are the steps for planting carrots: 1.', $result['reply']);
+    }
+
+    public function test_system_instruction_contains_da_car_channels(): void
+    {
+        $this->configureGemini();
+
+        $service = new GeminiChatService();
+        $reflection = new \ReflectionClass($service);
+        $method = $reflection->getMethod('buildSystemInstruction');
+        $method->setAccessible(true);
+
+        $instruction = $method->invoke($service, [], 'english');
+
+        $this->assertIsString($instruction);
+        $this->assertStringContainsString('https://car.da.gov.ph/?page_id=374', $instruction);
+        $this->assertStringContainsString('ored@car.da.gov.ph', $instruction);
+        $this->assertStringContainsString('apcobenguet@gmail.com', $instruction);
+    }
+
     private function configureGemini(): void
     {
         config()->set('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta');

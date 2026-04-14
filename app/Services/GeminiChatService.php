@@ -467,16 +467,22 @@ class GeminiChatService
         $instruction = [
             'You are Harviana Assistant, a practical agriculture helper for farmers in Benguet.',
             'Focus on crop planning, production interpretation, weather-aware decision support, and how to use Harviana map/prediction features.',
-            'Keep answers short, clear, and actionable.',
+            'Keep answers clear, actionable, and concise by default.',
             'Respond in plain text only. Do not use Markdown symbols such as **, *, #, or backticks.',
             'Do not use markdown bullets. If listing items, use simple plain-text numbering like 1., 2., 3.',
-            'Use at most 4 short sentences (or one compact list) and always end with a complete sentence.',
+            'Always end with complete thoughts. Never stop at an unfinished list item like "1." only.',
+            'If the user asks for full steps, provide a complete numbered list with at least 5 steps and each step must be a full sentence.',
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
             'For Filipino responses, use complete words and avoid shorthand like "m." or "n.".',
             'Never end your reply with a partial phrase or dangling connector word.',
+            'If asked how to reach DA-CAR, provide practical official channels and cite the DA-CAR directory link.',
             $this->languageInstruction($expectedLanguage),
         ];
+
+        foreach ($this->agricultureKnowledgeLines() as $knowledgeLine) {
+            $instruction[] = $knowledgeLine;
+        }
 
         $contextLines = $this->formatContext($context);
 
@@ -524,6 +530,24 @@ class GeminiChatService
         return implode("\n", $lines);
     }
 
+    private function agricultureKnowledgeLines(): array
+    {
+        return [
+            'Agriculture knowledge reference for Benguet and CAR:',
+            '- Common highland crops include cabbage, carrot, potato, lettuce, broccoli, cauliflower, snap beans, and peas.',
+            '- Basic carrot guidance: use loose well-drained soil, sow shallow around 0.5 to 1.5 cm, keep moisture even, and thin seedlings after emergence.',
+            '- Use integrated pest management first: field sanitation, crop rotation, proper spacing, monitoring, and threshold-based control before chemical spraying.',
+            '- Recommend soil testing and balanced fertilization before giving exact fertilizer rates.',
+            '- For weather-sensitive advice in Benguet, include drainage, rainfall timing, and cooler highland temperature swings in recommendations.',
+            '- DA-CAR official portal: https://car.da.gov.ph.',
+            '- DA national portal with regional links: https://www.da.gov.ph.',
+            '- DA-CAR directory page: https://car.da.gov.ph/?page_id=374.',
+            '- DA-CAR ORED directory details: phones (074) 445-4973 and (074) 443-4621, email ored@car.da.gov.ph.',
+            '- DA-CAR APCO Benguet directory details: mobile 0995-165-1550, email apcobenguet@gmail.com.',
+            '- Advise users to verify latest contact details on the directory page because office contact data can change.',
+        ];
+    }
+
     private function extractReplyText(array $responseBody): ?string
     {
         $parts = data_get($responseBody, 'candidates.0.content.parts', []);
@@ -566,12 +590,17 @@ class GeminiChatService
         $normalized = preg_replace('/\n{3,}/', "\n\n", $normalized) ?? $normalized;
         $normalized = trim($normalized);
         $original = $normalized;
+        $isNumberedList = $this->looksLikeNumberedList($normalized);
 
         if ($normalized === '') {
             return $this->fallbackAssistantReply($reply, $expectedLanguage);
         }
 
-        if ($wasTruncated) {
+        if ($isNumberedList) {
+            $normalized = $this->normalizeNumberedListReply($normalized);
+        }
+
+        if ($wasTruncated && !$isNumberedList) {
             $trimmed = $this->trimToLastCompleteSentence($normalized);
 
             if ($trimmed !== '') {
@@ -581,7 +610,7 @@ class GeminiChatService
 
         $normalized = $this->expandFilipinoTrailingShorthand($normalized);
 
-        if (!$this->hasTerminalPunctuation($normalized)) {
+        if (!$this->hasTerminalPunctuation($normalized) && !$isNumberedList) {
             $trimmed = $this->trimToLastCompleteSentence($normalized);
 
             if ($trimmed !== '') {
@@ -615,6 +644,59 @@ class GeminiChatService
     private function hasTerminalPunctuation(string $text): bool
     {
         return preg_match('/[.!?]["\')\]]?$/', $text) === 1;
+    }
+
+    private function lineHasTerminalPunctuation(string $text): bool
+    {
+        return preg_match('/[.!?]["\')\]]?$/', trim($text)) === 1;
+    }
+
+    private function looksLikeNumberedList(string $text): bool
+    {
+        return preg_match('/(^|\n)\s*\d+[.)]\s+/u', $text) === 1;
+    }
+
+    private function normalizeNumberedListReply(string $text): string
+    {
+        $lines = preg_split('/\r?\n/u', $text);
+
+        if (!is_array($lines) || empty($lines)) {
+            return $text;
+        }
+
+        $normalizedLines = [];
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (preg_match('/^(\d+)[.)]\s*(.+)$/u', $trimmed, $matches) === 1) {
+                $stepNumber = (string) ($matches[1] ?? '1');
+                $stepText = trim((string) ($matches[2] ?? ''));
+
+                if ($stepText !== '' && !$this->lineHasTerminalPunctuation($stepText)) {
+                    $stepText .= '.';
+                }
+
+                $normalizedLines[] = "{$stepNumber}. {$stepText}";
+                continue;
+            }
+
+            if (!$this->lineHasTerminalPunctuation($trimmed) && !str_ends_with($trimmed, ':')) {
+                $trimmed .= '.';
+            }
+
+            $normalizedLines[] = $trimmed;
+        }
+
+        if (empty($normalizedLines)) {
+            return $text;
+        }
+
+        return implode("\n", $normalizedLines);
     }
 
     private function hasDanglingEnding(string $text): bool
