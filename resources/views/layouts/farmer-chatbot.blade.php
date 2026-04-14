@@ -87,6 +87,120 @@
     </button>
 </div>
 
+<style>
+    #farmer-chatbot-panel {
+        will-change: transform, opacity;
+    }
+
+    #farmer-chatbot-launcher {
+        transition: opacity 180ms ease, transform 180ms ease, background-color 180ms ease;
+    }
+
+    .chatbot-panel-enter {
+        animation: farmerChatbotPanelEnter 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .chatbot-panel-exit {
+        animation: farmerChatbotPanelExit 220ms cubic-bezier(0.4, 0, 1, 1) forwards;
+    }
+
+    .chatbot-launcher-pop {
+        animation: farmerChatbotLauncherPop 180ms cubic-bezier(0.2, 1.1, 0.2, 1);
+    }
+
+    .chatbot-message-enter {
+        animation: farmerChatbotMessageEnter 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chatbot-typing-dot {
+        width: 0.4rem;
+        height: 0.4rem;
+        border-radius: 9999px;
+        background-color: #7f8ea3;
+        animation: farmerChatbotTypingDot 1s ease-in-out infinite;
+    }
+
+    .chatbot-typing-dot:nth-child(2) {
+        animation-delay: 120ms;
+    }
+
+    .chatbot-typing-dot:nth-child(3) {
+        animation-delay: 240ms;
+    }
+
+    @keyframes farmerChatbotPanelEnter {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes farmerChatbotPanelExit {
+        from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(14px) scale(0.98);
+        }
+    }
+
+    @keyframes farmerChatbotLauncherPop {
+        from {
+            transform: scale(0.88);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes farmerChatbotMessageEnter {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes farmerChatbotTypingDot {
+        0%, 80%, 100% {
+            transform: translateY(0);
+            opacity: 0.45;
+        }
+
+        40% {
+            transform: translateY(-3px);
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        #farmer-chatbot-launcher {
+            transition: none;
+        }
+
+        .chatbot-panel-enter,
+        .chatbot-panel-exit,
+        .chatbot-launcher-pop,
+        .chatbot-message-enter,
+        .chatbot-typing-dot {
+            animation: none !important;
+        }
+    }
+</style>
+
 <script>
 (function () {
     if (window.__harvianaFarmerChatbotInitialized) {
@@ -125,12 +239,16 @@
     const appMain = document.querySelector('main');
     const mobileQuery = window.matchMedia('(max-width: 639px)');
     const visualViewport = window.visualViewport;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const lockState = {
         htmlOverflow: '',
         bodyOverflow: '',
         mainOverflow: '',
         active: false,
     };
+    const PANEL_ANIMATION_MS = 220;
+    let panelHideTimer = null;
+    let typingIndicatorElement = null;
 
     const state = {
         isOpen: localStorage.getItem(mobileStorageKey) === '1',
@@ -201,20 +319,94 @@
         panel.style.maxHeight = `${computedHeight}px`;
     }
 
-    function applyViewportMode() {
+    function clearPanelHideTimer() {
+        if (panelHideTimer !== null) {
+            window.clearTimeout(panelHideTimer);
+            panelHideTimer = null;
+        }
+    }
+
+    function animatePanelIn(animate) {
+        clearPanelHideTimer();
+        panel.classList.remove('chatbot-panel-exit');
+        panel.classList.remove('hidden');
+
+        if (!animate || prefersReducedMotion.matches) {
+            panel.classList.remove('chatbot-panel-enter');
+            return;
+        }
+
+        panel.classList.remove('chatbot-panel-enter');
+        void panel.offsetWidth;
+        panel.classList.add('chatbot-panel-enter');
+
+        window.setTimeout(() => {
+            panel.classList.remove('chatbot-panel-enter');
+        }, PANEL_ANIMATION_MS);
+    }
+
+    function animatePanelOut(animate) {
+        clearPanelHideTimer();
+
+        if (panel.classList.contains('hidden')) {
+            return;
+        }
+
+        panel.classList.remove('chatbot-panel-enter');
+
+        if (!animate || prefersReducedMotion.matches) {
+            panel.classList.add('hidden');
+            panel.classList.remove('chatbot-panel-exit');
+            return;
+        }
+
+        panel.classList.add('chatbot-panel-exit');
+        panelHideTimer = window.setTimeout(() => {
+            panel.classList.add('hidden');
+            panel.classList.remove('chatbot-panel-exit');
+            panelHideTimer = null;
+        }, PANEL_ANIMATION_MS);
+    }
+
+    function animateLauncherPop(shouldAnimate) {
+        if (!shouldAnimate || prefersReducedMotion.matches) {
+            return;
+        }
+
+        launcher.classList.remove('chatbot-launcher-pop');
+        void launcher.offsetWidth;
+        launcher.classList.add('chatbot-launcher-pop');
+    }
+
+    function applyViewportMode(options = {}) {
+        const animate = options.animate === true;
         const mobileViewport = isMobileViewport();
+        const launcherWasVisible = !launcher.classList.contains('opacity-0');
 
         if (mobileViewport) {
-            panel.classList.toggle('hidden', !state.isOpen);
+            if (state.isOpen) {
+                animatePanelIn(animate);
+            } else {
+                animatePanelOut(animate);
+            }
+
             launcher.classList.toggle('opacity-0', state.isOpen);
             launcher.classList.toggle('pointer-events-none', state.isOpen);
             setDocumentScrollLock(state.isOpen);
         } else {
-            panel.classList.toggle('hidden', state.isMinimized);
+            if (state.isMinimized) {
+                animatePanelOut(animate);
+            } else {
+                animatePanelIn(animate);
+            }
+
             launcher.classList.toggle('opacity-0', !state.isMinimized);
             launcher.classList.toggle('pointer-events-none', !state.isMinimized);
             setDocumentScrollLock(false);
         }
+
+        const launcherIsVisible = !launcher.classList.contains('opacity-0');
+        animateLauncherPop(launcherIsVisible && !launcherWasVisible);
 
         updateMobilePanelHeight();
 
@@ -223,7 +415,7 @@
         }
     }
 
-    function setOpen(isOpen) {
+    function setOpen(isOpen, options = {}) {
         const wasOpen = state.isOpen;
         state.isOpen = isOpen;
 
@@ -231,7 +423,7 @@
             localStorage.setItem(mobileStorageKey, isOpen ? '1' : '0');
         }
 
-        applyViewportMode();
+        applyViewportMode(options);
 
         if (isMobileViewport() && isOpen && !wasOpen) {
             requestAnimationFrame(() => {
@@ -241,7 +433,7 @@
         }
     }
 
-    function setMinimized(isMinimized) {
+    function setMinimized(isMinimized, options = {}) {
         if (isMobileViewport()) {
             return;
         }
@@ -250,7 +442,7 @@
         state.isMinimized = isMinimized;
         localStorage.setItem(desktopStorageKey, isMinimized ? '1' : '0');
 
-        applyViewportMode();
+        applyViewportMode(options);
 
         if (wasMinimized && !isMinimized) {
             requestAnimationFrame(() => {
@@ -277,9 +469,13 @@
             .trim();
     }
 
-    function createBubble(message) {
+    function createBubble(message, options = {}) {
         const wrapper = document.createElement('div');
         wrapper.className = message.role === 'assistant' ? 'flex justify-start mb-2' : 'flex justify-end mb-2';
+
+        if (options.animate === true) {
+            wrapper.classList.add('chatbot-message-enter');
+        }
 
         const bubble = document.createElement('div');
         bubble.className = message.role === 'assistant'
@@ -296,8 +492,42 @@
         return wrapper;
     }
 
-    function renderMessages() {
+    function createTypingBubble() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex justify-start mb-2 chatbot-message-enter';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 inline-flex items-center gap-1.5';
+
+        for (let i = 0; i < 3; i += 1) {
+            const dot = document.createElement('span');
+            dot.className = 'chatbot-typing-dot';
+            bubble.appendChild(dot);
+        }
+
+        wrapper.appendChild(bubble);
+        return wrapper;
+    }
+
+    function showTypingIndicator() {
+        removeTypingIndicator();
+        typingIndicatorElement = createTypingBubble();
+        messagesContainer.appendChild(typingIndicatorElement);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+        if (typingIndicatorElement && typingIndicatorElement.parentNode) {
+            typingIndicatorElement.parentNode.removeChild(typingIndicatorElement);
+        }
+
+        typingIndicatorElement = null;
+    }
+
+    function renderMessages(options = {}) {
+        const animateLast = options.animateLast === true;
         messagesContainer.innerHTML = '';
+        typingIndicatorElement = null;
 
         if (!state.messages.length) {
             state.messages.push({
@@ -306,8 +536,12 @@
             });
         }
 
-        state.messages.forEach((message) => {
-            messagesContainer.appendChild(createBubble(message));
+        state.messages.forEach((message, index) => {
+            const isLastMessage = index === state.messages.length - 1;
+
+            messagesContainer.appendChild(createBubble(message, {
+                animate: animateLast && isLastMessage,
+            }));
         });
 
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -366,7 +600,8 @@
         };
 
         state.messages.push(pendingUserMessage);
-        renderMessages();
+        renderMessages({ animateLast: true });
+        showTypingIndicator();
 
         try {
             const response = await fetch(messageUrl, {
@@ -402,16 +637,17 @@
                 });
             }
 
-            renderMessages();
+            renderMessages({ animateLast: true });
             setStatus('Ready');
         } catch (error) {
             state.messages.push({
                 role: 'assistant',
                 text: error.message || 'Assistant is temporarily unavailable. Please try again.',
             });
-            renderMessages();
+            renderMessages({ animateLast: true });
             setStatus('Last request failed');
         } finally {
+            removeTypingIndicator();
             setLoading(false);
         }
     }
@@ -455,20 +691,20 @@
 
     launcher.addEventListener('click', () => {
         if (isMobileViewport()) {
-            setOpen(!state.isOpen);
+            setOpen(!state.isOpen, { animate: true });
             return;
         }
 
-        setMinimized(false);
+        setMinimized(false, { animate: true });
     });
 
     minimizeButton.addEventListener('click', () => {
         if (isMobileViewport()) {
-            setOpen(false);
+            setOpen(false, { animate: true });
             return;
         }
 
-        setMinimized(true);
+        setMinimized(true, { animate: true });
     });
 
     closeButton.addEventListener('click', () => {
@@ -476,7 +712,7 @@
             return;
         }
 
-        setOpen(false);
+        setOpen(false, { animate: true });
     });
 
     form.addEventListener('submit', (event) => {
@@ -516,7 +752,7 @@
     });
 
     function syncViewportState() {
-        applyViewportMode();
+        applyViewportMode({ animate: false });
     }
 
     window.addEventListener('resize', syncViewportState);
@@ -528,7 +764,7 @@
         visualViewport.addEventListener('resize', syncViewportState);
     }
 
-    setOpen(state.isOpen);
+    setOpen(state.isOpen, { animate: false });
     loadHistory();
 })();
 </script>
