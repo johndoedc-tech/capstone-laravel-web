@@ -49,7 +49,7 @@
                     name="message"
                     maxlength="2000"
                     placeholder="Ask about crops, map, or predictions"
-                    class="flex-1 min-w-0 rounded-lg border-gray-300 text-sm focus:border-primary focus:ring-primary"
+                    class="flex-1 min-w-0 rounded-lg border-gray-300 text-base sm:text-sm focus:border-primary focus:ring-primary"
                     autocomplete="off"
                     required
                 >
@@ -306,17 +306,48 @@
 
     function updateMobilePanelHeight() {
         if (!isMobileViewport()) {
+            panel.style.top = '';
+            panel.style.bottom = '';
             panel.style.height = '';
             panel.style.maxHeight = '';
             return;
         }
 
-        const viewportHeight = visualViewport ? Math.floor(visualViewport.height) : window.innerHeight;
+        const layoutHeight = window.innerHeight;
+        const viewportHeight = visualViewport ? Math.floor(visualViewport.height) : layoutHeight;
+        const viewportTop = visualViewport ? Math.floor(visualViewport.offsetTop) : 0;
+        const keyboardInset = visualViewport
+            ? Math.max(0, layoutHeight - Math.floor(visualViewport.height + visualViewport.offsetTop))
+            : 0;
         const topOffset = 56;
-        const computedHeight = Math.max(320, viewportHeight - topOffset);
+        const computedHeight = Math.max(280, viewportHeight - topOffset);
+
+        panel.style.top = `${viewportTop + topOffset}px`;
+        panel.style.bottom = `${keyboardInset}px`;
 
         panel.style.height = `${computedHeight}px`;
         panel.style.maxHeight = `${computedHeight}px`;
+    }
+
+    function syncViewportAfterKeyboardChange(frameCount = 4) {
+        if (!isMobileViewport()) {
+            return;
+        }
+
+        let remainingFrames = frameCount;
+
+        function tick() {
+            updateMobilePanelHeight();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            remainingFrames -= 1;
+
+            if (remainingFrames > 0) {
+                window.requestAnimationFrame(tick);
+            }
+        }
+
+        window.requestAnimationFrame(tick);
     }
 
     function clearPanelHideTimer() {
@@ -737,10 +768,15 @@
             return;
         }
 
-        setTimeout(() => {
-            updateMobilePanelHeight();
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 180);
+        syncViewportAfterKeyboardChange(6);
+    });
+
+    input.addEventListener('blur', () => {
+        if (!isMobileViewport()) {
+            return;
+        }
+
+        syncViewportAfterKeyboardChange(3);
     });
 
     resetButton.addEventListener('click', () => {
