@@ -97,6 +97,24 @@ class GeminiChatServiceTest extends TestCase
         $this->assertNotSame('Here are the steps for planting carrots: 1.', $result['reply']);
     }
 
+    public function test_inline_numbered_steps_are_split_into_clean_lines(): void
+    {
+        $this->configureGemini();
+        $this->fakeGeminiReply(
+            'Here are the steps for planting carrots: 1. Prepare loose and well-drained soil '
+            . '2. Sow seeds around 1 cm deep 3. Water lightly to keep soil moist '
+            . '4. Thin seedlings when true leaves appear 5. Monitor pests and diseases'
+        );
+
+        $service = new GeminiChatService();
+
+        $result = $service->generateReply('Give me full steps in planting carrot.', [], []);
+
+        $this->assertStringContainsString("\n2. Sow seeds around 1 cm deep.", $result['reply']);
+        $this->assertStringContainsString("\n4. Thin seedlings when true leaves appear.", $result['reply']);
+        $this->assertStringContainsString("\n5. Monitor pests and diseases.", $result['reply']);
+    }
+
     public function test_english_explanatory_reply_is_split_into_two_paragraphs(): void
     {
         $this->configureGemini();

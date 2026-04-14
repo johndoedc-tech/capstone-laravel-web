@@ -542,7 +542,7 @@
 
         const bubble = document.createElement('div');
         bubble.className = message.role === 'assistant'
-            ? 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700'
+            ? 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-white border border-gray-200 text-gray-700 whitespace-pre-line break-words'
             : 'max-w-[90%] rounded-xl px-3 py-2 text-sm bg-primary text-white';
 
         const messageText = message.role === 'assistant'

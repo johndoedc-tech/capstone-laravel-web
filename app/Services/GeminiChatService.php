@@ -661,12 +661,18 @@ class GeminiChatService
 
     private function looksLikeNumberedList(string $text): bool
     {
-        return preg_match('/(^|\n)\s*\d+[.)]\s+/u', $text) === 1;
+        if (preg_match('/(^|\n)\s*\d+[.)]\s+/u', $text) === 1) {
+            return true;
+        }
+
+        // Also treat inline "1. ... 2. ..." sequences as lists.
+        return preg_match('/\b1[.)]\s+.*\b2[.)]\s+/u', $text) === 1;
     }
 
     private function normalizeNumberedListReply(string $text): string
     {
-        $lines = preg_split('/\r?\n/u', $text);
+        $expandedText = $this->expandInlineNumberedList($text);
+        $lines = preg_split('/\r?\n/u', $expandedText);
 
         if (!is_array($lines) || empty($lines)) {
             return $text;
@@ -705,6 +711,34 @@ class GeminiChatService
         }
 
         return implode("\n", $normalizedLines);
+    }
+
+    private function expandInlineNumberedList(string $text): string
+    {
+        $trimmed = trim($text);
+
+        if ($trimmed === '') {
+            return $text;
+        }
+
+        preg_match_all('/\b(\d+)[.)]\s+/u', $trimmed, $matches);
+        $markers = $matches[1] ?? [];
+
+        if (!is_array($markers) || count($markers) < 2) {
+            return $text;
+        }
+
+        $hasFirst = in_array('1', $markers, true);
+        $hasSecond = in_array('2', $markers, true);
+
+        if (!$hasFirst || !$hasSecond) {
+            return $text;
+        }
+
+        $normalized = preg_replace('/(:)\s+(?=1[.)]\s+)/u', "$1\n", $trimmed) ?? $trimmed;
+        $normalized = preg_replace('/\s+(?=(?:[2-9]\d*)[.)]\s+)/u', "\n", $normalized) ?? $normalized;
+
+        return $normalized;
     }
 
     private function normalizeEnglishParagraphs(string $text): string
