@@ -17,6 +17,7 @@ class FarmerChatbotController extends Controller
     private const QUOTA_COOLDOWN_SECONDS = 65;
     private const IN_FLIGHT_REQUEST_SECONDS = 30;
     private const DUPLICATE_RESPONSE_TTL_SECONDS = 12;
+    private const RECENT_PREDICTIONS_CACHE_SECONDS = 120;
 
     public function history(Request $request): JsonResponse
     {
@@ -50,16 +51,18 @@ class FarmerChatbotController extends Controller
             ], 422);
         }
 
+        $history = $this->getHistory($request);
         $messageFingerprint = $this->messageFingerprint($message);
-        $cachedResponse = Cache::get($this->duplicateResponseCacheKey($request, $messageFingerprint));
+        $historyFingerprint = $this->historyFingerprint($history);
+        $cachedResponse = Cache::get($this->duplicateResponseCacheKey($request, $messageFingerprint, $historyFingerprint));
 
         if (is_array($cachedResponse) && isset($cachedResponse['success']) && $cachedResponse['success'] === true) {
             return response()->json($cachedResponse);
         }
 
-        $inFlightKey = $this->inFlightRequestKey($request);
+        $inFlightLock = Cache::lock($this->inFlightRequestKey($request), self::IN_FLIGHT_REQUEST_SECONDS);
 
-        if (!Cache::add($inFlightKey, now()->timestamp, self::IN_FLIGHT_REQUEST_SECONDS)) {
+        if (!$inFlightLock->get()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please wait for the current assistant reply to finish before sending another question.',
@@ -68,6 +71,12 @@ class FarmerChatbotController extends Controller
 
         try {
             $history = $this->getHistory($request);
+            $historyFingerprint = $this->historyFingerprint($history);
+            $cachedResponse = Cache::get($this->duplicateResponseCacheKey($request, $messageFingerprint, $historyFingerprint));
+
+            if (is_array($cachedResponse) && isset($cachedResponse['success']) && $cachedResponse['success'] === true) {
+                return response()->json($cachedResponse);
+            }
 
             try {
                 $result = $chatService->generateReply(
@@ -124,14 +133,21 @@ class FarmerChatbotController extends Controller
             ];
 
             Cache::put(
-                $this->duplicateResponseCacheKey($request, $messageFingerprint),
+                $this->duplicateResponseCacheKey($request, $messageFingerprint, $historyFingerprint),
                 $responsePayload,
                 self::DUPLICATE_RESPONSE_TTL_SECONDS
             );
 
             return response()->json($responsePayload);
         } finally {
-            Cache::forget($inFlightKey);
+            try {
+                $inFlightLock->release();
+            } catch (Throwable $exception) {
+                Log::debug('Farmer chatbot in-flight lock release skipped.', [
+                    'user_id' => $request->user()?->id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
         }
     }
 
@@ -150,24 +166,30 @@ class FarmerChatbotController extends Controller
     {
         $user = $request->user();
 
-        $recentPredictions = Prediction::query()
-            ->where('user_id', $user->id)
-            ->latest('created_at')
-            ->limit(3)
-            ->get(['crop', 'municipality', 'predicted_production_mt', 'confidence_score', 'created_at'])
-            ->map(function (Prediction $prediction): array {
-                return [
-                    'crop' => $prediction->crop,
-                    'municipality' => $prediction->municipality,
-                    'predicted_production_mt' => round((float) $prediction->predicted_production_mt, 2),
-                    'confidence_score' => $prediction->confidence_score !== null
-                        ? round((float) $prediction->confidence_score, 4)
-                        : null,
-                    'created_at' => optional($prediction->created_at)->toDateString(),
-                ];
-            })
-            ->values()
-            ->all();
+        $recentPredictions = Cache::remember(
+            $this->recentPredictionsCacheKey($user->id),
+            self::RECENT_PREDICTIONS_CACHE_SECONDS,
+            function () use ($user): array {
+                return Prediction::query()
+                    ->where('user_id', $user->id)
+                    ->latest('created_at')
+                    ->limit(3)
+                    ->get(['crop', 'municipality', 'predicted_production_mt', 'confidence_score', 'created_at'])
+                    ->map(function (Prediction $prediction): array {
+                        return [
+                            'crop' => $prediction->crop,
+                            'municipality' => $prediction->municipality,
+                            'predicted_production_mt' => round((float) $prediction->predicted_production_mt, 2),
+                            'confidence_score' => $prediction->confidence_score !== null
+                                ? round((float) $prediction->confidence_score, 4)
+                                : null,
+                            'created_at' => optional($prediction->created_at)->toDateString(),
+                        ];
+                    })
+                    ->values()
+                    ->all();
+            }
+        );
 
         return [
             'preferred_municipality' => $user->preferred_municipality,
@@ -258,13 +280,42 @@ class FarmerChatbotController extends Controller
         return 'farmer_chatbot.in_flight.' . $request->user()->id;
     }
 
-    private function duplicateResponseCacheKey(Request $request, string $messageFingerprint): string
+    private function duplicateResponseCacheKey(Request $request, string $messageFingerprint, string $historyFingerprint): string
     {
-        return 'farmer_chatbot.duplicate_response.' . $request->user()->id . '.' . $messageFingerprint;
+        return 'farmer_chatbot.duplicate_response.'
+            . $request->user()->id
+            . '.' . $historyFingerprint
+            . '.' . $messageFingerprint;
     }
 
     private function messageFingerprint(string $message): string
     {
         return hash('sha256', strtolower(trim($message)));
+    }
+
+    private function historyFingerprint(array $history): string
+    {
+        $compactHistory = array_map(
+            static function ($entry): array {
+                if (!is_array($entry)) {
+                    return ['role' => '', 'text' => ''];
+                }
+
+                return [
+                    'role' => strtolower((string) ($entry['role'] ?? '')),
+                    'text' => substr(trim((string) ($entry['text'] ?? '')), 0, 180),
+                ];
+            },
+            array_slice($history, -self::CONTEXT_HISTORY_LIMIT)
+        );
+
+        $encoded = json_encode($compactHistory, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return hash('sha256', $encoded !== false ? $encoded : '[]');
+    }
+
+    private function recentPredictionsCacheKey(int|string $userId): string
+    {
+        return 'farmer_chatbot.recent_predictions.' . $userId;
     }
 }

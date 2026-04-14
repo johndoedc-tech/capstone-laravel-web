@@ -324,9 +324,10 @@ class GeminiChatService
         $normalized = preg_replace('/[ \t]+/', ' ', $normalized) ?? $normalized;
         $normalized = preg_replace('/\n{3,}/', "\n\n", $normalized) ?? $normalized;
         $normalized = trim($normalized);
+        $original = $normalized;
 
         if ($normalized === '') {
-            return $normalized;
+            return $this->fallbackAssistantReply($reply);
         }
 
         if ($wasTruncated) {
@@ -349,6 +350,10 @@ class GeminiChatService
 
         if (!$this->hasTerminalPunctuation($normalized)) {
             $normalized .= '.';
+        }
+
+        if ($this->isLowValueReply($normalized)) {
+            return $this->fallbackAssistantReply($original);
         }
 
         return $normalized;
@@ -377,6 +382,38 @@ class GeminiChatService
         $completed = trim(implode(' ', array_map(static fn (string $sentence): string => trim($sentence), $sentences)));
 
         return $completed;
+    }
+
+    private function isLowValueReply(string $text): bool
+    {
+        $clean = trim($text);
+
+        if ($clean === '') {
+            return true;
+        }
+
+        $alphaNumericCount = preg_match_all('/[\p{L}\p{N}]/u', $clean);
+
+        return !is_int($alphaNumericCount) || $alphaNumericCount < 4;
+    }
+
+    private function fallbackAssistantReply(string $seed): string
+    {
+        $fallback = trim((string) preg_replace('/\s+/', ' ', $seed));
+
+        if ($fallback !== '' && !$this->isLowValueReply($fallback)) {
+            if (!$this->hasTerminalPunctuation($fallback)) {
+                $fallback .= '.';
+            }
+
+            return $fallback;
+        }
+
+        if ($this->looksLikeFilipino($seed)) {
+            return 'Maaari kitang tulungan sa pananim, panahon, mapa, at predictions. Pakispecify ang tanong mo.';
+        }
+
+        return 'I can help with crops, weather, map insights, and predictions. Please ask a specific farming question.';
     }
 
     private function expandFilipinoTrailingShorthand(string $text): string

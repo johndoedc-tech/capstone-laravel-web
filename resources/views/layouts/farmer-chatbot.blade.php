@@ -12,7 +12,10 @@
     >
         <div class="px-4 py-3 bg-primary text-white flex items-center justify-between">
             <div>
-                <p class="text-sm font-semibold">Harviana Assistant</p>
+                <p class="text-sm font-semibold inline-flex items-center gap-2">
+                    <span>Harviana Assistant</span>
+                    <span class="inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/90">Beta</span>
+                </p>
                 <p class="text-xs text-primary-100">Farmer support chat</p>
             </div>
             <div class="flex items-center gap-1">
@@ -247,13 +250,18 @@
         active: false,
     };
     const PANEL_ANIMATION_MS = 220;
+    const REQUEST_TIMEOUT_MS = 20000;
     let panelHideTimer = null;
+    let viewportSyncTimer = null;
     let typingIndicatorElement = null;
 
     const state = {
         isOpen: localStorage.getItem(mobileStorageKey) === '1',
         isMinimized: localStorage.getItem(desktopStorageKey) === '1',
         isLoading: false,
+        activeRequestId: 0,
+        requestSequence: 0,
+        hasUserActivity: false,
         messages: [],
     };
 
@@ -557,8 +565,8 @@
 
     function renderMessages(options = {}) {
         const animateLast = options.animateLast === true;
+        removeTypingIndicator();
         messagesContainer.innerHTML = '';
-        typingIndicatorElement = null;
 
         if (!state.messages.length) {
             state.messages.push({
@@ -584,6 +592,8 @@
             return;
         }
 
+        const historyRequestSequence = state.requestSequence;
+
         try {
             const response = await fetch(historyUrl, {
                 method: 'GET',
@@ -594,8 +604,11 @@
             });
 
             const data = await response.json();
+            const canApplyHistory = !state.hasUserActivity
+                && !state.isLoading
+                && historyRequestSequence === state.requestSequence;
 
-            if (response.ok && data.success && Array.isArray(data.history)) {
+            if (canApplyHistory && response.ok && data.success && Array.isArray(data.history)) {
                 state.messages = data.history
                     .map((message) => ({
                         role: message?.role === 'user' ? 'user' : 'assistant',
@@ -609,7 +622,9 @@
             console.error('Failed to load chatbot history.', error);
         }
 
-        renderMessages();
+        if (!state.hasUserActivity && !state.isLoading && historyRequestSequence === state.requestSequence) {
+            renderMessages();
+        }
     }
 
     async function sendMessage(messageText) {
@@ -622,6 +637,9 @@
             return;
         }
 
+        const requestId = ++state.requestSequence;
+        state.activeRequestId = requestId;
+        state.hasUserActivity = true;
         setLoading(true);
         setStatus('Thinking...');
 
@@ -634,6 +652,11 @@
         renderMessages({ animateLast: true });
         showTypingIndicator();
 
+        const abortController = new AbortController();
+        const timeoutId = window.setTimeout(() => {
+            abortController.abort();
+        }, REQUEST_TIMEOUT_MS);
+
         try {
             const response = await fetch(messageUrl, {
                 method: 'POST',
@@ -643,10 +666,15 @@
                     'X-CSRF-TOKEN': csrfToken,
                 },
                 credentials: 'same-origin',
+                signal: abortController.signal,
                 body: JSON.stringify({ message: messageText }),
             });
 
             const data = await response.json().catch(() => ({}));
+
+            if (requestId !== state.activeRequestId) {
+                return;
+            }
 
             if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Unable to contact the assistant right now.');
@@ -671,13 +699,29 @@
             renderMessages({ animateLast: true });
             setStatus('Ready');
         } catch (error) {
+            if (requestId !== state.activeRequestId) {
+                return;
+            }
+
+            const isTimeoutError = (typeof error === 'object' && error !== null && error.name === 'AbortError');
+            const errorMessage = error instanceof Error ? error.message : String(error || '');
+
             state.messages.push({
                 role: 'assistant',
-                text: error.message || 'Assistant is temporarily unavailable. Please try again.',
+                text: isTimeoutError
+                    ? 'The assistant request timed out. Please try again.'
+                    : (errorMessage || 'Assistant is temporarily unavailable. Please try again.'),
             });
             renderMessages({ animateLast: true });
             setStatus('Last request failed');
         } finally {
+            window.clearTimeout(timeoutId);
+
+            if (requestId !== state.activeRequestId) {
+                return;
+            }
+
+            state.activeRequestId = 0;
             removeTypingIndicator();
             setLoading(false);
         }
@@ -692,6 +736,8 @@
         if (!resetUrl || !csrfToken) {
             return;
         }
+
+        state.hasUserActivity = true;
 
         setStatus('Resetting...');
 
@@ -768,7 +814,7 @@
             return;
         }
 
-        syncViewportAfterKeyboardChange(6);
+        syncViewportAfterKeyboardChange(10);
     });
 
     input.addEventListener('blur', () => {
@@ -776,7 +822,7 @@
             return;
         }
 
-        syncViewportAfterKeyboardChange(3);
+        syncViewportAfterKeyboardChange(6);
     });
 
     resetButton.addEventListener('click', () => {
@@ -791,13 +837,28 @@
         applyViewportMode({ animate: false });
     }
 
-    window.addEventListener('resize', syncViewportState);
+    function scheduleViewportSync(delay = 100) {
+        if (viewportSyncTimer !== null) {
+            window.clearTimeout(viewportSyncTimer);
+        }
+
+        viewportSyncTimer = window.setTimeout(() => {
+            viewportSyncTimer = null;
+            syncViewportState();
+        }, delay);
+    }
+
+    window.addEventListener('resize', () => {
+        scheduleViewportSync(100);
+    });
     window.addEventListener('orientationchange', () => {
-        setTimeout(syncViewportState, 120);
+        scheduleViewportSync(140);
     });
 
     if (visualViewport) {
-        visualViewport.addEventListener('resize', syncViewportState);
+        visualViewport.addEventListener('resize', () => {
+            scheduleViewportSync(80);
+        });
     }
 
     setOpen(state.isOpen, { animate: false });
