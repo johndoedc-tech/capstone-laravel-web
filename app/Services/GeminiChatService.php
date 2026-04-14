@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -15,7 +17,9 @@ class GeminiChatService
     private array $fallbackModels;
     private int $timeout;
     private int $retries;
+    private bool $allowHttpRetry;
     private int $maxOutputTokens;
+    private int $modelQuotaCooldownSeconds;
 
     public function __construct()
     {
@@ -29,12 +33,15 @@ class GeminiChatService
         $this->fallbackModels = $this->normalizeFallbackModels(config('services.gemini.fallback_models', []));
         $this->timeout = (int) config('services.gemini.timeout', 20);
         $this->retries = (int) config('services.gemini.retries', 0);
+        $this->allowHttpRetry = (bool) config('services.gemini.allow_http_retry', false);
         $this->maxOutputTokens = max(160, min(1024, (int) config('services.gemini.max_output_tokens', 480)));
+        $this->modelQuotaCooldownSeconds = max(30, (int) config('services.gemini.model_quota_cooldown_seconds', 75));
     }
 
     public function generateReply(string $message, array $history = [], array $context = []): array
     {
         $trimmedMessage = trim($message);
+        $expectedLanguage = $this->detectExpectedLanguage($trimmedMessage);
 
         if ($trimmedMessage === '') {
             throw new RuntimeException('Chat message cannot be empty.');
@@ -49,7 +56,7 @@ class GeminiChatService
         $payload = [
             'systemInstruction' => [
                 'parts' => [
-                    ['text' => $this->buildSystemInstruction($context)],
+                    ['text' => $this->buildSystemInstruction($context, $expectedLanguage)],
                 ],
             ],
             'contents' => $contents,
@@ -59,16 +66,31 @@ class GeminiChatService
             ],
         ];
 
-        $modelsToTry = array_values(array_unique(array_merge([$this->model], $this->fallbackModels)));
+        $modelsToTry = $this->buildModelsToTry();
+        $modelCount = count($modelsToTry);
         $lastException = null;
 
-        foreach ($modelsToTry as $modelName) {
+        foreach ($modelsToTry as $index => $modelName) {
             try {
-                return $this->requestWithModel($modelName, $payload);
+                $result = $this->requestWithModel($modelName, $payload, $expectedLanguage);
+                $result['reply'] = $this->resolveRepeatedReply(
+                    $result['reply'],
+                    $trimmedMessage,
+                    $history,
+                    $expectedLanguage
+                );
+
+                return $result;
             } catch (RuntimeException $exception) {
                 $lastException = $exception;
 
-                if ($this->isQuotaOrRateLimitError($exception->getMessage()) && count($modelsToTry) > 1) {
+                $isQuotaError = $this->isQuotaOrRateLimitError($exception->getMessage());
+
+                if ($isQuotaError) {
+                    $this->activateModelQuotaCooldown($modelName, $exception->getMessage());
+                }
+
+                if ($isQuotaError && $index < $modelCount - 1) {
                     Log::warning('Gemini chatbot model exhausted. Trying fallback model.', [
                         'current_model' => $modelName,
                         'error' => $exception->getMessage(),
@@ -84,16 +106,26 @@ class GeminiChatService
         throw $lastException ?? new RuntimeException('Gemini API request failed on all configured models.');
     }
 
-    private function requestWithModel(string $modelName, array $payload): array
+    private function requestWithModel(string $modelName, array $payload, string $expectedLanguage): array
     {
         $url = "{$this->baseUrl}/models/{$modelName}:generateContent";
-        $attempts = max(1, $this->retries + 1);
 
         $startTime = microtime(true);
 
         try {
-            $response = Http::timeout($this->timeout)
-                ->retry($attempts, 250)
+            $requestBuilder = Http::timeout($this->timeout);
+
+            if ($this->allowHttpRetry && $this->retries > 0) {
+                $attempts = max(1, $this->retries + 1);
+
+                $requestBuilder = $requestBuilder->retry(
+                    $attempts,
+                    250,
+                    static fn (Throwable $exception): bool => $exception instanceof ConnectionException
+                );
+            }
+
+            $response = $requestBuilder
                 ->withQueryParameters(['key' => $this->apiKey])
                 ->acceptJson()
                 ->post($url, $payload);
@@ -142,7 +174,7 @@ class GeminiChatService
             'total' => data_get($body, 'usageMetadata.totalTokenCount'),
         ];
 
-        $reply = $this->normalizeAssistantReply($reply, $finishReason === 'MAX_TOKENS');
+        $reply = $this->normalizeAssistantReply($reply, $finishReason === 'MAX_TOKENS', $expectedLanguage);
 
         Log::info('Gemini chatbot response generated.', [
             'model' => $modelName,
@@ -156,6 +188,67 @@ class GeminiChatService
             'model' => $modelName,
             'tokens' => $tokenUsage,
         ];
+    }
+
+    private function buildModelsToTry(): array
+    {
+        $allModels = array_values(array_unique(array_merge([$this->model], $this->fallbackModels)));
+        $availableModels = [];
+        $cooldownByModel = [];
+
+        foreach ($allModels as $modelName) {
+            $cooldownSeconds = $this->getModelQuotaCooldownSeconds($modelName);
+
+            if ($cooldownSeconds > 0) {
+                $cooldownByModel[$modelName] = $cooldownSeconds;
+                continue;
+            }
+
+            $availableModels[] = $modelName;
+        }
+
+        if (!empty($availableModels)) {
+            return $availableModels;
+        }
+
+        if (!empty($cooldownByModel)) {
+            $waitSeconds = min($cooldownByModel);
+
+            throw new RuntimeException("Gemini API quota cooldown is active. Please retry in {$waitSeconds} seconds.");
+        }
+
+        return [$this->model];
+    }
+
+    private function activateModelQuotaCooldown(string $modelName, string $reason): void
+    {
+        Cache::put(
+            $this->modelQuotaCooldownCacheKey($modelName),
+            now()->addSeconds($this->modelQuotaCooldownSeconds)->timestamp,
+            $this->modelQuotaCooldownSeconds
+        );
+
+        Log::warning('Gemini chatbot model cooldown activated after quota/rate limit error.', [
+            'model' => $modelName,
+            'cooldown_seconds' => $this->modelQuotaCooldownSeconds,
+            'reason' => $reason,
+        ]);
+    }
+
+    private function getModelQuotaCooldownSeconds(string $modelName): int
+    {
+        $unlockTimestamp = Cache::get($this->modelQuotaCooldownCacheKey($modelName));
+
+        if (!is_int($unlockTimestamp)) {
+            return 0;
+        }
+
+        return max(0, $unlockTimestamp - now()->timestamp);
+    }
+
+    private function modelQuotaCooldownCacheKey(string $modelName): string
+    {
+        return 'gemini_chatbot.model_quota_cooldown.' . hash('sha256', strtolower(trim($modelName)));
     }
 
     private function normalizeFallbackModels(mixed $fallbackModels): array
@@ -184,6 +277,153 @@ class GeminiChatService
             || str_contains($normalizedMessage, 'quota')
             || str_contains($normalizedMessage, 'too many requests')
             || str_contains($normalizedMessage, '429');
+    }
+
+    private function detectExpectedLanguage(string $message): string
+    {
+        $scores = $this->scoreLanguageHints($message);
+
+        if ($scores['filipino'] >= $scores['english'] + 1) {
+            return 'filipino';
+        }
+
+        if ($scores['english'] >= $scores['filipino'] + 1) {
+            return 'english';
+        }
+
+        return $this->looksLikeFilipino($message) ? 'filipino' : 'english';
+    }
+
+    private function languageInstruction(string $expectedLanguage): string
+    {
+        if ($expectedLanguage === 'filipino') {
+            return 'The latest user message is in Filipino. Reply only in Filipino (Tagalog).';
+        }
+
+        return 'The latest user message is in English. Reply only in English.';
+    }
+
+    private function matchesExpectedLanguage(string $text, string $expectedLanguage): bool
+    {
+        $scores = $this->scoreLanguageHints($text);
+
+        if ($expectedLanguage === 'filipino') {
+            $clearlyEnglish = $scores['english'] >= 2 && $scores['english'] > ($scores['filipino'] + 1);
+
+            return !$clearlyEnglish;
+        }
+
+        $clearlyFilipino = $scores['filipino'] >= 2 && $scores['filipino'] > $scores['english'];
+
+        return !$clearlyFilipino;
+    }
+
+    private function scoreLanguageHints(string $text): array
+    {
+        $english = preg_match_all(
+            '/\b(the|and|with|for|your|you|please|should|can|will|plant|crop|weather|soil|harvest|recommendation|map|prediction|month)\b/iu',
+            $text
+        );
+
+        $filipino = preg_match_all(
+            '/\b(ang|ng|sa|mga|para|hindi|pwede|paano|ano|ito|iyan|ikaw|ka|ko|mo|natin|tanim|pagtatanim|pananim|panahon|buwan|munisipalidad)\b/iu',
+            $text
+        );
+
+        return [
+            'english' => is_int($english) ? $english : 0,
+            'filipino' => is_int($filipino) ? $filipino : 0,
+        ];
+    }
+
+    private function resolveRepeatedReply(string $reply, string $currentUserMessage, array $history, string $expectedLanguage): string
+    {
+        if (!$this->isRepeatedReplyForDifferentQuestion($reply, $currentUserMessage, $history)) {
+            return $reply;
+        }
+
+        Log::info('Gemini chatbot repeated previous answer for a new question. Returning anti-repeat fallback.', [
+            'expected_language' => $expectedLanguage,
+        ]);
+
+        if ($expectedLanguage === 'filipino') {
+            return 'Mukhang naulit ang sagot ko. Ilagay ang crop, munisipalidad, at buwan para makapagbigay ako ng mas tiyak na payo.';
+        }
+
+        return 'I may have repeated my last answer. Share the crop, municipality, and month so I can give a more specific recommendation.';
+    }
+
+    private function isRepeatedReplyForDifferentQuestion(string $reply, string $currentUserMessage, array $history): bool
+    {
+        $lastAssistantReply = $this->latestHistoryTextByRole($history, 'assistant');
+        $lastUserMessage = $this->latestHistoryTextByRole($history, 'user');
+
+        if ($lastAssistantReply === null || $lastUserMessage === null) {
+            return false;
+        }
+
+        $normalizedReply = $this->normalizeComparableText($reply);
+        $normalizedLastAssistant = $this->normalizeComparableText($lastAssistantReply);
+
+        if (!$this->isHighlySimilarText($normalizedReply, $normalizedLastAssistant, 94.0)) {
+            return false;
+        }
+
+        $normalizedCurrentUser = $this->normalizeComparableText($currentUserMessage);
+        $normalizedLastUser = $this->normalizeComparableText($lastUserMessage);
+
+        if ($this->isHighlySimilarText($normalizedCurrentUser, $normalizedLastUser, 88.0)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function latestHistoryTextByRole(array $history, string $role): ?string
+    {
+        for ($index = count($history) - 1; $index >= 0; $index--) {
+            $entry = $history[$index] ?? null;
+
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            if (strtolower((string) ($entry['role'] ?? '')) !== $role) {
+                continue;
+            }
+
+            $text = trim((string) ($entry['text'] ?? ''));
+
+            if ($text !== '') {
+                return $text;
+            }
+        }
+
+        return null;
+    }
+
+    private function normalizeComparableText(string $text): string
+    {
+        $normalized = strtolower(trim($text));
+        $normalized = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $normalized) ?? $normalized;
+        $normalized = preg_replace('/\s+/u', ' ', $normalized) ?? $normalized;
+
+        return trim($normalized);
+    }
+
+    private function isHighlySimilarText(string $left, string $right, float $threshold): bool
+    {
+        if ($left === '' || $right === '') {
+            return false;
+        }
+
+        if ($left === $right) {
+            return true;
+        }
+
+        similar_text($left, $right, $percent);
+
+        return $percent >= $threshold;
     }
 
     private function buildContents(string $message, array $history): array
@@ -222,7 +462,7 @@ class GeminiChatService
         return $contents;
     }
 
-    private function buildSystemInstruction(array $context): string
+    private function buildSystemInstruction(array $context, string $expectedLanguage): string
     {
         $instruction = [
             'You are Harviana Assistant, a practical agriculture helper for farmers in Benguet.',
@@ -234,7 +474,8 @@ class GeminiChatService
             'If data is missing or uncertain, say it clearly and suggest the next best step.',
             'Do not claim live data access unless the context explicitly includes it.',
             'For Filipino responses, use complete words and avoid shorthand like "m." or "n.".',
-            'Mirror the user language (English or Filipino).',
+            'Never end your reply with a partial phrase or dangling connector word.',
+            $this->languageInstruction($expectedLanguage),
         ];
 
         $contextLines = $this->formatContext($context);
@@ -318,7 +559,7 @@ class GeminiChatService
         return "{$status}: {$message}";
     }
 
-    private function normalizeAssistantReply(string $reply, bool $wasTruncated): string
+    private function normalizeAssistantReply(string $reply, bool $wasTruncated, string $expectedLanguage): string
     {
         $normalized = str_replace(['**', '`'], '', $reply);
         $normalized = preg_replace('/[ \t]+/', ' ', $normalized) ?? $normalized;
@@ -327,7 +568,7 @@ class GeminiChatService
         $original = $normalized;
 
         if ($normalized === '') {
-            return $this->fallbackAssistantReply($reply);
+            return $this->fallbackAssistantReply($reply, $expectedLanguage);
         }
 
         if ($wasTruncated) {
@@ -352,8 +593,20 @@ class GeminiChatService
             $normalized .= '.';
         }
 
+        if ($this->hasDanglingEnding($normalized)) {
+            return $this->fallbackAssistantReply($original, $expectedLanguage);
+        }
+
         if ($this->isLowValueReply($normalized)) {
-            return $this->fallbackAssistantReply($original);
+            return $this->fallbackAssistantReply($original, $expectedLanguage);
+        }
+
+        if (!$this->matchesExpectedLanguage($normalized, $expectedLanguage)) {
+            Log::info('Gemini chatbot reply language mismatch detected. Returning language-locked fallback.', [
+                'expected_language' => $expectedLanguage,
+            ]);
+
+            return $this->fallbackAssistantReply($original, $expectedLanguage, true);
         }
 
         return $normalized;
@@ -362,6 +615,11 @@ class GeminiChatService
     private function hasTerminalPunctuation(string $text): bool
     {
         return preg_match('/[.!?]["\')\]]?$/', $text) === 1;
+    }
+
+    private function hasDanglingEnding(string $text): bool
+    {
+        return preg_match('/\b(with|and|or|for|to|about|around|into|from|by|of|ng|sa|at|para)[.!?]$/iu', trim($text)) === 1;
     }
 
     private function trimToLastCompleteSentence(string $text): string
@@ -397,11 +655,12 @@ class GeminiChatService
         return !is_int($alphaNumericCount) || $alphaNumericCount < 4;
     }
 
-    private function fallbackAssistantReply(string $seed): string
+    private function fallbackAssistantReply(string $seed, ?string $expectedLanguage = null, bool $skipSeedReuse = false): string
     {
         $fallback = trim((string) preg_replace('/\s+/', ' ', $seed));
+        $resolvedLanguage = $expectedLanguage ?? ($this->looksLikeFilipino($seed) ? 'filipino' : 'english');
 
-        if ($fallback !== '' && !$this->isLowValueReply($fallback)) {
+        if (!$skipSeedReuse && $fallback !== '' && !$this->isLowValueReply($fallback)) {
             if (!$this->hasTerminalPunctuation($fallback)) {
                 $fallback .= '.';
             }
@@ -409,7 +668,7 @@ class GeminiChatService
             return $fallback;
         }
 
-        if ($this->looksLikeFilipino($seed)) {
+        if ($resolvedLanguage === 'filipino') {
             return 'Maaari kitang tulungan sa pananim, panahon, mapa, at predictions. Pakispecify ang tanong mo.';
         }
 

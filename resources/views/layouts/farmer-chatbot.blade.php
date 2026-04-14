@@ -262,8 +262,32 @@
         activeRequestId: 0,
         requestSequence: 0,
         hasUserActivity: false,
+        lastFailedRequest: null,
         messages: [],
     };
+
+    function createRequestToken() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+        }
+
+        const randomFragment = Math.random().toString(36).slice(2, 11);
+        return `req-${Date.now()}-${randomFragment}`;
+    }
+
+    function resolveRequestToken(messageText) {
+        const lastFailedRequest = state.lastFailedRequest;
+
+        if (
+            lastFailedRequest
+            && lastFailedRequest.message === messageText
+            && (Date.now() - lastFailedRequest.at) <= 120000
+        ) {
+            return lastFailedRequest.requestId;
+        }
+
+        return createRequestToken();
+    }
 
     function setStatus(text) {
         statusLabel.textContent = text;
@@ -638,6 +662,7 @@
         }
 
         const requestId = ++state.requestSequence;
+        const requestToken = resolveRequestToken(messageText);
         state.activeRequestId = requestId;
         state.hasUserActivity = true;
         setLoading(true);
@@ -664,10 +689,14 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
+                    'X-Request-ID': requestToken,
                 },
                 credentials: 'same-origin',
                 signal: abortController.signal,
-                body: JSON.stringify({ message: messageText }),
+                body: JSON.stringify({
+                    message: messageText,
+                    request_id: requestToken,
+                }),
             });
 
             const data = await response.json().catch(() => ({}));
@@ -679,6 +708,8 @@
             if (!response.ok || !data.success) {
                 throw new Error(data.message || 'Unable to contact the assistant right now.');
             }
+
+            state.lastFailedRequest = null;
 
             if (Array.isArray(data.history)) {
                 state.messages = data.history
@@ -712,6 +743,13 @@
                     ? 'The assistant request timed out. Please try again.'
                     : (errorMessage || 'Assistant is temporarily unavailable. Please try again.'),
             });
+
+            state.lastFailedRequest = {
+                requestId: requestToken,
+                message: messageText,
+                at: Date.now(),
+            };
+
             renderMessages({ animateLast: true });
             setStatus('Last request failed');
         } finally {

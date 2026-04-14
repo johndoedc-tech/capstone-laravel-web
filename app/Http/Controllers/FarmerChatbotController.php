@@ -17,6 +17,7 @@ class FarmerChatbotController extends Controller
     private const QUOTA_COOLDOWN_SECONDS = 65;
     private const IN_FLIGHT_REQUEST_SECONDS = 30;
     private const DUPLICATE_RESPONSE_TTL_SECONDS = 12;
+    private const IDEMPOTENCY_RESPONSE_TTL_SECONDS = 180;
     private const RECENT_PREDICTIONS_CACHE_SECONDS = 120;
 
     public function history(Request $request): JsonResponse
@@ -40,15 +41,25 @@ class FarmerChatbotController extends Controller
 
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:2000'],
+            'request_id' => ['nullable', 'string', 'max:128'],
         ]);
 
         $message = trim(strip_tags((string) $validated['message']));
+        $requestId = $this->sanitizeRequestId((string) ($validated['request_id'] ?? ''));
 
         if ($message === '') {
             return response()->json([
                 'success' => false,
                 'message' => 'Please enter a valid question.',
             ], 422);
+        }
+
+        if ($requestId !== null) {
+            $cachedRequestResponse = Cache::get($this->idempotencyResponseCacheKey($request, $requestId));
+
+            if (is_array($cachedRequestResponse) && isset($cachedRequestResponse['success']) && $cachedRequestResponse['success'] === true) {
+                return response()->json($cachedRequestResponse);
+            }
         }
 
         $history = $this->getHistory($request);
@@ -129,6 +140,7 @@ class FarmerChatbotController extends Controller
                 'metadata' => [
                     'model' => $result['model'] ?? null,
                     'tokens' => $result['tokens'] ?? null,
+                    'request_id' => $requestId,
                 ],
             ];
 
@@ -137,6 +149,14 @@ class FarmerChatbotController extends Controller
                 $responsePayload,
                 self::DUPLICATE_RESPONSE_TTL_SECONDS
             );
+
+            if ($requestId !== null) {
+                Cache::put(
+                    $this->idempotencyResponseCacheKey($request, $requestId),
+                    $responsePayload,
+                    self::IDEMPOTENCY_RESPONSE_TTL_SECONDS
+                );
+            }
 
             return response()->json($responsePayload);
         } finally {
@@ -286,6 +306,30 @@ class FarmerChatbotController extends Controller
             . $request->user()->id
             . '.' . $historyFingerprint
             . '.' . $messageFingerprint;
+    }
+
+    private function idempotencyResponseCacheKey(Request $request, string $requestId): string
+    {
+        return 'farmer_chatbot.request_response.'
+            . $request->user()->id
+            . '.' . hash('sha256', strtolower(trim($requestId)));
+    }
+
+    private function sanitizeRequestId(string $requestId): ?string
+    {
+        $trimmed = trim($requestId);
+
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $normalized = preg_replace('/[^A-Za-z0-9._:-]/', '', $trimmed);
+
+        if (!is_string($normalized) || $normalized === '') {
+            return null;
+        }
+
+        return substr($normalized, 0, 128);
     }
 
     private function messageFingerprint(string $message): string
