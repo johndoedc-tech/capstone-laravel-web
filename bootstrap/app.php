@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'farmer' => \App\Http\Middleware\FarmerMiddleware::class,
             'force-password-change' => \App\Http\Middleware\ForcePasswordChangeMiddleware::class,
+            'onboarding' => \App\Http\Middleware\EnsureProfileCompleteMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

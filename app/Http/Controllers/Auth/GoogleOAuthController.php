@@ -70,6 +70,6 @@ class GoogleOAuthController extends Controller
             return redirect()->route('password.change-required');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('onboarding.show', absolute: false));
     }
 }

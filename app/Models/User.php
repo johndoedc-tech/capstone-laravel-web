@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'must_change_password',
         'preferred_municipality',
+        'cooperative',
         'favorite_crops',
     ];
 
@@ -43,6 +44,22 @@ class User extends Authenticatable
     public function isFarmer(): bool
     {
         return $this->role === 'farmer';
+    }
+
+    /**
+     * Check if the farmer has completed onboarding (municipality & cooperative).
+     */
+    public function hasCompletedOnboarding(): bool
+    {
+        return ! empty($this->preferred_municipality) && ! empty($this->cooperative);
+    }
+
+    /**
+     * Check if the farmer still needs to complete onboarding.
+     */
+    public function needsOnboarding(): bool
+    {
+        return ! $this->hasCompletedOnboarding();
     }
 
     /**

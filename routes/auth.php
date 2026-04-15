@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\GoogleOAuthController;
+use App\Http\Controllers\Auth\OnboardingController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RequiredPasswordChangeController;
@@ -39,6 +40,13 @@ Route::middleware(['auth', 'force-password-change'])->group(function () {
 
     Route::put('password/change-required', [RequiredPasswordChangeController::class, 'update'])
         ->name('password.change-required.update');
+
+    // Onboarding: municipality & cooperative selection (after signup)
+    Route::get('onboarding', [OnboardingController::class, 'show'])
+        ->name('onboarding.show');
+
+    Route::post('onboarding', [OnboardingController::class, 'store'])
+        ->name('onboarding.store');
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
