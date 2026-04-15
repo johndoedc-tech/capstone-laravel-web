@@ -24,15 +24,17 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('auth/google/redirect', [GoogleOAuthController::class, 'redirect'])
-        ->name('google.redirect');
-
-    Route::get('auth/google/callback', [GoogleOAuthController::class, 'callback'])
-        ->name('google.callback');
-
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 });
+
+// Google OAuth routes are outside the 'guest' group so the callback
+// is still reachable after the user is authenticated during the flow.
+Route::get('auth/google/redirect', [GoogleOAuthController::class, 'redirect'])
+    ->name('google.redirect');
+
+Route::get('auth/google/callback', [GoogleOAuthController::class, 'callback'])
+    ->name('google.callback');
 
 Route::middleware(['auth', 'force-password-change'])->group(function () {
     Route::get('password/change-required', [RequiredPasswordChangeController::class, 'edit'])
