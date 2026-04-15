@@ -236,30 +236,6 @@
 
                             <!-- Panel Content -->
                             <div id="panel-content" class="space-y-6">
-                                <!-- Overview Stats -->
-                                <div
-                                    class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Overview</h3>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <p class="text-xs text-gray-600">Total Production</p>
-                                            <p id="detail-production" class="text-lg font-bold text-green-700">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Area Harvested</p>
-                                            <p id="detail-area" class="text-lg font-bold text-green-700">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Productivity</p>
-                                            <p id="detail-productivity" class="text-lg font-bold text-green-700">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Records</p>
-                                            <p id="detail-records" class="text-lg font-bold text-green-700">-</p>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- Weather Cards -->
                                 <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
                                     <div class="flex items-center justify-between mb-3">
@@ -305,22 +281,6 @@
                                             <div id="weather-daily-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Farm Type Breakdown -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Farm Type
-                                        Distribution</h3>
-                                    <div id="farm-type-container" class="space-y-2">
-                                        <!-- Will be populated dynamically -->
-                                    </div>
-                                </div>
-
-                                <!-- Monthly Production Chart -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Monthly Production
-                                    </h3>
-                                    <canvas id="monthly-chart" height="200"></canvas>
                                 </div>
 
                                 <!-- Contribution Per Municipality Chart -->
@@ -903,7 +863,6 @@
         }
 
         // Municipality Details Panel Functions
-        let monthlyChart = null;
         let cropChart = null;
 
         function closeDetailsPanel() {
@@ -1118,17 +1077,7 @@
 
                 console.log('Municipality data:', data);
 
-                // Update overview stats
-                document.getElementById('detail-production').textContent = Number(data.summary.total_production).toLocaleString() + ' mt';
-                document.getElementById('detail-area').textContent = Number(data.summary.total_area_harvested).toLocaleString() + ' ha';
-                document.getElementById('detail-productivity').textContent = Number(data.summary.avg_productivity).toFixed(2) + ' mt/ha';
-                document.getElementById('detail-records').textContent = data.monthly_data.length + ' months';
-
-                // Update farm type breakdown
-                updateFarmTypeBreakdown(data.farm_type_breakdown);
-
                 // Update charts
-                updateMonthlyChart(data.monthly_data);
                 updateContributionChart(municipalityName);
                 updateCropChart(data.crop_distribution);
 
@@ -1151,96 +1100,30 @@
             }
         }
 
-        function updateFarmTypeBreakdown(farmTypes) {
-            const container = document.getElementById('farm-type-container');
-
-            if (!farmTypes || farmTypes.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-500">No farm type data available</p>';
-                return;
-            }
-
-            const total = farmTypes.reduce((sum, ft) => sum + parseFloat(ft.total_production), 0);
-
-            container.innerHTML = farmTypes.map(ft => {
-                const production = parseFloat(ft.total_production);
-                const percentage = ((production / total) * 100).toFixed(1);
-                return `
-                    <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700">${ft.farm_type}</span>
-                            <span class="text-sm font-bold text-green-600">${percentage}%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: ${percentage}%"></div>
-                        </div>
-                        <p class="text-xs text-gray-600 mt-1">${Number(production).toLocaleString()} mt</p>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateMonthlyChart(monthlyData) {
-            const ctx = document.getElementById('monthly-chart');
-
-            // Destroy existing chart
-            if (monthlyChart) {
-                monthlyChart.destroy();
-            }
-
-            const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-            const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-            const data = monthNames.map((monthName) => {
-                const monthData = monthlyData.find(m => m.month === monthName);
-                return monthData ? parseFloat(monthData.total_production) : 0;
-            });
-
-            monthlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: monthLabels,
-                    datasets: [{
-                        label: 'Production (mt)',
-                        data: data,
-                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                        borderColor: 'rgb(34, 197, 94)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function (value) {
-                                    return value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
         function updateCropChart(cropData) {
             const ctx = document.getElementById('crop-chart');
+            if (!ctx) return;
+
+            const container = ctx.parentElement;
+            const emptyState = container.querySelector('[data-crop-chart-empty]');
 
             // Destroy existing chart
             if (cropChart) {
                 cropChart.destroy();
+                cropChart = null;
             }
 
-            if (cropData.length === 0) {
-                ctx.parentElement.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">No crop data available</p>';
+            if (!Array.isArray(cropData) || cropData.length === 0) {
+                ctx.classList.add('hidden');
+                if (!emptyState) {
+                    container.insertAdjacentHTML('beforeend',
+                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop data available</p>');
+                }
                 return;
             }
+
+            ctx.classList.remove('hidden');
+            emptyState?.remove();
 
             const colors = [
                 '#ef4444', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
