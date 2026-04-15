@@ -70,7 +70,7 @@ class OnboardingController extends Controller
         ]);
 
         $request->user()->forceFill([
-            'preferred_municipality' => $validated['municipality'],
+            'preferred_municipality' => strtoupper($validated['municipality']),
             'cooperative' => $validated['cooperative'],
         ])->save();
 

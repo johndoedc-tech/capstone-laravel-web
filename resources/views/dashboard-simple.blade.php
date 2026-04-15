@@ -259,38 +259,35 @@
             </div>
 
             <!-- ============================================ -->
-            <!-- MY FARM QUICK SETUP (Simplified) -->
+            <!-- MY FARM (Read-only, set from onboarding) -->
             <!-- ============================================ -->
             <div x-data="farmPreferences()" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-2xl">🏡</span>
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-900" x-text="t('my_farm')"></h2>
-                        <p class="text-xs text-gray-500" x-text="t('my_farm_desc')"></p>
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-2xl flex-shrink-0">🏡</span>
+                        <div class="min-w-0">
+                            <h2 class="text-lg font-semibold text-gray-900" x-text="t('my_farm')"></h2>
+                            <p class="text-xs text-gray-500" x-text="t('my_farm_desc')"></p>
+                        </div>
                     </div>
-                    <span x-show="saved" x-transition class="ml-auto text-xs text-primary-dark bg-primary-100 px-2 py-0.5 rounded-full" x-text="t('saved')"></span>
+                    <a href="{{ route('profile.edit') }}" class="flex-shrink-0 text-xs text-primary-dark hover:text-primary-900 font-medium underline underline-offset-2 mt-1">Edit</a>
                 </div>
-                
-                <!-- Municipality Selection -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">📍 <span x-text="t('where_is_farm')"></span></label>
-                    <select x-model="municipality" @change="savePreferences()" 
-                        class="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary-dark focus:ring focus:ring-primary-200 focus:ring-opacity-50">
-                        <option value="" x-text="t('select_location')"></option>
-                        <option value="ATOK">Atok</option>
-                        <option value="BAKUN">Bakun</option>
-                        <option value="BOKOD">Bokod</option>
-                        <option value="BUGUIAS">Buguias</option>
-                        <option value="ITOGON">Itogon</option>
-                        <option value="KABAYAN">Kabayan</option>
-                        <option value="KAPANGAN">Kapangan</option>
-                        <option value="KIBUNGAN">Kibungan</option>
-                        <option value="LA TRINIDAD">La Trinidad</option>
-                        <option value="MANKAYAN">Mankayan</option>
-                        <option value="SABLAN">Sablan</option>
-                        <option value="TUBA">Tuba</option>
-                        <option value="TUBLAY">Tublay</option>
-                    </select>
+
+                <!-- Municipality Display (from onboarding) -->
+                <div class="mt-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">📍 <span x-text="t('where_is_farm')"></span></p>
+                    @if($preferredMunicipality)
+                        <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-green-50 border border-green-200">
+                            <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-green-800">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
+                        </div>
+                    @else
+                        <div class="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 italic">
+                            No location set — <a href="{{ route('profile.edit') }}" class="text-primary-dark underline">update your profile</a>.
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -962,41 +959,17 @@
         }
 
         // Farm Preferences Component
+        // Municipality is read from onboarding; no dropdown save needed.
         function farmPreferences() {
             return {
                 municipality: '{{ $preferredMunicipality ?? '' }}',
-                saved: false,
-                saving: false,
 
-                async savePreferences() {
-                    if (this.saving) return;
-                    this.saving = true;
-
-                    try {
-                        const response = await fetch('{{ route('farmer.preferences.save') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                preferred_municipality: this.municipality
-                            })
-                        });
-
-                        if (response.ok) {
-                            this.saved = true;
-                            setTimeout(() => this.saved = false, 2000);
-                            
-                            // Trigger custom event to update recommendations
-                            window.dispatchEvent(new CustomEvent('farm-preferences-updated', {
-                                detail: { municipality: this.municipality }
-                            }));
-                        }
-                    } catch (error) {
-                        console.error('Failed to save preferences:', error);
-                    } finally {
-                        this.saving = false;
+                init() {
+                    // Broadcast once on init so all widgets pick up the saved location.
+                    if (this.municipality) {
+                        window.dispatchEvent(new CustomEvent('farm-preferences-updated', {
+                            detail: { municipality: this.municipality }
+                        }));
                     }
                 }
             }
