@@ -513,39 +513,6 @@
                 </div>
             </div>
 
-            <!-- ============================================ -->
-            <!-- QUIET STATS -->
-            <!-- ============================================ -->
-            <div class="mb-4 lg:mb-6">
-                <div class="mb-4">
-                    <h2 class="text-base font-semibold text-gray-900">Your snapshot</h2>
-                    <p class="text-sm text-gray-500">Quick numbers you can glance at after exploring the tools above.</p>
-                </div>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
-                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('your_predictions')"></p>
-                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $predictionsCount }}</p>
-                        <p class="mt-1 text-xs text-gray-500">Predictions you have already made</p>
-                    </div>
-                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
-                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('crop_types')"></p>
-                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $cropTypesCount }}</p>
-                        <p class="mt-1 text-xs text-gray-500">Crop options available in the system</p>
-                    </div>
-                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
-                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('municipalities')"></p>
-                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ $municipalitiesCount }}</p>
-                        <p class="mt-1 text-xs text-gray-500">Municipalities covered by the data</p>
-                    </div>
-                    <div class="quiet-stat-card rounded-2xl border border-gray-200 bg-slate-50 p-4">
-                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500" x-text="t('data_records')"></p>
-                        <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($totalRecords) }}</p>
-                        <p class="mt-1 text-xs text-gray-500">Historical crop records behind your insights</p>
-                    </div>
-                </div>
-            </div>
-
             @if (false)
             <!-- ============================================ -->
             <!-- QUICK ACTIONS - Big Friendly Buttons -->
