@@ -537,6 +537,8 @@
             municipalityName: '',
             currentYear: null,
             rows: [],
+            recommendedCrop: '',
+            recommendationMonth: '',
             insightTypingTimer: null,
             insightToken: 0,
             isTyping: false,
@@ -568,27 +570,87 @@
             return municipality.charAt(0) + municipality.slice(1).toLowerCase();
         }
 
-        function buildAdminTopCropsInsight(crops, historicalData, predictedData, municipalityName, currentYear) {
+        function getAdminCurrentMonthCode() {
+            return new Date().toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        }
+
+        function getAdminMonthLabel(monthCode) {
+            const monthNames = {
+                JAN: 'January',
+                FEB: 'February',
+                MAR: 'March',
+                APR: 'April',
+                MAY: 'May',
+                JUN: 'June',
+                JUL: 'July',
+                AUG: 'August',
+                SEP: 'September',
+                OCT: 'October',
+                NOV: 'November',
+                DEC: 'December'
+            };
+
+            return monthNames[monthCode] || monthCode;
+        }
+
+        async function fetchAdminRecommendationContext(municipality) {
+            const monthCode = getAdminCurrentMonthCode();
+            const fallbackMonthLabel = getAdminMonthLabel(monthCode);
+
+            try {
+                const response = await fetch(`{{ route('admin.recommendations') }}?municipality=${encodeURIComponent(municipality)}&month=${monthCode}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                if (!response.ok) {
+                    return {
+                        recommendedCrop: '',
+                        recommendationMonth: fallbackMonthLabel
+                    };
+                }
+
+                const data = await response.json();
+
+                return {
+                    recommendedCrop: data.recommendations?.[0]?.crop || '',
+                    recommendationMonth: data.month || fallbackMonthLabel
+                };
+            } catch (error) {
+                console.error('Unable to load admin recommendation context:', error);
+
+                return {
+                    recommendedCrop: '',
+                    recommendationMonth: fallbackMonthLabel
+                };
+            }
+        }
+
+        function buildAdminTopCropsInsight(crops, historicalData, predictedData, municipalityName, recommendedCrop = '', recommendationMonth = '') {
             if (!crops.length) {
                 return `No crop outlook data is available for ${municipalityName} yet.`;
             }
 
-            const predictedLeaderIndex = predictedData.reduce((bestIndex, value, index, values) => {
-                return value > values[bestIndex] ? index : bestIndex;
-            }, 0);
+            const highestPredicted = Math.max(...predictedData);
+            const highestHistorical = Math.max(...historicalData);
+            const predictedLeaderIndex = highestPredicted > 0 ? predictedData.indexOf(highestPredicted) : -1;
+            const historicalLeaderIndex = historicalData.indexOf(highestHistorical);
+            const bestIndex = predictedLeaderIndex >= 0 ? predictedLeaderIndex : historicalLeaderIndex;
+            const bestCrop = crops[bestIndex] || crops[0];
+            const normalizedBestCrop = String(bestCrop || '').trim().toUpperCase();
+            const normalizedRecommendedCrop = String(recommendedCrop || '').trim().toUpperCase();
 
-            const historicalLeaderIndex = historicalData.reduce((bestIndex, value, index, values) => {
-                return value > values[bestIndex] ? index : bestIndex;
-            }, 0);
+            if (normalizedRecommendedCrop && recommendationMonth) {
+                if (normalizedBestCrop === normalizedRecommendedCrop) {
+                    return `${bestCrop} stands out as the strongest crop choice for ${recommendationMonth}, and it is also expected to lead overall performance in ${municipalityName} for the rest of the year.`;
+                }
 
-            const predictedLeader = crops[predictedLeaderIndex];
-            const historicalLeader = crops[historicalLeaderIndex];
-
-            if (predictedLeader === historicalLeader) {
-                return `${predictedLeader} stands out as the strongest crop choice in ${municipalityName} for ${currentYear}, and it is also expected to lead overall performance there for the rest of the year.`;
+                return `${recommendedCrop} stands out as the strongest crop choice for ${recommendationMonth}, while ${bestCrop} is expected to lead overall performance in ${municipalityName} for the rest of the year.`;
             }
 
-            return `${predictedLeader} looks like the strongest crop choice in ${municipalityName} for ${currentYear}, while ${historicalLeader} remains the long-term leader based on historical performance.`;
+            return `${bestCrop} is expected to lead overall performance in ${municipalityName} for the rest of the year, based on historical averages and this year's forecast.`;
         }
 
         function adminPrefersReducedMotion() {
@@ -808,7 +870,8 @@
                 historicalData,
                 predictedData,
                 municipalityName,
-                currentYear
+                adminTopCropsChartState.recommendedCrop,
+                adminTopCropsChartState.recommendationMonth
             );
 
             if (shouldNarrate) {
@@ -944,6 +1007,8 @@
             errorEl.classList.add('hidden');
 
             try {
+                const recommendationContextPromise = fetchAdminRecommendationContext(municipality);
+
                 const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
                     method: 'POST',
                     headers: {
@@ -964,6 +1029,7 @@
 
                 const currentYear = new Date().getFullYear();
                 const rows = mergeAdminTopCropRows(data, currentYear);
+                const recommendationContext = await recommendationContextPromise;
 
                 if (!rows.length) {
                     throw new Error('No chart data available');
@@ -974,7 +1040,9 @@
                     municipality,
                     municipalityName,
                     currentYear,
-                    rows
+                    rows,
+                    recommendedCrop: recommendationContext.recommendedCrop,
+                    recommendationMonth: recommendationContext.recommendationMonth
                 };
 
                 renderAdminTopCropsChart(rows, municipalityName, currentYear);

@@ -197,6 +197,9 @@ Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->
         return view('admin.activities.index', $resolveActivityPageContext($request, $activityFeed));
     })->name('activities.index');
 
+    // Shared recommendation API for admin quick insight consistency
+    Route::get('/recommendations', [FarmerDashboardController::class, 'getRecommendations'])->name('recommendations');
+
     // Crop Data Management routes
     Route::prefix('crop-data')->name('crop-data.')->group(function () {
         Route::get('/', [CropDataController::class, 'index'])->name('index');
