@@ -304,7 +304,7 @@
                             <span class="text-xl">📊</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">This chart shows the broader full-year crop outlook in your area.</p>
+                                <p class="text-sm text-gray-600">This ranking shows the broader full-year crop outlook in your area.</p>
                             </div>
                         </div>
                         <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
@@ -336,8 +336,8 @@
                 </div>
 
                 <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight chart.</p>
-                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the chart focused on the same municipality.</p>
+                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight ranking.</p>
+                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the ranking focused on the same municipality.</p>
                 </div>
 
                 <div x-show="loading" class="text-center py-8">
@@ -352,10 +352,68 @@
                     <p class="text-sm" x-text="t('load_error')"></p>
                 </div>
 
-                <div x-show="!loading && !error && municipality">
-                    <div class="h-[260px] sm:h-[300px] lg:h-[340px]">
-                        <canvas x-ref="canvas"></canvas>
-                    </div>
+                <div x-show="!loading && !error && municipality" class="space-y-3">
+                    <template x-for="row in rankedCropRows" :key="row.rank + '-' + row.crop">
+                        <div
+                            class="rounded-2xl border p-4 transition-all duration-200"
+                            :class="row.rank === 1
+                                ? 'border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 shadow-md shadow-amber-100/70'
+                                : 'border-gray-200 bg-white shadow-sm'"
+                        >
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl text-center"
+                                        :class="row.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-200/80' : 'bg-slate-100 text-slate-700'"
+                                    >
+                                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Rank</span>
+                                        <span class="text-base font-bold leading-none" x-text="row.rank"></span>
+                                    </div>
+
+                                    <div class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
+                                        <template x-if="row.image && !isCropImageMissing(row.crop)">
+                                            <img
+                                                :src="row.image"
+                                                :alt="row.crop"
+                                                class="h-full w-full object-cover"
+                                                @error="markCropImageMissing(row.crop)"
+                                            >
+                                        </template>
+                                        <template x-if="!row.image || isCropImageMissing(row.crop)">
+                                            <div
+                                                class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
+                                            >
+                                                No Image
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <p
+                                            class="text-[11px] font-semibold uppercase tracking-[0.2em]"
+                                            :class="row.rank === 1 ? 'text-amber-600' : 'text-slate-500'"
+                                            x-text="row.rank === 1 ? 'Top Performer' : `Rank ${row.rank}`"
+                                        ></p>
+                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
+                                        <p class="text-xs text-gray-500">
+                                            Ranked by forecast, using historical average when this year's forecast is zero.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-3 sm:min-w-[280px] sm:grid-cols-2">
+                                    <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Historical Average</p>
+                                        <p class="mt-1 text-lg font-semibold text-emerald-900" x-text="formatCropValue(row.historical)"></p>
+                                    </div>
+                                    <div class="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3">
+                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">This Year Forecast</p>
+                                        <p class="mt-1 text-lg font-semibold text-sky-900" x-text="formatCropValue(row.predicted)"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -1173,7 +1231,6 @@
                 municipality: '{{ $preferredMunicipality ?? '' }}',
                 loading: false,
                 error: false,
-                chart: null,
                 insightText: '',
                 insightDisplayText: '',
                 recommendedCrop: '',
@@ -1181,6 +1238,19 @@
                 chartCrops: [],
                 chartHistoricalData: [],
                 chartPredictedData: [],
+                cropImageErrors: {},
+                cropImageMap: {
+                    'CABBAGE': @json(asset('images/crops/cabbage.png')),
+                    'BROCCOLI': @json(asset('images/crops/broccoli.png')),
+                    'LETTUCE': @json(asset('images/crops/lettuce.png')),
+                    'CAULIFLOWER': @json(asset('images/crops/cauliflower.png')),
+                    'CHINESE CABBAGE': @json(asset('images/crops/chinesecabbage.png')),
+                    'CARROTS': @json(asset('images/crops/carrot.png')),
+                    'GARDEN PEAS': @json(asset('images/crops/gardenpeas.png')),
+                    'WHITE POTATO': @json(asset('images/crops/whitepotato.png')),
+                    'SNAP BEANS': @json(asset('images/crops/snapbean.png')),
+                    'SWEET PEPPER': @json(asset('images/crops/sweetpepper.png')),
+                },
                 insightTypingTimer: null,
                 isTypingInsight: false,
                 insightToken: 0,
@@ -1212,11 +1282,41 @@
                     return formatMunicipalityName(this.municipality);
                 },
 
-                destroyChart() {
-                    if (this.chart) {
-                        this.chart.destroy();
-                        this.chart = null;
-                    }
+                get rankedCropRows() {
+                    return this.chartCrops.map((crop, index) => ({
+                        rank: index + 1,
+                        crop,
+                        historical: Number(this.chartHistoricalData[index] || 0),
+                        predicted: Number(this.chartPredictedData[index] || 0),
+                        image: this.getCropImage(crop),
+                    }));
+                },
+
+                getCropImage(crop) {
+                    const key = String(crop || '').trim().toUpperCase();
+                    return this.cropImageMap[key] || '';
+                },
+
+                isCropImageMissing(crop) {
+                    const key = String(crop || '').trim().toUpperCase();
+                    return Boolean(this.cropImageErrors[key]);
+                },
+
+                markCropImageMissing(crop) {
+                    const key = String(crop || '').trim().toUpperCase();
+                    this.cropImageErrors = {
+                        ...this.cropImageErrors,
+                        [key]: true,
+                    };
+                },
+
+                formatCropValue(value) {
+                    const number = Number(value || 0);
+
+                    return new Intl.NumberFormat(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2,
+                    }).format(number);
                 },
 
                 prefersReducedMotion() {
@@ -1416,7 +1516,6 @@
                 },
 
                 async loadChart() {
-                    this.destroyChart();
                     this.cancelInsightNarration();
                     this.error = false;
                     this.insightText = '';
@@ -1425,6 +1524,7 @@
                     this.chartCrops = [];
                     this.chartHistoricalData = [];
                     this.chartPredictedData = [];
+                    this.cropImageErrors = {};
 
                     if (!this.municipality) {
                         this.loading = false;
@@ -1482,13 +1582,37 @@
                             merged.get(key).predicted = predictedValue;
                         });
 
-                        const rows = Array.from(merged.values()).slice(0, 5);
+                        const rows = Array.from(merged.values())
+                            .map((row) => ({
+                                crop: row.crop,
+                                historical: Number(row.historical || 0),
+                                predicted: Number(row.predicted || 0),
+                            }))
+                            .sort((a, b) => {
+                                const aRankValue = a.predicted > 0 ? a.predicted : a.historical;
+                                const bRankValue = b.predicted > 0 ? b.predicted : b.historical;
+
+                                if (bRankValue !== aRankValue) {
+                                    return bRankValue - aRankValue;
+                                }
+
+                                if (b.predicted !== a.predicted) {
+                                    return b.predicted - a.predicted;
+                                }
+
+                                if (b.historical !== a.historical) {
+                                    return b.historical - a.historical;
+                                }
+
+                                return String(a.crop || '').localeCompare(String(b.crop || ''));
+                            })
+                            .slice(0, 5);
                         const crops = rows.map((row) => row.crop);
                         const historicalData = rows.map((row) => row.historical);
                         const predictedData = rows.map((row) => row.predicted);
 
                         if (!rows.length) {
-                            throw new Error('No chart data available');
+                            throw new Error('No crop ranking data available');
                         }
 
                         this.chartCrops = crops;
@@ -1496,73 +1620,8 @@
                         this.chartPredictedData = predictedData;
                         this.refreshInsightText();
                         this.loading = false;
-
-                        await this.$nextTick();
-
-                        const ctx = this.$refs.canvas?.getContext('2d');
-
-                        if (!ctx) {
-                            throw new Error('Chart canvas is unavailable');
-                        }
-
-                        this.chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: crops,
-                                datasets: [
-                                    {
-                                        label: 'Historical Average',
-                                        data: historicalData,
-                                        backgroundColor: 'rgba(34, 197, 94, 0.72)',
-                                        borderColor: 'rgba(34, 197, 94, 1)',
-                                        borderWidth: 2,
-                                        borderRadius: 10,
-                                    },
-                                    {
-                                        label: 'This Year Forecast',
-                                        data: predictedData,
-                                        backgroundColor: 'rgba(59, 130, 246, 0.72)',
-                                        borderColor: 'rgba(59, 130, 246, 1)',
-                                        borderWidth: 2,
-                                        borderRadius: 10,
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        position: 'top',
-                                        labels: {
-                                            usePointStyle: true,
-                                            boxWidth: 12,
-                                        }
-                                    },
-                                    title: {
-                                        display: false,
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        ticks: {
-                                            autoSkip: false,
-                                        },
-                                        grid: {
-                                            display: false,
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            color: 'rgba(148, 163, 184, 0.18)',
-                                        }
-                                    }
-                                }
-                            }
-                        });
                     } catch (error) {
-                        console.error('Error loading chart:', error);
+                        console.error('Error loading crop ranking:', error);
                         this.error = true;
                         this.chartCrops = [];
                         this.chartHistoricalData = [];
