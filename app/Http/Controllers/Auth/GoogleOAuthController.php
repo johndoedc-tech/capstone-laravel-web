@@ -18,7 +18,9 @@ class GoogleOAuthController extends Controller
      */
     public function redirect(): RedirectResponse
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
     }
 
     /**
@@ -70,6 +72,6 @@ class GoogleOAuthController extends Controller
             return redirect()->route('password.change-required');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('onboarding.show', absolute: false));
     }
 }

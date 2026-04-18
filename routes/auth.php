@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\GoogleOAuthController;
+use App\Http\Controllers\Auth\OnboardingController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RequiredPasswordChangeController;
@@ -23,15 +24,17 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('auth/google/redirect', [GoogleOAuthController::class, 'redirect'])
-        ->name('google.redirect');
-
-    Route::get('auth/google/callback', [GoogleOAuthController::class, 'callback'])
-        ->name('google.callback');
-
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 });
+
+// Google OAuth routes are outside the 'guest' group so the callback
+// is still reachable after the user is authenticated during the flow.
+Route::get('auth/google/redirect', [GoogleOAuthController::class, 'redirect'])
+    ->name('google.redirect');
+
+Route::get('auth/google/callback', [GoogleOAuthController::class, 'callback'])
+    ->name('google.callback');
 
 Route::middleware(['auth', 'force-password-change'])->group(function () {
     Route::get('password/change-required', [RequiredPasswordChangeController::class, 'edit'])
@@ -39,6 +42,13 @@ Route::middleware(['auth', 'force-password-change'])->group(function () {
 
     Route::put('password/change-required', [RequiredPasswordChangeController::class, 'update'])
         ->name('password.change-required.update');
+
+    // Onboarding: municipality & cooperative selection (after signup)
+    Route::get('onboarding', [OnboardingController::class, 'show'])
+        ->name('onboarding.show');
+
+    Route::post('onboarding', [OnboardingController::class, 'store'])
+        ->name('onboarding.store');
 
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');

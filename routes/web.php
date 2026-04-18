@@ -111,10 +111,10 @@ Route::get('/dashboard', function () {
 
     return app(FarmerDashboardController::class)->index();
 })
-    ->middleware(['auth', 'force-password-change', 'verified'])
+    ->middleware(['auth', 'force-password-change', 'onboarding', 'verified'])
     ->name('dashboard');
 
-Route::middleware(['auth', 'force-password-change'])->group(function () {
+Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
