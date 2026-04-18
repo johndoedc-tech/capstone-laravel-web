@@ -302,7 +302,6 @@
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
                                 <p class="text-sm text-gray-600">This ranking shows the broader full-year crop outlook in your area.</p>
-                                <p class="mt-1 text-xs text-gray-500">Ranking is based on this year's forecast, with historical average used when the forecast is zero.</p>
                             </div>
                         </div>
                         <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
@@ -311,22 +310,22 @@
                         </div>
                     </div>
 
-                    <div x-show="municipality && insightText" class="w-full lg:max-w-lg">
-                        <div class="flex items-center relative w-full lg:max-w-lg">
-                            <div class="shrink-0 relative z-20 w-[88px] sm:w-[110px]">
+                    <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
+                        <div class="flex items-center relative w-full lg:max-w-xl">
+                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
                                 <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" class="w-[88px] h-[88px] sm:w-[110px] sm:h-[110px]" aria-hidden="true"></div>
+                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 relative z-10 ml-4 sm:ml-6">
+                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
                                 {{-- Thought Bubble Tails --}}
-                                <div class="absolute top-[58%] -left-3 sm:-left-5 h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                <div class="absolute top-[34%] -left-1.5 sm:-left-2.5 h-3.5 w-3.5 sm:h-5 sm:w-5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
                                 
                                 {{-- Main Cloud Box --}}
-                                <div class="relative rounded-[1.75rem] bg-gray-800 px-4 py-3 sm:px-5 sm:py-4 shadow-xl border border-white/10 z-10">
+                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
                                     <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
-                                    <p class="text-[11px] sm:text-[13px] leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
+                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
                                 </div>
                             </div>
                         </div>
@@ -353,31 +352,22 @@
                 <div x-show="!loading && !error && municipality" class="space-y-3">
                     <template x-for="row in rankedCropRows" :key="row.rank + '-' + row.crop">
                         <div
-                            class="rounded-2xl border transition-all duration-200"
+                            class="rounded-2xl border p-4 transition-all duration-200"
                             :class="row.rank === 1
-                                ? 'border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 p-4 shadow-md shadow-amber-100/70'
-                                : row.rank <= 2
-                                    ? 'border-gray-200 bg-white p-4 shadow-sm'
-                                    : 'border-gray-200 bg-white p-3.5 shadow-sm'"
+                                ? 'border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 shadow-md shadow-amber-100/70'
+                                : 'border-gray-200 bg-white shadow-sm'"
                         >
-                            <div
-                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
-                                :class="row.rank >= 3 ? 'gap-3' : 'gap-4'"
-                            >
-                                <div class="flex items-center min-w-0" :class="row.rank >= 3 ? 'gap-2.5' : 'gap-3'">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center gap-3 min-w-0">
                                     <div
-                                        class="flex shrink-0 flex-col items-center justify-center rounded-2xl text-center"
+                                        class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl text-center"
                                         :class="row.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-200/80' : 'bg-slate-100 text-slate-700'"
-                                        :style="row.rank >= 3 ? 'width: 3rem; height: 3rem;' : 'width: 3.25rem; height: 3.25rem;'"
                                     >
                                         <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Rank</span>
                                         <span class="text-base font-bold leading-none" x-text="row.rank"></span>
                                     </div>
 
-                                    <div
-                                        class="shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100"
-                                        :style="row.rank >= 3 ? 'width: 3.75rem; height: 3.75rem;' : 'width: 4rem; height: 4rem;'"
-                                    >
+                                    <div class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
                                         <template x-if="row.image && !isCropImageMissing(row.crop)">
                                             <img
                                                 :src="row.image"
@@ -401,32 +391,21 @@
                                             :class="row.rank === 1 ? 'text-amber-600' : 'text-slate-500'"
                                             x-text="row.rank === 1 ? 'Top Performer' : `Rank ${row.rank}`"
                                         ></p>
-                                        <h3
-                                            class="truncate font-semibold text-gray-900"
-                                            :class="row.rank >= 3 ? 'text-[1.05rem] sm:text-[1.15rem]' : 'text-base sm:text-lg'"
-                                            x-text="row.crop"
-                                        ></h3>
+                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
+                                        <p class="text-xs text-gray-500">
+                                            Ranked by forecast, using historical average when this year's forecast is zero.
+                                        </p>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 gap-3 sm:min-w-[300px] sm:grid-cols-2">
-                                    <div
-                                        class="rounded-xl border border-emerald-100 bg-emerald-50/75"
-                                        :class="row.rank >= 3 ? 'px-3.5 py-2.5' : 'px-4 py-3'"
-                                    >
+                                <div class="grid grid-cols-1 gap-3 sm:min-w-[280px] sm:grid-cols-2">
+                                    <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
                                         <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Historical Average</p>
-                                        <p class="mt-1 text-base font-semibold text-emerald-900 sm:text-lg" x-text="formatCropValueWithUnit(row.historical)"></p>
+                                        <p class="mt-1 text-lg font-semibold text-emerald-900" x-text="formatCropValue(row.historical)"></p>
                                     </div>
-                                    <div
-                                        class="rounded-xl border border-sky-200 bg-sky-100/80 shadow-sm shadow-sky-100/60"
-                                        :class="row.rank >= 3 ? 'px-3.5 py-2.5' : 'px-4 py-3'"
-                                    >
+                                    <div class="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3">
                                         <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">This Year Forecast</p>
-                                        <p
-                                            class="mt-1 font-bold text-sky-950"
-                                            :class="row.rank >= 3 ? 'text-xl sm:text-[1.65rem]' : 'text-[1.65rem] sm:text-[1.85rem]'"
-                                            x-text="formatCropValueWithUnit(row.predicted)"
-                                        ></p>
+                                        <p class="mt-1 text-lg font-semibold text-sky-900" x-text="formatCropValue(row.predicted)"></p>
                                     </div>
                                 </div>
                             </div>
@@ -1278,10 +1257,6 @@
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 2,
                     }).format(number);
-                },
-
-                formatCropValueWithUnit(value) {
-                    return `${this.formatCropValue(value)} mt`;
                 },
 
                 prefersReducedMotion() {
