@@ -373,7 +373,7 @@
                                                 :src="row.image"
                                                 :alt="row.crop"
                                                 class="h-full w-full object-cover"
-                                                @error="markCropImageMissing(row.crop)"
+                                                x-on:error="markCropImageMissing(row.crop)"
                                             >
                                         </template>
                                         <template x-if="!row.image || isCropImageMissing(row.crop)">
