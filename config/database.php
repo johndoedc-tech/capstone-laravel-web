@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Str;
 
+$envOr = static function (string $key, mixed $default = null): mixed {
+    $value = env($key);
+
+    return $value === null || $value === '' ? $default : $value;
+};
+
 return [
 
     /*
@@ -85,12 +91,12 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL', env('DATABASE_URL')),
-            'host' => env('DB_HOST', env('PGHOST', '127.0.0.1')),
-            'port' => env('DB_PORT', env('PGPORT', '5432')),
-            'database' => env('DB_DATABASE', env('PGDATABASE', 'laravel')),
-            'username' => env('DB_USERNAME', env('PGUSER', 'root')),
-            'password' => env('DB_PASSWORD', env('PGPASSWORD', '')),
+            'url' => $envOr('DB_URL', $envOr('DATABASE_URL')),
+            'host' => $envOr('DB_HOST', $envOr('PGHOST', '127.0.0.1')),
+            'port' => $envOr('DB_PORT', $envOr('PGPORT', '5432')),
+            'database' => $envOr('DB_DATABASE', $envOr('PGDATABASE', 'laravel')),
+            'username' => $envOr('DB_USERNAME', $envOr('PGUSER', 'root')),
+            'password' => $envOr('DB_PASSWORD', $envOr('PGPASSWORD', '')),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
