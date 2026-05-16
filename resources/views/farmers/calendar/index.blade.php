@@ -253,6 +253,13 @@
                                     </select>
                                 </div>
 
+                                <!-- Planning Date (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan'">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Planning Date *</label>
+                                    <input type="date" x-model="eventForm.planning_date" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                    <p class="text-xs text-gray-400 mt-1">You can select a past, present, or future date.</p>
+                                </div>
+
                                 <!-- Reminder Time (only for reminders) -->
                                 <div x-show="modalType === 'reminder'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Reminder Time</label>
@@ -314,6 +321,7 @@
                     description: '',
                     category: 'other',
                     crop: '',
+                    planning_date: '',
                     reminder_time: '',
                 },
 
@@ -390,6 +398,10 @@
                     return this.eventsByDay[this.selectedDate] || [];
                 },
 
+                get todayDate() {
+                    return formatLocalDate(new Date());
+                },
+
                 get modalTitle() {
                     if (this.modalType === 'crop_plan') return 'Plan a Crop';
                     if (this.modalType === 'reminder') return '🔔 Set Reminder';
@@ -404,10 +416,19 @@
 
                 get canSaveEvent() {
                     if (this.modalType === 'crop_plan') {
-                        return Boolean(this.eventForm.crop);
+                        return Boolean(this.eventForm.crop)
+                            && Boolean(this.eventForm.planning_date);
                     }
 
                     return Boolean(this.eventForm.title);
+                },
+
+                get defaultPlanningDate() {
+                    if (this.selectedDate && this.selectedDate <= this.todayDate) {
+                        return this.selectedDate;
+                    }
+
+                    return this.todayDate;
                 },
 
                 goToToday() {
@@ -470,6 +491,7 @@
                         description: '',
                         category: type === 'crop_plan' ? 'crop_plan' : 'other',
                         crop: '',
+                        planning_date: type === 'crop_plan' ? this.defaultPlanningDate : '',
                         reminder_time: type === 'reminder' ? '08:00' : '',
                     };
                     this.showModal = true;
@@ -485,6 +507,7 @@
 
                     try {
                         const isCropPlan = this.modalType === 'crop_plan';
+                        const eventDate = isCropPlan ? this.eventForm.planning_date : this.selectedDate;
                         const eventTitle = isCropPlan
                             ? (this.eventForm.title || `Plan ${this.eventForm.crop}`)
                             : this.eventForm.title;
@@ -497,7 +520,7 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({
-                                event_date: this.selectedDate,
+                                event_date: eventDate,
                                 event_type: this.modalType === 'reminder' ? 'reminder' : 'note',
                                 title: eventTitle,
                                 description: this.eventForm.description,
@@ -509,6 +532,10 @@
 
                         if (response.ok) {
                             this.closeModal();
+                            if (isCropPlan) {
+                                this.selectedDate = eventDate;
+                                this.currentDate = new Date(eventDate + 'T00:00:00');
+                            }
                             this.loadEvents();
                             if (this.modalType === 'reminder') {
                                 this.loadUpcomingReminders();
