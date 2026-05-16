@@ -17,6 +17,7 @@ class FarmerCalendarEvent extends Model
         'description',
         'category',
         'crop',
+        'desired_area_sqm',
         'reminder_time',
         'reminder_sent',
         'is_completed',
@@ -24,6 +25,7 @@ class FarmerCalendarEvent extends Model
 
     protected $casts = [
         'event_date' => 'date',
+        'desired_area_sqm' => 'decimal:2',
         'reminder_time' => 'datetime:H:i',
         'reminder_sent' => 'boolean',
         'is_completed' => 'boolean',

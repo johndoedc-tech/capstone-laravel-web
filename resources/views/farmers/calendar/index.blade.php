@@ -177,6 +177,7 @@
                                             <p x-show="calEvent.description" class="text-xs text-gray-500 mt-1" x-text="calEvent.description"></p>
                                             <div class="flex items-center gap-2 mt-1">
                                                 <span x-show="calEvent.crop" class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
+                                                <span x-show="calEvent.desired_area_sqm" class="text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
                                                 <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -253,6 +254,13 @@
                                     </select>
                                 </div>
 
+                                <!-- Desired Area (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan'">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Desired Area (sqm)</label>
+                                    <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="eventForm.desired_area_sqm" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 250">
+                                    <p class="text-xs text-gray-400 mt-1">Enter the land area you want to use in square meters.</p>
+                                </div>
+
                                 <!-- Planning Date (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Planning Date *</label>
@@ -321,6 +329,7 @@
                     description: '',
                     category: 'other',
                     crop: '',
+                    desired_area_sqm: '',
                     planning_date: '',
                     reminder_time: '',
                 },
@@ -396,6 +405,13 @@
                 get selectedDayEvents() {
                     if (!this.selectedDate) return [];
                     return this.eventsByDay[this.selectedDate] || [];
+                },
+
+                formatSquareMeters(value) {
+                    const amount = Number(value);
+                    if (!Number.isFinite(amount)) return '';
+
+                    return `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} sqm`;
                 },
 
                 get todayDate() {
@@ -491,6 +507,7 @@
                         description: '',
                         category: type === 'crop_plan' ? 'crop_plan' : 'other',
                         crop: '',
+                        desired_area_sqm: '',
                         planning_date: type === 'crop_plan' ? this.defaultPlanningDate : '',
                         reminder_time: type === 'reminder' ? '08:00' : '',
                     };
@@ -526,6 +543,7 @@
                                 description: this.eventForm.description,
                                 category: isCropPlan ? 'crop_plan' : this.eventForm.category,
                                 crop: this.eventForm.crop,
+                                desired_area_sqm: isCropPlan && this.eventForm.desired_area_sqm ? this.eventForm.desired_area_sqm : null,
                                 reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || null) : null,
                             })
                         });
