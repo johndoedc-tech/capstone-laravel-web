@@ -53,14 +53,16 @@
         .farmer-action-grid > a:nth-child(1) .text-3xl,
         .farmer-action-grid > a:nth-child(2) .text-2xl,
         .farmer-action-grid > a:nth-child(3) .text-2xl,
-        .farmer-action-grid > a:nth-child(4) .text-2xl {
+        .farmer-action-grid > a:nth-child(4) .text-2xl,
+        .farmer-action-grid > a:nth-child(5) .text-2xl {
             color: transparent;
             position: relative;
         }
         .farmer-action-grid > a:nth-child(1) .text-3xl::before,
         .farmer-action-grid > a:nth-child(2) .text-2xl::before,
         .farmer-action-grid > a:nth-child(3) .text-2xl::before,
-        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
+        .farmer-action-grid > a:nth-child(4) .text-2xl::before,
+        .farmer-action-grid > a:nth-child(5) .text-2xl::before {
             position: absolute;
             inset: 0;
             display: flex;
@@ -70,18 +72,22 @@
             font-weight: 700;
         }
         .farmer-action-grid > a:nth-child(1) .text-3xl::before {
-            content: 'P';
+            content: 'C';
             color: #ffffff;
         }
         .farmer-action-grid > a:nth-child(2) .text-2xl::before {
+            content: 'P';
+            color: #355872;
+        }
+        .farmer-action-grid > a:nth-child(3) .text-2xl::before {
             content: 'M';
             color: #2563eb;
         }
-        .farmer-action-grid > a:nth-child(3) .text-2xl::before {
+        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
             content: 'H';
             color: #15803d;
         }
-        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
+        .farmer-action-grid > a:nth-child(5) .text-2xl::before {
             content: 'F';
             color: #b45309;
         }
@@ -514,18 +520,18 @@
                 </div>
 
                 <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
-                    <a :href="predictionHref" class="quick-action-btn sm:col-span-2 lg:col-span-6 lg:row-span-2 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 p-6 text-white shadow-sm">
+                    <a href="{{ route('farmer.calendar.page') }}" class="quick-action-btn sm:col-span-2 lg:col-span-6 lg:row-span-2 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 p-6 text-white shadow-sm">
                         <div class="flex h-full flex-col justify-between gap-6">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
-                                    <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">Recommended action</span>
-                                    <h3 class="mt-4 text-2xl font-bold" x-text="t('action_predict')"></h3>
-                                    <p class="mt-2 max-w-sm text-sm leading-6 text-white/85" x-text="t('action_predict_desc')"></p>
+                                    <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">Main feature</span>
+                                    <h3 class="mt-4 text-2xl font-bold" x-text="t('action_calendar')"></h3>
+                                    <p class="mt-2 max-w-sm text-sm leading-6 text-white/85" x-text="t('action_calendar_desc')"></p>
                                 </div>
                                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
                             </div>
                             <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
-                                <span x-text="municipality ? 'Use your saved area for a faster start' : 'Start with a quick harvest forecast'"></span>
+                                <span>Plan notes, reminders, and field work by date</span>
                                 <span class="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-primary-dark shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg">
                                     Open
                                     <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -533,6 +539,16 @@
                                     </svg>
                                 </span>
                             </div>
+                        </div>
+                    </a>
+
+                    <a :href="predictionHref" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-primary-100 bg-white p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_predict')"></h3>
+                                <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_predict_desc')"></p>
+                            </div>
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-2xl shadow-sm">P</div>
                         </div>
                     </a>
 
@@ -546,7 +562,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('predictions.history') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-3">
+                    <a href="{{ route('predictions.history') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <h3 class="text-base font-semibold text-gray-900" x-text="t('action_history')"></h3>
@@ -556,7 +572,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('forum.index') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-3">
+                    <a href="{{ route('forum.index') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <h3 class="text-base font-semibold text-gray-900" x-text="t('action_forum')"></h3>
@@ -724,6 +740,8 @@
                 predict: 'Predict',
                 
                 // Quick Actions
+                action_calendar: 'My Calendar',
+                action_calendar_desc: 'Plan farm tasks, notes, and reminders',
                 action_predict: 'Make Prediction',
                 action_predict_desc: 'Start a harvest forecast for your farm',
                 action_map: 'View Map',
@@ -841,6 +859,8 @@
                 predict: 'I-predict',
                 
                 // Quick Actions
+                action_calendar: 'Aking Calendar',
+                action_calendar_desc: 'Planuhin ang gawain, notes, at paalala sa bukid',
                 action_predict: 'Gumawa ng Prediction',
                 action_predict_desc: 'Simulan ang forecast ng ani',
                 action_map: 'Tingnan ang Mapa',

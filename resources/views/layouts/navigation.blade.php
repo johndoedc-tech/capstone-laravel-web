@@ -37,6 +37,13 @@
             <span class="font-medium">Dashboard</span>
         </a>
 
+        <a href="{{ route('farmer.calendar.page') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('farmer.calendar.page') ? 'bg-primary text-white font-semibold' : 'text-cream hover:bg-primary-700/50' }}">
+            <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="font-medium">My Calendar</span>
+        </a>
+
         <!-- Divider -->
         <div class="!my-3 border-t border-white/10"></div>
 
@@ -61,13 +68,6 @@
 
         <!-- Personal & Community Section -->
         <p class="px-3 lg:px-4 pt-1 pb-2 text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary-200/60">Personal & Community</p>
-        <a href="{{ route('farmer.calendar.page') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('farmer.calendar.page') ? 'bg-primary text-white font-semibold' : 'text-cream hover:bg-primary-700/50' }}">
-            <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            <span class="font-medium">My Calendar</span>
-        </a>
-
         <a href="{{ route('forum.index') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('forum.*') ? 'bg-primary text-white font-semibold' : 'text-cream hover:bg-primary-700/50' }}">
             <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
