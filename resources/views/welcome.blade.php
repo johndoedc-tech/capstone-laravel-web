@@ -135,7 +135,7 @@
     <!-- Hero Section -->
     <section id="hero" class="hero-section min-h-screen flex items-center justify-center px-3 sm:px-4 md:px-6 fade-on-scroll">
         <img
-            src="{{ asset('images/crop-yield-ant-rozetsky-c0PJUAtpSo-unsplash.jpg') }}"
+            src="{{ asset('images/benguetfarmfinal.png') }}"
             alt=""
             class="hero-background"
             loading="eager"
