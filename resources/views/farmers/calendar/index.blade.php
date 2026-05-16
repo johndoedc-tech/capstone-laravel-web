@@ -180,6 +180,7 @@
                                                 <span x-show="calEvent.desired_area_sqm" class="text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
                                                 <span x-show="calEvent.water_source" class="text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
                                                 <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
+                                                <span x-show="calEvent.estimated_harvest_date" class="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
                                                 <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -291,6 +292,13 @@
                                     <p class="text-xs text-gray-400 mt-1">You can select a past, present, or future date.</p>
                                 </div>
 
+                                <!-- Estimated Harvest Date (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan' && estimatedHarvestDate" class="rounded-lg border border-green-200 bg-green-50 px-3 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-green-700">Estimated Harvest Date</p>
+                                    <p class="text-sm font-semibold text-gray-900 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
+                                    <p class="text-xs text-green-700 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning date, based on crop, water source, and seed type.' : ''"></p>
+                                </div>
+
                                 <!-- Reminder Time (only for reminders) -->
                                 <div x-show="modalType === 'reminder'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Reminder Time</label>
@@ -329,6 +337,10 @@
             return `${year}-${month}-${day}`;
         }
 
+        function parseLocalDate(dateString) {
+            return new Date(dateString + 'T00:00:00');
+        }
+
         function farmerCalendar() {
             return {
                 currentDate: new Date(),
@@ -346,6 +358,26 @@
                     { value: 'fertilizer', label: 'Fertilizer', icon: '💧' },
                     { value: 'weather', label: 'Weather', icon: '🌤️' },
                     { value: 'other', label: 'Other', icon: '📝' },
+                ],
+                harvestBaseDays: {
+                    'Cabbage': 58,
+                    'Broccoli': 60,
+                    'Lettuce': 55,
+                    'Cauliflower': 68,
+                    'Chinese Cabbage': 58,
+                    'Carrots': 90,
+                    'Garden Peas': 63,
+                    'White Potato': 100,
+                    'Snap Beans': 62,
+                    'Sweet Pepper': 80,
+                },
+                transplantedCrops: [
+                    'Cabbage',
+                    'Broccoli',
+                    'Lettuce',
+                    'Cauliflower',
+                    'Chinese Cabbage',
+                    'Sweet Pepper',
                 ],
                 eventForm: {
                     title: '',
@@ -450,6 +482,16 @@
                     return labels[value] || value;
                 },
 
+                formatDisplayDate(dateString) {
+                    if (!dateString) return '';
+
+                    return parseLocalDate(dateString).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                    });
+                },
+
                 get todayDate() {
                     return formatLocalDate(new Date());
                 },
@@ -478,11 +520,50 @@
                 },
 
                 get defaultPlanningDate() {
-                    if (this.selectedDate && this.selectedDate <= this.todayDate) {
+                    if (this.selectedDate) {
                         return this.selectedDate;
                     }
 
                     return this.todayDate;
+                },
+
+                get estimatedHarvestDate() {
+                    if (this.modalType !== 'crop_plan'
+                        || !this.eventForm.crop
+                        || !this.eventForm.water_source
+                        || !this.eventForm.planting_material
+                        || !this.eventForm.planning_date) {
+                        return null;
+                    }
+
+                    const days = this.calculateHarvestDays(
+                        this.eventForm.crop,
+                        this.eventForm.water_source,
+                        this.eventForm.planting_material
+                    );
+                    const harvestDate = parseLocalDate(this.eventForm.planning_date);
+                    harvestDate.setDate(harvestDate.getDate() + days);
+                    const date = formatLocalDate(harvestDate);
+
+                    return {
+                        days,
+                        date,
+                        display: this.formatDisplayDate(date),
+                    };
+                },
+
+                calculateHarvestDays(crop, waterSource, plantingMaterial) {
+                    let days = this.harvestBaseDays[crop] || 75;
+
+                    if (plantingMaterial === 'seed' && this.transplantedCrops.includes(crop)) {
+                        days += 30;
+                    }
+
+                    if (waterSource === 'rainfed') {
+                        days += 7;
+                    }
+
+                    return days;
                 },
 
                 goToToday() {

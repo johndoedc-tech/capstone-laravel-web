@@ -20,6 +20,9 @@ class FarmerCalendarEvent extends Model
         'desired_area_sqm',
         'water_source',
         'planting_material',
+        'estimated_harvest_date',
+        'estimated_harvest_days',
+        'harvest_event_id',
         'reminder_time',
         'reminder_sent',
         'is_completed',
@@ -28,6 +31,8 @@ class FarmerCalendarEvent extends Model
     protected $casts = [
         'event_date' => 'date',
         'desired_area_sqm' => 'decimal:2',
+        'estimated_harvest_date' => 'date',
+        'estimated_harvest_days' => 'integer',
         'reminder_time' => 'datetime:H:i',
         'reminder_sent' => 'boolean',
         'is_completed' => 'boolean',
