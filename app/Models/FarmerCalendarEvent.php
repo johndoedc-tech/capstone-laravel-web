@@ -23,6 +23,8 @@ class FarmerCalendarEvent extends Model
         'estimated_harvest_date',
         'estimated_harvest_days',
         'harvest_event_id',
+        'crop_plan_event_id',
+        'crop_plan_stage',
         'reminder_time',
         'reminder_sent',
         'is_completed',

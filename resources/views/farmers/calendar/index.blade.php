@@ -181,6 +181,7 @@
                                                 <span x-show="calEvent.water_source" class="text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
                                                 <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
                                                 <span x-show="calEvent.estimated_harvest_date" class="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
+                                                <span x-show="calEvent.crop_plan_stage" class="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
                                                 <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -299,6 +300,22 @@
                                     <p class="text-xs text-green-700 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning date, based on crop, water source, and seed type.' : ''"></p>
                                 </div>
 
+                                <!-- Fertilization Stages (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan' && fertilizationStages.length" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Fertilization Stages</p>
+                                    <div class="mt-2 space-y-2">
+                                        <template x-for="stage in fertilizationStages" :key="stage.key">
+                                            <div class="flex items-start justify-between gap-3 rounded-md bg-white px-3 py-2 border border-blue-100">
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900" x-text="stage.label"></p>
+                                                    <p class="text-xs text-blue-700" x-text="stage.days + ' days from planning date'"></p>
+                                                </div>
+                                                <p class="text-xs font-semibold text-gray-700 whitespace-nowrap" x-text="stage.display"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
                                 <!-- Reminder Time (only for reminders) -->
                                 <div x-show="modalType === 'reminder'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Reminder Time</label>
@@ -379,6 +396,54 @@
                     'Chinese Cabbage',
                     'Sweet Pepper',
                 ],
+                fertilizationStageRules: {
+                    'Cabbage': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 21 },
+                        { key: 'head_formation', label: 'Head formation feeding', offset: 42 },
+                    ],
+                    'Broccoli': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 21 },
+                        { key: 'head_formation', label: 'Before head formation', offset: 42 },
+                    ],
+                    'Lettuce': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'Light side-dress', offset: 18 },
+                    ],
+                    'Cauliflower': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 21 },
+                        { key: 'curd_formation', label: 'Curd formation feeding', offset: 45 },
+                    ],
+                    'Chinese Cabbage': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 14 },
+                        { key: 'side_dress_2', label: 'Second side-dress', offset: 28 },
+                    ],
+                    'Carrots': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'Root development side-dress', offset: 28 },
+                    ],
+                    'Garden Peas': [
+                        { key: 'basal', label: 'Basal compost/P-K', offset: 0 },
+                        { key: 'flowering', label: 'Flowering or pod formation feed', offset: 35 },
+                    ],
+                    'White Potato': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'hilling', label: 'Hilling side-dress', offset: 25 },
+                        { key: 'tuber_initiation', label: 'Tuber initiation feeding', offset: 45 },
+                    ],
+                    'Snap Beans': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'flowering', label: 'Flowering or early pod feed', offset: 35 },
+                    ],
+                    'Sweet Pepper': [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 21 },
+                        { key: 'fruit_setting', label: 'Flowering and fruit setting feed', offset: 45 },
+                    ],
+                },
                 eventForm: {
                     title: '',
                     description: '',
@@ -492,6 +557,15 @@
                     });
                 },
 
+                formatCropPlanStage(value) {
+                    if (!value) return '';
+
+                    return value
+                        .replace(/^fertilizer_/, '')
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+                },
+
                 get todayDate() {
                     return formatLocalDate(new Date());
                 },
@@ -564,6 +638,49 @@
                     }
 
                     return days;
+                },
+
+                get fertilizationStages() {
+                    if (this.modalType !== 'crop_plan'
+                        || !this.eventForm.crop
+                        || !this.eventForm.water_source
+                        || !this.eventForm.planting_material
+                        || !this.eventForm.planning_date) {
+                        return [];
+                    }
+
+                    const rules = this.fertilizationStageRules[this.eventForm.crop] || [
+                        { key: 'basal', label: 'Basal fertilizer', offset: 0 },
+                        { key: 'side_dress_1', label: 'First side-dress', offset: 21 },
+                    ];
+                    const fieldStartDelay = this.calculateFieldStartDelayDays(
+                        this.eventForm.crop,
+                        this.eventForm.planting_material
+                    );
+
+                    return rules.map((stage) => {
+                        const rainfedDelay = this.eventForm.water_source === 'rainfed' && stage.offset > 0 ? 3 : 0;
+                        const days = fieldStartDelay + stage.offset + rainfedDelay;
+                        const stageDate = parseLocalDate(this.eventForm.planning_date);
+                        stageDate.setDate(stageDate.getDate() + days);
+                        const date = formatLocalDate(stageDate);
+
+                        return {
+                            key: stage.key,
+                            label: stage.label,
+                            days,
+                            date,
+                            display: this.formatDisplayDate(date),
+                        };
+                    });
+                },
+
+                calculateFieldStartDelayDays(crop, plantingMaterial) {
+                    if (plantingMaterial === 'seed' && this.transplantedCrops.includes(crop)) {
+                        return 30;
+                    }
+
+                    return 0;
                 },
 
                 goToToday() {

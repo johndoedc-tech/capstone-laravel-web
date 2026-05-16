@@ -32,6 +32,55 @@ class FarmerCalendarController extends Controller
         'sweet pepper',
     ];
 
+    private const FERTILIZATION_STAGES = [
+        'cabbage' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 21],
+            ['key' => 'head_formation', 'label' => 'Head formation feeding', 'offset' => 42],
+        ],
+        'broccoli' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 21],
+            ['key' => 'head_formation', 'label' => 'Before head formation', 'offset' => 42],
+        ],
+        'lettuce' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'Light side-dress', 'offset' => 18],
+        ],
+        'cauliflower' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 21],
+            ['key' => 'curd_formation', 'label' => 'Curd formation feeding', 'offset' => 45],
+        ],
+        'chinese cabbage' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 14],
+            ['key' => 'side_dress_2', 'label' => 'Second side-dress', 'offset' => 28],
+        ],
+        'carrots' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'Root development side-dress', 'offset' => 28],
+        ],
+        'garden peas' => [
+            ['key' => 'basal', 'label' => 'Basal compost/P-K', 'offset' => 0],
+            ['key' => 'flowering', 'label' => 'Flowering or pod formation feed', 'offset' => 35],
+        ],
+        'white potato' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'hilling', 'label' => 'Hilling side-dress', 'offset' => 25],
+            ['key' => 'tuber_initiation', 'label' => 'Tuber initiation feeding', 'offset' => 45],
+        ],
+        'snap beans' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'flowering', 'label' => 'Flowering or early pod feed', 'offset' => 35],
+        ],
+        'sweet pepper' => [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 21],
+            ['key' => 'fruit_setting', 'label' => 'Flowering and fruit setting feed', 'offset' => 45],
+        ],
+    ];
+
     /**
      * Display the calendar page
      */
@@ -95,8 +144,16 @@ class FarmerCalendarController extends Controller
                 $validated['event_date'],
             )
             : null;
+        $fertilizationStages = $isCropPlan
+            ? $this->getFertilizationStages(
+                $validated['crop'],
+                $validated['water_source'],
+                $validated['planting_material'],
+                $validated['event_date'],
+            )
+            : [];
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate) {
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages) {
             $event = FarmerCalendarEvent::create([
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
@@ -136,6 +193,23 @@ class FarmerCalendarController extends Controller
                 $event->update(['harvest_event_id' => $harvestEvent->id]);
             }
 
+            foreach ($fertilizationStages as $stage) {
+                FarmerCalendarEvent::create([
+                    'user_id' => Auth::id(),
+                    'event_date' => $stage['date'],
+                    'event_type' => 'note',
+                    'title' => $stage['label'] . ' - ' . $validated['crop'],
+                    'description' => $this->buildFertilizationDescription($validated, $stage),
+                    'category' => 'fertilizer',
+                    'crop' => $validated['crop'],
+                    'desired_area_sqm' => $validated['desired_area_sqm'] ?? null,
+                    'water_source' => $validated['water_source'],
+                    'planting_material' => $validated['planting_material'],
+                    'crop_plan_event_id' => $event->id,
+                    'crop_plan_stage' => 'fertilizer_' . $stage['key'],
+                ]);
+            }
+
             return $event->fresh();
         });
 
@@ -173,26 +247,7 @@ class FarmerCalendarController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Event updated successfully!',
-            'event' => [
-                'id' => $event->id,
-                'date' => $event->event_date->format('Y-m-d'),
-                'day' => $event->event_date->day,
-                'type' => $event->event_type,
-                'title' => $event->title,
-                'description' => $event->description,
-                'category' => $event->category,
-                'category_icon' => $event->category_icon,
-                'category_color' => $event->category_color,
-                'crop' => $event->crop,
-                'desired_area_sqm' => $event->desired_area_sqm !== null ? (float) $event->desired_area_sqm : null,
-                'water_source' => $event->water_source,
-                'planting_material' => $event->planting_material,
-                'estimated_harvest_date' => $event->estimated_harvest_date?->format('Y-m-d'),
-                'estimated_harvest_days' => $event->estimated_harvest_days,
-                'harvest_event_id' => $event->harvest_event_id,
-                'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
-                'is_completed' => $event->is_completed,
-            ],
+            'event' => $this->formatEvent($event),
         ]);
     }
 
@@ -225,6 +280,12 @@ class FarmerCalendarController extends Controller
             if ($event->category === 'crop_plan' && $event->harvest_event_id) {
                 FarmerCalendarEvent::where('user_id', $userId)
                     ->where('id', $event->harvest_event_id)
+                    ->delete();
+            }
+
+            if ($event->category === 'crop_plan') {
+                FarmerCalendarEvent::where('user_id', $userId)
+                    ->where('crop_plan_event_id', $event->id)
                     ->delete();
             }
 
@@ -343,6 +404,8 @@ class FarmerCalendarController extends Controller
             'estimated_harvest_date' => $event->estimated_harvest_date?->format('Y-m-d'),
             'estimated_harvest_days' => $event->estimated_harvest_days,
             'harvest_event_id' => $event->harvest_event_id,
+            'crop_plan_event_id' => $event->crop_plan_event_id,
+            'crop_plan_stage' => $event->crop_plan_stage,
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
@@ -373,5 +436,51 @@ class FarmerCalendarController extends Controller
         $plantingMaterial = ucfirst($validated['planting_material']);
 
         return "Estimated from crop plan: {$days} days after planning date. Water source: {$waterSource}. Seed type: {$plantingMaterial}.";
+    }
+
+    private function getFertilizationStages(string $crop, string $waterSource, string $plantingMaterial, string $planningDate): array
+    {
+        $cropKey = strtolower(trim($crop));
+        $rules = self::FERTILIZATION_STAGES[$cropKey] ?? [
+            ['key' => 'basal', 'label' => 'Basal fertilizer', 'offset' => 0],
+            ['key' => 'side_dress_1', 'label' => 'First side-dress', 'offset' => 21],
+        ];
+        $fieldStartDelay = $this->getFieldStartDelayDays($cropKey, $plantingMaterial);
+
+        return array_map(function ($stage) use ($planningDate, $waterSource, $fieldStartDelay) {
+            $rainfedDelay = $waterSource === 'rainfed' && $stage['offset'] > 0 ? 3 : 0;
+            $daysFromPlanning = $fieldStartDelay + $stage['offset'] + $rainfedDelay;
+
+            return [
+                'key' => $stage['key'],
+                'label' => $stage['label'],
+                'days_from_planning' => $daysFromPlanning,
+                'date' => Carbon::parse($planningDate)->addDays($daysFromPlanning)->toDateString(),
+                'rainfed_delay_days' => $rainfedDelay,
+            ];
+        }, $rules);
+    }
+
+    private function getFieldStartDelayDays(string $cropKey, string $plantingMaterial): int
+    {
+        if ($plantingMaterial === 'seed' && in_array($cropKey, self::TRANSPLANTED_CROPS, true)) {
+            return 30;
+        }
+
+        return 0;
+    }
+
+    private function buildFertilizationDescription(array $validated, array $stage): string
+    {
+        $waterSource = ucfirst($validated['water_source']);
+        $plantingMaterial = ucfirst($validated['planting_material']);
+        $note = "Generated from crop plan: {$stage['label']} {$stage['days_from_planning']} days after planning date.";
+        $note .= " Water source: {$waterSource}. Seed type: {$plantingMaterial}.";
+
+        if (($stage['rainfed_delay_days'] ?? 0) > 0) {
+            $note .= ' Rainfed schedule includes a small delay; apply when soil moisture is available.';
+        }
+
+        return $note;
     }
 }
