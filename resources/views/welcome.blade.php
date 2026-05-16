@@ -38,7 +38,9 @@
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to bottom, rgba(245, 245, 220, 0.3), rgba(245, 245, 220, 0.5));
+            background:
+                radial-gradient(circle at center, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.48)),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0.58));
         }
         
         .hero-content {
@@ -143,10 +145,10 @@
         >
         <div class="hero-overlay"></div>
         <div class="hero-content max-w-5xl mx-auto text-center">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-lg px-2">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 md:mb-8 leading-tight drop-shadow-[0_4px_18px_rgba(0,0,0,0.65)] px-2">
                 Harviana
             </h1>
-            <p class="text-base sm:text-lg md:text-xl lg:text-3xl text-gray-800 font-light italic leading-relaxed max-w-4xl mx-auto drop-shadow-md px-4 sm:px-6">
+            <p class="text-base sm:text-lg md:text-xl lg:text-3xl text-white font-medium italic leading-relaxed max-w-4xl mx-auto drop-shadow-[0_3px_14px_rgba(0,0,0,0.75)] px-4 sm:px-6">
                 "Empowering farmers and decision-makers with intelligent insights for sustainable agriculture in the highlands of Benguet."
             </p>
             <div class="mt-6 sm:mt-8 md:mt-12 flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center px-4">
