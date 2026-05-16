@@ -178,6 +178,8 @@
                                             <div class="flex items-center gap-2 mt-1">
                                                 <span x-show="calEvent.crop" class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
                                                 <span x-show="calEvent.desired_area_sqm" class="text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
+                                                <span x-show="calEvent.water_source" class="text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
+                                                <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
                                                 <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -261,6 +263,27 @@
                                     <p class="text-xs text-gray-400 mt-1">Enter the land area you want to use in square meters.</p>
                                 </div>
 
+                                <!-- Water Source and Seed Type (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan'" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Water Source *</label>
+                                        <select x-model="eventForm.water_source" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                            <option value="">Select source...</option>
+                                            <option value="rainfed">Rainfed</option>
+                                            <option value="irrigated">Irrigated</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Seed Type *</label>
+                                        <select x-model="eventForm.planting_material" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                            <option value="">Select type...</option>
+                                            <option value="seed">Seed</option>
+                                            <option value="seedling">Seedling</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <!-- Planning Date (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Planning Date *</label>
@@ -330,6 +353,8 @@
                     category: 'other',
                     crop: '',
                     desired_area_sqm: '',
+                    water_source: '',
+                    planting_material: '',
                     planning_date: '',
                     reminder_time: '',
                 },
@@ -414,6 +439,17 @@
                     return `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} sqm`;
                 },
 
+                formatCropPlanOption(value) {
+                    const labels = {
+                        rainfed: 'Rainfed',
+                        irrigated: 'Irrigated',
+                        seed: 'Seed',
+                        seedling: 'Seedling',
+                    };
+
+                    return labels[value] || value;
+                },
+
                 get todayDate() {
                     return formatLocalDate(new Date());
                 },
@@ -433,6 +469,8 @@
                 get canSaveEvent() {
                     if (this.modalType === 'crop_plan') {
                         return Boolean(this.eventForm.crop)
+                            && Boolean(this.eventForm.water_source)
+                            && Boolean(this.eventForm.planting_material)
                             && Boolean(this.eventForm.planning_date);
                     }
 
@@ -508,6 +546,8 @@
                         category: type === 'crop_plan' ? 'crop_plan' : 'other',
                         crop: '',
                         desired_area_sqm: '',
+                        water_source: '',
+                        planting_material: '',
                         planning_date: type === 'crop_plan' ? this.defaultPlanningDate : '',
                         reminder_time: type === 'reminder' ? '08:00' : '',
                     };
@@ -544,6 +584,8 @@
                                 category: isCropPlan ? 'crop_plan' : this.eventForm.category,
                                 crop: this.eventForm.crop,
                                 desired_area_sqm: isCropPlan && this.eventForm.desired_area_sqm ? this.eventForm.desired_area_sqm : null,
+                                water_source: isCropPlan ? this.eventForm.water_source : null,
+                                planting_material: isCropPlan ? this.eventForm.planting_material : null,
                                 reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || null) : null,
                             })
                         });

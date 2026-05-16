@@ -43,6 +43,8 @@ class FarmerCalendarController extends Controller
                     'category_color' => $event->category_color,
                     'crop' => $event->crop,
                     'desired_area_sqm' => $event->desired_area_sqm !== null ? (float) $event->desired_area_sqm : null,
+                    'water_source' => $event->water_source,
+                    'planting_material' => $event->planting_material,
                     'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
                     'is_completed' => $event->is_completed,
                 ];
@@ -74,6 +76,8 @@ class FarmerCalendarController extends Controller
             'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'desired_area_sqm' => 'nullable|numeric|min:0.01|max:999999999.99',
+            'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
+            'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
         ]);
 
@@ -87,6 +91,12 @@ class FarmerCalendarController extends Controller
             'crop' => $validated['crop'] ?? null,
             'desired_area_sqm' => ($validated['category'] ?? null) === 'crop_plan'
                 ? ($validated['desired_area_sqm'] ?? null)
+                : null,
+            'water_source' => ($validated['category'] ?? null) === 'crop_plan'
+                ? ($validated['water_source'] ?? null)
+                : null,
+            'planting_material' => ($validated['category'] ?? null) === 'crop_plan'
+                ? ($validated['planting_material'] ?? null)
                 : null,
             'reminder_time' => $validated['reminder_time'] ?? null,
         ]);
@@ -108,6 +118,8 @@ class FarmerCalendarController extends Controller
                 'category_color' => $event->category_color,
                 'crop' => $event->crop,
                 'desired_area_sqm' => $event->desired_area_sqm !== null ? (float) $event->desired_area_sqm : null,
+                'water_source' => $event->water_source,
+                'planting_material' => $event->planting_material,
                 'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
                 'is_completed' => $event->is_completed,
             ],
@@ -128,6 +140,8 @@ class FarmerCalendarController extends Controller
             'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'desired_area_sqm' => 'nullable|numeric|min:0.01|max:999999999.99',
+            'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
+            'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
             'is_completed' => 'sometimes|boolean',
         ]);
@@ -149,6 +163,8 @@ class FarmerCalendarController extends Controller
                 'category_color' => $event->category_color,
                 'crop' => $event->crop,
                 'desired_area_sqm' => $event->desired_area_sqm !== null ? (float) $event->desired_area_sqm : null,
+                'water_source' => $event->water_source,
+                'planting_material' => $event->planting_material,
                 'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
                 'is_completed' => $event->is_completed,
             ],

@@ -18,6 +18,8 @@ class FarmerCalendarEvent extends Model
         'category',
         'crop',
         'desired_area_sqm',
+        'water_source',
+        'planting_material',
         'reminder_time',
         'reminder_sent',
         'is_completed',
