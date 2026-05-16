@@ -70,8 +70,8 @@ class FarmerCalendarController extends Controller
             'event_type' => 'required|in:note,reminder',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'category' => 'nullable|string|in:pest,harvest,planting,fertilizer,weather,other',
-            'crop' => 'nullable|string|max:100',
+            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
+            'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'reminder_time' => 'nullable|date_format:H:i',
         ]);
 
@@ -88,7 +88,9 @@ class FarmerCalendarController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $validated['event_type'] === 'reminder' ? 'Reminder set successfully!' : 'Note added successfully!',
+            'message' => ($validated['category'] ?? null) === 'crop_plan'
+                ? 'Crop plan added successfully!'
+                : ($validated['event_type'] === 'reminder' ? 'Reminder set successfully!' : 'Note added successfully!'),
             'event' => [
                 'id' => $event->id,
                 'date' => $event->event_date->format('Y-m-d'),
@@ -117,8 +119,8 @@ class FarmerCalendarController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'category' => 'nullable|string|in:pest,harvest,planting,fertilizer,weather,other',
-            'crop' => 'nullable|string|max:100',
+            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
+            'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'reminder_time' => 'nullable|date_format:H:i',
             'is_completed' => 'sometimes|boolean',
         ]);

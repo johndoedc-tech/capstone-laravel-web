@@ -70,7 +70,7 @@
                                             :class="{
                                                 'bg-red-100 text-red-700': event.category === 'pest',
                                                 'bg-green-100 text-green-700': event.category === 'harvest',
-                                                'bg-emerald-100 text-emerald-700': event.category === 'planting',
+                                                'bg-emerald-100 text-emerald-700': event.category === 'planting' || event.category === 'crop_plan',
                                                 'bg-blue-100 text-blue-700': event.category === 'fertilizer',
                                                 'bg-yellow-100 text-yellow-700': event.category === 'weather',
                                                 'bg-gray-100 text-gray-700': event.category === 'other'
@@ -92,6 +92,7 @@
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-100 border border-red-200"></span> Pest</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-100 border border-green-200"></span> Harvest</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-200"></span> Planting</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-200"></span> Crop Plan</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-200"></span> Fertilizer</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-yellow-100 border border-yellow-200"></span> Weather</span>
                     </div>
@@ -143,11 +144,14 @@
                             </div>
 
                             <!-- Add Buttons -->
-                            <div class="flex gap-2 mb-4">
-                                <button @click="openAddModal('note')" class="flex-1 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                                <button @click="openAddModal('crop_plan')" class="text-sm bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <span>Plan a Crop</span>
+                                </button>
+                                <button @click="openAddModal('note')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>📝</span> Add Note
                                 </button>
-                                <button @click="openAddModal('reminder')" class="flex-1 text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                <button @click="openAddModal('reminder')" class="text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>🔔</span> Reminder
                                 </button>
                             </div>
@@ -160,6 +164,7 @@
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="font-medium text-gray-900 text-sm" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
+                                                <span x-show="calEvent.category === 'crop_plan'" class="text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
                                                 <span x-show="calEvent.type === 'reminder'" class="text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
                                             </div>
                                             <p x-show="calEvent.description" class="text-xs text-gray-500 mt-1" x-text="calEvent.description"></p>
@@ -185,7 +190,7 @@
                             </div>
                             
                             <p x-show="selectedDayEvents.length === 0" class="text-sm text-gray-400 text-center py-6">
-                                No events for this day.<br>Add a note or set a reminder!
+                                No events for this day.<br>Plan a crop, add a note, or set a reminder.
                             </p>
                         </div>
                     </div>
@@ -199,17 +204,17 @@
 
                     <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4" x-text="modalType === 'reminder' ? '🔔 Set Reminder' : '📝 Add Note'"></h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4" x-text="modalTitle"></h3>
                             
                             <div class="space-y-4">
                                 <!-- Title -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
-                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Cabbage harvest day">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : 'Title *'"></label>
+                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : 'e.g., Cabbage harvest day'">
                                 </div>
 
                                 <!-- Category -->
-                                <div>
+                                <div x-show="modalType !== 'crop_plan'">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
                                     <div class="grid grid-cols-3 gap-2">
                                         <template x-for="cat in categories" :key="cat.value">
@@ -225,7 +230,7 @@
 
                                 <!-- Crop (optional) -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Related Crop (optional)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Crop to Plan *' : 'Related Crop (optional)'"></label>
                                     <select x-model="eventForm.crop" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
                                         <option value="">Select crop...</option>
                                         <option value="Cabbage">Cabbage</option>
@@ -256,8 +261,8 @@
                             </div>
                         </div>
                         <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
-                            <button @click="saveEvent()" :disabled="!eventForm.title || saving" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm transition-colors">
-                                <span x-show="!saving" x-text="modalType === 'reminder' ? 'Set Reminder' : 'Save Note'"></span>
+                            <button @click="saveEvent()" :disabled="!canSaveEvent || saving" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm transition-colors">
+                                <span x-show="!saving" x-text="modalSubmitText"></span>
                                 <span x-show="saving">Saving...</span>
                             </button>
                             <button @click="closeModal()" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm transition-colors">
@@ -378,6 +383,26 @@
                     return this.eventsByDay[this.selectedDate] || [];
                 },
 
+                get modalTitle() {
+                    if (this.modalType === 'crop_plan') return 'Plan a Crop';
+                    if (this.modalType === 'reminder') return '🔔 Set Reminder';
+                    return '📝 Add Note';
+                },
+
+                get modalSubmitText() {
+                    if (this.modalType === 'crop_plan') return 'Save Crop Plan';
+                    if (this.modalType === 'reminder') return 'Set Reminder';
+                    return 'Save Note';
+                },
+
+                get canSaveEvent() {
+                    if (this.modalType === 'crop_plan') {
+                        return Boolean(this.eventForm.crop);
+                    }
+
+                    return Boolean(this.eventForm.title);
+                },
+
                 goToToday() {
                     this.currentDate = new Date();
                     this.selectedDate = formatLocalDate(new Date());
@@ -436,7 +461,7 @@
                     this.eventForm = {
                         title: '',
                         description: '',
-                        category: 'other',
+                        category: type === 'crop_plan' ? 'crop_plan' : 'other',
                         crop: '',
                         reminder_time: type === 'reminder' ? '08:00' : '',
                     };
@@ -448,10 +473,15 @@
                 },
 
                 async saveEvent() {
-                    if (!this.eventForm.title || !this.selectedDate) return;
+                    if (!this.canSaveEvent || !this.selectedDate) return;
                     this.saving = true;
 
                     try {
+                        const isCropPlan = this.modalType === 'crop_plan';
+                        const eventTitle = isCropPlan
+                            ? (this.eventForm.title || `Plan ${this.eventForm.crop}`)
+                            : this.eventForm.title;
+
                         const response = await fetch('{{ route('farmer.calendar.store') }}', {
                             method: 'POST',
                             headers: {
@@ -461,12 +491,12 @@
                             },
                             body: JSON.stringify({
                                 event_date: this.selectedDate,
-                                event_type: this.modalType,
-                                title: this.eventForm.title,
+                                event_type: this.modalType === 'reminder' ? 'reminder' : 'note',
+                                title: eventTitle,
                                 description: this.eventForm.description,
-                                category: this.eventForm.category,
+                                category: isCropPlan ? 'crop_plan' : this.eventForm.category,
                                 crop: this.eventForm.crop,
-                                reminder_time: this.eventForm.reminder_time || null,
+                                reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || null) : null,
                             })
                         });
 
