@@ -42,6 +42,16 @@
                         </button>
                     </div>
 
+                    <div x-show="selectedDate" class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-3">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Selected date</p>
+                            <p class="text-sm font-medium text-gray-900" x-text="selectedDateDisplay"></p>
+                        </div>
+                        <button @click="openAddModal('crop_plan')" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
+                            Plan a Crop
+                        </button>
+                    </div>
+
                     <!-- Calendar Grid -->
                     <div class="grid grid-cols-7 gap-1 lg:gap-2">
                         <!-- Day Headers -->
@@ -144,10 +154,7 @@
                             </div>
 
                             <!-- Add Buttons -->
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
-                                <button @click="openAddModal('crop_plan')" class="text-sm bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                                    <span>Plan a Crop</span>
-                                </button>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
                                 <button @click="openAddModal('note')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>📝</span> Add Note
                                 </button>
