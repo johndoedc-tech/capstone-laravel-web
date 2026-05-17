@@ -327,7 +327,7 @@
                                             <div class="flex items-center justify-between gap-3 px-2.5 py-1.5">
                                                 <div class="min-w-0">
                                                     <p class="text-xs font-medium text-gray-900 leading-tight truncate" x-text="stage.label"></p>
-                                                    <p class="text-[11px] text-blue-700 leading-tight" x-text="stage.days + ' days from planning'"></p>
+                                                    <p class="text-[11px] text-blue-700 leading-tight" x-text="stage.timingText"></p>
                                                 </div>
                                                 <p class="text-[11px] font-semibold text-gray-700 whitespace-nowrap" x-text="stage.display"></p>
                                             </div>
@@ -715,8 +715,19 @@
                             days,
                             date,
                             display: this.formatDisplayDate(date),
+                            timingText: this.formatFertilizationTiming(stage, days),
                         };
                     });
+                },
+
+                formatFertilizationTiming(stage, days) {
+                    if (stage.key === 'basal') {
+                        return days > 0
+                            ? `${days} days from planning, before/during field planting`
+                            : 'Apply before or during planting';
+                    }
+
+                    return `${days} days from planning`;
                 },
 
                 calculateFieldStartDelayDays(crop, plantingMaterial) {

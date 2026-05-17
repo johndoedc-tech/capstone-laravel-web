@@ -606,7 +606,15 @@ class FarmerCalendarController extends Controller
     {
         $waterSource = ucfirst($validated['water_source']);
         $plantingMaterial = ucfirst($validated['planting_material']);
-        $note = "Generated from crop plan: {$stage['label']} {$stage['days_from_planning']} days after planning date.";
+        if (($stage['key'] ?? null) === 'basal') {
+            $timing = ((int) ($stage['days_from_planning'] ?? 0)) > 0
+                ? "{$stage['days_from_planning']} days after planning date, before or during field planting"
+                : 'before or during planting';
+            $note = "Generated from crop plan: {$stage['label']} should be applied {$timing}.";
+        } else {
+            $note = "Generated from crop plan: {$stage['label']} {$stage['days_from_planning']} days after planning date.";
+        }
+
         $note .= " Water source: {$waterSource}. Seed type: {$plantingMaterial}.";
 
         if (($stage['rainfed_delay_days'] ?? 0) > 0) {
