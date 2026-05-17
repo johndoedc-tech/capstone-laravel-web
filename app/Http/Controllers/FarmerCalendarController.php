@@ -130,15 +130,27 @@ class FarmerCalendarController extends Controller
             'event_type' => 'required|in:note,reminder',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
+            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,damage_report,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'desired_area_sqm' => 'nullable|required_if:category,crop_plan|numeric|min:0.01|max:999999999.99',
+            'damage_area_sqm' => 'nullable|required_if:category,damage_report|numeric|min:0.01|max:999999999.99',
+            'crop_plan_event_id' => 'nullable|required_if:category,damage_report|integer',
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
         ]);
 
         $isCropPlan = ($validated['category'] ?? null) === 'crop_plan';
+        $isDamageReport = ($validated['category'] ?? null) === 'damage_report';
+        $damageCropPlan = null;
+
+        if ($isDamageReport) {
+            $damageCropPlan = $this->validateDamageReport($validated);
+            if ($damageCropPlan instanceof \Illuminate\Http\JsonResponse) {
+                return $damageCropPlan;
+            }
+        }
+
         $harvestEstimate = $isCropPlan
             ? $this->getHarvestEstimate(
                 $validated['crop'],
@@ -173,7 +185,7 @@ class FarmerCalendarController extends Controller
             ? $this->predictProductionForCropPlan($validated, $harvestEstimate)
             : null;
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction) {
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $isDamageReport, $damageCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction) {
             $eventData = [
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
@@ -181,15 +193,21 @@ class FarmerCalendarController extends Controller
                 'title' => $validated['title'],
                 'description' => $validated['description'] ?? null,
                 'category' => $validated['category'] ?? 'other',
-                'crop' => $validated['crop'] ?? null,
+                'crop' => $isDamageReport ? $damageCropPlan->crop : ($validated['crop'] ?? null),
                 'desired_area_sqm' => $isCropPlan
                     ? ($validated['desired_area_sqm'] ?? null)
+                    : ($isDamageReport ? $damageCropPlan->desired_area_sqm : null),
+                'damage_area_sqm' => $isDamageReport
+                    ? ($validated['damage_area_sqm'] ?? null)
                     : null,
                 'water_source' => $isCropPlan
                     ? ($validated['water_source'] ?? null)
-                    : null,
+                    : ($isDamageReport ? $damageCropPlan->water_source : null),
                 'planting_material' => $isCropPlan
                     ? ($validated['planting_material'] ?? null)
+                    : ($isDamageReport ? $damageCropPlan->planting_material : null),
+                'crop_plan_event_id' => $isDamageReport
+                    ? $damageCropPlan->id
                     : null,
                 'reminder_time' => $validated['reminder_time'] ?? null,
             ];
@@ -260,8 +278,40 @@ class FarmerCalendarController extends Controller
             'success' => true,
             'message' => $isCropPlan
                 ? 'Crop plan added successfully!'
-                : ($validated['event_type'] === 'reminder' ? 'Reminder set successfully!' : 'Note added successfully!'),
+                : ($isDamageReport
+                    ? 'Damage report added successfully!'
+                    : ($validated['event_type'] === 'reminder' ? 'Reminder set successfully!' : 'Note added successfully!')),
             'event' => $this->formatEvent($event),
+        ]);
+    }
+
+    public function getCropPlans()
+    {
+        $plans = FarmerCalendarEvent::where('user_id', Auth::id())
+            ->where('category', 'crop_plan')
+            ->whereNotNull('desired_area_sqm')
+            ->orderByDesc('event_date')
+            ->get()
+            ->map(function (FarmerCalendarEvent $plan) {
+                $reportedDamage = $this->getReportedDamageArea($plan->id);
+                $plantedArea = (float) $plan->desired_area_sqm;
+
+                return [
+                    'id' => $plan->id,
+                    'title' => $plan->title,
+                    'crop' => $plan->crop,
+                    'planning_date' => $plan->event_date->format('Y-m-d'),
+                    'planted_area_sqm' => $plantedArea,
+                    'reported_damage_sqm' => round($reportedDamage, 2),
+                    'remaining_damage_sqm' => round(max(0, $plantedArea - $reportedDamage), 2),
+                    'water_source' => $plan->water_source,
+                    'planting_material' => $plan->planting_material,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'crop_plans' => $plans,
         ]);
     }
 
@@ -276,9 +326,11 @@ class FarmerCalendarController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
+            'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,damage_report,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'desired_area_sqm' => 'nullable|required_if:category,crop_plan|numeric|min:0.01|max:999999999.99',
+            'damage_area_sqm' => 'nullable|numeric|min:0.01|max:999999999.99',
+            'crop_plan_event_id' => 'nullable|integer',
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
@@ -445,6 +497,7 @@ class FarmerCalendarController extends Controller
             'category_color' => $event->category_color,
             'crop' => $event->crop,
             'desired_area_sqm' => $event->desired_area_sqm !== null ? (float) $event->desired_area_sqm : null,
+            'damage_area_sqm' => $event->damage_area_sqm !== null ? (float) $event->damage_area_sqm : null,
             'water_source' => $event->water_source,
             'planting_material' => $event->planting_material,
             'estimated_harvest_date' => $event->estimated_harvest_date?->format('Y-m-d'),
@@ -458,6 +511,65 @@ class FarmerCalendarController extends Controller
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
+    }
+
+    private function validateDamageReport(array $validated): FarmerCalendarEvent|\Illuminate\Http\JsonResponse
+    {
+        if (Carbon::parse($validated['event_date'])->isFuture()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Damage report date cannot be in the future.',
+            ], 422);
+        }
+
+        if (! $this->supportsCalendarColumns(['damage_area_sqm', 'crop_plan_event_id'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Damage reporting is not available until the latest calendar migration is applied.',
+            ], 422);
+        }
+
+        $cropPlan = FarmerCalendarEvent::where('user_id', Auth::id())
+            ->where('category', 'crop_plan')
+            ->where('id', $validated['crop_plan_event_id'])
+            ->whereNotNull('desired_area_sqm')
+            ->first();
+
+        if (! $cropPlan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Select a valid planted crop before reporting damage.',
+            ], 422);
+        }
+
+        $damageArea = (float) $validated['damage_area_sqm'];
+        $plantedArea = (float) $cropPlan->desired_area_sqm;
+        $reportedDamage = $this->getReportedDamageArea($cropPlan->id);
+        $remainingArea = max(0, $plantedArea - $reportedDamage);
+
+        if ($damageArea > $remainingArea + 0.0001) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Damage area cannot exceed the remaining planted area for this crop plan.',
+                'remaining_damage_sqm' => round($remainingArea, 2),
+                'planted_area_sqm' => round($plantedArea, 2),
+                'reported_damage_sqm' => round($reportedDamage, 2),
+            ], 422);
+        }
+
+        return $cropPlan;
+    }
+
+    private function getReportedDamageArea(int $cropPlanId): float
+    {
+        if (! $this->supportsCalendarColumns(['damage_area_sqm', 'crop_plan_event_id'])) {
+            return 0.0;
+        }
+
+        return (float) FarmerCalendarEvent::where('user_id', Auth::id())
+            ->where('category', 'damage_report')
+            ->where('crop_plan_event_id', $cropPlanId)
+            ->sum('damage_area_sqm');
     }
 
     public function predictProduction(Request $request)

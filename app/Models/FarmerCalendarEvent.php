@@ -18,6 +18,7 @@ class FarmerCalendarEvent extends Model
         'category',
         'crop',
         'desired_area_sqm',
+        'damage_area_sqm',
         'water_source',
         'planting_material',
         'estimated_harvest_date',
@@ -36,6 +37,7 @@ class FarmerCalendarEvent extends Model
     protected $casts = [
         'event_date' => 'date',
         'desired_area_sqm' => 'decimal:2',
+        'damage_area_sqm' => 'decimal:2',
         'estimated_harvest_date' => 'date',
         'estimated_harvest_days' => 'integer',
         'predicted_production_mt' => 'decimal:2',
@@ -78,6 +80,7 @@ class FarmerCalendarEvent extends Model
     public function getCategoryIconAttribute()
     {
         $icons = [
+            'damage_report' => '!',
             'pest' => '🐛',
             'harvest' => '🌾',
             'planting' => '🌱',
@@ -96,6 +99,7 @@ class FarmerCalendarEvent extends Model
     public function getCategoryColorAttribute()
     {
         $colors = [
+            'damage_report' => 'red',
             'pest' => 'red',
             'harvest' => 'green',
             'planting' => 'emerald',

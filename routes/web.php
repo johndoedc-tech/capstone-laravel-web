@@ -134,6 +134,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
 
             // Farmer Calendar Events API
             Route::get('/calendar-events', [FarmerCalendarController::class, 'getEvents'])->name('calendar.events');
+            Route::get('/calendar-crop-plans', [FarmerCalendarController::class, 'getCropPlans'])->name('calendar.crop-plans');
             Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
             Route::post('/calendar-events/production-prediction', [FarmerCalendarController::class, 'predictProduction'])->name('calendar.production-prediction');
             Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');

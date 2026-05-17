@@ -47,9 +47,14 @@
                             <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Selected date</p>
                             <p class="text-sm font-medium text-gray-900" x-text="selectedDateDisplay"></p>
                         </div>
-                        <button @click="openAddModal('crop_plan')" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
-                            Plan a Crop
-                        </button>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <button @click="openAddModal('damage_report')" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
+                                Damage Report
+                            </button>
+                            <button @click="openAddModal('crop_plan')" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
+                                Plan a Crop
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Calendar Grid -->
@@ -78,7 +83,7 @@
                                         <div 
                                             class="text-[10px] lg:text-xs px-1 py-0.5 rounded truncate"
                                             :class="{
-                                                'bg-red-100 text-red-700': event.category === 'pest',
+                                                'bg-red-100 text-red-700': event.category === 'pest' || event.category === 'damage_report',
                                                 'bg-green-100 text-green-700': event.category === 'harvest',
                                                 'bg-emerald-100 text-emerald-700': event.category === 'planting' || event.category === 'crop_plan',
                                                 'bg-blue-100 text-blue-700': event.category === 'fertilizer',
@@ -100,6 +105,7 @@
                     <div class="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t text-xs text-gray-500">
                         <span class="font-medium">Categories:</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-100 border border-red-200"></span> Pest</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-red-100 border border-red-200"></span> Damage</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-100 border border-green-200"></span> Harvest</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-200"></span> Planting</span>
                         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-200"></span> Crop Plan</span>
@@ -172,12 +178,14 @@
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="font-medium text-gray-900 text-sm" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
                                                 <span x-show="calEvent.category === 'crop_plan'" class="text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
+                                                <span x-show="calEvent.category === 'damage_report'" class="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
                                                 <span x-show="calEvent.type === 'reminder'" class="text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
                                             </div>
                                             <p x-show="calEvent.description" class="text-xs text-gray-500 mt-1" x-text="calEvent.description"></p>
                                             <div class="flex items-center gap-2 mt-1">
                                                 <span x-show="calEvent.crop" class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
                                                 <span x-show="calEvent.desired_area_sqm" class="text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
+                                                <span x-show="calEvent.damage_area_sqm" class="text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded" x-text="'Damage: ' + formatSquareMeters(calEvent.damage_area_sqm)"></span>
                                                 <span x-show="calEvent.water_source" class="text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
                                                 <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
                                                 <span x-show="calEvent.estimated_harvest_date" class="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
@@ -222,8 +230,8 @@
                             <div class="space-y-3">
                                 <!-- Title -->
                                 <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : 'Title *'"></label>
-                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : 'e.g., Cabbage harvest day'">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : (modalType === 'damage_report' ? 'Report Title (optional)' : 'Title *')"></label>
+                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : (modalType === 'damage_report' ? 'e.g., Typhoon damage' : 'e.g., Cabbage harvest day')">
                                 </div>
 
                                 <!-- Category -->
@@ -242,7 +250,7 @@
                                 </div>
 
                                 <!-- Crop (optional) -->
-                                <div>
+                                <div x-show="modalType !== 'damage_report'">
                                     <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Crop to Plan *' : 'Related Crop (optional)'"></label>
                                     <select x-model="eventForm.crop" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
                                         <option value="">Select crop...</option>
@@ -257,6 +265,28 @@
                                         <option value="Snap Beans">Snap Beans</option>
                                         <option value="Sweet Pepper">Sweet Pepper</option>
                                     </select>
+                                </div>
+
+                                <div x-show="modalType === 'damage_report'" class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Reported Planted Crop *</label>
+                                        <select x-model="eventForm.crop_plan_event_id" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-red-500 focus:border-red-500">
+                                            <option value="">Select planted crop...</option>
+                                            <template x-for="plan in cropPlans" :key="plan.id">
+                                                <option :value="plan.id" :disabled="Number(plan.remaining_damage_sqm) <= 0" x-text="damageCropPlanOption(plan)"></option>
+                                            </template>
+                                        </select>
+                                        <p x-show="cropPlans.length === 0" class="text-[11px] text-red-600 mt-1">Plan a crop first before reporting damage.</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Damaged Area (sqm) *</label>
+                                        <input type="number" min="0.01" :max="selectedDamageCropPlan ? selectedDamageCropPlan.remaining_damage_sqm : null" step="0.01" inputmode="decimal" x-model="eventForm.damage_area_sqm" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-red-500 focus:border-red-500" placeholder="e.g., 50">
+                                        <p x-show="selectedDamageCropPlan" class="text-[11px] text-gray-500 mt-1">
+                                            <span x-text="'Remaining reportable area: ' + formatSquareMeters(selectedDamageCropPlan.remaining_damage_sqm)"></span>
+                                            <span x-text="' of ' + formatSquareMeters(selectedDamageCropPlan.planted_area_sqm)"></span>
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <!-- Desired Area (only for crop plans) -->
@@ -287,9 +317,10 @@
                                 </div>
 
                                 <!-- Planning Date (only for crop plans) -->
-                                <div x-show="modalType === 'crop_plan'">
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Planning Date *</label>
-                                    <input type="date" x-model="eventForm.planning_date" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
+                                <div x-show="modalType === 'crop_plan' || modalType === 'damage_report'">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'damage_report' ? 'Damage Date *' : 'Planning Date *'"></label>
+                                    <input type="date" x-model="eventForm.planning_date" :max="modalType === 'damage_report' ? todayDate : null" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
+                                    <p x-show="modalType === 'damage_report'" class="text-[11px] text-gray-500 mt-1">Future dates are disabled for damage reports.</p>
                                 </div>
 
                                 <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -384,6 +415,7 @@
                 events: [],
                 eventsByDay: {},
                 upcomingReminders: [],
+                cropPlans: [],
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -476,6 +508,8 @@
                     category: 'other',
                     crop: '',
                     desired_area_sqm: '',
+                    damage_area_sqm: '',
+                    crop_plan_event_id: '',
                     water_source: '',
                     planting_material: '',
                     planning_date: '',
@@ -487,6 +521,7 @@
                     this.selectedDate = formatLocalDate(new Date());
                     this.loadEvents();
                     this.loadUpcomingReminders();
+                    this.loadCropPlans();
                     ['crop', 'desired_area_sqm', 'water_source', 'planting_material', 'planning_date'].forEach((field) => {
                         this.$watch(`eventForm.${field}`, () => this.scheduleProductionPrediction());
                     });
@@ -565,6 +600,14 @@
                     return `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} sqm`;
                 },
 
+                damageCropPlanOption(plan) {
+                    const remaining = this.formatSquareMeters(plan.remaining_damage_sqm);
+                    const planted = this.formatSquareMeters(plan.planted_area_sqm);
+                    const date = this.formatDisplayDate(plan.planning_date);
+
+                    return `${plan.crop} - ${planted} planted, ${remaining} remaining (${date})`;
+                },
+
                 formatMetricTons(value) {
                     const amount = Number(value);
                     if (!Number.isFinite(amount)) return '';
@@ -615,12 +658,14 @@
 
                 get modalTitle() {
                     if (this.modalType === 'crop_plan') return 'Plan a Crop';
+                    if (this.modalType === 'damage_report') return 'Damage Report';
                     if (this.modalType === 'reminder') return '🔔 Set Reminder';
                     return '📝 Add Note';
                 },
 
                 get modalSubmitText() {
                     if (this.modalType === 'crop_plan') return 'Save Crop Plan';
+                    if (this.modalType === 'damage_report') return 'Save Damage Report';
                     if (this.modalType === 'reminder') return 'Set Reminder';
                     return 'Save Note';
                 },
@@ -633,6 +678,14 @@
                             && Boolean(this.eventForm.planting_material)
                             && Boolean(this.eventForm.planning_date);
                     }
+                    if (this.modalType === 'damage_report') {
+                        return Boolean(this.eventForm.crop_plan_event_id)
+                            && Number(this.eventForm.damage_area_sqm) > 0
+                            && Boolean(this.eventForm.planning_date)
+                            && this.eventForm.planning_date <= this.todayDate
+                            && this.selectedDamageCropPlan
+                            && Number(this.eventForm.damage_area_sqm) <= Number(this.selectedDamageCropPlan.remaining_damage_sqm);
+                    }
 
                     return Boolean(this.eventForm.title);
                 },
@@ -643,6 +696,18 @@
                     }
 
                     return this.todayDate;
+                },
+
+                get defaultDamageDate() {
+                    if (this.selectedDate && this.selectedDate <= this.todayDate) {
+                        return this.selectedDate;
+                    }
+
+                    return this.todayDate;
+                },
+
+                get selectedDamageCropPlan() {
+                    return this.cropPlans.find((plan) => String(plan.id) === String(this.eventForm.crop_plan_event_id)) || null;
                 },
 
                 get estimatedHarvestDate() {
@@ -880,18 +945,37 @@
                     }
                 },
 
+                async loadCropPlans() {
+                    try {
+                        const response = await fetch('{{ route('farmer.calendar.crop-plans') }}', {
+                            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.cropPlans = data.crop_plans || [];
+                        }
+                    } catch (error) {
+                        console.error('Failed to load crop plans:', error);
+                    }
+                },
+
                 openAddModal(type) {
                     this.modalType = type;
                     this.resetProductionPrediction();
+                    if (type === 'damage_report') {
+                        this.loadCropPlans();
+                    }
                     this.eventForm = {
                         title: '',
                         description: '',
-                        category: type === 'crop_plan' ? 'crop_plan' : 'other',
+                        category: type === 'crop_plan' ? 'crop_plan' : (type === 'damage_report' ? 'damage_report' : 'other'),
                         crop: '',
                         desired_area_sqm: '',
+                        damage_area_sqm: '',
+                        crop_plan_event_id: '',
                         water_source: '',
                         planting_material: '',
-                        planning_date: type === 'crop_plan' ? this.defaultPlanningDate : '',
+                        planning_date: type === 'crop_plan' ? this.defaultPlanningDate : (type === 'damage_report' ? this.defaultDamageDate : ''),
                         reminder_time: type === 'reminder' ? '08:00' : '',
                     };
                     this.showModal = true;
@@ -907,10 +991,18 @@
 
                     try {
                         const isCropPlan = this.modalType === 'crop_plan';
-                        const eventDate = isCropPlan ? this.eventForm.planning_date : this.selectedDate;
+                        const isDamageReport = this.modalType === 'damage_report';
+                        const eventDate = (isCropPlan || isDamageReport) ? this.eventForm.planning_date : this.selectedDate;
                         const eventTitle = isCropPlan
                             ? (this.eventForm.title || `Plan ${this.eventForm.crop}`)
-                            : this.eventForm.title;
+                            : (isDamageReport
+                                ? (this.eventForm.title || `Damage report - ${this.selectedDamageCropPlan?.crop || 'Crop'}`)
+                                : this.eventForm.title);
+
+                        const selectedPlan = this.selectedDamageCropPlan;
+                        const eventDescription = isDamageReport && !this.eventForm.description
+                            ? `Damage reported for ${selectedPlan?.crop || 'selected crop plan'}. Damaged area: ${this.formatSquareMeters(this.eventForm.damage_area_sqm)}.`
+                            : this.eventForm.description;
 
                         const response = await fetch('{{ route('farmer.calendar.store') }}', {
                             method: 'POST',
@@ -923,10 +1015,12 @@
                                 event_date: eventDate,
                                 event_type: this.modalType === 'reminder' ? 'reminder' : 'note',
                                 title: eventTitle,
-                                description: this.eventForm.description,
-                                category: isCropPlan ? 'crop_plan' : this.eventForm.category,
+                                description: isDamageReport ? (this.eventForm.description || eventDescription) : this.eventForm.description,
+                                category: isCropPlan ? 'crop_plan' : (isDamageReport ? 'damage_report' : this.eventForm.category),
                                 crop: this.eventForm.crop,
                                 desired_area_sqm: isCropPlan && this.eventForm.desired_area_sqm ? this.eventForm.desired_area_sqm : null,
+                                damage_area_sqm: isDamageReport && this.eventForm.damage_area_sqm ? this.eventForm.damage_area_sqm : null,
+                                crop_plan_event_id: isDamageReport ? this.eventForm.crop_plan_event_id : null,
                                 water_source: isCropPlan ? this.eventForm.water_source : null,
                                 planting_material: isCropPlan ? this.eventForm.planting_material : null,
                                 reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || null) : null,
@@ -935,14 +1029,18 @@
 
                         if (response.ok) {
                             this.closeModal();
-                            if (isCropPlan) {
+                            if (isCropPlan || isDamageReport) {
                                 this.selectedDate = eventDate;
                                 this.currentDate = new Date(eventDate + 'T00:00:00');
                             }
                             this.loadEvents();
+                            this.loadCropPlans();
                             if (this.modalType === 'reminder') {
                                 this.loadUpcomingReminders();
                             }
+                        } else {
+                            const data = await response.json().catch(() => ({}));
+                            alert(data.message || 'Failed to save event. Please try again.');
                         }
                     } catch (error) {
                         console.error('Failed to save event:', error);
@@ -987,6 +1085,7 @@
                             const data = await response.json();
                             if (data.success) {
                                 this.loadEvents();
+                                this.loadCropPlans();
                                 this.loadUpcomingReminders();
                             }
                         } else {
