@@ -6,6 +6,7 @@ use App\Models\FarmerCalendarEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
 class FarmerCalendarController extends Controller
@@ -152,9 +153,18 @@ class FarmerCalendarController extends Controller
                 $validated['event_date'],
             )
             : [];
+        $supportsHarvestEstimate = $this->supportsCalendarColumns([
+            'estimated_harvest_date',
+            'estimated_harvest_days',
+            'harvest_event_id',
+        ]);
+        $supportsStageLinks = $this->supportsCalendarColumns([
+            'crop_plan_event_id',
+            'crop_plan_stage',
+        ]);
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages) {
-            $event = FarmerCalendarEvent::create([
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks) {
+            $eventData = [
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
                 'event_type' => $validated['event_type'],
@@ -171,10 +181,15 @@ class FarmerCalendarController extends Controller
                 'planting_material' => $isCropPlan
                     ? ($validated['planting_material'] ?? null)
                     : null,
-                'estimated_harvest_date' => $harvestEstimate['date'] ?? null,
-                'estimated_harvest_days' => $harvestEstimate['days'] ?? null,
                 'reminder_time' => $validated['reminder_time'] ?? null,
-            ]);
+            ];
+
+            if ($supportsHarvestEstimate) {
+                $eventData['estimated_harvest_date'] = $harvestEstimate['date'] ?? null;
+                $eventData['estimated_harvest_days'] = $harvestEstimate['days'] ?? null;
+            }
+
+            $event = FarmerCalendarEvent::create($eventData);
 
             if ($isCropPlan && $harvestEstimate) {
                 $harvestEvent = FarmerCalendarEvent::create([
@@ -190,24 +205,28 @@ class FarmerCalendarController extends Controller
                     'planting_material' => $validated['planting_material'],
                 ]);
 
-                $event->update(['harvest_event_id' => $harvestEvent->id]);
+                if ($supportsHarvestEstimate) {
+                    $event->update(['harvest_event_id' => $harvestEvent->id]);
+                }
             }
 
-            foreach ($fertilizationStages as $stage) {
-                FarmerCalendarEvent::create([
-                    'user_id' => Auth::id(),
-                    'event_date' => $stage['date'],
-                    'event_type' => 'note',
-                    'title' => $stage['label'] . ' - ' . $validated['crop'],
-                    'description' => $this->buildFertilizationDescription($validated, $stage),
-                    'category' => 'fertilizer',
-                    'crop' => $validated['crop'],
-                    'desired_area_sqm' => $validated['desired_area_sqm'] ?? null,
-                    'water_source' => $validated['water_source'],
-                    'planting_material' => $validated['planting_material'],
-                    'crop_plan_event_id' => $event->id,
-                    'crop_plan_stage' => 'fertilizer_' . $stage['key'],
-                ]);
+            if ($supportsStageLinks) {
+                foreach ($fertilizationStages as $stage) {
+                    FarmerCalendarEvent::create([
+                        'user_id' => Auth::id(),
+                        'event_date' => $stage['date'],
+                        'event_type' => 'note',
+                        'title' => $stage['label'] . ' - ' . $validated['crop'],
+                        'description' => $this->buildFertilizationDescription($validated, $stage),
+                        'category' => 'fertilizer',
+                        'crop' => $validated['crop'],
+                        'desired_area_sqm' => $validated['desired_area_sqm'] ?? null,
+                        'water_source' => $validated['water_source'],
+                        'planting_material' => $validated['planting_material'],
+                        'crop_plan_event_id' => $event->id,
+                        'crop_plan_stage' => 'fertilizer_' . $stage['key'],
+                    ]);
+                }
             }
 
             return $event->fresh();
@@ -277,13 +296,16 @@ class FarmerCalendarController extends Controller
                 ], 404);
             }
 
-            if ($event->category === 'crop_plan' && $event->harvest_event_id) {
+            if ($event->category === 'crop_plan'
+                && $this->supportsCalendarColumns(['harvest_event_id'])
+                && $event->harvest_event_id) {
                 FarmerCalendarEvent::where('user_id', $userId)
                     ->where('id', $event->harvest_event_id)
                     ->delete();
             }
 
-            if ($event->category === 'crop_plan') {
+            if ($event->category === 'crop_plan'
+                && $this->supportsCalendarColumns(['crop_plan_event_id'])) {
                 FarmerCalendarEvent::where('user_id', $userId)
                     ->where('crop_plan_event_id', $event->id)
                     ->delete();
@@ -482,5 +504,16 @@ class FarmerCalendarController extends Controller
         }
 
         return $note;
+    }
+
+    private function supportsCalendarColumns(array $columns): bool
+    {
+        foreach ($columns as $column) {
+            if (!Schema::hasColumn('farmer_calendar_events', $column)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
