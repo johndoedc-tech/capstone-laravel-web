@@ -135,6 +135,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
             // Farmer Calendar Events API
             Route::get('/calendar-events', [FarmerCalendarController::class, 'getEvents'])->name('calendar.events');
             Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
+            Route::post('/calendar-events/production-prediction', [FarmerCalendarController::class, 'predictProduction'])->name('calendar.production-prediction');
             Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');
             Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
             Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');

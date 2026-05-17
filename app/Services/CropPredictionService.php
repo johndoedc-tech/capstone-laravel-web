@@ -158,6 +158,95 @@ class CropPredictionService
             throw $e;
         }
     }
+
+    /**
+     * Predict production for a calendar crop plan from square meters.
+     */
+    public function predictCropPlanProduction(array $data): array
+    {
+        $areaSqm = (float) $data['desired_area_sqm'];
+        $areaHectares = $areaSqm / 10000;
+        $requestData = [
+            'MUNICIPALITY' => strtoupper(str_replace(' ', '', $data['municipality'])),
+            'FARM_TYPE' => strtoupper($data['farm_type']),
+            'YEAR' => (int) $data['year'],
+            'MONTH' => (int) $data['month'],
+            'CROP' => strtoupper($data['crop']),
+            'Area_sqm' => $areaSqm,
+        ];
+
+        try {
+            $response = Http::timeout($this->timeout)->post("{$this->apiUrl}/api/predict-area-production", $requestData);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                $prediction = $result['prediction'] ?? [];
+
+                return [
+                    'success' => true,
+                    'predicted_production_mt' => round(max(0, (float) ($prediction['production_mt'] ?? 0)), 2),
+                    'production_per_ha_mt' => isset($prediction['production_per_ha_mt'])
+                        ? round(max(0, (float) $prediction['production_per_ha_mt']), 2)
+                        : null,
+                    'prediction_confidence' => isset($prediction['confidence_score'])
+                        ? round((float) $prediction['confidence_score'], 4)
+                        : null,
+                    'area_sqm' => round($areaSqm, 2),
+                    'area_hectares' => round($areaHectares, 4),
+                    'municipality' => $data['municipality'],
+                    'farm_type' => $data['farm_type'],
+                    'crop' => $data['crop'],
+                    'year' => (int) $data['year'],
+                    'month' => (int) $data['month'],
+                    'source' => 'ml_api_area_scaled',
+                    'raw' => $result,
+                ];
+            }
+
+            Log::info('ML API area-scaled endpoint unavailable; falling back to 1ha scaling', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+        } catch (Exception $e) {
+            Log::info('ML API area-scaled endpoint failed; falling back to 1ha scaling', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        $result = $this->predict([
+            'municipality' => $data['municipality'],
+            'farm_type' => $data['farm_type'],
+            'year' => $data['year'],
+            'month' => $data['month'],
+            'crop' => $data['crop'],
+            'area_planted' => 1,
+        ]);
+
+        $prediction = $result['prediction'] ?? [];
+        $productionPerHa = $prediction['production_mt']
+            ?? $prediction['Production_mt']
+            ?? $prediction['predicted_production']
+            ?? null;
+        $production = $productionPerHa !== null ? (float) $productionPerHa * $areaHectares : null;
+
+        return [
+            'success' => $production !== null,
+            'predicted_production_mt' => $production !== null ? round(max(0, (float) $production), 2) : null,
+            'production_per_ha_mt' => $productionPerHa !== null ? round(max(0, (float) $productionPerHa), 2) : null,
+            'prediction_confidence' => isset($prediction['confidence_score'])
+                ? round((float) $prediction['confidence_score'], 4)
+                : null,
+            'area_sqm' => round($areaSqm, 2),
+            'area_hectares' => round($areaHectares, 4),
+            'municipality' => $data['municipality'],
+            'farm_type' => $data['farm_type'],
+            'crop' => $data['crop'],
+            'year' => (int) $data['year'],
+            'month' => $data['month'],
+            'source' => 'ml_api_1ha_scaled',
+            'raw' => $result,
+        ];
+    }
     
     /**
      * Make batch predictions

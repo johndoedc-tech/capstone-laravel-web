@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\FarmerCalendarEvent;
+use App\Services\CropPredictionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
@@ -130,7 +132,7 @@ class FarmerCalendarController extends Controller
             'description' => 'nullable|string|max:1000',
             'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
-            'desired_area_sqm' => 'nullable|numeric|min:0.01|max:999999999.99',
+            'desired_area_sqm' => 'nullable|required_if:category,crop_plan|numeric|min:0.01|max:999999999.99',
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
@@ -162,8 +164,16 @@ class FarmerCalendarController extends Controller
             'crop_plan_event_id',
             'crop_plan_stage',
         ]);
+        $supportsProductionPrediction = $this->supportsCalendarColumns([
+            'predicted_production_mt',
+            'prediction_confidence',
+            'prediction_source',
+        ]);
+        $productionPrediction = $isCropPlan && $harvestEstimate
+            ? $this->predictProductionForCropPlan($validated, $harvestEstimate)
+            : null;
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks) {
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction) {
             $eventData = [
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
@@ -189,21 +199,35 @@ class FarmerCalendarController extends Controller
                 $eventData['estimated_harvest_days'] = $harvestEstimate['days'] ?? null;
             }
 
+            if ($supportsProductionPrediction && $productionPrediction) {
+                $eventData['predicted_production_mt'] = $productionPrediction['predicted_production_mt'] ?? null;
+                $eventData['prediction_confidence'] = $productionPrediction['prediction_confidence'] ?? null;
+                $eventData['prediction_source'] = $productionPrediction['source'] ?? null;
+            }
+
             $event = FarmerCalendarEvent::create($eventData);
 
             if ($isCropPlan && $harvestEstimate) {
-                $harvestEvent = FarmerCalendarEvent::create([
+                $harvestEventData = [
                     'user_id' => Auth::id(),
                     'event_date' => $harvestEstimate['date'],
                     'event_type' => 'note',
                     'title' => 'Harvest ' . $validated['crop'],
-                    'description' => $this->buildHarvestDescription($validated, $harvestEstimate['days']),
+                    'description' => $this->buildHarvestDescription($validated, $harvestEstimate['days'], $productionPrediction),
                     'category' => 'harvest',
                     'crop' => $validated['crop'],
                     'desired_area_sqm' => $validated['desired_area_sqm'] ?? null,
                     'water_source' => $validated['water_source'],
                     'planting_material' => $validated['planting_material'],
-                ]);
+                ];
+
+                if ($supportsProductionPrediction && $productionPrediction) {
+                    $harvestEventData['predicted_production_mt'] = $productionPrediction['predicted_production_mt'] ?? null;
+                    $harvestEventData['prediction_confidence'] = $productionPrediction['prediction_confidence'] ?? null;
+                    $harvestEventData['prediction_source'] = $productionPrediction['source'] ?? null;
+                }
+
+                $harvestEvent = FarmerCalendarEvent::create($harvestEventData);
 
                 if ($supportsHarvestEstimate) {
                     $event->update(['harvest_event_id' => $harvestEvent->id]);
@@ -254,7 +278,7 @@ class FarmerCalendarController extends Controller
             'description' => 'nullable|string|max:1000',
             'category' => 'nullable|string|in:pest,harvest,planting,crop_plan,fertilizer,weather,other',
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
-            'desired_area_sqm' => 'nullable|numeric|min:0.01|max:999999999.99',
+            'desired_area_sqm' => 'nullable|required_if:category,crop_plan|numeric|min:0.01|max:999999999.99',
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
@@ -428,9 +452,92 @@ class FarmerCalendarController extends Controller
             'harvest_event_id' => $event->harvest_event_id,
             'crop_plan_event_id' => $event->crop_plan_event_id,
             'crop_plan_stage' => $event->crop_plan_stage,
+            'predicted_production_mt' => $event->predicted_production_mt !== null ? (float) $event->predicted_production_mt : null,
+            'prediction_confidence' => $event->prediction_confidence !== null ? (float) $event->prediction_confidence : null,
+            'prediction_source' => $event->prediction_source,
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
+    }
+
+    public function predictProduction(Request $request)
+    {
+        $validated = $request->validate([
+            'crop' => 'required|string|max:100',
+            'desired_area_sqm' => 'required|numeric|min:0.01|max:999999999.99',
+            'water_source' => 'required|string|in:rainfed,irrigated',
+            'planting_material' => 'required|string|in:seed,seedling',
+            'planning_date' => 'required|date',
+        ]);
+
+        if (! Auth::user()?->preferred_municipality) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set your farm municipality first to calculate production prediction.',
+            ], 422);
+        }
+
+        $harvestEstimate = $this->getHarvestEstimate(
+            $validated['crop'],
+            $validated['water_source'],
+            $validated['planting_material'],
+            $validated['planning_date'],
+        );
+        $prediction = $this->predictProductionForCropPlan([
+            'crop' => $validated['crop'],
+            'desired_area_sqm' => $validated['desired_area_sqm'],
+            'water_source' => $validated['water_source'],
+            'planting_material' => $validated['planting_material'],
+            'event_date' => $validated['planning_date'],
+        ], $harvestEstimate);
+
+        if (! $prediction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Production prediction is unavailable right now.',
+            ], 422);
+        }
+
+        return response()->json([
+            'success' => true,
+            'prediction' => $prediction,
+        ]);
+    }
+
+    private function predictProductionForCropPlan(array $validated, array $harvestEstimate): ?array
+    {
+        $user = Auth::user();
+        $municipality = $user?->preferred_municipality;
+
+        if (! $municipality) {
+            return null;
+        }
+
+        try {
+            $harvestDate = Carbon::parse($harvestEstimate['date']);
+            $prediction = app(CropPredictionService::class)->predictCropPlanProduction([
+                'municipality' => $municipality,
+                'farm_type' => strtoupper($validated['water_source']),
+                'year' => $harvestDate->year,
+                'month' => $harvestDate->month,
+                'crop' => $validated['crop'],
+                'desired_area_sqm' => $validated['desired_area_sqm'],
+            ]);
+
+            return array_merge($prediction, [
+                'harvest_date' => $harvestEstimate['date'],
+                'harvest_days' => $harvestEstimate['days'],
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('Crop plan production prediction failed', [
+                'user_id' => $user?->id,
+                'crop' => $validated['crop'] ?? null,
+                'area_sqm' => $validated['desired_area_sqm'] ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 
     private function getHarvestEstimate(string $crop, string $waterSource, string $plantingMaterial, string $planningDate): array
@@ -452,12 +559,15 @@ class FarmerCalendarController extends Controller
         ];
     }
 
-    private function buildHarvestDescription(array $validated, int $days): string
+    private function buildHarvestDescription(array $validated, int $days, ?array $productionPrediction = null): string
     {
         $waterSource = ucfirst($validated['water_source']);
         $plantingMaterial = ucfirst($validated['planting_material']);
+        $prediction = $productionPrediction && isset($productionPrediction['predicted_production_mt'])
+            ? " Predicted production: {$productionPrediction['predicted_production_mt']} mt."
+            : '';
 
-        return "Estimated from crop plan: {$days} days after planning date. Water source: {$waterSource}. Seed type: {$plantingMaterial}.";
+        return "Estimated from crop plan: {$days} days after planning date. Water source: {$waterSource}. Seed type: {$plantingMaterial}.{$prediction}";
     }
 
     private function getFertilizationStages(string $crop, string $waterSource, string $plantingMaterial, string $planningDate): array

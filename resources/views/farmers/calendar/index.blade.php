@@ -182,6 +182,7 @@
                                                 <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
                                                 <span x-show="calEvent.estimated_harvest_date" class="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
                                                 <span x-show="calEvent.crop_plan_stage" class="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
+                                                <span x-show="calEvent.predicted_production_mt" class="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
                                                 <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -260,7 +261,7 @@
 
                                 <!-- Desired Area (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Desired Area (sqm)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Desired Area (sqm) *</label>
                                     <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="eventForm.desired_area_sqm" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 250">
                                     <p class="text-xs text-gray-400 mt-1">Enter the land area you want to use in square meters.</p>
                                 </div>
@@ -298,6 +299,26 @@
                                     <p class="text-xs font-semibold uppercase tracking-wide text-green-700">Estimated Harvest Date</p>
                                     <p class="text-sm font-semibold text-gray-900 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
                                     <p class="text-xs text-green-700 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning date, based on crop, water source, and seed type.' : ''"></p>
+                                </div>
+
+                                <!-- Production Prediction (only for crop plans) -->
+                                <div x-show="modalType === 'crop_plan' && (productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="rounded-lg border border-orange-200 bg-orange-50 px-3 py-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-orange-700">Production Prediction</p>
+                                    <div x-show="productionPrediction.loading" class="mt-2 text-sm text-orange-700">Calculating expected harvest...</div>
+                                    <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-2">
+                                        <p class="text-sm font-semibold text-gray-900" x-text="productionPrediction.data ? formatMetricTons(productionPrediction.data.predicted_production_mt) : ''"></p>
+                                        <p class="text-xs text-orange-700 mt-1">
+                                            <span x-text="productionPrediction.data ? formatSquareMeters(productionPrediction.data.area_sqm) : ''"></span>
+                                            <span x-show="productionPrediction.data"> / </span>
+                                            <span x-text="productionPrediction.data ? productionPrediction.data.area_hectares + ' ha' : ''"></span>
+                                            <span x-show="productionPrediction.data">, </span>
+                                            <span x-text="productionPrediction.data ? formatCropPlanOption(eventForm.water_source) : ''"></span>
+                                            <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence">, confidence </span>
+                                            <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence" x-text="formatPercent(productionPrediction.data.prediction_confidence)"></span>
+                                        </p>
+                                        <p x-show="productionPrediction.data && productionPrediction.data.production_per_ha_mt" class="text-xs text-orange-600 mt-1" x-text="'Baseline: ' + formatMetricTons(productionPrediction.data.production_per_ha_mt) + ' per ha'"></p>
+                                    </div>
+                                    <p x-show="!productionPrediction.loading && productionPrediction.error" class="mt-2 text-sm text-orange-700" x-text="productionPrediction.error"></p>
                                 </div>
 
                                 <!-- Fertilization Stages (only for crop plans) -->
@@ -368,6 +389,13 @@
                 showModal: false,
                 modalType: 'note',
                 saving: false,
+                productionPrediction: {
+                    loading: false,
+                    data: null,
+                    error: '',
+                },
+                productionPredictionTimer: null,
+                productionPredictionRequestId: 0,
                 categories: [
                     { value: 'pest', label: 'Pest', icon: '🐛' },
                     { value: 'harvest', label: 'Harvest', icon: '🌾' },
@@ -461,6 +489,9 @@
                     this.selectedDate = formatLocalDate(new Date());
                     this.loadEvents();
                     this.loadUpcomingReminders();
+                    ['crop', 'desired_area_sqm', 'water_source', 'planting_material', 'planning_date'].forEach((field) => {
+                        this.$watch(`eventForm.${field}`, () => this.scheduleProductionPrediction());
+                    });
                 },
 
                 get calendarDays() {
@@ -536,6 +567,20 @@
                     return `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} sqm`;
                 },
 
+                formatMetricTons(value) {
+                    const amount = Number(value);
+                    if (!Number.isFinite(amount)) return '';
+
+                    return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+                },
+
+                formatPercent(value) {
+                    const amount = Number(value);
+                    if (!Number.isFinite(amount)) return '';
+
+                    return `${(amount * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
+                },
+
                 formatCropPlanOption(value) {
                     const labels = {
                         rainfed: 'Rainfed',
@@ -585,6 +630,7 @@
                 get canSaveEvent() {
                     if (this.modalType === 'crop_plan') {
                         return Boolean(this.eventForm.crop)
+                            && Number(this.eventForm.desired_area_sqm) > 0
                             && Boolean(this.eventForm.water_source)
                             && Boolean(this.eventForm.planting_material)
                             && Boolean(this.eventForm.planning_date);
@@ -683,6 +729,95 @@
                     return 0;
                 },
 
+                get canRequestProductionPrediction() {
+                    return this.modalType === 'crop_plan'
+                        && Boolean(this.eventForm.crop)
+                        && Number(this.eventForm.desired_area_sqm) > 0
+                        && Boolean(this.eventForm.water_source)
+                        && Boolean(this.eventForm.planting_material)
+                        && Boolean(this.eventForm.planning_date);
+                },
+
+                resetProductionPrediction() {
+                    this.productionPrediction = {
+                        loading: false,
+                        data: null,
+                        error: '',
+                    };
+                    if (this.productionPredictionTimer) {
+                        clearTimeout(this.productionPredictionTimer);
+                        this.productionPredictionTimer = null;
+                    }
+                },
+
+                scheduleProductionPrediction() {
+                    if (!this.canRequestProductionPrediction) {
+                        this.resetProductionPrediction();
+                        return;
+                    }
+
+                    if (this.productionPredictionTimer) {
+                        clearTimeout(this.productionPredictionTimer);
+                    }
+
+                    this.productionPrediction.loading = true;
+                    this.productionPrediction.error = '';
+                    this.productionPredictionTimer = setTimeout(() => this.loadProductionPrediction(), 500);
+                },
+
+                async loadProductionPrediction() {
+                    if (!this.canRequestProductionPrediction) {
+                        this.resetProductionPrediction();
+                        return;
+                    }
+
+                    const requestId = ++this.productionPredictionRequestId;
+
+                    try {
+                        const response = await fetch('{{ route('farmer.calendar.production-prediction') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                crop: this.eventForm.crop,
+                                desired_area_sqm: this.eventForm.desired_area_sqm,
+                                water_source: this.eventForm.water_source,
+                                planting_material: this.eventForm.planting_material,
+                                planning_date: this.eventForm.planning_date,
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (requestId !== this.productionPredictionRequestId) return;
+
+                        if (response.ok && data.success) {
+                            this.productionPrediction = {
+                                loading: false,
+                                data: data.prediction,
+                                error: '',
+                            };
+                            return;
+                        }
+
+                        this.productionPrediction = {
+                            loading: false,
+                            data: null,
+                            error: data.message || data.error || 'Production prediction is unavailable.',
+                        };
+                    } catch (error) {
+                        if (requestId !== this.productionPredictionRequestId) return;
+
+                        this.productionPrediction = {
+                            loading: false,
+                            data: null,
+                            error: 'Production prediction is unavailable.',
+                        };
+                    }
+                },
+
                 goToToday() {
                     this.currentDate = new Date();
                     this.selectedDate = formatLocalDate(new Date());
@@ -738,6 +873,7 @@
 
                 openAddModal(type) {
                     this.modalType = type;
+                    this.resetProductionPrediction();
                     this.eventForm = {
                         title: '',
                         description: '',
