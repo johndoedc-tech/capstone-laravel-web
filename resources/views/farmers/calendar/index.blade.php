@@ -215,15 +215,15 @@
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
 
-                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4" x-text="modalTitle"></h3>
+                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="bg-white px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
+                            <h3 class="text-base font-semibold text-gray-900 mb-3" x-text="modalTitle"></h3>
                             
-                            <div class="space-y-4">
+                            <div class="space-y-3">
                                 <!-- Title -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : 'Title *'"></label>
-                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : 'e.g., Cabbage harvest day'">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : 'Title *'"></label>
+                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : 'e.g., Cabbage harvest day'">
                                 </div>
 
                                 <!-- Category -->
@@ -243,8 +243,8 @@
 
                                 <!-- Crop (optional) -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Crop to Plan *' : 'Related Crop (optional)'"></label>
-                                    <select x-model="eventForm.crop" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Crop to Plan *' : 'Related Crop (optional)'"></label>
+                                    <select x-model="eventForm.crop" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
                                         <option value="">Select crop...</option>
                                         <option value="Cabbage">Cabbage</option>
                                         <option value="Broccoli">Broccoli</option>
@@ -261,16 +261,15 @@
 
                                 <!-- Desired Area (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Desired Area (sqm) *</label>
-                                    <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="eventForm.desired_area_sqm" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 250">
-                                    <p class="text-xs text-gray-400 mt-1">Enter the land area you want to use in square meters.</p>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Desired Area (sqm) *</label>
+                                    <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="eventForm.desired_area_sqm" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., 250">
                                 </div>
 
                                 <!-- Water Source and Seed Type (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Water Source *</label>
-                                        <select x-model="eventForm.water_source" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Water Source *</label>
+                                        <select x-model="eventForm.water_source" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Select source...</option>
                                             <option value="rainfed">Rainfed</option>
                                             <option value="irrigated">Irrigated</option>
@@ -278,8 +277,8 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Seed Type *</label>
-                                        <select x-model="eventForm.planting_material" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Seed Type *</label>
+                                        <select x-model="eventForm.planting_material" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
                                             <option value="">Select type...</option>
                                             <option value="seed">Seed</option>
                                             <option value="seedling">Seedling</option>
@@ -289,49 +288,48 @@
 
                                 <!-- Planning Date (only for crop plans) -->
                                 <div x-show="modalType === 'crop_plan'">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Planning Date *</label>
-                                    <input type="date" x-model="eventForm.planning_date" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
-                                    <p class="text-xs text-gray-400 mt-1">You can select a past, present, or future date.</p>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Planning Date *</label>
+                                    <input type="date" x-model="eventForm.planning_date" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
                                 </div>
 
-                                <!-- Estimated Harvest Date (only for crop plans) -->
-                                <div x-show="modalType === 'crop_plan' && estimatedHarvestDate" class="rounded-lg border border-green-200 bg-green-50 px-3 py-3">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-green-700">Estimated Harvest Date</p>
-                                    <p class="text-sm font-semibold text-gray-900 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
-                                    <p class="text-xs text-green-700 mt-1" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning date, based on crop, water source, and seed type.' : ''"></p>
-                                </div>
-
-                                <!-- Production Prediction (only for crop plans) -->
-                                <div x-show="modalType === 'crop_plan' && (productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="rounded-lg border border-orange-200 bg-orange-50 px-3 py-3">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-orange-700">Production Prediction</p>
-                                    <div x-show="productionPrediction.loading" class="mt-2 text-sm text-orange-700">Calculating expected harvest...</div>
-                                    <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-2">
-                                        <p class="text-sm font-semibold text-gray-900" x-text="productionPrediction.data ? formatMetricTons(productionPrediction.data.predicted_production_mt) : ''"></p>
-                                        <p class="text-xs text-orange-700 mt-1">
-                                            <span x-text="productionPrediction.data ? formatSquareMeters(productionPrediction.data.area_sqm) : ''"></span>
-                                            <span x-show="productionPrediction.data"> / </span>
-                                            <span x-text="productionPrediction.data ? productionPrediction.data.area_hectares + ' ha' : ''"></span>
-                                            <span x-show="productionPrediction.data">, </span>
-                                            <span x-text="productionPrediction.data ? formatCropPlanOption(eventForm.water_source) : ''"></span>
-                                            <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence">, confidence </span>
-                                            <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence" x-text="formatPercent(productionPrediction.data.prediction_confidence)"></span>
-                                        </p>
-                                        <p x-show="productionPrediction.data && productionPrediction.data.production_per_ha_mt" class="text-xs text-orange-600 mt-1" x-text="'Baseline: ' + formatMetricTons(productionPrediction.data.production_per_ha_mt) + ' per ha'"></p>
+                                <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <!-- Estimated Harvest Date (only for crop plans) -->
+                                    <div x-show="estimatedHarvestDate" class="rounded-md border border-green-200 bg-green-50 px-3 py-2">
+                                        <p class="text-[11px] font-semibold uppercase text-green-700">Harvest Date</p>
+                                        <p class="text-sm font-semibold text-gray-900 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
+                                        <p class="text-[11px] text-green-700 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning' : ''"></p>
                                     </div>
-                                    <p x-show="!productionPrediction.loading && productionPrediction.error" class="mt-2 text-sm text-orange-700" x-text="productionPrediction.error"></p>
+
+                                    <!-- Production Prediction (only for crop plans) -->
+                                    <div x-show="productionPrediction.loading || productionPrediction.data || productionPrediction.error" class="rounded-md border border-orange-200 bg-orange-50 px-3 py-2">
+                                        <p class="text-[11px] font-semibold uppercase text-orange-700">Production</p>
+                                        <div x-show="productionPrediction.loading" class="mt-1 text-xs text-orange-700">Calculating...</div>
+                                        <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-0.5">
+                                            <p class="text-sm font-semibold text-gray-900 leading-tight" x-text="productionPrediction.data ? formatMetricTons(productionPrediction.data.predicted_production_mt) : ''"></p>
+                                            <p class="text-[11px] text-orange-700 leading-tight mt-0.5">
+                                                <span x-text="productionPrediction.data ? formatSquareMeters(productionPrediction.data.area_sqm) : ''"></span>
+                                                <span x-show="productionPrediction.data"> / </span>
+                                                <span x-text="productionPrediction.data ? productionPrediction.data.area_hectares + ' ha' : ''"></span>
+                                                <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence">, </span>
+                                                <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence" x-text="formatPercent(productionPrediction.data.prediction_confidence)"></span>
+                                            </p>
+                                            <p x-show="productionPrediction.data && productionPrediction.data.production_per_ha_mt" class="text-[11px] text-orange-600 leading-tight mt-0.5" x-text="formatMetricTons(productionPrediction.data.production_per_ha_mt) + ' per ha'"></p>
+                                        </div>
+                                        <p x-show="!productionPrediction.loading && productionPrediction.error" class="mt-1 text-xs text-orange-700" x-text="productionPrediction.error"></p>
+                                    </div>
                                 </div>
 
                                 <!-- Fertilization Stages (only for crop plans) -->
-                                <div x-show="modalType === 'crop_plan' && fertilizationStages.length" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Fertilization Stages</p>
-                                    <div class="mt-2 space-y-2">
+                                <div x-show="modalType === 'crop_plan' && fertilizationStages.length" class="rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+                                    <p class="text-[11px] font-semibold uppercase text-blue-700">Fertilization Stages</p>
+                                    <div class="mt-1 divide-y divide-blue-100 rounded-md bg-white border border-blue-100">
                                         <template x-for="stage in fertilizationStages" :key="stage.key">
-                                            <div class="flex items-start justify-between gap-3 rounded-md bg-white px-3 py-2 border border-blue-100">
+                                            <div class="flex items-center justify-between gap-3 px-2.5 py-1.5">
                                                 <div class="min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900" x-text="stage.label"></p>
-                                                    <p class="text-xs text-blue-700" x-text="stage.days + ' days from planning date'"></p>
+                                                    <p class="text-xs font-medium text-gray-900 leading-tight truncate" x-text="stage.label"></p>
+                                                    <p class="text-[11px] text-blue-700 leading-tight" x-text="stage.days + ' days from planning'"></p>
                                                 </div>
-                                                <p class="text-xs font-semibold text-gray-700 whitespace-nowrap" x-text="stage.display"></p>
+                                                <p class="text-[11px] font-semibold text-gray-700 whitespace-nowrap" x-text="stage.display"></p>
                                             </div>
                                         </template>
                                     </div>
@@ -346,17 +344,17 @@
 
                                 <!-- Description -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
-                                    <textarea x-model="eventForm.description" rows="3" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500" placeholder="Add any additional details..."></textarea>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Notes (optional)</label>
+                                    <textarea x-model="eventForm.description" rows="2" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" placeholder="Add any additional details..."></textarea>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
-                            <button @click="saveEvent()" :disabled="!canSaveEvent || saving" class="w-full sm:w-auto inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-base font-medium text-white hover:bg-orange-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed sm:text-sm transition-colors">
+                        <div class="bg-gray-50 px-4 py-2.5 sm:flex sm:flex-row-reverse sm:px-5 gap-2">
+                            <button @click="saveEvent()" :disabled="!canSaveEvent || saving" class="w-full sm:w-auto inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                                 <span x-show="!saving" x-text="modalSubmitText"></span>
                                 <span x-show="saving">Saving...</span>
                             </button>
-                            <button @click="closeModal()" class="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm transition-colors">
+                            <button @click="closeModal()" class="mt-2 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors">
                                 Cancel
                             </button>
                         </div>
