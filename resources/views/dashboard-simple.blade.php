@@ -420,6 +420,7 @@
                 </div>
             </div>
 
+            @if(false)
             <!-- ============================================ -->
             <!-- TODAY'S RECOMMENDATION (The Main Focus) -->
             <!-- ============================================ -->
@@ -510,13 +511,15 @@
                 </div>
             </div>
 
+            @endif
+
             <!-- ============================================ -->
             <!-- NEXT STEP ACTIONS -->
             <!-- ============================================ -->
             <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
-                    <p class="text-sm text-gray-500">Use these tools after reviewing your recommendations and crop trends.</p>
+                    <p class="text-sm text-gray-500">Use these tools after reviewing your crop trends.</p>
                 </div>
 
                 <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
