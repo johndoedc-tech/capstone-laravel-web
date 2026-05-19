@@ -169,80 +169,6 @@
                                 </button>
                             </div>
 
-                            <!-- Planted Crop Details -->
-                            <div x-show="selectedCropPlanEvents.length > 0" class="mb-4 space-y-3">
-                                <div class="flex items-center justify-between gap-3">
-                                    <h4 class="text-sm font-semibold text-gray-900">Planted Crop Details</h4>
-                                    <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
-                                        <span x-text="selectedCropPlanEvents.length"></span>
-                                        <span x-text="selectedCropPlanEvents.length === 1 ? ' crop' : ' crops'"></span>
-                                    </span>
-                                </div>
-
-                                <template x-for="plan in selectedCropPlanEvents" :key="'details-' + plan.id">
-                                    <div class="rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
-                                        <div class="flex items-start justify-between gap-3">
-                                            <div class="min-w-0">
-                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="plan.title"></p>
-                                                <p class="text-xs text-emerald-700 mt-0.5">
-                                                    <span x-text="plan.crop || 'Crop plan'"></span>
-                                                    <span> planted on </span>
-                                                    <span x-text="formatDisplayDate(plan.date)"></span>
-                                                </p>
-                                            </div>
-                                            <span class="text-[11px] bg-white text-emerald-700 border border-emerald-100 rounded px-1.5 py-0.5">Crop Plan</span>
-                                        </div>
-
-                                        <div class="grid grid-cols-2 gap-2 mt-3">
-                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Area</p>
-                                                <p class="text-sm font-medium text-gray-900" x-text="formatSquareMeters(plan.desired_area_sqm) || '-'"></p>
-                                            </div>
-                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Water</p>
-                                                <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(plan.water_source) || '-'"></p>
-                                            </div>
-                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Seed Type</p>
-                                                <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(plan.planting_material) || '-'"></p>
-                                            </div>
-                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Harvest</p>
-                                                <p class="text-sm font-medium text-gray-900" x-text="plan.estimated_harvest_date ? formatDisplayDate(plan.estimated_harvest_date) : '-'"></p>
-                                            </div>
-                                        </div>
-
-                                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            <div x-show="plan.predicted_production_mt" class="rounded-md border border-orange-100 bg-orange-50 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-orange-700">Predicted Production</p>
-                                                <p class="text-sm font-semibold text-gray-900" x-text="formatMetricTons(plan.predicted_production_mt)"></p>
-                                                <p x-show="plan.prediction_confidence" class="text-[11px] text-orange-700 mt-0.5" x-text="'Confidence: ' + formatPercent(plan.prediction_confidence)"></p>
-                                            </div>
-
-                                            <div class="rounded-md border border-red-100 bg-red-50 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-red-700">Damage Status</p>
-                                                <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanDamageStatus(plan)"></p>
-                                                <p class="text-[11px] text-red-700 mt-0.5" x-text="formatCropPlanRemainingStatus(plan)"></p>
-                                            </div>
-                                        </div>
-
-                                        <div x-show="getCropPlanSchedule(plan).length > 0" class="mt-3">
-                                            <p class="text-[11px] uppercase font-semibold text-gray-500 mb-1.5">Generated Schedule</p>
-                                            <div class="space-y-1.5">
-                                                <template x-for="item in getCropPlanSchedule(plan)" :key="plan.id + '-' + item.label + '-' + item.date">
-                                                    <div class="flex items-center justify-between gap-3 rounded-md bg-white/80 px-2.5 py-1.5">
-                                                        <span class="text-xs font-medium text-gray-700 truncate" x-text="item.label"></span>
-                                                        <span class="text-xs text-gray-500 whitespace-nowrap" x-text="formatDisplayDate(item.date)"></span>
-                                                    </div>
-                                                </template>
-                                            </div>
-                                        </div>
-
-                                        <p x-show="plan.description" class="mt-3 text-xs text-gray-600" x-text="plan.description"></p>
-                                    </div>
-                                </template>
-                            </div>
-
                             <!-- Events List -->
                             <div x-show="selectedDayEvents.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto">
                                 <template x-for="calEvent in selectedDayEvents" :key="calEvent.id">
@@ -283,10 +209,104 @@
                                     </div>
                                 </template>
                             </div>
-                            
                             <p x-show="selectedDayEvents.length === 0" class="text-sm text-gray-400 text-center py-6">
                                 No events for this day.<br>Plan a crop, add a note, or set a reminder.
                             </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planted Crop Details Modal -->
+            <div x-show="showCropDetailsModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="crop-details-title" role="dialog" aria-modal="true">
+                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                    <div x-show="showCropDetailsModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeCropDetailsModal()"></div>
+
+                    <div x-show="showCropDetailsModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                        <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Planted Crop Details</p>
+                                <h3 id="crop-details-title" class="mt-1 text-lg font-semibold text-gray-900" x-text="selectedDateDisplay"></h3>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
+                                    <span x-text="selectedCropPlanEvents.length"></span>
+                                    <span x-text="selectedCropPlanEvents.length === 1 ? ' crop' : ' crops'"></span>
+                                </span>
+                                <button @click="closeCropDetailsModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close crop details">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="max-h-[75vh] overflow-y-auto px-4 py-4 sm:px-5">
+                            <div class="space-y-3">
+                                <template x-for="plan in selectedCropPlanEvents" :key="'details-modal-' + plan.id">
+                                    <div class="rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-semibold text-gray-900 truncate" x-text="plan.title"></p>
+                                                <p class="text-xs text-emerald-700 mt-0.5">
+                                                    <span x-text="plan.crop || 'Crop plan'"></span>
+                                                    <span> planted on </span>
+                                                    <span x-text="formatDisplayDate(plan.date)"></span>
+                                                </p>
+                                            </div>
+                                            <span class="text-[11px] bg-white text-emerald-700 border border-emerald-100 rounded px-1.5 py-0.5">Crop Plan</span>
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-2 mt-3">
+                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Area</p>
+                                                <p class="text-sm font-medium text-gray-900" x-text="formatSquareMeters(plan.desired_area_sqm) || '-'"></p>
+                                            </div>
+                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Water</p>
+                                                <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(plan.water_source) || '-'"></p>
+                                            </div>
+                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Seed Type</p>
+                                                <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(plan.planting_material) || '-'"></p>
+                                            </div>
+                                            <div class="rounded-md bg-white/80 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-gray-500">Harvest</p>
+                                                <p class="text-sm font-medium text-gray-900" x-text="plan.estimated_harvest_date ? formatDisplayDate(plan.estimated_harvest_date) : '-'"></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div x-show="plan.predicted_production_mt" class="rounded-md border border-orange-100 bg-orange-50 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-orange-700">Predicted Production</p>
+                                                <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanProduction(plan)"></p>
+                                                <p x-show="plan.prediction_confidence" class="text-[11px] text-orange-700 mt-0.5" x-text="'Confidence: ' + formatPercent(plan.prediction_confidence)"></p>
+                                                <p x-show="hasCropPlanDamage(plan)" class="text-[11px] text-orange-700 mt-0.5" x-text="'Original: ' + formatMetricTons(plan.predicted_production_mt)"></p>
+                                            </div>
+
+                                            <div class="rounded-md border border-red-100 bg-red-50 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-red-700">Damage Status</p>
+                                                <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanDamageStatus(plan)"></p>
+                                                <p class="text-[11px] text-red-700 mt-0.5" x-text="formatCropPlanRemainingStatus(plan)"></p>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="getCropPlanSchedule(plan).length > 0" class="mt-3">
+                                            <p class="text-[11px] uppercase font-semibold text-gray-500 mb-1.5">Generated Schedule</p>
+                                            <div class="space-y-1.5">
+                                                <template x-for="item in getCropPlanSchedule(plan)" :key="plan.id + '-' + item.label + '-' + item.date">
+                                                    <div class="flex items-center justify-between gap-3 rounded-md bg-white/80 px-2.5 py-1.5">
+                                                        <span class="text-xs font-medium text-gray-700 truncate" x-text="item.label"></span>
+                                                        <span class="text-xs text-gray-500 whitespace-nowrap" x-text="formatDisplayDate(item.date)"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <p x-show="plan.description" class="mt-3 text-xs text-gray-600" x-text="plan.description"></p>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -300,7 +320,7 @@
                     <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
                         <div class="bg-white px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
                             <h3 class="text-base font-semibold text-gray-900 mb-3" x-text="modalTitle"></h3>
-                            
+
                             <div class="space-y-3">
                                 <!-- Title -->
                                 <div>
@@ -490,6 +510,7 @@
                 eventsByDay: {},
                 upcomingReminders: [],
                 cropPlans: [],
+                showCropDetailsModal: false,
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -732,6 +753,30 @@
 
                 getCropPlanDamageSummary(plan) {
                     return this.cropPlans.find((cropPlan) => String(cropPlan.id) === String(plan.id)) || null;
+                },
+
+                hasCropPlanDamage(plan) {
+                    const summary = this.getCropPlanDamageSummary(plan);
+                    return Number(summary?.reported_damage_sqm || 0) > 0;
+                },
+
+                getCropPlanHealthyAreaRatio(plan) {
+                    const summary = this.getCropPlanDamageSummary(plan);
+                    const plantedArea = Number(summary?.planted_area_sqm || plan.desired_area_sqm || 0);
+                    const remainingArea = Number(summary?.remaining_damage_sqm || plantedArea);
+
+                    if (!Number.isFinite(plantedArea) || plantedArea <= 0) {
+                        return 1;
+                    }
+
+                    return Math.max(0, Math.min(1, remainingArea / plantedArea));
+                },
+
+                formatCropPlanProduction(plan) {
+                    const production = Number(plan.predicted_production_mt);
+                    if (!Number.isFinite(production)) return '';
+
+                    return this.formatMetricTons(production * this.getCropPlanHealthyAreaRatio(plan));
                 },
 
                 formatCropPlanDamageStatus(plan) {
@@ -1030,17 +1075,24 @@
                 prevMonth() {
                     this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
                     this.selectedDate = null;
+                    this.showCropDetailsModal = false;
                     this.loadEvents();
                 },
 
                 nextMonth() {
                     this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
                     this.selectedDate = null;
+                    this.showCropDetailsModal = false;
                     this.loadEvents();
                 },
 
                 selectDay(day) {
                     this.selectedDate = day.date;
+                    this.showCropDetailsModal = this.selectedCropPlanEvents.length > 0;
+                },
+
+                closeCropDetailsModal() {
+                    this.showCropDetailsModal = false;
                 },
 
                 async loadEvents() {
