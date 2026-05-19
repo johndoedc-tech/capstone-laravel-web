@@ -81,7 +81,15 @@
                         Original: {{ number_format($record['original_production_mt'], 2) }} mt<br>
                         Adjusted: {{ number_format($record['adjusted_production_mt'], 2) }} mt
                         @if($record['damage_sqm'] > 0)
-                            <br><span class="damaged">Damage: {{ number_format($record['damage_ha'], 2) }} ha, {{ number_format($record['loss_production_mt'], 2) }} mt lost</span>
+                            <br><span class="damaged">
+                                Damage:
+                                @if($record['damage_ha'] < 0.01)
+                                    {{ number_format($record['damage_sqm'], 2) }} sqm ({{ number_format($record['damage_ha'], 4) }} ha)
+                                @else
+                                    {{ number_format($record['damage_ha'], 2) }} ha
+                                @endif
+                                affected, {{ number_format($record['loss_production_mt'], 2) }} mt lost
+                            </span>
                         @endif
                     </td>
                     <td>{{ $record['farm_type'] }}<br>{{ $record['seed_type'] }}</td>

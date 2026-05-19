@@ -278,7 +278,15 @@
                                         <p class="mt-1">Original: {{ number_format($record['original_production_mt'], 2) }} mt</p>
                                         <p>Adjusted: {{ number_format($record['adjusted_production_mt'], 2) }} mt</p>
                                         @if($record['damage_sqm'] > 0)
-                                            <p class="mt-1 font-semibold text-orange-700">Damage: {{ number_format($record['damage_ha'], 2) }} ha affected, {{ number_format($record['loss_production_mt'], 2) }} mt lost</p>
+                                            <p class="mt-1 font-semibold text-orange-700">
+                                                Damage:
+                                                @if($record['damage_ha'] < 0.01)
+                                                    {{ number_format($record['damage_sqm'], 2) }} sqm ({{ number_format($record['damage_ha'], 4) }} ha)
+                                                @else
+                                                    {{ number_format($record['damage_ha'], 2) }} ha
+                                                @endif
+                                                affected, {{ number_format($record['loss_production_mt'], 2) }} mt lost
+                                            </p>
                                         @endif
                                     </td>
                                     <td class="px-4 py-4 text-xs text-gray-600">
