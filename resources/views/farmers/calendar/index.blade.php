@@ -48,7 +48,7 @@
                             <p class="text-sm font-medium text-gray-900" x-text="selectedDateDisplay"></p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2">
-                            <button @click="openAddModal('damage_report')" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
+                            <button x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
                                 Damage Report
                             </button>
                             <button @click="openAddModal('crop_plan')" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
@@ -828,6 +828,10 @@
 
                 get todayDate() {
                     return formatLocalDate(new Date());
+                },
+
+                get canReportDamageOnSelectedDate() {
+                    return Boolean(this.selectedDate) && this.selectedDate <= this.todayDate;
                 },
 
                 get modalTitle() {
