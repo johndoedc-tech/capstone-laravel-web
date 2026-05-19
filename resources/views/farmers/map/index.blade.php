@@ -41,6 +41,31 @@
             color: #0f172a;
             background: #e2e8f0;
         }
+        .map-pinpoint {
+            width: 1.55rem;
+            height: 1.55rem;
+            border-radius: 50% 50% 50% 0;
+            background: #16a34a;
+            border: 3px solid #ffffff;
+            box-shadow: 0 8px 18px rgb(15 23 42 / 0.28);
+            transform: rotate(-45deg);
+            transform-origin: center;
+        }
+        .map-pinpoint::after {
+            content: '';
+            position: absolute;
+            inset: 0.36rem;
+            border-radius: 9999px;
+            background: #ffffff;
+            opacity: 0.9;
+        }
+        .map-pinpoint.no-data {
+            background: #94a3b8;
+        }
+        .map-pinpoint.preferred {
+            background: #7c3aed;
+            box-shadow: 0 8px 22px rgb(124 58 237 / 0.38);
+        }
     </style>
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
@@ -140,17 +165,6 @@
                         </div>
                     </div>
 
-                    <!-- Toggle Options -->
-                    <div class="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-boundaries" checked class="sr-only peer">
-                            <div
-                                class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600">
-                            </div>
-                            <span class="ms-2 text-sm text-gray-600">Show Boundaries</span>
-                        </label>
-                    </div>
-
                     <!-- Loading Indicator -->
                     <div id="loading-indicator" class="hidden mt-4">
                         <div class="flex items-center text-green-600">
@@ -173,31 +187,6 @@
                 <div class="p-3 lg:p-6 relative">
                     <div id="map" style="height: 500px; width: 100%;"
                         class="relative z-0 rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
-
-                    <!-- Legend - Collapsible on mobile -->
-                    <div id="legend"
-                        class="absolute bottom-4 left-4 lg:bottom-8 lg:left-8 bg-white rounded-lg shadow-lg border-2 border-gray-200 z-10 max-w-[200px] sm:max-w-[240px] lg:max-w-[280px]">
-                        <!-- Toggle Button (Mobile Only) -->
-                        <button id="legend-toggle" onclick="toggleLegend()"
-                            class="lg:hidden w-full flex items-center justify-between p-3 font-bold text-gray-800 text-xs uppercase tracking-wide">
-                            <span>Legend</span>
-                            <svg id="legend-icon" class="w-4 h-4 transform transition-transform" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-
-                        <!-- Legend Content -->
-                        <div id="legend-wrapper" class="hidden lg:block p-3 lg:p-4">
-                            <h4
-                                class="hidden lg:block font-bold text-gray-800 mb-2 lg:mb-3 text-xs lg:text-sm uppercase tracking-wide">
-                                Production Legend</h4>
-                            <div id="legend-content">
-                                <span class="text-xs text-gray-600">Select filters to view data</span>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Municipality Details Panel - Slides from right -->
                     <div id="details-panel"
@@ -347,7 +336,7 @@
 
     <script>
         let map;
-        let geojsonLayer;
+        let markerLayer;
         let currentData = {};
         let filterOptions = {};
         let currentMunicipality = null;
@@ -355,27 +344,26 @@
 
         // Base URLs using Laravel's url() helper
         const apiBase = '{{ url("/api/map") }}';
-        const dataPath = '{{ asset("data") }}';
 
         // User preferences from server
         const userPreferredMunicipality = '{{ $preferredMunicipality ?? '' }}';
         const userFavoriteCrops = @json($favoriteCrops ?? []);
 
-        // Municipality coordinates for focusing
+        // Municipality coordinates used for one pinpoint per municipality.
         const municipalityCoords = {
-            'ATOK': [16.5917, 120.7083],
-            'BAKUN': [16.7833, 120.6667],
-            'BOKOD': [16.4833, 120.8167],
-            'BUGUIAS': [16.7333, 120.8333],
-            'ITOGON': [16.3667, 120.6833],
-            'KABAYAN': [16.6167, 120.8500],
-            'KAPANGAN': [16.5667, 120.6000],
-            'KIBUNGAN': [16.6833, 120.6500],
-            'LA TRINIDAD': [16.4500, 120.5833],
-            'MANKAYAN': [16.8667, 120.7833],
-            'SABLAN': [16.4833, 120.5000],
-            'TUBA': [16.3333, 120.5500],
-            'TUBLAY': [16.5000, 120.6167]
+            'ATOK': [16.6274093, 120.7675527],
+            'BAKUN': [16.8300411, 120.6830301],
+            'BOKOD': [16.4908605, 120.8302587],
+            'BUGUIAS': [16.7192014, 120.826902],
+            'ITOGON': [16.3657698, 120.633172],
+            'KABAYAN': [16.6239201, 120.8381884],
+            'KAPANGAN': [16.5761774, 120.6030069],
+            'KIBUNGAN': [16.6937271, 120.6533943],
+            'LA TRINIDAD': [16.4586825, 120.5812456],
+            'MANKAYAN': [16.8572602, 120.7933631],
+            'SABLAN': [16.4966909, 120.4875959],
+            'TUBA': [16.3926636, 120.5612911],
+            'TUBLAY': [16.5145931, 120.6322972]
         };
 
         function normalizeMunicipalityName(name) {
@@ -414,20 +402,6 @@
 
                 // Open the details panel for this municipality
                 loadMunicipalityDetails(userPreferredMunicipality);
-            }
-        }
-
-        // Toggle legend on mobile
-        function toggleLegend() {
-            const wrapper = document.getElementById('legend-wrapper');
-            const icon = document.getElementById('legend-icon');
-
-            if (wrapper.classList.contains('hidden')) {
-                wrapper.classList.remove('hidden');
-                icon.classList.add('rotate-180');
-            } else {
-                wrapper.classList.add('hidden');
-                icon.classList.remove('rotate-180');
             }
         }
 
@@ -507,218 +481,74 @@
             }
         }
 
-        // Update map with choropleth
+        // Update map with one pinpoint marker per municipality.
         function updateMap(data) {
-            // Remove existing layer
-            if (geojsonLayer) {
-                map.removeLayer(geojsonLayer);
+            if (markerLayer) {
+                map.removeLayer(markerLayer);
             }
 
-            // Use the dataPath from Laravel's asset() helper
-            const geojsonPath = `${dataPath}/benguet.geojson`;
+            markerLayer = L.layerGroup().addTo(map);
+            const markerBounds = [];
 
-            // Load GeoJSON
-            fetch(geojsonPath)
-                .then(response => response.json())
-                .then(geojson => {
-                    geojsonLayer = L.geoJSON(geojson, {
-                        style: feature => getStyle(feature, data),
-                        onEachFeature: (feature, layer) => {
-                            const municipalityName = feature.properties.name;
-                            const municipalityData = data.data.find(d =>
-                                normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName)
-                            );
-
-                            // Popup
-                            let popupContent;
-                            if (municipalityData) {
-                                const viewType = document.getElementById('view-filter').value;
-                                const unit = getUnit(viewType);
-                                popupContent = `
-                                    <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
-                                        <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
-                                    </div>
-                                    <p class="text-[9px] sm:text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
-                                    <p class="text-lg sm:text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-[10px] sm:text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
-                                `;
-                            } else {
-                                popupContent = `
-                                    <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
-                                        <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
-                                    </div>
-                                    <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
-                                `;
-                            }
-                            layer.bindPopup(popupContent);
-
-                            // Hover effect
-                            layer.on({
-                                mouseover: e => {
-                                    layer.setStyle({
-                                        weight: 3,
-                                        color: '#666',
-                                        fillOpacity: 0.9
-                                    });
-                                },
-                                mouseout: e => {
-                                    geojsonLayer.resetStyle(layer);
-                                },
-                                click: e => {
-                                    loadMunicipalityDetails(municipalityName);
-                                }
-                            });
-                        }
-                    }).addTo(map);
-
-                    // Update legend
-                    updateLegend(data);
-
-                    // Highlight user's preferred municipality
-                    if (userPreferredMunicipality) {
-                        highlightUserMunicipality();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading GeoJSON:', error);
-                    alert('Error loading map boundaries: ' + error.message + '\nPath: ' + geojsonPath);
+            Object.entries(municipalityCoords).forEach(([municipalityName, coords]) => {
+                const municipalityData = findMunicipalityData(data, municipalityName);
+                const marker = L.marker(coords, {
+                    icon: createPinpointIcon(municipalityName, municipalityData)
                 });
+
+                marker.bindPopup(buildMarkerPopup(municipalityName, municipalityData));
+                marker.on('click', () => loadMunicipalityDetails(municipalityName));
+                marker.addTo(markerLayer);
+                markerBounds.push(coords);
+            });
+
+            if (markerBounds.length > 0 && !userPreferredMunicipality) {
+                map.fitBounds(markerBounds, { padding: [28, 28] });
+            }
         }
 
-        // Highlight user's preferred municipality with a special border
-        function highlightUserMunicipality() {
-            if (!geojsonLayer || !userPreferredMunicipality) return;
+        function findMunicipalityData(data, municipalityName) {
+            return (data.data || []).find(d =>
+                normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName)
+            );
+        }
 
-            geojsonLayer.eachLayer(layer => {
-                const name = layer.feature.properties.name;
-                if (normalizeMunicipalityName(name) === normalizeMunicipalityName(userPreferredMunicipality)) {
-                    layer.setStyle({
-                        weight: 4,
-                        color: '#7c3aed', // Purple border for user's location
-                        dashArray: '5, 5'
-                    });
-                    layer.bringToFront();
-                }
+        function createPinpointIcon(municipalityName, municipalityData) {
+            const isPreferred = userPreferredMunicipality &&
+                normalizeMunicipalityName(municipalityName) === normalizeMunicipalityName(userPreferredMunicipality);
+            const classes = [
+                'map-pinpoint',
+                municipalityData ? '' : 'no-data',
+                isPreferred ? 'preferred' : ''
+            ].filter(Boolean).join(' ');
+
+            return L.divIcon({
+                className: '',
+                html: `<div class="${classes}"></div>`,
+                iconSize: [25, 25],
+                iconAnchor: [12, 25],
+                popupAnchor: [0, -24]
             });
         }
 
-        // Get style for municipality based on value
-        function getStyle(feature, data) {
-            const municipalityName = feature.properties.name;
-            const municipalityData = data.data.find(d =>
-                normalizeMunicipalityName(d.municipality) === normalizeMunicipalityName(municipalityName)
-            );
-
-            // Check if this is the user's preferred municipality
-            const isUserMunicipality = userPreferredMunicipality &&
-                normalizeMunicipalityName(municipalityName) === normalizeMunicipalityName(userPreferredMunicipality);
-
-            let fillColor = '#d3d3d3'; // Default gray for no data
-
-            if (municipalityData && data.metadata) {
-                const value = municipalityData.value;
-                const { min, max } = data.metadata;
-
-                // Calculate color based on value (green gradient)
-                const ratio = (value - min) / (max - min);
-                fillColor = getColor(ratio);
+        function buildMarkerPopup(municipalityName, municipalityData) {
+            if (municipalityData) {
+                const viewType = document.getElementById('view-filter').value;
+                const unit = getUnit(viewType);
+                return `
+                    <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
+                        <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
+                    </div>
+                    <p class="text-[9px] sm:text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
+                    <p class="text-lg sm:text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-[10px] sm:text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
+                `;
             }
 
-            return {
-                fillColor: fillColor,
-                weight: isUserMunicipality ? 4 : 2,
-                opacity: 1,
-                color: isUserMunicipality ? '#7c3aed' : 'white',
-                dashArray: isUserMunicipality ? '5, 5' : null,
-                fillOpacity: 0.7
-            };
-        }
-
-        // Get color for value ratio (0-1)
-        function getColor(ratio) {
-            // Red to Green gradient - red = low, green = high
-            const colors = [
-                '#991b1b', // Very dark red (lowest)
-                '#dc2626', // Dark red
-                '#ef4444', // Red
-                '#f97316', // Orange
-                '#f59e0b', // Amber
-                '#eab308', // Yellow
-                '#84cc16', // Lime green
-                '#22c55e', // Green
-                '#15803d'  // Dark green (highest)
-            ];
-
-            const index = Math.floor(ratio * (colors.length - 1));
-            return colors[index];
-        }
-
-        // Update legend
-        function updateLegend(data) {
-            const legendContent = document.getElementById('legend-content');
-
-            if (!data.metadata) {
-                legendContent.innerHTML = '<span class="text-sm text-gray-600">No data available</span>';
-                return;
-            }
-
-            const { min, max } = data.metadata;
-            const viewType = document.getElementById('view-filter').value;
-            const unit = getUnit(viewType);
-
-            legendContent.innerHTML = `
-                <div class="space-y-2">
-                    <!-- Color gradient -->
-                    <div class="flex flex-col gap-1.5">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border-2 border-gray-400" style="background-color: #15803d;"></div>
-                            <span class="text-xs font-semibold text-gray-700">Highest</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #22c55e;"></div>
-                            <span class="text-xs text-gray-600">Very High</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #84cc16;"></div>
-                            <span class="text-xs text-gray-600">High</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #eab308;"></div>
-                            <span class="text-xs text-gray-600">Medium-High</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #f59e0b;"></div>
-                            <span class="text-xs text-gray-600">Medium</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #f97316;"></div>
-                            <span class="text-xs text-gray-600">Medium-Low</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #ef4444;"></div>
-                            <span class="text-xs text-gray-600">Low</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #dc2626;"></div>
-                            <span class="text-xs text-gray-600">Very Low</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border-2 border-gray-400" style="background-color: #991b1b;"></div>
-                            <span class="text-xs font-semibold text-gray-700">Lowest</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-6 rounded border border-gray-300" style="background-color: #ffffff;"></div>
-                            <span class="text-xs text-gray-600">No data</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Range values -->
-                    <div class="pt-2 border-t border-gray-200">
-                        <div class="text-xs text-gray-600">
-                            <div><span class="font-medium">Max:</span> <span class="font-bold" style="color: #15803d;">${Number(max).toLocaleString()} ${unit}</span></div>
-                            <div><span class="font-medium">Min:</span> <span class="font-bold" style="color: #991b1b;">${Number(min).toLocaleString()} ${unit}</span></div>
-                        </div>
-                    </div>
+            return `
+                <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
+                    <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                 </div>
+                <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
             `;
         }
 
@@ -1178,29 +1008,11 @@
             }
         }
 
-        // Toggle boundaries visibility
-        function toggleBoundaries(show) {
-            if (!geojsonLayer) return;
-
-            if (show) {
-                if (!map.hasLayer(geojsonLayer)) {
-                    geojsonLayer.addTo(map);
-                }
-            } else {
-                if (map.hasLayer(geojsonLayer)) {
-                    map.removeLayer(geojsonLayer);
-                }
-            }
-        }
-
         // Event listeners
         document.getElementById('crop-filter').addEventListener('change', onFilterChange);
         document.getElementById('year-filter').addEventListener('change', onFilterChange);
         document.getElementById('view-filter').addEventListener('change', onFilterChange);
         document.getElementById('farm-type-filter').addEventListener('change', onFilterChange);
-        document.getElementById('toggle-boundaries').addEventListener('change', function () {
-            toggleBoundaries(this.checked);
-        });
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', initMap);
