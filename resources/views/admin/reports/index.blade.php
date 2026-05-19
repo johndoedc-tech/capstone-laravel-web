@@ -80,6 +80,30 @@
                     </div>
                 </div>
 
+                <!-- Planting Report -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
+                    <div class="p-4 lg:p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-emerald-100 p-3 rounded-lg flex-shrink-0">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m0-14c-2.5 0-4.5 1.6-4.5 3.8 0 1.6 1 3 2.5 3.6M12 7c2.5 0 4.5 1.6 4.5 3.8 0 1.6-1 3-2.5 3.6M7 21h10"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-2">Planting Report</h3>
+                                <p class="text-xs lg:text-sm text-gray-600 mb-4">Review farmer calendar crop plans, planting areas, harvest schedules, damage reports, and adjusted production estimates.</p>
+                                <a href="{{ route('admin.reports.planting-report') }}"
+                                   class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">
+                                    Generate Report
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Prediction Analytics Report -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition">
                     <div class="p-4 lg:p-6">

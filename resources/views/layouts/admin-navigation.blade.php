@@ -67,6 +67,14 @@
             <span class="font-medium">Interactive Map</span>
         </a>
 
+        <!-- Planting Report -->
+        <a href="{{ route('admin.reports.planting-report') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('admin.reports.planting-report') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
+            <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m0-14c-2.5 0-4.5 1.6-4.5 3.8 0 1.6 1 3 2.5 3.6M12 7c2.5 0 4.5 1.6 4.5 3.8 0 1.6-1 3-2.5 3.6M7 21h10"></path>
+            </svg>
+            <span class="font-medium">Planting Report</span>
+        </a>
+
         <!-- Divider -->
         <div class="!my-3 border-t border-white/10"></div>
 
@@ -96,7 +104,7 @@
         <p class="px-3 lg:px-4 pt-1 pb-2 text-[10px] lg:text-xs font-semibold uppercase tracking-wider text-primary-200/60">Reports</p>
 
         <!-- Reports -->
-        <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('admin.reports.*') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
+        <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('admin.reports.index', 'admin.reports.production-summary', 'admin.reports.prediction-analytics', 'admin.reports.comparative-analysis', 'admin.reports.user-activity') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
             <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>

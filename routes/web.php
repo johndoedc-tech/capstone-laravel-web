@@ -242,6 +242,7 @@ Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
         Route::get('/production-summary', [ReportController::class, 'productionSummary'])->name('production-summary');
+        Route::get('/planting-report', [ReportController::class, 'plantingReport'])->name('planting-report');
         Route::get('/prediction-analytics', [ReportController::class, 'predictionAnalytics'])->name('prediction-analytics');
         Route::get('/comparative-analysis', [ReportController::class, 'comparativeAnalysis'])->name('comparative-analysis');
         Route::get('/user-activity', [ReportController::class, 'userActivity'])->name('user-activity');

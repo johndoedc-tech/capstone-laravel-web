@@ -14,6 +14,7 @@
                 'admin.users.index' => 'Users',
                 'admin.reports.index' => 'Reports',
                 'admin.reports.production-summary' => 'Production Summary',
+                'admin.reports.planting-report' => 'Planting Report',
                 'admin.reports.prediction-analytics' => 'Prediction Analytics',
                 'admin.reports.comparative-analysis' => 'Comparative Analysis',
                 'admin.reports.user-activity' => 'User Activity',
