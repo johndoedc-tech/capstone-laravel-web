@@ -278,10 +278,9 @@
 
                                         <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             <div x-show="plan.predicted_production_mt" class="rounded-md border border-orange-100 bg-orange-50 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-orange-700">Predicted Production</p>
+                                                <p class="text-[11px] uppercase font-semibold text-orange-700" x-text="hasCropPlanDamage(plan) ? 'Adjusted Production' : 'Predicted Production'"></p>
                                                 <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanProduction(plan)"></p>
-                                                <p x-show="plan.prediction_confidence" class="text-[11px] text-orange-700 mt-0.5" x-text="'Confidence: ' + formatPercent(plan.prediction_confidence)"></p>
-                                                <p x-show="hasCropPlanDamage(plan)" class="text-[11px] text-orange-700 mt-0.5" x-text="'Original: ' + formatMetricTons(plan.predicted_production_mt)"></p>
+                                                <p x-show="hasCropPlanDamage(plan)" class="text-[11px] text-orange-700 mt-0.5" x-text="'Adjusted because of damage. Original: ' + formatMetricTons(plan.predicted_production_mt)"></p>
                                             </div>
 
                                             <div class="rounded-md border border-red-100 bg-red-50 px-2.5 py-2">
@@ -323,7 +322,7 @@
 
                             <div class="space-y-3">
                                 <!-- Title -->
-                                <div>
+                                <div x-show="modalType !== 'damage_report'">
                                     <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : (modalType === 'damage_report' ? 'Report Title (optional)' : 'Title *')"></label>
                                     <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : (modalType === 'damage_report' ? 'e.g., Typhoon damage' : 'e.g., Cabbage harvest day')">
                                 </div>
@@ -362,6 +361,16 @@
                                 </div>
 
                                 <div x-show="modalType === 'damage_report'" class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Cause of Damage *</label>
+                                        <select x-model="eventForm.damage_cause" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-red-500 focus:border-red-500">
+                                            <option value="">Select disaster or cause...</option>
+                                            <template x-for="cause in damageCauseOptions" :key="cause.value">
+                                                <option :value="cause.value" x-text="cause.label"></option>
+                                            </template>
+                                        </select>
+                                    </div>
+
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Reported Planted Crop *</label>
                                         <select x-model="eventForm.crop_plan_event_id" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-red-500 focus:border-red-500">
@@ -435,8 +444,6 @@
                                                 <span x-text="productionPrediction.data ? formatSquareMeters(productionPrediction.data.area_sqm) : ''"></span>
                                                 <span x-show="productionPrediction.data"> / </span>
                                                 <span x-text="productionPrediction.data ? productionPrediction.data.area_hectares + ' ha' : ''"></span>
-                                                <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence">, </span>
-                                                <span x-show="productionPrediction.data && productionPrediction.data.prediction_confidence" x-text="formatPercent(productionPrediction.data.prediction_confidence)"></span>
                                             </p>
                                             <p x-show="productionPrediction.data && productionPrediction.data.production_per_ha_mt" class="text-[11px] text-orange-600 leading-tight mt-0.5" x-text="formatMetricTons(productionPrediction.data.production_per_ha_mt) + ' per ha'"></p>
                                         </div>
@@ -529,6 +536,17 @@
                     { value: 'weather', label: 'Weather', icon: '🌤️' },
                     { value: 'other', label: 'Other', icon: '📝' },
                 ],
+                damageCauseOptions: [
+                    { value: 'typhoon', label: 'Typhoon' },
+                    { value: 'heavy_rain', label: 'Heavy rain' },
+                    { value: 'flood', label: 'Flood' },
+                    { value: 'drought', label: 'Drought' },
+                    { value: 'strong_wind', label: 'Strong wind' },
+                    { value: 'landslide', label: 'Landslide' },
+                    { value: 'hail', label: 'Hail' },
+                    { value: 'pest_disease', label: 'Pest or disease' },
+                    { value: 'other', label: 'Other' },
+                ],
                 harvestBaseDays: {
                     'Cabbage': 58,
                     'Broccoli': 60,
@@ -605,6 +623,7 @@
                     desired_area_sqm: '',
                     damage_area_sqm: '',
                     crop_plan_event_id: '',
+                    damage_cause: '',
                     water_source: '',
                     planting_material: '',
                     planning_date: '',
@@ -732,6 +751,10 @@
                     return labels[value] || value;
                 },
 
+                formatDamageCause(value) {
+                    return this.damageCauseOptions.find((cause) => cause.value === value)?.label || '';
+                },
+
                 formatDisplayDate(dateString) {
                     if (!dateString) return '';
 
@@ -836,14 +859,14 @@
 
                 get modalTitle() {
                     if (this.modalType === 'crop_plan') return 'Plan a Crop';
-                    if (this.modalType === 'damage_report') return 'Damage Report';
+                    if (this.modalType === 'damage_report') return 'Report Crop Damage';
                     if (this.modalType === 'reminder') return '🔔 Set Reminder';
                     return '📝 Add Note';
                 },
 
                 get modalSubmitText() {
                     if (this.modalType === 'crop_plan') return 'Save Crop Plan';
-                    if (this.modalType === 'damage_report') return 'Save Damage Report';
+                    if (this.modalType === 'damage_report') return 'Submit Damage Report';
                     if (this.modalType === 'reminder') return 'Set Reminder';
                     return 'Save Note';
                 },
@@ -858,6 +881,7 @@
                     }
                     if (this.modalType === 'damage_report') {
                         return Boolean(this.eventForm.crop_plan_event_id)
+                            && Boolean(this.eventForm.damage_cause)
                             && Number(this.eventForm.damage_area_sqm) > 0
                             && Boolean(this.eventForm.planning_date)
                             && this.eventForm.planning_date <= this.todayDate
@@ -1158,6 +1182,7 @@
                         desired_area_sqm: '',
                         damage_area_sqm: '',
                         crop_plan_event_id: '',
+                        damage_cause: '',
                         water_source: '',
                         planting_material: '',
                         planning_date: type === 'crop_plan' ? this.defaultPlanningDate : (type === 'damage_report' ? this.defaultDamageDate : ''),
@@ -1178,15 +1203,16 @@
                         const isCropPlan = this.modalType === 'crop_plan';
                         const isDamageReport = this.modalType === 'damage_report';
                         const eventDate = (isCropPlan || isDamageReport) ? this.eventForm.planning_date : this.selectedDate;
+                        const selectedPlan = this.selectedDamageCropPlan;
+                        const damageCause = this.formatDamageCause(this.eventForm.damage_cause);
                         const eventTitle = isCropPlan
                             ? (this.eventForm.title || `Plan ${this.eventForm.crop}`)
                             : (isDamageReport
-                                ? (this.eventForm.title || `Damage report - ${this.selectedDamageCropPlan?.crop || 'Crop'}`)
+                                ? `${damageCause} damage - ${selectedPlan?.crop || 'Crop'}`
                                 : this.eventForm.title);
 
-                        const selectedPlan = this.selectedDamageCropPlan;
                         const eventDescription = isDamageReport && !this.eventForm.description
-                            ? `Damage reported for ${selectedPlan?.crop || 'selected crop plan'}. Damaged area: ${this.formatSquareMeters(this.eventForm.damage_area_sqm)}.`
+                            ? `Cause: ${damageCause}. Damage reported for ${selectedPlan?.crop || 'selected crop plan'}. Damaged area: ${this.formatSquareMeters(this.eventForm.damage_area_sqm)}.`
                             : this.eventForm.description;
 
                         const response = await fetch('{{ route('farmer.calendar.store') }}', {
