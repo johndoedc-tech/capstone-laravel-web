@@ -116,7 +116,7 @@ const handleNavigationRequest = async (request) => {
 
         if (isSuccessfulBasicResponse(response)) {
             await cache.put(request, response.clone());
-            trimPageCache();
+            await trimPageCache();
         }
 
         return response;
