@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Harviana - Change Password</title>
@@ -16,8 +16,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-gradient-to-br from-lime-50 via-white to-emerald-50 font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6">
+    <body class="min-h-screen bg-gradient-to-br from-lime-50 via-white to-emerald-50 font-sans text-gray-900 antialiased" style="min-height: var(--harviana-viewport-height);">
+        <div class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6" style="min-height: var(--harviana-viewport-height); padding-top: calc(2rem + env(safe-area-inset-top, 0px)); padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px)); padding-left: calc(1rem + env(safe-area-inset-left, 0px)); padding-right: calc(1rem + env(safe-area-inset-right, 0px));">
             <div class="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 shadow-xl sm:p-8">
                 <div class="mb-6 text-center">
                     <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600">

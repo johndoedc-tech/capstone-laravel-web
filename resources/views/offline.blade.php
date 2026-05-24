@@ -21,11 +21,11 @@
         }
 
         body {
-            min-height: 100vh;
+            min-height: var(--harviana-viewport-height, 100dvh);
             margin: 0;
             display: grid;
             place-items: center;
-            padding: 24px;
+            padding: calc(24px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(24px + env(safe-area-inset-left, 0px));
             background:
                 linear-gradient(135deg, rgba(217, 228, 194, 0.95), rgba(247, 248, 240, 0.98)),
                 #f7f8f0;
