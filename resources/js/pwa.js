@@ -47,7 +47,7 @@ const syncThemeColor = (color) => {
 };
 
 window.addEventListener('harviana-sidebar-theme', (event) => {
-    syncThemeColor(event.detail?.open ? '#355872' : '#f7f8f0');
+    syncThemeColor('#355872');
 });
 
 if ('serviceWorker' in navigator && isSecureContextForServiceWorker()) {

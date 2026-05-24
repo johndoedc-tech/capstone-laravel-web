@@ -22,8 +22,13 @@ body {
 	overscroll-behavior-y: none;
 }
 
+html {
+	background-color: #355872;
+}
+
 body {
 	min-height: var(--harviana-viewport-height);
+	background-color: #f7f8f0;
 }
 
 .app-shell {

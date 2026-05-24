@@ -36,11 +36,13 @@ class PwaTest extends TestCase
 
         $this->assertSame('Harviana Agricultural Decision Support System', $manifest['name']);
         $this->assertSame('Harviana', $manifest['short_name']);
-        $this->assertSame('/dashboard', $manifest['start_url']);
+        $this->assertSame('/app', $manifest['id']);
+        $this->assertSame('/app', $manifest['start_url']);
         $this->assertSame('/', $manifest['scope']);
-        $this->assertSame('fullscreen', $manifest['display']);
-        $this->assertSame(['fullscreen', 'standalone'], $manifest['display_override']);
-        $this->assertSame('#f7f8f0', $manifest['theme_color']);
+        $this->assertSame('standalone', $manifest['display']);
+        $this->assertSame('#355872', $manifest['theme_color']);
+        $this->assertSame('en-PH', $manifest['lang']);
+        $this->assertFalse($manifest['prefer_related_applications']);
 
         $icons = collect($manifest['icons']);
         $this->assertTrue($icons->contains(fn (array $icon): bool => $icon['sizes'] === '192x192' && str_contains($icon['purpose'], 'any')));
@@ -59,10 +61,17 @@ class PwaTest extends TestCase
 
         $contents = file_get_contents($path);
 
-        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.17'", $contents);
+        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.18'", $contents);
         $this->assertStringContainsString("const OFFLINE_URL = '/offline'", $contents);
+        $this->assertStringContainsString("'/app'", $contents);
         $this->assertStringContainsString('CLEAR_RUNTIME_CACHES', $contents);
         $this->assertStringContainsString('handleNavigationRequest', $contents);
+    }
+
+    public function test_pwa_launch_route_redirects_by_session_state(): void
+    {
+        $this->get('/app')
+            ->assertRedirect(route('welcome', absolute: false));
     }
 
     public function test_mobile_viewport_and_safe_area_assets_are_configured(): void
@@ -72,7 +81,11 @@ class PwaTest extends TestCase
             file_get_contents(resource_path('views/partials/pwa.blade.php'))
         );
         $this->assertStringContainsString(
-            'name="theme-color" content="#f7f8f0"',
+            'name="theme-color" content="#355872"',
+            file_get_contents(resource_path('views/partials/pwa.blade.php'))
+        );
+        $this->assertStringContainsString(
+            'format-detection" content="telephone=no"',
             file_get_contents(resource_path('views/partials/pwa.blade.php'))
         );
 

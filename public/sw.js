@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1.15.17';
+const CACHE_VERSION = 'v1.15.18';
 const PRECACHE = `harviana-precache-${CACHE_VERSION}`;
 const STATIC_CACHE = `harviana-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `harviana-pages-${CACHE_VERSION}`;
@@ -28,6 +28,7 @@ const STATIC_PATH_PREFIXES = [
 ];
 
 const AUTH_PATHS = [
+    '/app',
     '/login',
     '/register',
     '/logout',
