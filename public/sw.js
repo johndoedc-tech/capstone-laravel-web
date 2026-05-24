@@ -142,7 +142,10 @@ const handleStaticAssetRequest = async (request) => {
 
             return response;
         })
-        .catch(() => cachedResponse);
+        .catch(() => cachedResponse || new Response('Asset unavailable while offline.', {
+            status: 503,
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        }));
 
     return cachedResponse || networkFetch;
 };
