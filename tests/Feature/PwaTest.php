@@ -38,8 +38,9 @@ class PwaTest extends TestCase
         $this->assertSame('Harviana', $manifest['short_name']);
         $this->assertSame('/dashboard', $manifest['start_url']);
         $this->assertSame('/', $manifest['scope']);
-        $this->assertSame('standalone', $manifest['display']);
-        $this->assertSame('#4d7c0f', $manifest['theme_color']);
+        $this->assertSame('fullscreen', $manifest['display']);
+        $this->assertSame(['fullscreen', 'standalone'], $manifest['display_override']);
+        $this->assertSame('#f7f8f0', $manifest['theme_color']);
 
         $icons = collect($manifest['icons']);
         $this->assertTrue($icons->contains(fn (array $icon): bool => $icon['sizes'] === '192x192' && str_contains($icon['purpose'], 'any')));
@@ -70,6 +71,10 @@ class PwaTest extends TestCase
             'apple-mobile-web-app-status-bar-style" content="black-translucent"',
             file_get_contents(resource_path('views/partials/pwa.blade.php'))
         );
+        $this->assertStringContainsString(
+            'name="theme-color" content="#f7f8f0"',
+            file_get_contents(resource_path('views/partials/pwa.blade.php'))
+        );
 
         foreach ([
             resource_path('views/layouts/app.blade.php'),
@@ -90,6 +95,7 @@ class PwaTest extends TestCase
 
         $js = file_get_contents(resource_path('js/pwa.js'));
         $this->assertStringContainsString('syncViewportHeight', $js);
+        $this->assertStringContainsString('syncThemeColor', $js);
         $this->assertStringContainsString('window.visualViewport', $js);
     }
 }

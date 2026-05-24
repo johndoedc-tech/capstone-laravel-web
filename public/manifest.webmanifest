@@ -5,9 +5,10 @@
     "id": "/dashboard",
     "start_url": "/dashboard",
     "scope": "/",
-    "display": "standalone",
+    "display": "fullscreen",
+    "display_override": ["fullscreen", "standalone"],
     "orientation": "portrait-primary",
-    "theme_color": "#4d7c0f",
+    "theme_color": "#f7f8f0",
     "background_color": "#f7f8f0",
     "categories": ["productivity", "utilities", "education"],
     "icons": [

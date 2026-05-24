@@ -6,7 +6,7 @@
     <div class="p-4 lg:p-6 border-b border-primary-700/30">
         <div class="flex items-start gap-3">
             <button
-                @click="open = false"
+                @click="open = false; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: false } }))"
                 class="lg:hidden mt-0.5 p-2 rounded-lg border border-white/15 text-white hover:bg-white/10 transition-colors flex-shrink-0"
                 aria-label="Close sidebar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,12 +137,12 @@
 </aside>
 
 <!-- Mobile Menu Button -->
-<button x-show="!open" @click="open = true" class="mobile-safe-top lg:hidden fixed z-50 p-2.5 rounded-xl shadow-lg border border-primary-700/30 hover:bg-primary-600 active:scale-95 transition-transform" style="background-color: #355872;">
+<button x-show="!open" @click="open = true; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: true } }))" class="mobile-safe-top lg:hidden fixed z-50 p-2.5 rounded-xl shadow-lg border border-primary-700/30 hover:bg-primary-600 active:scale-95 transition-transform" style="background-color: #355872;">
     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
     </svg>
 </button>
 
 <!-- Mobile overlay -->
-<div x-show="open" @click="open = false" class="mobile-overlay-safe lg:hidden fixed bg-black bg-opacity-50 z-30"></div>
+<div x-show="open" @click="open = false; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: false } }))" class="mobile-overlay-safe lg:hidden fixed bg-black bg-opacity-50 z-30"></div>
 </div>

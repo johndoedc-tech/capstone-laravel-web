@@ -40,6 +40,16 @@ const syncViewportHeight = () => {
     }
 };
 
+const syncThemeColor = (color) => {
+    document.querySelectorAll('meta[name="theme-color"], meta[name="msapplication-TileColor"]').forEach((meta) => {
+        meta.setAttribute('content', color);
+    });
+};
+
+window.addEventListener('harviana-sidebar-theme', (event) => {
+    syncThemeColor(event.detail?.open ? '#355872' : '#f7f8f0');
+});
+
 if ('serviceWorker' in navigator && isSecureContextForServiceWorker()) {
     let refreshing = false;
 
