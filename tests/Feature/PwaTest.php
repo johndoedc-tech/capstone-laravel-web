@@ -63,4 +63,33 @@ class PwaTest extends TestCase
         $this->assertStringContainsString('CLEAR_RUNTIME_CACHES', $contents);
         $this->assertStringContainsString('handleNavigationRequest', $contents);
     }
+
+    public function test_mobile_viewport_and_safe_area_assets_are_configured(): void
+    {
+        $this->assertStringContainsString(
+            'apple-mobile-web-app-status-bar-style" content="black-translucent"',
+            file_get_contents(resource_path('views/partials/pwa.blade.php'))
+        );
+
+        foreach ([
+            resource_path('views/layouts/app.blade.php'),
+            resource_path('views/layouts/admin.blade.php'),
+            resource_path('views/layouts/guest.blade.php'),
+            resource_path('views/auth/onboarding.blade.php'),
+            resource_path('views/auth/password-change-required.blade.php'),
+            resource_path('views/welcome.blade.php'),
+            resource_path('views/offline.blade.php'),
+        ] as $viewPath) {
+            $this->assertStringContainsString('viewport-fit=cover', file_get_contents($viewPath));
+        }
+
+        $css = file_get_contents(resource_path('css/app.css'));
+        $this->assertStringContainsString('--harviana-viewport-height: 100dvh', $css);
+        $this->assertStringContainsString('env(safe-area-inset-top', $css);
+        $this->assertStringContainsString('.mobile-sidebar', $css);
+
+        $js = file_get_contents(resource_path('js/pwa.js'));
+        $this->assertStringContainsString('syncViewportHeight', $js);
+        $this->assertStringContainsString('window.visualViewport', $js);
+    }
 }

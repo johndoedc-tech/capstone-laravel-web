@@ -32,6 +32,14 @@ const clearRuntimeCachesOnAuthBoundary = () => {
     });
 };
 
+const syncViewportHeight = () => {
+    const height = window.visualViewport?.height || window.innerHeight;
+
+    if (height > 0) {
+        document.documentElement.style.setProperty('--harviana-viewport-height', `${height}px`);
+    }
+};
+
 if ('serviceWorker' in navigator && isSecureContextForServiceWorker()) {
     let refreshing = false;
 
@@ -68,3 +76,8 @@ if ('serviceWorker' in navigator && isSecureContextForServiceWorker()) {
         }
     });
 }
+
+syncViewportHeight();
+window.addEventListener('resize', syncViewportHeight, { passive: true });
+window.visualViewport?.addEventListener('resize', syncViewportHeight, { passive: true });
+window.visualViewport?.addEventListener('scroll', syncViewportHeight, { passive: true });

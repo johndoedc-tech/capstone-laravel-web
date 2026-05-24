@@ -33,11 +33,11 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen flex" style="background-color: #F7F8F0;">
+        <div class="app-shell flex">
             @include('layouts.navigation')
 
             <!-- Page Content -->
-            <main class="flex-1 lg:ml-64 overflow-y-auto pt-14 lg:pt-0">
+            <main class="app-main flex-1 lg:ml-64 overflow-y-auto pt-16 lg:pt-0">
                 {{ $slot }}
             </main>
         </div>

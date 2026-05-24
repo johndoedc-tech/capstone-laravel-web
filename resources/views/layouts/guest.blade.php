@@ -15,7 +15,7 @@
         @endphp
 
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Harviana - {{ $pageTitle }}</title>
@@ -34,7 +34,7 @@
         <style>
             body {
                 background: linear-gradient(135deg, #F6F0D7 0%, #E8EFD9 50%, #D9E4C2 100%);
-                min-height: 100vh;
+                min-height: var(--harviana-viewport-height);
             }
             .auth-card {
                 backdrop-filter: blur(10px);
@@ -44,7 +44,7 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <!-- Header with Back to Home Button -->
-        <header class="fixed top-3 sm:top-4 md:top-6 left-3 sm:left-4 md:left-6 z-50">
+        <header class="fixed z-50" style="top: calc(0.75rem + env(safe-area-inset-top, 0px)); left: calc(0.75rem + env(safe-area-inset-left, 0px));">
             <div class="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-3.5 inline-flex border border-white/50">
                 <nav class="flex items-center justify-center">
                     <a href="{{ route('welcome') }}" class="text-gray-700 text-xs sm:text-sm md:text-base font-medium hover:text-green-700 transition-colors duration-300 relative group inline-flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
@@ -58,9 +58,9 @@
             </div>
         </header>
 
-        <div class="min-h-screen flex flex-col md:flex-row">
+        <div class="min-h-screen flex flex-col md:flex-row" style="min-height: var(--harviana-viewport-height); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);">
             <!-- Left Panel - Logo / Brand -->
-            <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-8 sm:py-10 md:py-0 px-6 md:px-12 md:min-h-screen">
+            <div class="w-full md:w-2/5 flex flex-col justify-center items-center py-8 sm:py-10 md:py-0 px-6 md:px-12 md:min-h-screen" style="min-height: var(--harviana-viewport-height);">
                 <div class="text-center">
                     <div class="mb-0 relative mx-auto w-72 h-36 sm:w-80 sm:h-48 md:w-[33rem] md:h-56 overflow-hidden">
                         <img src="{{ asset('images/HarvianaLogo.png') }}" alt="Harviana Logo" class="w-[30rem] sm:w-[33rem] md:w-[35rem] h-auto absolute top-0 left-1/2 -translate-x-1/2">
@@ -75,7 +75,7 @@
             </div>
 
             <!-- Right Panel - Auth Form -->
-            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-4 sm:py-6 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen bg-white/50 md:bg-white/70">
+            <div class="w-full md:w-3/5 flex flex-col justify-center items-center py-4 sm:py-6 md:py-0 px-4 sm:px-6 md:px-12 md:min-h-screen bg-white/50 md:bg-white/70" style="min-height: var(--harviana-viewport-height);">
                 <div class="w-full max-w-md auth-card px-5 sm:px-8 py-6 sm:py-8 shadow-xl rounded-2xl border border-gray-100 bg-white">
                     {{ $slot }}
                 </div>
