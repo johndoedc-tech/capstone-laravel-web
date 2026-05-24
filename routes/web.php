@@ -103,6 +103,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
 // Shared dashboard entry point: redirect admins to admin dashboard, keep farmers on farmer dashboard.
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
