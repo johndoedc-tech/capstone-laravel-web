@@ -5,6 +5,31 @@
         </h2>
     </x-slot>
 
+    <style>
+        .calendar-sidebar-card,
+        .calendar-event-card,
+        .calendar-event-content {
+            min-width: 0;
+        }
+
+        .calendar-event-card {
+            overflow: hidden;
+        }
+
+        .calendar-event-title,
+        .calendar-event-description,
+        .calendar-chip {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .calendar-chip {
+            max-width: 100%;
+            white-space: normal;
+            line-height: 1.15;
+        }
+    </style>
+
     <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto" x-data="farmerCalendar()">
             
@@ -115,13 +140,13 @@
                 </div>
 
                 <!-- Sidebar -->
-                <div class="space-y-4 lg:space-y-6">
+                <div class="space-y-4 lg:space-y-6 min-w-0">
                     
                     <!-- Upcoming Reminders -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
+                    <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="text-xl">🔔</span>
-                            <h3 class="font-semibold text-gray-900">Upcoming Reminders</h3>
+                            <h3 class="font-semibold text-gray-900 min-w-0 break-words">Upcoming Reminders</h3>
                         </div>
                         
                         <div x-show="upcomingReminders.length === 0" class="text-sm text-gray-400 text-center py-4">
@@ -130,15 +155,15 @@
                         
                         <div class="space-y-3">
                             <template x-for="reminder in upcomingReminders" :key="reminder.id">
-                                <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
-                                    <span class="text-lg" x-text="reminder.category_icon"></span>
+                                <div class="calendar-event-card flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
+                                    <span class="text-lg flex-shrink-0" x-text="reminder.category_icon"></span>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-medium text-gray-900 text-sm" x-text="reminder.title"></p>
-                                        <p class="text-xs text-amber-600 mt-0.5">
+                                        <p class="calendar-event-title font-medium text-gray-900 text-sm leading-snug" x-text="reminder.title"></p>
+                                        <p class="calendar-event-description text-xs text-amber-600 mt-0.5 leading-relaxed">
                                             <span x-text="reminder.is_today ? 'Today' : (reminder.is_tomorrow ? 'Tomorrow' : reminder.day_name + ', ' + reminder.date)"></span>
                                             <span x-show="reminder.reminder_time" x-text="' at ' + reminder.reminder_time"></span>
                                         </p>
-                                        <span x-show="reminder.crop" class="inline-block text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded mt-1" x-text="reminder.crop"></span>
+                                        <span x-show="reminder.crop" class="calendar-chip inline-flex text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded mt-1" x-text="reminder.crop"></span>
                                     </div>
                                 </div>
                             </template>
@@ -146,7 +171,7 @@
                     </div>
 
                     <!-- Selected Day Details -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
+                    <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
                         <div x-show="!selectedDate" class="text-center py-8 text-gray-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -156,51 +181,51 @@
 
                         <div x-show="selectedDate">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-semibold text-gray-900" x-text="selectedDateDisplay"></h3>
+                                <h3 class="font-semibold text-gray-900 min-w-0 break-words" x-text="selectedDateDisplay"></h3>
                             </div>
 
                             <!-- Add Buttons -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                                <button @click="openAddModal('note')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <button @click="openAddModal('note')" class="min-w-0 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>📝</span> Add Note
                                 </button>
-                                <button @click="openAddModal('reminder')" class="text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                <button @click="openAddModal('reminder')" class="min-w-0 text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>🔔</span> Reminder
                                 </button>
                             </div>
 
                             <!-- Events List -->
-                            <div x-show="selectedDayEvents.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto">
+                            <div x-show="selectedDayEvents.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
                                 <template x-for="calEvent in selectedDayEvents" :key="calEvent.id">
-                                    <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors">
-                                        <span class="text-lg" x-text="calEvent.category_icon"></span>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="font-medium text-gray-900 text-sm" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
-                                                <span x-show="calEvent.category === 'crop_plan'" class="text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
-                                                <span x-show="calEvent.category === 'damage_report'" class="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
+                                    <div class="calendar-event-card flex items-start gap-2 p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors">
+                                        <span class="text-lg flex-shrink-0" x-text="calEvent.category_icon"></span>
+                                        <div class="calendar-event-content flex-1 min-w-0">
+                                            <div class="flex min-w-0 items-start gap-1.5 flex-wrap">
+                                                <span class="calendar-event-title min-w-0 max-w-full font-medium text-gray-900 text-sm leading-snug" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
+                                                <span x-show="calEvent.category === 'crop_plan'" class="calendar-chip inline-flex text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
+                                                <span x-show="calEvent.category === 'damage_report'" class="calendar-chip inline-flex text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
                                                 <span x-show="calEvent.type === 'reminder'" class="text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
                                             </div>
-                                            <p x-show="calEvent.description" class="text-xs text-gray-500 mt-1" x-text="calEvent.description"></p>
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span x-show="calEvent.crop" class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
-                                                <span x-show="calEvent.desired_area_sqm" class="text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
-                                                <span x-show="calEvent.damage_area_sqm" class="text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded" x-text="'Damage: ' + formatSquareMeters(calEvent.damage_area_sqm)"></span>
-                                                <span x-show="calEvent.water_source" class="text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
-                                                <span x-show="calEvent.planting_material" class="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
-                                                <span x-show="calEvent.estimated_harvest_date" class="text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
-                                                <span x-show="calEvent.crop_plan_stage" class="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
-                                                <span x-show="calEvent.predicted_production_mt" class="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
-                                                <span x-show="calEvent.reminder_time" class="text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
+                                            <p x-show="calEvent.description" class="calendar-event-description text-xs text-gray-500 mt-1 leading-relaxed" x-text="calEvent.description"></p>
+                                            <div class="mt-2 flex min-w-0 flex-wrap items-start gap-1.5">
+                                                <span x-show="calEvent.crop" class="calendar-chip inline-flex text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
+                                                <span x-show="calEvent.desired_area_sqm" class="calendar-chip inline-flex text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
+                                                <span x-show="calEvent.damage_area_sqm" class="calendar-chip inline-flex text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded" x-text="'Damage: ' + formatSquareMeters(calEvent.damage_area_sqm)"></span>
+                                                <span x-show="calEvent.water_source" class="calendar-chip inline-flex text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
+                                                <span x-show="calEvent.planting_material" class="calendar-chip inline-flex text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
+                                                <span x-show="calEvent.estimated_harvest_date" class="calendar-chip inline-flex text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
+                                                <span x-show="calEvent.crop_plan_stage" class="calendar-chip inline-flex text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
+                                                <span x-show="calEvent.predicted_production_mt" class="calendar-chip inline-flex text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
+                                                <span x-show="calEvent.reminder_time" class="calendar-chip inline-flex text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <button @click="toggleEventComplete(calEvent)" class="p-1.5 hover:bg-gray-200 rounded transition-colors" :title="calEvent.is_completed ? 'Mark incomplete' : 'Mark complete'">
+                                        <div class="flex flex-shrink-0 items-center gap-1">
+                                            <button @click="toggleEventComplete(calEvent)" class="shrink-0 p-1.5 hover:bg-gray-200 rounded transition-colors" :title="calEvent.is_completed ? 'Mark incomplete' : 'Mark complete'">
                                                 <svg class="w-4 h-4" :class="calEvent.is_completed ? 'text-green-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                 </svg>
                                             </button>
-                                            <button @click="deleteEvent(calEvent)" class="p-1.5 hover:bg-red-100 rounded text-gray-400 hover:text-red-500 transition-colors">
+                                            <button @click="deleteEvent(calEvent)" class="shrink-0 p-1.5 hover:bg-red-100 rounded text-gray-400 hover:text-red-500 transition-colors">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
