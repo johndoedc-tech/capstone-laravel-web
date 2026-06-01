@@ -306,6 +306,11 @@ class FarmerCalendarController extends Controller
                     'remaining_damage_sqm' => round(max(0, $plantedArea - $reportedDamage), 2),
                     'water_source' => $plan->water_source,
                     'planting_material' => $plan->planting_material,
+                    'estimated_harvest_date' => $plan->estimated_harvest_date?->format('Y-m-d'),
+                    'estimated_harvest_days' => $plan->estimated_harvest_days,
+                    'predicted_production_mt' => $plan->predicted_production_mt !== null ? (float) $plan->predicted_production_mt : null,
+                    'prediction_confidence' => $plan->prediction_confidence !== null ? (float) $plan->prediction_confidence : null,
+                    'description' => $plan->description,
                 ];
             });
 

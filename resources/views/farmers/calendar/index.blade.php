@@ -172,14 +172,14 @@
 
                     <!-- Selected Day Details -->
                     <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
-                        <div x-show="!selectedDate && calendarEventGroups.length === 0" class="text-center py-8 text-gray-400">
+                        <div x-show="!selectedDate && calendarEventGroups.length === 0 && activeCropTimelines.length === 0" class="text-center py-8 text-gray-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             <p class="text-sm">Select a day to view or add events</p>
                         </div>
 
-                        <div x-show="selectedDate || calendarEventGroups.length > 0">
+                        <div x-show="selectedDate || calendarEventGroups.length > 0 || activeCropTimelines.length > 0">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="font-semibold text-gray-900 min-w-0 break-words" x-text="selectedDate ? selectedDateDisplay : 'Calendar Events'"></h3>
                             </div>
@@ -192,6 +192,51 @@
                                 <button @click="openAddModal('reminder')" class="min-w-0 text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>🔔</span> Reminder
                                 </button>
+                            </div>
+
+                            <!-- Active Crop Timelines -->
+                            <div x-show="activeCropTimelines.length > 0" class="mb-5">
+                                <div class="mb-3 flex items-center justify-between gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">Active Crop Timelines</p>
+                                        <p class="text-xs text-gray-400">Visible until harvest</p>
+                                    </div>
+                                    <span class="calendar-chip inline-flex rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                                        <span x-text="activeCropTimelines.length"></span>
+                                        <span x-text="activeCropTimelines.length === 1 ? ' crop' : ' crops'"></span>
+                                    </span>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <template x-for="timeline in activeCropTimelines" :key="'active-crop-' + timeline.plan.id">
+                                        <button type="button" @click="openCropTimelineModal(timeline.plan.id)" class="calendar-event-card w-full rounded-lg border border-emerald-100 bg-emerald-50/70 p-3 text-left transition-colors hover:border-emerald-200 hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                            <div class="flex min-w-0 items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="timeline.plan.crop || timeline.plan.title"></p>
+                                                    <p class="mt-0.5 text-xs text-emerald-700">
+                                                        <span x-text="'Planted ' + formatDisplayDate(timeline.startDate)"></span>
+                                                        <span x-show="timeline.endDate"> to </span>
+                                                        <span x-show="timeline.endDate" x-text="formatDisplayDate(timeline.endDate)"></span>
+                                                    </p>
+                                                </div>
+                                                <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-700" x-text="timeline.daysLeftText"></span>
+                                            </div>
+
+                                            <div class="mt-3 h-2 overflow-hidden rounded-full bg-white">
+                                                <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${timeline.progress}%`"></div>
+                                            </div>
+
+                                            <div class="mt-2 flex min-w-0 flex-wrap gap-1.5">
+                                                <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
+                                                <span x-show="timeline.plan.water_source" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-sky-700" x-text="formatCropPlanOption(timeline.plan.water_source)"></span>
+                                                <span x-show="timeline.nextTask" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
+                                                    <span x-text="'Next: ' + timeline.nextTask.label"></span>
+                                                    <span class="ml-1 text-gray-400" x-text="formatDisplayDate(timeline.nextTask.date)"></span>
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
 
                             <!-- Grouped Events List -->
@@ -398,6 +443,83 @@
                                         </div>
                                     </div>
                                 </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Crop Timeline Modal -->
+            <div x-show="showCropTimelineModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="crop-timeline-title" role="dialog" aria-modal="true">
+                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                    <div x-show="showCropTimelineModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeCropTimelineModal()"></div>
+
+                    <div x-show="showCropTimelineModal && activeCropPlan" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                        <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
+                            <div class="min-w-0">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Active Crop Timeline</p>
+                                <h3 id="crop-timeline-title" class="calendar-event-title mt-1 text-lg font-semibold text-gray-900" x-text="activeCropPlan?.crop || activeCropPlan?.title"></h3>
+                                <p class="mt-0.5 text-xs text-emerald-700">
+                                    <span x-text="'Planted ' + formatDisplayDate(activeCropPlanStartDate(activeCropPlan))"></span>
+                                    <span x-show="activeCropPlanEndDate(activeCropPlan)"> to </span>
+                                    <span x-show="activeCropPlanEndDate(activeCropPlan)" x-text="formatDisplayDate(activeCropPlanEndDate(activeCropPlan))"></span>
+                                </p>
+                            </div>
+                            <button @click="closeCropTimelineModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close crop timeline">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="max-h-[75vh] overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="rounded-md bg-emerald-50 px-2.5 py-2">
+                                    <p class="text-[11px] uppercase font-semibold text-emerald-700">Area</p>
+                                    <p class="text-sm font-medium text-gray-900" x-text="formatSquareMeters(activeCropPlan?.planted_area_sqm) || '-'"></p>
+                                </div>
+                                <div class="rounded-md bg-orange-50 px-2.5 py-2">
+                                    <p class="text-[11px] uppercase font-semibold text-orange-700">Production</p>
+                                    <p class="text-sm font-medium text-gray-900" x-text="activeCropPlan?.predicted_production_mt ? formatCropPlanProduction(activeCropPlan) : '-'"></p>
+                                </div>
+                                <div class="rounded-md bg-sky-50 px-2.5 py-2">
+                                    <p class="text-[11px] uppercase font-semibold text-sky-700">Water</p>
+                                    <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(activeCropPlan?.water_source) || '-'"></p>
+                                </div>
+                                <div class="rounded-md bg-amber-50 px-2.5 py-2">
+                                    <p class="text-[11px] uppercase font-semibold text-amber-700">Seed Type</p>
+                                    <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanOption(activeCropPlan?.planting_material) || '-'"></p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                                <div class="flex items-center justify-between gap-3">
+                                    <p class="text-xs font-semibold uppercase text-emerald-700">Harvest Progress</p>
+                                    <p class="text-xs font-medium text-emerald-700" x-text="activeCropTimeline ? activeCropTimeline.daysLeftText : ''"></p>
+                                </div>
+                                <div class="mt-2 h-2 overflow-hidden rounded-full bg-white">
+                                    <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${activeCropTimeline ? activeCropTimeline.progress : 0}%`"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <p class="text-xs font-semibold uppercase text-gray-500 mb-2">Schedule Until Harvest</p>
+                                <div class="space-y-2">
+                                    <template x-for="item in getCropPlanSchedule(activeCropPlan || {})" :key="'crop-timeline-' + item.label + '-' + item.date">
+                                        <div class="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
+                                            <div class="min-w-0">
+                                                <p class="calendar-event-title text-sm font-medium text-gray-900" x-text="item.label"></p>
+                                                <p class="text-xs text-gray-500" x-text="formatDisplayDate(item.date)"></p>
+                                            </div>
+                                            <span class="calendar-chip shrink-0 rounded-full px-2 py-0.5 text-xs font-medium" :class="item.date < todayDate ? 'bg-gray-100 text-gray-500' : (item.label === 'Estimated harvest' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700')" x-text="item.date < todayDate ? 'Past' : (item.date === todayDate ? 'Today' : 'Upcoming')"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div x-show="activeCropPlan?.description" class="mt-4 rounded-lg bg-gray-50 px-3 py-2">
+                                <p class="text-xs font-semibold uppercase text-gray-500">Notes</p>
+                                <p class="calendar-event-description mt-1 text-sm text-gray-600" x-text="activeCropPlan?.description"></p>
                             </div>
                         </div>
                     </div>
@@ -613,6 +735,8 @@
                 showCropDetailsModal: false,
                 showEventGroupModal: false,
                 activeEventGroupDate: null,
+                showCropTimelineModal: false,
+                activeCropPlanId: null,
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -829,6 +953,35 @@
                     return this.selectedDayEvents.filter((event) => event.category === 'crop_plan');
                 },
 
+                get activeCropTimelines() {
+                    const monthStart = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+                    const monthEnd = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+
+                    return this.cropPlans
+                        .filter((plan) => {
+                            const startDate = this.activeCropPlanStartDate(plan);
+                            if (!startDate) return false;
+
+                            const start = parseLocalDate(startDate);
+                            const endDate = this.activeCropPlanEndDate(plan);
+                            const end = endDate ? parseLocalDate(endDate) : null;
+
+                            return start <= monthEnd && (!end || end >= monthStart);
+                        })
+                        .sort((a, b) => this.activeCropPlanStartDate(a).localeCompare(this.activeCropPlanStartDate(b)))
+                        .map((plan) => this.buildCropTimeline(plan));
+                },
+
+                get activeCropPlan() {
+                    if (!this.activeCropPlanId) return null;
+                    return this.cropPlans.find((plan) => String(plan.id) === String(this.activeCropPlanId)) || null;
+                },
+
+                get activeCropTimeline() {
+                    if (!this.activeCropPlan) return null;
+                    return this.buildCropTimeline(this.activeCropPlan);
+                },
+
                 formatSquareMeters(value) {
                     const amount = Number(value);
                     if (!Number.isFinite(amount)) return '';
@@ -893,6 +1046,62 @@
                     });
                 },
 
+                activeCropPlanStartDate(plan) {
+                    return plan?.planning_date || plan?.date || '';
+                },
+
+                activeCropPlanEndDate(plan) {
+                    return plan?.estimated_harvest_date || '';
+                },
+
+                buildCropTimeline(plan) {
+                    const startDate = this.activeCropPlanStartDate(plan);
+                    const endDate = this.activeCropPlanEndDate(plan);
+                    const progress = this.calculateCropProgress(startDate, endDate);
+                    const nextTask = this.getNextCropPlanTask(plan);
+
+                    return {
+                        plan,
+                        startDate,
+                        endDate,
+                        progress,
+                        nextTask,
+                        daysLeftText: this.formatCropTimelineDaysLeft(endDate),
+                    };
+                },
+
+                calculateCropProgress(startDate, endDate) {
+                    if (!startDate || !endDate) return 0;
+
+                    const start = parseLocalDate(startDate);
+                    const end = parseLocalDate(endDate);
+                    const today = parseLocalDate(this.todayDate);
+                    const totalMs = end - start;
+
+                    if (totalMs <= 0) return 100;
+
+                    const elapsedMs = today - start;
+                    return Math.max(0, Math.min(100, Math.round((elapsedMs / totalMs) * 100)));
+                },
+
+                formatCropTimelineDaysLeft(endDate) {
+                    if (!endDate) return 'Active';
+
+                    const today = parseLocalDate(this.todayDate);
+                    const harvest = parseLocalDate(endDate);
+                    const days = Math.ceil((harvest - today) / 86400000);
+
+                    if (days < 0) return 'Harvest due';
+                    if (days === 0) return 'Harvest today';
+                    if (days === 1) return '1 day left';
+                    return `${days} days left`;
+                },
+
+                getNextCropPlanTask(plan) {
+                    const schedule = this.getCropPlanSchedule(plan);
+                    return schedule.find((item) => item.date >= this.todayDate) || schedule[schedule.length - 1] || null;
+                },
+
                 formatCropPlanStage(value) {
                     if (!value) return '';
 
@@ -954,7 +1163,9 @@
                         });
                     }
 
-                    if (!plan.crop || !plan.water_source || !plan.planting_material || !plan.date) {
+                    const startDate = this.activeCropPlanStartDate(plan);
+
+                    if (!plan.crop || !plan.water_source || !plan.planting_material || !startDate) {
                         return schedule;
                     }
 
@@ -966,7 +1177,7 @@
 
                     rules.forEach((stage) => {
                         const rainfedDelay = plan.water_source === 'rainfed' && stage.offset > 0 ? 3 : 0;
-                        const stageDate = parseLocalDate(plan.date);
+                        const stageDate = parseLocalDate(startDate);
                         stageDate.setDate(stageDate.getDate() + fieldStartDelay + stage.offset + rainfedDelay);
                         schedule.push({
                             label: stage.label,
@@ -1233,6 +1444,7 @@
                     this.selectedDate = null;
                     this.showCropDetailsModal = false;
                     this.closeEventGroupModal();
+                    this.closeCropTimelineModal();
                     this.loadEvents();
                 },
 
@@ -1241,6 +1453,7 @@
                     this.selectedDate = null;
                     this.showCropDetailsModal = false;
                     this.closeEventGroupModal();
+                    this.closeCropTimelineModal();
                     this.loadEvents();
                 },
 
@@ -1253,6 +1466,16 @@
                     this.activeEventGroupDate = date;
                     this.selectedDate = date;
                     this.showEventGroupModal = true;
+                },
+
+                openCropTimelineModal(planId) {
+                    this.activeCropPlanId = planId;
+                    this.showCropTimelineModal = true;
+                },
+
+                closeCropTimelineModal() {
+                    this.showCropTimelineModal = false;
+                    this.activeCropPlanId = null;
                 },
 
                 closeEventGroupModal() {
@@ -1306,6 +1529,9 @@
                         if (response.ok) {
                             const data = await response.json();
                             this.cropPlans = data.crop_plans || [];
+                            if (this.activeCropPlanId && !this.activeCropPlan) {
+                                this.closeCropTimelineModal();
+                            }
                         }
                     } catch (error) {
                         console.error('Failed to load crop plans:', error);
