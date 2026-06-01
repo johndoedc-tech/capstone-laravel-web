@@ -239,6 +239,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Real-time Production Outlook -->
+                                <div class="rounded-lg border border-orange-200 bg-orange-50/50 p-4">
+                                    <div class="mb-3 flex items-start justify-between gap-3">
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Current Season Crop Outlook</h3>
+                                            <p class="mt-1 text-xs text-orange-700">Predicted, harvested, damaged, and remaining supply from farmer crop plans</p>
+                                        </div>
+                                        <span id="production-outlook-count" class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-orange-700">-</span>
+                                    </div>
+                                    <div id="production-outlook-list" class="space-y-2">
+                                        <p class="text-sm text-gray-500">Select a municipality to view current crop outlook.</p>
+                                    </div>
+                                </div>
+
                                 <!-- Weather Cards -->
                                 <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
                                     <div class="flex items-center justify-between mb-3">
@@ -787,6 +801,54 @@
             document.getElementById('panel-farmer-count-label').textContent = count === 1 ? 'farmer' : 'farmers';
         }
 
+        function formatMetricTons(value) {
+            const amount = Number(value) || 0;
+            return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+        }
+
+        function renderProductionOutlook(outlook) {
+            const listEl = document.getElementById('production-outlook-list');
+            const countEl = document.getElementById('production-outlook-count');
+            const rows = Array.isArray(outlook) ? outlook : [];
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No current-season crop plans reported for this municipality yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = rows.map(row => `
+                <div class="rounded-lg border border-orange-100 bg-white p-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 break-words">${escapeHtml(row.crop || 'Crop')}</p>
+                            <p class="mt-0.5 text-[11px] text-gray-500">${Number(row.plan_count || 0).toLocaleString()} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} · ${Number(row.harvested_count || 0).toLocaleString()} harvested</p>
+                        </div>
+                        <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(row.net_expected_production_mt)}</span>
+                    </div>
+                    <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <div class="rounded bg-orange-50 px-2 py-1.5">
+                            <p class="font-semibold text-orange-700">Predicted</p>
+                            <p class="text-gray-900">${formatMetricTons(row.predicted_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-green-50 px-2 py-1.5">
+                            <p class="font-semibold text-green-700">Harvested</p>
+                            <p class="text-gray-900">${formatMetricTons(row.harvested_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-red-50 px-2 py-1.5">
+                            <p class="font-semibold text-red-700">Damaged</p>
+                            <p class="text-gray-900">${formatMetricTons(row.damaged_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-emerald-50 px-2 py-1.5">
+                            <p class="font-semibold text-emerald-700">Net Expected</p>
+                            <p class="text-gray-900">${formatMetricTons(row.net_expected_production_mt)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function formatDay(value) {
             if (!value) return '--';
             const parsed = new Date(value);
@@ -921,6 +983,7 @@
             // Update header
             document.getElementById('panel-municipality-name').textContent = municipalityName;
             updateFarmerCountCard(municipalityName, getFarmerCountForMunicipality(currentData, municipalityName));
+            renderProductionOutlook([]);
 
             // Show loading
             document.getElementById('panel-loading').classList.remove('hidden');
@@ -951,6 +1014,7 @@
                     municipalityName,
                     data.summary?.farmer_count ?? getFarmerCountForMunicipality(currentData, municipalityName)
                 );
+                renderProductionOutlook(data.production_outlook);
 
                 // Update charts
                 updateContributionChart(municipalityName);
