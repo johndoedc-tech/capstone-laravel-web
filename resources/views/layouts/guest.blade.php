@@ -126,6 +126,7 @@
                 .auth-card {
                     padding: 1.25rem;
                     border-radius: 1.25rem;
+                    backdrop-filter: none;
                 }
             }
 

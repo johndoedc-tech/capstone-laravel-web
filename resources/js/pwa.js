@@ -14,7 +14,7 @@ const postToServiceWorker = (message) => {
 
 const clearRuntimeCachesOnAuthBoundary = () => {
     if (['/login', '/register'].includes(window.location.pathname)) {
-        postToServiceWorker({ type: 'CLEAR_RUNTIME_CACHES' });
+        postToServiceWorker({ type: 'CLEAR_PAGE_CACHE' });
     }
 
     document.addEventListener('submit', (event) => {
@@ -27,17 +27,29 @@ const clearRuntimeCachesOnAuthBoundary = () => {
         const action = new URL(form.action || window.location.href, window.location.origin);
 
         if (action.origin === window.location.origin && action.pathname === '/logout') {
-            postToServiceWorker({ type: 'CLEAR_RUNTIME_CACHES' });
+            postToServiceWorker({ type: 'CLEAR_PAGE_CACHE' });
         }
     });
 };
 
-const syncViewportHeight = () => {
-    const height = window.visualViewport?.height || window.innerHeight;
+let viewportSyncFrame = 0;
+let lastViewportHeight = 0;
 
-    if (height > 0) {
-        document.documentElement.style.setProperty('--harviana-viewport-height', `${height}px`);
+const syncViewportHeight = () => {
+    if (viewportSyncFrame) {
+        return;
     }
+
+    viewportSyncFrame = window.requestAnimationFrame(() => {
+        viewportSyncFrame = 0;
+
+        const height = Math.round(window.visualViewport?.height || window.innerHeight);
+
+        if (height > 0 && Math.abs(height - lastViewportHeight) > 1) {
+            lastViewportHeight = height;
+            document.documentElement.style.setProperty('--harviana-viewport-height', `${height}px`);
+        }
+    });
 };
 
 const syncThemeColor = (color) => {

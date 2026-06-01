@@ -14,10 +14,79 @@
         * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --harviana-safe-top: env(safe-area-inset-top, 0px);
+            --harviana-safe-right: env(safe-area-inset-right, 0px);
+            --harviana-safe-bottom: env(safe-area-inset-bottom, 0px);
+            --harviana-safe-left: env(safe-area-inset-left, 0px);
+            --harviana-landing-nav-top: calc(0.75rem + var(--harviana-safe-top));
+            --harviana-landing-nav-x: calc(0.75rem + max(var(--harviana-safe-left), var(--harviana-safe-right)));
         }
         
         body {
             background-color: #f5f5dc; /* Light beige */
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-bottom: var(--harviana-safe-bottom);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .landing-header {
+            top: var(--harviana-landing-nav-top);
+            padding-left: var(--harviana-landing-nav-x);
+            padding-right: var(--harviana-landing-nav-x);
+            pointer-events: none;
+        }
+
+        .landing-pill {
+            pointer-events: auto;
+            max-width: min(100%, 28rem);
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        .landing-pill a,
+        .landing-pill button {
+            touch-action: manipulation;
+        }
+
+        .mobile-nav-panel {
+            top: calc(100% + 0.75rem);
+        }
+
+        @media (min-width: 640px) {
+            :root {
+                --harviana-landing-nav-top: calc(1rem + var(--harviana-safe-top));
+                --harviana-landing-nav-x: calc(1rem + max(var(--harviana-safe-left), var(--harviana-safe-right)));
+            }
+
+            .landing-pill {
+                max-width: 56rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            :root {
+                --harviana-landing-nav-top: calc(1.5rem + var(--harviana-safe-top));
+                --harviana-landing-nav-x: 0px;
+            }
+
+            .landing-pill {
+                max-width: none;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .touch-stable-link {
+                transition-property: background-color, color, box-shadow;
+            }
+
+            .touch-stable-link:hover {
+                transform: none !important;
+            }
         }
         
         .hero-section {
@@ -75,8 +144,8 @@
 </head>
 <body class="font-sans text-gray-800 m-0 p-0">
     <!-- Header -->
-    <header class="fixed top-2 sm:top-3 md:top-6 left-0 right-0 z-50 flex justify-center px-2 sm:px-3 md:px-0">
-        <div class="bg-white rounded-full shadow-xl px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 md:py-4 inline-flex max-w-[calc(100%-16px)] sm:w-full sm:max-w-4xl md:w-auto">
+    <header class="landing-header fixed left-0 right-0 z-50 flex justify-center">
+        <div class="landing-pill bg-white rounded-full shadow-xl px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 md:py-4 inline-flex w-full sm:w-full md:w-auto">
             <nav class="relative flex flex-nowrap items-center justify-between sm:justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-8 w-full">
                 <div class="flex items-center gap-2 sm:gap-2 md:gap-4 lg:gap-8">
                     <button
@@ -108,24 +177,24 @@
 
                 <div class="flex items-center gap-2 sm:gap-2 md:gap-4">
                     @auth
-                        <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
+                        <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="touch-stable-link bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
                             <span class="hidden min-[400px]:inline">Dashboard</span>
                             <span class="min-[400px]:hidden">🏠</span>
                             <span>→</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-gray-900 text-xs sm:text-xs md:text-base font-medium hover:text-lime-400 transition-colors duration-300 relative group whitespace-nowrap px-2 py-2 sm:px-0 sm:py-0">
+                        <a href="{{ route('login') }}" class="touch-stable-link text-gray-900 text-xs sm:text-xs md:text-base font-medium hover:text-lime-400 transition-colors duration-300 relative group whitespace-nowrap px-2 py-2 sm:px-0 sm:py-0">
                             Login
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover:w-full transition-all duration-300"></span>
                         </a>
-                        <a href="{{ route('register') }}" class="bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
+                        <a href="{{ route('register') }}" class="touch-stable-link bg-lime-400 text-gray-900 px-3 sm:px-4 md:px-6 py-2 sm:py-2 md:py-2.5 rounded-full font-semibold hover:bg-lime-500 hover:-translate-y-0.5 transition-all duration-300 shadow-md hover:shadow-lime-400/50 inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-xs md:text-base whitespace-nowrap">
                             Sign Up
                             <span>→</span>
                         </a>
                     @endauth
                 </div>
 
-                <div id="mobile-nav-menu" class="hidden sm:hidden absolute left-0 right-0 top-[calc(100%+8px)] bg-white rounded-2xl shadow-xl border border-lime-100 p-3">
+                <div id="mobile-nav-menu" class="mobile-nav-panel hidden sm:hidden absolute left-0 right-0 bg-white rounded-2xl shadow-xl border border-lime-100 p-3">
                     <a href="#about" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">About</a>
                     <a href="#features" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Features</a>
                     <a href="#developers" class="mobile-nav-link block text-gray-900 text-sm font-medium py-2.5 px-3 rounded-lg hover:bg-lime-50 transition-colors duration-300">Team</a>
@@ -462,18 +531,9 @@
                 
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
-                    // Calculate offset for fixed header (responsive for all screen sizes)
-                    const isMobile = window.innerWidth < 640; // sm breakpoint
-                    const isTablet = window.innerWidth >= 640 && window.innerWidth < 768; // md breakpoint
-                    let headerOffset;
-                    
-                    if (isMobile) {
-                        headerOffset = 100; // Smaller offset for mobile (< 640px)
-                    } else if (isTablet) {
-                        headerOffset = 130; // Medium offset for tablets (640-768px)
-                    } else {
-                        headerOffset = 160; // Larger offset for desktop
-                    }
+                    const header = document.querySelector('.landing-header');
+                    const headerRect = header?.getBoundingClientRect();
+                    const headerOffset = headerRect ? headerRect.bottom + 16 : 120;
                     
                     const elementPosition = targetElement.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -488,9 +548,14 @@
 
         // Scroll fade effect for hero section
         let lastScrollPosition = 0;
-        
-        window.addEventListener('scroll', function() {
+
+        const updateHeroFade = () => {
             const hero = document.getElementById('hero');
+
+            if (!hero) {
+                return;
+            }
+
             const scrollPosition = window.scrollY;
             const heroHeight = hero.offsetHeight;
             const isScrollingUp = scrollPosition < lastScrollPosition;
@@ -516,7 +581,7 @@
             }
             
             lastScrollPosition = scrollPosition;
-        });
+        };
         
         // Fade in/out animation for sections on scroll (optimized for mobile)
         const fadeElements = document.querySelectorAll('.fade-section');
@@ -538,17 +603,35 @@
                 }
             });
         };
+
+        let scrollFrame = 0;
+
+        const requestScrollEffects = () => {
+            if (scrollFrame) {
+                return;
+            }
+
+            scrollFrame = window.requestAnimationFrame(() => {
+                scrollFrame = 0;
+                updateHeroFade();
+                checkFade();
+            });
+        };
         
         // Check on load and scroll
+        updateHeroFade();
         checkFade();
-        window.addEventListener('scroll', checkFade);
+        window.addEventListener('scroll', requestScrollEffects, { passive: true });
         
         // Recalculate on window resize (for orientation changes on mobile)
         let resizeTimeout;
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(checkFade, 150);
-        });
+            resizeTimeout = setTimeout(() => {
+                updateHeroFade();
+                checkFade();
+            }, 150);
+        }, { passive: true });
     </script>
 </body>
 </html>
