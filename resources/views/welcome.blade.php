@@ -42,8 +42,10 @@
         }
 
         .landing-pill {
+            width: auto;
+            inline-size: max-content;
             pointer-events: auto;
-            max-width: min(100%, 28rem);
+            max-width: calc(100vw - var(--harviana-landing-nav-x) - var(--harviana-landing-nav-x));
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
         }
@@ -64,7 +66,7 @@
             }
 
             .landing-pill {
-                max-width: 56rem;
+                max-width: min(56rem, calc(100vw - var(--harviana-landing-nav-x) - var(--harviana-landing-nav-x)));
             }
         }
 
@@ -145,8 +147,8 @@
 <body class="font-sans text-gray-800 m-0 p-0">
     <!-- Header -->
     <header class="landing-header fixed left-0 right-0 z-50 flex justify-center">
-        <div class="landing-pill bg-white rounded-full shadow-xl px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 md:py-4 inline-flex w-full sm:w-full md:w-auto">
-            <nav class="relative flex flex-nowrap items-center justify-between sm:justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-8 w-full">
+        <div class="landing-pill bg-white rounded-full shadow-xl px-3 sm:px-4 md:px-8 py-2.5 sm:py-3 md:py-4 inline-flex">
+            <nav class="relative flex flex-nowrap items-center justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-8">
                 <div class="flex items-center gap-2 sm:gap-2 md:gap-4 lg:gap-8">
                     <button
                         id="mobile-menu-toggle"
