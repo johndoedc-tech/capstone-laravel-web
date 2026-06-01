@@ -47,5 +47,7 @@
                 @include('layouts.farmer-chatbot')
             @endif
         @endauth
+
+        @include('layouts.page-loader')
     </body>
 </html>

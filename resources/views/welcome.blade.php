@@ -635,5 +635,6 @@
             }, 150);
         }, { passive: true });
     </script>
+    @include('layouts.page-loader')
 </body>
 </html>

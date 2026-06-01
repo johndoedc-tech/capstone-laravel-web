@@ -193,5 +193,7 @@
                 <p class="md:hidden mt-4 text-xs text-gray-400">&copy; {{ date('Y') }} BenguetCropMap. All rights reserved.</p>
             </div>
         </div>
+
+        @include('layouts.page-loader')
     </body>
 </html>
