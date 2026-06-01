@@ -225,6 +225,20 @@
 
                             <!-- Panel Content -->
                             <div id="panel-content" class="space-y-6">
+                                <!-- Farmer Count -->
+                                <div class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Registered Farmers</p>
+                                            <p class="mt-1 text-xs text-emerald-700">Based on saved farmer municipality</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p id="panel-farmer-count" class="text-2xl font-bold text-emerald-700">-</p>
+                                            <p id="panel-farmer-count-label" class="text-xs text-emerald-700">farmers</p>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Weather Cards -->
                                 <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
                                     <div class="flex items-center justify-between mb-3">
@@ -513,6 +527,20 @@
             );
         }
 
+        function getFarmerCountForMunicipality(data, municipalityName) {
+            const productionRow = findMunicipalityData(data, municipalityName);
+            if (productionRow && productionRow.farmer_count !== undefined) {
+                return Number(productionRow.farmer_count) || 0;
+            }
+
+            const countRow = (data.farmer_counts || []).find(row =>
+                normalizeMunicipalityName(row.municipality) === normalizeMunicipalityName(municipalityName)
+                || normalizeMunicipalityName(row.normalized_municipality) === normalizeMunicipalityName(municipalityName)
+            );
+
+            return Number(countRow?.farmer_count) || 0;
+        }
+
         function createPinpointIcon(municipalityName, municipalityData) {
             const isPreferred = userPreferredMunicipality &&
                 normalizeMunicipalityName(municipalityName) === normalizeMunicipalityName(userPreferredMunicipality);
@@ -532,6 +560,9 @@
         }
 
         function buildMarkerPopup(municipalityName, municipalityData) {
+            const farmerCount = getFarmerCountForMunicipality(currentData, municipalityName);
+            const farmerLabel = farmerCount === 1 ? 'farmer' : 'farmers';
+
             if (municipalityData) {
                 const viewType = document.getElementById('view-filter').value;
                 const unit = getUnit(viewType);
@@ -541,6 +572,7 @@
                     </div>
                     <p class="text-[9px] sm:text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
                     <p class="text-lg sm:text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-[10px] sm:text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
+                    <p class="mt-2 text-[10px] sm:text-xs font-semibold text-emerald-700">${farmerCount.toLocaleString()} ${farmerLabel}</p>
                 `;
             }
 
@@ -549,6 +581,7 @@
                     <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                 </div>
                 <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
+                <p class="mt-2 text-[10px] sm:text-xs font-semibold text-emerald-700">${farmerCount.toLocaleString()} ${farmerLabel}</p>
             `;
         }
 
@@ -748,6 +781,12 @@
             return parsed.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         }
 
+        function updateFarmerCountCard(municipalityName, farmerCount) {
+            const count = Number(farmerCount) || 0;
+            document.getElementById('panel-farmer-count').textContent = count.toLocaleString();
+            document.getElementById('panel-farmer-count-label').textContent = count === 1 ? 'farmer' : 'farmers';
+        }
+
         function formatDay(value) {
             if (!value) return '--';
             const parsed = new Date(value);
@@ -881,6 +920,7 @@
 
             // Update header
             document.getElementById('panel-municipality-name').textContent = municipalityName;
+            updateFarmerCountCard(municipalityName, getFarmerCountForMunicipality(currentData, municipalityName));
 
             // Show loading
             document.getElementById('panel-loading').classList.remove('hidden');
@@ -906,6 +946,11 @@
                 }
 
                 console.log('Municipality data:', data);
+
+                updateFarmerCountCard(
+                    municipalityName,
+                    data.summary?.farmer_count ?? getFarmerCountForMunicipality(currentData, municipalityName)
+                );
 
                 // Update charts
                 updateContributionChart(municipalityName);

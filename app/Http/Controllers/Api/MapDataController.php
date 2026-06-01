@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CropProduction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,7 @@ class MapDataController extends Controller
         $year = $request->input('year');
         $view = $request->input('view', 'production'); // production, productivity, area_planted, area_harvested
         $farmType = $request->input('farm_type'); // optional: IRRIGATED or RAINFED
+        $farmerCounts = $this->getFarmerCountsByMunicipality();
 
         $query = CropProduction::query();
 
@@ -46,10 +48,13 @@ class MapDataController extends Controller
             ->select('municipality', DB::raw($selectField))
             ->groupBy('municipality')
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item) use ($farmerCounts) {
+                $farmerCount = $farmerCounts->get($this->normalizeMunicipalityKey($item->municipality))['farmer_count'] ?? 0;
+
                 return [
                     'municipality' => $item->municipality,
-                    'value' => round($item->value, 2)
+                    'value' => round($item->value, 2),
+                    'farmer_count' => $farmerCount,
                 ];
             });
 
@@ -68,8 +73,10 @@ class MapDataController extends Controller
                 'max' => $values->max() ?? 0,
                 'avg' => round($values->avg() ?? 0, 2),
                 'total' => round($values->sum(), 2),
+                'farmer_total' => $farmerCounts->sum('farmer_count'),
                 'unit' => $this->getUnit($view)
-            ]
+            ],
+            'farmer_counts' => $farmerCounts->values(),
         ]);
     }
 
@@ -82,6 +89,7 @@ class MapDataController extends Controller
         $crop = $request->input('crop');
         $year = $request->input('year');
         $farmType = $request->input('farm_type');
+        $farmerCount = $this->getFarmerCountForMunicipality($municipality);
 
         // Monthly production data
         $monthlyQuery = CropProduction::query();
@@ -168,6 +176,7 @@ class MapDataController extends Controller
                 'avg_productivity' => round($summary->avg_productivity ?? 0, 2),
                 'total_area_planted' => round($summary->total_area_planted ?? 0, 2),
                 'total_area_harvested' => round($summary->total_area_harvested ?? 0, 2),
+                'farmer_count' => $farmerCount,
             ],
             'monthly_data' => $monthlyData,
             'crop_distribution' => $cropDistribution,
@@ -399,6 +408,36 @@ class MapDataController extends Controller
             $innerQuery->whereRaw('UPPER(municipality) = ?', [$canonicalMunicipality])
                 ->orWhereRaw("UPPER(REPLACE(municipality, ' ', '')) = ?", [$normalizedMunicipality]);
         });
+    }
+
+    private function getFarmerCountsByMunicipality()
+    {
+        return User::query()
+            ->where('role', 'farmer')
+            ->whereNotNull('preferred_municipality')
+            ->where('preferred_municipality', '!=', '')
+            ->get(['id', 'preferred_municipality'])
+            ->groupBy(fn (User $user) => $this->normalizeMunicipalityKey($user->preferred_municipality))
+            ->map(function ($farmers, string $normalizedMunicipality) {
+                $municipality = strtoupper(trim((string) $farmers->first()->preferred_municipality));
+
+                return [
+                    'municipality' => $municipality,
+                    'normalized_municipality' => $normalizedMunicipality,
+                    'farmer_count' => $farmers->count(),
+                ];
+            });
+    }
+
+    private function getFarmerCountForMunicipality(string $municipality): int
+    {
+        return (int) ($this->getFarmerCountsByMunicipality()
+            ->get($this->normalizeMunicipalityKey($municipality))['farmer_count'] ?? 0);
+    }
+
+    private function normalizeMunicipalityKey(?string $municipality): string
+    {
+        return str_replace(' ', '', strtoupper(trim((string) $municipality)));
     }
 
     /**
