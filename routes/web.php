@@ -103,6 +103,22 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
+
+Route::get('/app', function () {
+    if (! auth()->check()) {
+        return redirect()->route('welcome');
+    }
+
+    if (auth()->user()->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('dashboard');
+})->name('app.launch');
+
 // Shared dashboard entry point: redirect admins to admin dashboard, keep farmers on farmer dashboard.
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {

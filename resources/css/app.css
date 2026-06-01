@@ -2,6 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--harviana-safe-top: env(safe-area-inset-top, 0px);
+	--harviana-safe-right: env(safe-area-inset-right, 0px);
+	--harviana-safe-bottom: env(safe-area-inset-bottom, 0px);
+	--harviana-safe-left: env(safe-area-inset-left, 0px);
+	--harviana-viewport-height: 100dvh;
+}
+
+@supports not (height: 100dvh) {
+	:root {
+		--harviana-viewport-height: 100vh;
+	}
+}
+
+html,
+body {
+	min-height: 100%;
+	overscroll-behavior-y: none;
+}
+
+html {
+	background-color: #355872;
+}
+
+body {
+	min-height: var(--harviana-viewport-height);
+	background-color: #f7f8f0;
+}
+
+.app-shell {
+	min-height: var(--harviana-viewport-height);
+	padding-left: var(--harviana-safe-left);
+	padding-right: var(--harviana-safe-right);
+	background-color: #f7f8f0;
+}
+
+.app-main {
+	min-height: var(--harviana-viewport-height);
+	padding-bottom: var(--harviana-safe-bottom);
+}
+
+.mobile-safe-top {
+	top: calc(0.75rem + var(--harviana-safe-top));
+	left: calc(0.75rem + var(--harviana-safe-left));
+}
+
+.mobile-sidebar {
+	height: var(--harviana-viewport-height);
+	max-height: var(--harviana-viewport-height);
+	padding-top: var(--harviana-safe-top);
+	padding-bottom: var(--harviana-safe-bottom);
+}
+
+.mobile-overlay-safe {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+@media (display-mode: standalone) {
+	body {
+		background-color: #f7f8f0;
+	}
+}
+
 /* Keep sidebar scrollbars consistent with the sidebar background color. */
 .sidebar-scroll {
 	scrollbar-width: thin;

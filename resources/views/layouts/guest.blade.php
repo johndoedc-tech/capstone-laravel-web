@@ -22,6 +22,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+        @include('partials.pwa')
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -38,7 +39,7 @@
             body {
                 background: linear-gradient(135deg, #F6F0D7 0%, #E8EFD9 50%, #D9E4C2 100%);
                 min-height: 100vh;
-                min-height: 100dvh;
+                min-height: var(--harviana-viewport-height, 100dvh);
             }
 
             .site-return {
@@ -58,23 +59,24 @@
                     top: calc(1.5rem + env(safe-area-inset-top, 0px));
                     left: calc(1.5rem + env(safe-area-inset-left, 0px));
                 }
+
+                .auth-brand-panel,
+                .auth-form-panel {
+                    min-height: var(--harviana-viewport-height, 100dvh);
+                }
             }
 
             .auth-shell {
                 min-height: 100vh;
-                min-height: 100dvh;
+                min-height: var(--harviana-viewport-height, 100dvh);
+                padding-right: env(safe-area-inset-right, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+                padding-left: env(safe-area-inset-left, 0px);
             }
 
             .auth-card {
                 backdrop-filter: blur(10px);
                 background: rgba(255, 255, 255, 0.95);
-            }
-
-            @supports (min-height: 100svh) {
-                body,
-                .auth-shell {
-                    min-height: 100svh;
-                }
             }
 
             @media (max-width: 767px) {
@@ -85,7 +87,7 @@
                 .auth-shell {
                     justify-content: flex-start;
                     gap: 1.25rem;
-                    padding: calc(4.875rem + env(safe-area-inset-top, 0px)) 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+                    padding: calc(4.875rem + env(safe-area-inset-top, 0px)) calc(1rem + env(safe-area-inset-right, 0px)) calc(1.25rem + env(safe-area-inset-bottom, 0px)) calc(1rem + env(safe-area-inset-left, 0px));
                 }
 
                 .auth-brand-panel,
@@ -151,7 +153,7 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <!-- Header with Back to Home Button -->
-        <header class="site-return fixed top-3 sm:top-4 md:top-6 left-3 sm:left-4 md:left-6 z-50">
+        <header class="site-return fixed z-50">
             <div class="bg-white/90 backdrop-blur-sm rounded-full shadow-lg px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-3.5 inline-flex border border-white/50">
                 <nav class="flex items-center justify-center">
                     <a href="{{ route('welcome') }}" class="text-gray-700 text-xs sm:text-sm md:text-base font-medium hover:text-green-700 transition-colors duration-300 relative group inline-flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">

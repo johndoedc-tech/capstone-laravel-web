@@ -1,0 +1,42 @@
+{
+    "name": "Harviana Agricultural Decision Support System",
+    "short_name": "Harviana",
+    "description": "GIS-integrated crop insights, predictions, calendar planning, maps, and reports for Benguet agriculture.",
+    "id": "/app",
+    "start_url": "/app",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "theme_color": "#355872",
+    "background_color": "#f7f8f0",
+    "categories": ["productivity", "utilities", "education"],
+    "lang": "en-PH",
+    "dir": "ltr",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/icons/harviana-icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/harviana-icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/harviana-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icons/harviana-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
