@@ -1095,16 +1095,28 @@
 
         function updateCropChart(cropData) {
             const ctx = document.getElementById('crop-chart');
+            if (!ctx) return;
+
+            const container = ctx.parentElement;
+            const emptyState = container?.querySelector('[data-crop-chart-empty]');
 
             // Destroy existing chart
             if (cropChart) {
                 cropChart.destroy();
+                cropChart = null;
             }
 
-            if (cropData.length === 0) {
-                ctx.parentElement.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">No crop data available</p>';
+            if (!Array.isArray(cropData) || cropData.length === 0) {
+                ctx.classList.add('hidden');
+                if (container && !emptyState) {
+                    container.insertAdjacentHTML('beforeend',
+                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop data available</p>');
+                }
                 return;
             }
+
+            ctx.classList.remove('hidden');
+            emptyState?.remove();
 
             const colors = [
                 '#ef4444', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
