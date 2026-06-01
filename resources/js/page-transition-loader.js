@@ -1,142 +1,149 @@
-const loader = document.getElementById('page-transition-loader');
+let initialized = false;
 
-let showTimer = 0;
-let hideTimer = 0;
-
-const SHOW_DELAY_MS = 180;
+const SHOW_DELAY_MS = 0;
 const MAX_VISIBLE_MS = 12000;
 
-const clearTimers = () => {
-    if (showTimer) {
-        window.clearTimeout(showTimer);
-        showTimer = 0;
+const initPageTransitionLoader = () => {
+    if (initialized) {
+        return;
     }
 
-    if (hideTimer) {
-        window.clearTimeout(hideTimer);
-        hideTimer = 0;
-    }
-};
+    const loader = document.getElementById('page-transition-loader');
 
-const hidePageLoader = () => {
     if (!loader) {
         return;
     }
 
-    clearTimers();
-    loader.classList.remove('is-visible');
-    loader.setAttribute('aria-hidden', 'true');
-};
+    initialized = true;
 
-const showPageLoader = (message = 'Preparing the next page...') => {
-    if (!loader || loader.classList.contains('is-visible') || showTimer) {
-        return;
-    }
+    let showTimer = 0;
+    let hideTimer = 0;
 
-    showTimer = window.setTimeout(() => {
-        showTimer = 0;
-        const messageElement = loader.querySelector('.page-transition-message');
-
-        if (messageElement) {
-            messageElement.textContent = message;
+    const clearTimers = () => {
+        if (showTimer) {
+            window.clearTimeout(showTimer);
+            showTimer = 0;
         }
 
-        loader.classList.add('is-visible');
-        loader.setAttribute('aria-hidden', 'false');
+        if (hideTimer) {
+            window.clearTimeout(hideTimer);
+            hideTimer = 0;
+        }
+    };
 
-        hideTimer = window.setTimeout(hidePageLoader, MAX_VISIBLE_MS);
-    }, SHOW_DELAY_MS);
-};
+    const hidePageLoader = () => {
+        clearTimers();
+        loader.classList.remove('is-visible');
+        loader.setAttribute('aria-hidden', 'true');
+    };
 
-const isModifiedClick = (event) => (
-    event.defaultPrevented
-    || event.button !== 0
-    || event.metaKey
-    || event.ctrlKey
-    || event.shiftKey
-    || event.altKey
-);
+    const showPageLoader = (message = 'Preparing the next page...') => {
+        if (loader.classList.contains('is-visible') || showTimer) {
+            return;
+        }
 
-const hasLoaderOptOut = (element) => Boolean(element.closest('[data-no-page-loader], [data-no-loader]'));
+        showTimer = window.setTimeout(() => {
+            showTimer = 0;
+            const messageElement = loader.querySelector('.page-transition-message');
 
-const shouldLoadForLink = (link, event) => {
-    if (!link || isModifiedClick(event) || hasLoaderOptOut(link)) {
-        return false;
-    }
+            if (messageElement) {
+                messageElement.textContent = message;
+            }
 
-    if (link.target && link.target !== '_self') {
-        return false;
-    }
+            loader.classList.add('is-visible');
+            loader.setAttribute('aria-hidden', 'false');
 
-    if (link.hasAttribute('download')) {
-        return false;
-    }
+            hideTimer = window.setTimeout(hidePageLoader, MAX_VISIBLE_MS);
+        }, SHOW_DELAY_MS);
+    };
 
-    const href = link.getAttribute('href');
+    const isModifiedClick = (event) => (
+        event.defaultPrevented
+        || event.button !== 0
+        || event.metaKey
+        || event.ctrlKey
+        || event.shiftKey
+        || event.altKey
+    );
 
-    if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
-        return false;
-    }
+    const hasLoaderOptOut = (element) => Boolean(element.closest('[data-no-page-loader], [data-no-loader]'));
 
-    const url = new URL(link.href, window.location.href);
+    const shouldLoadForLink = (link, event) => {
+        if (!link || isModifiedClick(event) || hasLoaderOptOut(link)) {
+            return false;
+        }
 
-    if (url.origin !== window.location.origin) {
-        return false;
-    }
+        if (link.target && link.target !== '_self') {
+            return false;
+        }
 
-    const current = new URL(window.location.href);
-    const sameDocument = url.pathname === current.pathname && url.search === current.search;
+        if (link.hasAttribute('download')) {
+            return false;
+        }
 
-    return !(sameDocument && url.hash);
-};
+        const href = link.getAttribute('href');
 
-const shouldLoadForForm = (form) => {
-    if (!form || hasLoaderOptOut(form)) {
-        return false;
-    }
+        if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+            return false;
+        }
 
-    if (form.target && form.target !== '_self') {
-        return false;
-    }
+        const url = new URL(link.href, window.location.href);
 
-    const method = (form.getAttribute('method') || 'GET').toUpperCase();
+        if (url.origin !== window.location.origin) {
+            return false;
+        }
 
-    return method !== 'GET';
-};
+        const current = new URL(window.location.href);
+        const sameDocument = url.pathname === current.pathname && url.search === current.search;
 
-if (loader) {
+        return !(sameDocument && url.hash);
+    };
+
+    const shouldLoadForForm = (form) => {
+        if (!form || hasLoaderOptOut(form)) {
+            return false;
+        }
+
+        if (form.target && form.target !== '_self') {
+            return false;
+        }
+
+        const method = (form.getAttribute('method') || 'GET').toUpperCase();
+
+        return method !== 'GET';
+    };
+
     document.addEventListener('click', (event) => {
         const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
 
         if (shouldLoadForLink(link, event)) {
-            window.setTimeout(() => {
-                if (!event.defaultPrevented) {
-                    showPageLoader('Opening the next page...');
-                }
-            }, 0);
+            showPageLoader('Opening the next page...');
         }
-    }, true);
+    });
 
     document.addEventListener('submit', (event) => {
         const form = event.target;
 
-        if (!(form instanceof HTMLFormElement) || !shouldLoadForForm(form)) {
+        if (!(form instanceof HTMLFormElement) || !shouldLoadForForm(form) || event.defaultPrevented) {
             return;
         }
 
-        window.setTimeout(() => {
-            if (!event.defaultPrevented) {
-                showPageLoader('Saving your request...');
-            }
-        }, 0);
-    }, true);
+        showPageLoader('Saving your request...');
+    });
 
     window.addEventListener('pageshow', hidePageLoader);
     window.addEventListener('pagehide', clearTimers);
+    window.addEventListener('load', hidePageLoader);
     window.addEventListener('online', hidePageLoader);
 
     window.HarvianaPageLoader = {
         hide: hidePageLoader,
         show: showPageLoader,
     };
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPageTransitionLoader, { once: true });
+} else {
+    initPageTransitionLoader();
 }
