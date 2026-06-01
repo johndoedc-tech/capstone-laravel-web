@@ -172,20 +172,20 @@
 
                     <!-- Selected Day Details -->
                     <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
-                        <div x-show="!selectedDate" class="text-center py-8 text-gray-400">
+                        <div x-show="!selectedDate && calendarEventGroups.length === 0" class="text-center py-8 text-gray-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             <p class="text-sm">Select a day to view or add events</p>
                         </div>
 
-                        <div x-show="selectedDate">
+                        <div x-show="selectedDate || calendarEventGroups.length > 0">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-semibold text-gray-900 min-w-0 break-words" x-text="selectedDateDisplay"></h3>
+                                <h3 class="font-semibold text-gray-900 min-w-0 break-words" x-text="selectedDate ? selectedDateDisplay : 'Calendar Events'"></h3>
                             </div>
 
                             <!-- Add Buttons -->
-                            <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div x-show="selectedDate" class="grid grid-cols-2 gap-2 mb-4">
                                 <button @click="openAddModal('note')" class="min-w-0 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
                                     <span>📝</span> Add Note
                                 </button>
@@ -194,48 +194,47 @@
                                 </button>
                             </div>
 
-                            <!-- Events List -->
-                            <div x-show="selectedDayEvents.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
-                                <template x-for="calEvent in selectedDayEvents" :key="calEvent.id">
-                                    <div class="calendar-event-card flex items-start gap-2 p-3 bg-gray-50 rounded-lg group hover:bg-gray-100 transition-colors">
-                                        <span class="text-lg flex-shrink-0" x-text="calEvent.category_icon"></span>
-                                        <div class="calendar-event-content flex-1 min-w-0">
-                                            <div class="flex min-w-0 items-start gap-1.5 flex-wrap">
-                                                <span class="calendar-event-title min-w-0 max-w-full font-medium text-gray-900 text-sm leading-snug" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
-                                                <span x-show="calEvent.category === 'crop_plan'" class="calendar-chip inline-flex text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
-                                                <span x-show="calEvent.category === 'damage_report'" class="calendar-chip inline-flex text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
-                                                <span x-show="calEvent.type === 'reminder'" class="text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
+                            <!-- Grouped Events List -->
+                            <div class="mb-3 flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">Grouped Events</p>
+                                    <p class="text-xs text-gray-400" x-text="monthYearDisplay"></p>
+                                </div>
+                                <span class="calendar-chip inline-flex rounded-full bg-orange-50 px-2 py-1 text-xs font-medium text-orange-700">
+                                    <span x-text="calendarEventGroups.length"></span>
+                                    <span x-text="calendarEventGroups.length === 1 ? ' date' : ' dates'"></span>
+                                </span>
+                            </div>
+
+                            <div x-show="calendarEventGroups.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
+                                <template x-for="group in calendarEventGroups" :key="'group-' + group.date">
+                                    <button type="button" @click="openEventGroupModal(group.date)" class="calendar-event-card w-full rounded-lg border border-gray-100 bg-gray-50 p-3 text-left transition-colors hover:border-orange-200 hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                                        <div class="flex min-w-0 items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="group.display"></p>
+                                                <p class="mt-0.5 text-xs text-gray-500">
+                                                    <span x-text="group.count"></span>
+                                                    <span x-text="group.count === 1 ? ' event' : ' events'"></span>
+                                                </p>
                                             </div>
-                                            <p x-show="calEvent.description" class="calendar-event-description text-xs text-gray-500 mt-1 leading-relaxed" x-text="calEvent.description"></p>
-                                            <div class="mt-2 flex min-w-0 flex-wrap items-start gap-1.5">
-                                                <span x-show="calEvent.crop" class="calendar-chip inline-flex text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
-                                                <span x-show="calEvent.desired_area_sqm" class="calendar-chip inline-flex text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
-                                                <span x-show="calEvent.damage_area_sqm" class="calendar-chip inline-flex text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded" x-text="'Damage: ' + formatSquareMeters(calEvent.damage_area_sqm)"></span>
-                                                <span x-show="calEvent.water_source" class="calendar-chip inline-flex text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
-                                                <span x-show="calEvent.planting_material" class="calendar-chip inline-flex text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
-                                                <span x-show="calEvent.estimated_harvest_date" class="calendar-chip inline-flex text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
-                                                <span x-show="calEvent.crop_plan_stage" class="calendar-chip inline-flex text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
-                                                <span x-show="calEvent.predicted_production_mt" class="calendar-chip inline-flex text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
-                                                <span x-show="calEvent.reminder_time" class="calendar-chip inline-flex text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
-                                            </div>
+                                            <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-orange-700" x-text="group.count"></span>
                                         </div>
-                                        <div class="flex flex-shrink-0 items-center gap-1">
-                                            <button @click="toggleEventComplete(calEvent)" class="shrink-0 p-1.5 hover:bg-gray-200 rounded transition-colors" :title="calEvent.is_completed ? 'Mark incomplete' : 'Mark complete'">
-                                                <svg class="w-4 h-4" :class="calEvent.is_completed ? 'text-green-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                </svg>
-                                            </button>
-                                            <button @click="deleteEvent(calEvent)" class="shrink-0 p-1.5 hover:bg-red-100 rounded text-gray-400 hover:text-red-500 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
+                                        <div class="mt-2 flex min-w-0 flex-wrap gap-1.5">
+                                            <template x-for="event in group.previewEvents" :key="'preview-' + group.date + '-' + event.id">
+                                                <span class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
+                                                    <span x-text="event.category_icon"></span>
+                                                    <span class="ml-1" x-text="event.title"></span>
+                                                </span>
+                                            </template>
+                                            <span x-show="group.hiddenCount > 0" class="calendar-chip inline-flex rounded bg-orange-100 px-1.5 py-0.5 text-xs text-orange-700">
+                                                +<span x-text="group.hiddenCount"></span> more
+                                            </span>
                                         </div>
-                                    </div>
+                                    </button>
                                 </template>
                             </div>
-                            <p x-show="selectedDayEvents.length === 0" class="text-sm text-gray-400 text-center py-6">
-                                No events for this day.<br>Plan a crop, add a note, or set a reminder.
+                            <p x-show="calendarEventGroups.length === 0" class="text-sm text-gray-400 text-center py-6">
+                                No events for this month.<br>Plan a crop, add a note, or set a reminder.
                             </p>
                         </div>
                     </div>
@@ -328,6 +327,75 @@
                                         </div>
 
                                         <p x-show="plan.description" class="mt-3 text-xs text-gray-600" x-text="plan.description"></p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grouped Events Modal -->
+            <div x-show="showEventGroupModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="event-group-title" role="dialog" aria-modal="true">
+                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                    <div x-show="showEventGroupModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeEventGroupModal()"></div>
+
+                    <div x-show="showEventGroupModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                        <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
+                            <div class="min-w-0">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-orange-700">Grouped Events</p>
+                                <h3 id="event-group-title" class="calendar-event-title mt-1 text-lg font-semibold text-gray-900" x-text="activeEventGroupDateDisplay"></h3>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="calendar-chip text-[11px] font-medium text-orange-700 bg-orange-50 border border-orange-100 rounded-full px-2 py-0.5">
+                                    <span x-text="activeEventGroupEvents.length"></span>
+                                    <span x-text="activeEventGroupEvents.length === 1 ? ' event' : ' events'"></span>
+                                </span>
+                                <button @click="closeEventGroupModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close grouped events">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="max-h-[70vh] overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-5">
+                            <div class="space-y-2">
+                                <template x-for="calEvent in activeEventGroupEvents" :key="'event-group-modal-' + calEvent.id">
+                                    <div class="calendar-event-card flex items-start gap-2 rounded-lg bg-gray-50 p-3">
+                                        <span class="text-lg flex-shrink-0" x-text="calEvent.category_icon"></span>
+                                        <div class="calendar-event-content flex-1 min-w-0">
+                                            <div class="flex min-w-0 items-start gap-1.5 flex-wrap">
+                                                <span class="calendar-event-title min-w-0 max-w-full font-medium text-gray-900 text-sm leading-snug" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
+                                                <span x-show="calEvent.category === 'crop_plan'" class="calendar-chip inline-flex text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
+                                                <span x-show="calEvent.category === 'damage_report'" class="calendar-chip inline-flex text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
+                                                <span x-show="calEvent.type === 'reminder'" class="calendar-chip inline-flex text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
+                                            </div>
+                                            <p x-show="calEvent.description" class="calendar-event-description text-xs text-gray-500 mt-1 leading-relaxed" x-text="calEvent.description"></p>
+                                            <div class="mt-2 flex min-w-0 flex-wrap items-start gap-1.5">
+                                                <span x-show="calEvent.crop" class="calendar-chip inline-flex text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded" x-text="calEvent.crop"></span>
+                                                <span x-show="calEvent.desired_area_sqm" class="calendar-chip inline-flex text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="formatSquareMeters(calEvent.desired_area_sqm)"></span>
+                                                <span x-show="calEvent.damage_area_sqm" class="calendar-chip inline-flex text-xs bg-red-50 text-red-700 px-1.5 py-0.5 rounded" x-text="'Damage: ' + formatSquareMeters(calEvent.damage_area_sqm)"></span>
+                                                <span x-show="calEvent.water_source" class="calendar-chip inline-flex text-xs bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.water_source)"></span>
+                                                <span x-show="calEvent.planting_material" class="calendar-chip inline-flex text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanOption(calEvent.planting_material)"></span>
+                                                <span x-show="calEvent.estimated_harvest_date" class="calendar-chip inline-flex text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
+                                                <span x-show="calEvent.crop_plan_stage" class="calendar-chip inline-flex text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
+                                                <span x-show="calEvent.predicted_production_mt" class="calendar-chip inline-flex text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
+                                                <span x-show="calEvent.reminder_time" class="calendar-chip inline-flex text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-shrink-0 items-center gap-1">
+                                            <button @click="toggleEventComplete(calEvent)" class="shrink-0 p-1.5 hover:bg-gray-200 rounded transition-colors" :title="calEvent.is_completed ? 'Mark incomplete' : 'Mark complete'">
+                                                <svg class="w-4 h-4" :class="calEvent.is_completed ? 'text-green-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </button>
+                                            <button @click="deleteEvent(calEvent)" class="shrink-0 p-1.5 hover:bg-red-100 rounded text-gray-400 hover:text-red-500 transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
@@ -543,6 +611,8 @@
                 upcomingReminders: [],
                 cropPlans: [],
                 showCropDetailsModal: false,
+                showEventGroupModal: false,
+                activeEventGroupDate: null,
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -732,6 +802,29 @@
                     return this.eventsByDay[this.selectedDate] || [];
                 },
 
+                get calendarEventGroups() {
+                    return Object.entries(this.eventsByDay)
+                        .filter(([, events]) => Array.isArray(events) && events.length > 0)
+                        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+                        .map(([date, events]) => ({
+                            date,
+                            display: this.formatEventGroupDate(date),
+                            count: events.length,
+                            previewEvents: events.slice(0, 3),
+                            hiddenCount: Math.max(events.length - 3, 0),
+                        }));
+                },
+
+                get activeEventGroupEvents() {
+                    if (!this.activeEventGroupDate) return [];
+                    return this.eventsByDay[this.activeEventGroupDate] || [];
+                },
+
+                get activeEventGroupDateDisplay() {
+                    if (!this.activeEventGroupDate) return '';
+                    return this.formatEventGroupDate(this.activeEventGroupDate);
+                },
+
                 get selectedCropPlanEvents() {
                     return this.selectedDayEvents.filter((event) => event.category === 'crop_plan');
                 },
@@ -787,6 +880,16 @@
                         month: 'short',
                         day: 'numeric',
                         year: 'numeric',
+                    });
+                },
+
+                formatEventGroupDate(dateString) {
+                    if (!dateString) return '';
+
+                    return parseLocalDate(dateString).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
                     });
                 },
 
@@ -1129,6 +1232,7 @@
                     this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
                     this.selectedDate = null;
                     this.showCropDetailsModal = false;
+                    this.closeEventGroupModal();
                     this.loadEvents();
                 },
 
@@ -1136,12 +1240,24 @@
                     this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
                     this.selectedDate = null;
                     this.showCropDetailsModal = false;
+                    this.closeEventGroupModal();
                     this.loadEvents();
                 },
 
                 selectDay(day) {
                     this.selectedDate = day.date;
                     this.showCropDetailsModal = this.selectedCropPlanEvents.length > 0;
+                },
+
+                openEventGroupModal(date) {
+                    this.activeEventGroupDate = date;
+                    this.selectedDate = date;
+                    this.showEventGroupModal = true;
+                },
+
+                closeEventGroupModal() {
+                    this.showEventGroupModal = false;
+                    this.activeEventGroupDate = null;
                 },
 
                 closeCropDetailsModal() {
@@ -1159,6 +1275,9 @@
                             const data = await response.json();
                             this.events = data.events || [];
                             this.eventsByDay = data.events_by_day || {};
+                            if (this.activeEventGroupDate && !(this.eventsByDay[this.activeEventGroupDate] || []).length) {
+                                this.closeEventGroupModal();
+                            }
                         }
                     } catch (error) {
                         console.error('Failed to load calendar events:', error);
