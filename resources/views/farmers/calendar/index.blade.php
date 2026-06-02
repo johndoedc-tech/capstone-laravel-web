@@ -28,6 +28,28 @@
             white-space: normal;
             line-height: 1.15;
         }
+
+        @media (max-width: 639px) {
+            .calendar-form-modal {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                max-height: calc(var(--harviana-viewport-height) - var(--harviana-safe-top) - var(--harviana-safe-bottom) - 1.5rem);
+            }
+
+            .calendar-form-modal-body {
+                min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .calendar-form-modal input,
+            .calendar-form-modal select,
+            .calendar-form-modal textarea {
+                font-size: 16px !important;
+                line-height: 1.5rem;
+            }
+        }
     </style>
 
     <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
@@ -759,8 +781,8 @@
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
 
-                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
-                        <div class="bg-white px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
+                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="calendar-form-modal inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-[opacity,transform] sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="calendar-form-modal-body bg-white px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
                             <h3 class="text-base font-semibold text-gray-900 mb-3" x-text="modalTitle"></h3>
 
                             <div class="space-y-3">
@@ -869,18 +891,18 @@
                                     <p x-show="modalType === 'damage_report'" class="text-[11px] text-gray-500 mt-1">Future dates are disabled for damage reports.</p>
                                 </div>
 
-                                <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 items-stretch sm:grid-cols-2 gap-2">
                                     <!-- Estimated Harvest Date (only for crop plans) -->
-                                    <div x-show="estimatedHarvestDate" class="rounded-md border border-green-200 bg-green-50 px-3 py-2">
+                                    <div x-show="estimatedHarvestDate" class="min-h-[6.5rem] rounded-md border border-green-200 bg-green-50 px-3 py-2">
                                         <p class="text-[11px] font-semibold uppercase text-green-700">Harvest Date</p>
                                         <p class="text-sm font-semibold text-gray-900 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
                                         <p class="text-[11px] text-green-700 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning' : ''"></p>
                                     </div>
 
                                     <!-- Production Prediction (only for crop plans) -->
-                                    <div x-show="productionPrediction.loading || productionPrediction.data || productionPrediction.error" class="rounded-md border border-orange-200 bg-orange-50 px-3 py-2">
+                                    <div x-show="productionPrediction.loading || productionPrediction.data || productionPrediction.error" class="min-h-[6.5rem] rounded-md border border-orange-200 bg-orange-50 px-3 py-2">
                                         <p class="text-[11px] font-semibold uppercase text-orange-700">Estimated Production</p>
-                                        <div x-show="productionPrediction.loading" class="mt-1 text-xs text-orange-700">Calculating...</div>
+                                        <div x-show="productionPrediction.loading" class="mt-1 flex min-h-16 items-center text-xs text-orange-700">Calculating...</div>
                                         <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-0.5">
                                             <p class="text-base font-semibold text-gray-900 leading-tight" x-text="productionPrediction.data ? formatEstimatedProduction(productionPrediction.data) : ''"></p>
                                             <p class="text-[11px] text-orange-700 leading-tight mt-0.5">Based on your crop, area, water source, and expected harvest month.</p>
