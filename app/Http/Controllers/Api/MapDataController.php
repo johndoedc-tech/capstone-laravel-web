@@ -488,6 +488,7 @@ class MapDataController extends Controller
                 'plans.estimated_harvest_date',
                 DB::raw('COALESCE(damage_totals.reported_damage_sqm, 0) as reported_damage_sqm'),
                 DB::raw('COALESCE(harvests.is_completed, false) as harvest_is_completed'),
+                DB::raw('COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) as actual_harvest_production_mt'),
             ])
             ->get();
 
@@ -515,10 +516,13 @@ class MapDataController extends Controller
                     $damagedProduction = round($predictedProduction * $damageRatio, 2);
                     $adjustedProduction = max(0, $predictedProduction - $damagedProduction);
                     $isHarvested = $this->isTruthy($plan->harvest_is_completed) || $this->isTruthy($plan->plan_is_completed);
-                    $harvestedProduction = $isHarvested ? $adjustedProduction : 0;
+                    $actualHarvestProduction = max(0, (float) ($plan->actual_harvest_production_mt ?? 0));
+                    $harvestedProduction = $actualHarvestProduction > 0
+                        ? $actualHarvestProduction
+                        : ($isHarvested ? $adjustedProduction : 0);
 
                     $summary['plan_count']++;
-                    $summary['harvested_count'] += $isHarvested ? 1 : 0;
+                    $summary['harvested_count'] += ($isHarvested || $actualHarvestProduction > 0) ? 1 : 0;
                     $summary['damaged_plan_count'] += $damageSqm > 0 ? 1 : 0;
                     $summary['planned_area_sqm'] += $areaSqm;
                     $summary['damaged_area_sqm'] += $damageSqm;

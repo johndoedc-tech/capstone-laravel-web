@@ -87,6 +87,10 @@
                             <div class="h-full rounded-full bg-emerald-500" style="width: {{ max(0, 100 - min(100, $summary['loss_percent'])) }}%"></div>
                         </div>
                         <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="rounded-lg bg-green-50 px-3 py-2">
+                                <p class="text-[11px] font-semibold uppercase text-green-700">Actual Harvest</p>
+                                <p class="mt-1 text-sm font-bold text-gray-900">{{ number_format($summary['actual_harvest_production_mt'] ?? 0, 2) }} mt</p>
+                            </div>
                             <div class="rounded-lg bg-emerald-50 px-3 py-2">
                                 <p class="text-[11px] font-semibold uppercase text-emerald-700">Adjusted</p>
                                 <p class="mt-1 text-sm font-bold text-gray-900">{{ number_format($summary['adjusted_production_mt'], 2) }} mt</p>
@@ -277,6 +281,14 @@
                                         <p class="font-bold text-gray-900">{{ number_format($record['area_ha'], 2) }} ha</p>
                                         <p class="mt-1">Original: {{ number_format($record['original_production_mt'], 2) }} mt</p>
                                         <p>Adjusted: {{ number_format($record['adjusted_production_mt'], 2) }} mt</p>
+                                        @if($record['actual_harvest_production_mt'] !== null)
+                                            <p class="font-semibold text-green-700">
+                                                Actual: {{ number_format($record['actual_harvest_production_mt'], 2) }} mt
+                                                @if($record['actual_harvest_date'])
+                                                    on {{ $record['actual_harvest_date']->format('M d, Y') }}
+                                                @endif
+                                            </p>
+                                        @endif
                                         @if($record['damage_sqm'] > 0)
                                             <p class="mt-1 font-semibold text-orange-700">
                                                 Damage:

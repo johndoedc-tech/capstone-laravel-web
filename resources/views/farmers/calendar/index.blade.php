@@ -109,6 +109,7 @@
                                                         <span x-show="event.crop" class="calendar-chip rounded bg-green-50 px-1.5 py-0.5 text-[11px] text-green-700" x-text="event.crop"></span>
                                                         <span x-show="event.category === 'crop_plan'" class="calendar-chip rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700">Crop Plan</span>
                                                         <span x-show="event.category === 'damage_report'" class="calendar-chip rounded bg-red-50 px-1.5 py-0.5 text-[11px] text-red-700">Damage</span>
+                                                        <span x-show="event.actual_harvest_production_mt" class="calendar-chip rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700" x-text="'Actual: ' + formatMetricTons(event.actual_harvest_production_mt)"></span>
                                                         <span x-show="event.reminder_time" class="calendar-chip rounded bg-orange-50 px-1.5 py-0.5 text-[11px] text-orange-700" x-text="event.reminder_time"></span>
                                                     </div>
                                                 </div>
@@ -156,11 +157,12 @@
                                     <div class="h-full rounded-full bg-emerald-500" :style="`width: ${timeline.progress}%`"></div>
                                 </div>
                                 <div class="mt-2 flex flex-wrap gap-1.5">
-                                    <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
-                                    <span x-show="timeline.nextTask" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
-                                        <span x-text="'Next: ' + timeline.nextTask.label"></span>
-                                    </span>
-                                </div>
+                                                <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
+                                                <span x-show="timeline.plan.actual_harvest_production_mt" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="'Actual: ' + formatMetricTons(timeline.plan.actual_harvest_production_mt)"></span>
+                                                <span x-show="timeline.nextTask" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
+                                                    <span x-text="'Next: ' + timeline.nextTask.label"></span>
+                                                </span>
+                                            </div>
                             </button>
                         </template>
                     </div>
@@ -583,10 +585,14 @@
                                                 <span x-show="calEvent.estimated_harvest_date" class="calendar-chip inline-flex text-xs bg-green-50 text-green-700 px-1.5 py-0.5 rounded" x-text="'Harvest: ' + formatDisplayDate(calEvent.estimated_harvest_date)"></span>
                                                 <span x-show="calEvent.crop_plan_stage" class="calendar-chip inline-flex text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
                                                 <span x-show="calEvent.predicted_production_mt" class="calendar-chip inline-flex text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
+                                                <span x-show="calEvent.actual_harvest_production_mt" class="calendar-chip inline-flex text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="'Actual: ' + formatMetricTons(calEvent.actual_harvest_production_mt)"></span>
                                                 <span x-show="calEvent.reminder_time" class="calendar-chip inline-flex text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
                                         <div class="flex flex-shrink-0 items-center gap-1">
+                                            <button x-show="canRecordHarvest(calEvent)" @click="openHarvestModal(calEvent)" class="shrink-0 rounded bg-emerald-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-emerald-700">
+                                                <span x-text="calEvent.actual_harvest_production_mt ? 'Edit' : 'Record'"></span>
+                                            </button>
                                             <button @click="toggleEventComplete(calEvent)" class="shrink-0 p-1.5 hover:bg-gray-200 rounded transition-colors" :title="calEvent.is_completed ? 'Mark incomplete' : 'Mark complete'">
                                                 <svg class="w-4 h-4" :class="calEvent.is_completed ? 'text-green-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -657,6 +663,9 @@
                                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-white">
                                     <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${activeCropTimeline ? activeCropTimeline.progress : 0}%`"></div>
                                 </div>
+                                <button type="button" x-show="activeCropPlan" @click="openHarvestModal(activeCropPlan)" class="mt-3 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                                    <span x-text="activeCropPlan?.actual_harvest_production_mt ? 'Edit Actual Harvest' : 'Record Actual Harvest'"></span>
+                                </button>
                             </div>
 
                             <div class="mt-4">
@@ -678,6 +687,68 @@
                                 <p class="text-xs font-semibold uppercase text-gray-500">Notes</p>
                                 <p class="calendar-event-description mt-1 text-sm text-gray-600" x-text="activeCropPlan?.description"></p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Record Harvest Modal -->
+            <div x-show="showHarvestModal" x-cloak class="fixed inset-0 z-[55] overflow-y-auto" aria-labelledby="harvest-record-title" role="dialog" aria-modal="true">
+                <div class="flex min-h-screen items-end justify-center px-0 pt-10 sm:items-center sm:px-4 sm:py-6">
+                    <div x-show="showHarvestModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeHarvestModal()"></div>
+
+                    <div x-show="showHarvestModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-lg overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-lg">
+                        <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
+                            <div class="min-w-0">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Actual Harvest</p>
+                                <h3 id="harvest-record-title" class="calendar-event-title mt-1 text-lg font-semibold text-gray-900" x-text="harvestTargetLabel"></h3>
+                                <p class="mt-0.5 text-xs text-gray-500">Record what was actually harvested from the field.</p>
+                            </div>
+                            <button @click="closeHarvestModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close harvest form">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="px-4 py-4 sm:px-5">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Actual Amount *</label>
+                                    <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="harvestForm.actual_harvest_amount" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="e.g., 850">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Unit *</label>
+                                    <select x-model="harvestForm.actual_harvest_unit" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+                                        <option value="kg">kg</option>
+                                        <option value="mt">mt</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Harvest Date *</label>
+                                <input type="date" x-model="harvestForm.actual_harvest_date" :max="todayDate" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+                            </div>
+
+                            <div class="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2">
+                                <p class="text-xs font-semibold uppercase text-emerald-700">Recorded as</p>
+                                <p class="mt-0.5 text-sm font-semibold text-gray-900" x-text="harvestFormMetricTons"></p>
+                                <p x-show="harvestComparisonText" class="mt-0.5 text-xs text-emerald-700" x-text="harvestComparisonText"></p>
+                            </div>
+
+                            <div class="mt-3">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Notes</label>
+                                <textarea x-model="harvestForm.actual_harvest_notes" rows="2" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Optional: buyer, quality, partial harvest, field notes..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 border-t border-gray-100 bg-gray-50 px-4 py-3 sm:px-5">
+                            <button type="button" @click="closeHarvestModal()" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
+                            <button type="button" @click="saveHarvestRecord()" :disabled="!canSaveHarvest || savingHarvest" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
+                                <span x-show="!savingHarvest">Save Harvest</span>
+                                <span x-show="savingHarvest">Saving...</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -895,6 +966,9 @@
                 activeEventGroupDate: null,
                 showCropTimelineModal: false,
                 activeCropPlanId: null,
+                showHarvestModal: false,
+                harvestTarget: null,
+                savingHarvest: false,
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -1005,6 +1079,12 @@
                     planting_material: '',
                     planning_date: '',
                     reminder_time: '',
+                },
+                harvestForm: {
+                    actual_harvest_date: '',
+                    actual_harvest_amount: '',
+                    actual_harvest_unit: 'kg',
+                    actual_harvest_notes: '',
                 },
 
                 init() {
@@ -1173,6 +1253,8 @@
 
                     return this.cropPlans
                         .filter((plan) => {
+                            if (plan.is_completed || plan.actual_harvest_production_mt) return false;
+
                             const startDate = this.activeCropPlanStartDate(plan);
                             if (!startDate) return false;
 
@@ -1194,6 +1276,49 @@
                 get activeCropTimeline() {
                     if (!this.activeCropPlan) return null;
                     return this.buildCropTimeline(this.activeCropPlan);
+                },
+
+                get harvestTargetLabel() {
+                    if (!this.harvestTarget) return 'Record Harvest';
+                    return this.harvestTarget.crop || this.harvestTarget.title || 'Record Harvest';
+                },
+
+                get harvestFormMetricTonsValue() {
+                    const amount = Number(this.harvestForm.actual_harvest_amount);
+                    if (!Number.isFinite(amount) || amount <= 0) return null;
+
+                    return this.harvestForm.actual_harvest_unit === 'kg'
+                        ? amount / 1000
+                        : amount;
+                },
+
+                get harvestFormMetricTons() {
+                    const value = this.harvestFormMetricTonsValue;
+                    if (value === null) return 'Enter the actual amount to calculate metric tons.';
+
+                    return this.formatMetricTons(value);
+                },
+
+                get harvestComparisonText() {
+                    const actual = this.harvestFormMetricTonsValue;
+                    const predicted = Number(this.harvestTarget?.predicted_production_mt || 0);
+
+                    if (actual === null || !Number.isFinite(predicted) || predicted <= 0) {
+                        return '';
+                    }
+
+                    const difference = actual - predicted;
+                    const label = difference >= 0 ? 'above' : 'below';
+
+                    return `${this.formatMetricTons(Math.abs(difference))} ${label} predicted production`;
+                },
+
+                get canSaveHarvest() {
+                    return Boolean(this.harvestTarget)
+                        && Boolean(this.harvestForm.actual_harvest_date)
+                        && this.harvestForm.actual_harvest_date <= this.todayDate
+                        && Number(this.harvestForm.actual_harvest_amount) > 0
+                        && ['kg', 'mt'].includes(this.harvestForm.actual_harvest_unit);
                 },
 
                 formatSquareMeters(value) {
@@ -1384,6 +1509,10 @@
                     if (!summary) return 'Full planted area remains available';
 
                     return `${this.formatSquareMeters(summary.remaining_damage_sqm)} remaining of ${this.formatSquareMeters(summary.planted_area_sqm)}`;
+                },
+
+                canRecordHarvest(record) {
+                    return ['crop_plan', 'harvest'].includes(record?.category) || record?.harvest_event_id;
                 },
 
                 getCropPlanSchedule(plan) {
@@ -1723,6 +1852,33 @@
                     this.activeCropPlanId = null;
                 },
 
+                openHarvestModal(record) {
+                    if (!record) return;
+
+                    this.harvestTarget = record;
+                    const actualAmount = record.actual_harvest_amount;
+                    const actualUnit = record.actual_harvest_unit || 'kg';
+                    const predicted = Number(record.predicted_production_mt || 0);
+
+                    this.harvestForm = {
+                        actual_harvest_date: record.actual_harvest_date || this.todayDate,
+                        actual_harvest_amount: actualAmount !== null && actualAmount !== undefined && actualAmount !== ''
+                            ? actualAmount
+                            : (predicted > 0 ? predicted : ''),
+                        actual_harvest_unit: actualAmount !== null && actualAmount !== undefined && actualAmount !== ''
+                            ? actualUnit
+                            : 'mt',
+                        actual_harvest_notes: record.actual_harvest_notes || '',
+                    };
+                    this.showHarvestModal = true;
+                },
+
+                closeHarvestModal() {
+                    this.showHarvestModal = false;
+                    this.harvestTarget = null;
+                    this.savingHarvest = false;
+                },
+
                 closeEventGroupModal() {
                     this.showEventGroupModal = false;
                     this.activeEventGroupDate = null;
@@ -1872,6 +2028,41 @@
                         console.error('Failed to save event:', error);
                     } finally {
                         this.saving = false;
+                    }
+                },
+
+                async saveHarvestRecord() {
+                    if (!this.canSaveHarvest || this.savingHarvest) return;
+
+                    this.savingHarvest = true;
+
+                    try {
+                        const targetId = this.harvestTarget.harvest_event_id || this.harvestTarget.id;
+                        const response = await fetch(`{{ url('farmer/calendar-events') }}/${targetId}/harvest`, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(this.harvestForm),
+                        });
+
+                        if (response.ok) {
+                            this.closeHarvestModal();
+                            this.loadEvents();
+                            this.loadCropPlans();
+                            this.loadUpcomingReminders();
+                            return;
+                        }
+
+                        const data = await response.json().catch(() => ({}));
+                        alert(data.message || 'Failed to record harvest. Please try again.');
+                    } catch (error) {
+                        console.error('Failed to record harvest:', error);
+                        alert('Failed to record harvest. Please try again.');
+                    } finally {
+                        this.savingHarvest = false;
                     }
                 },
 

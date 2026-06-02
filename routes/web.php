@@ -157,6 +157,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
             Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
             Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');
             Route::post('/calendar-events/{id}/toggle', [FarmerCalendarController::class, 'toggleComplete'])->name('calendar.toggle');
+            Route::post('/calendar-events/{id}/harvest', [FarmerCalendarController::class, 'recordHarvest'])->name('calendar.harvest');
             Route::get('/reminders/today', [FarmerCalendarController::class, 'getTodayReminders'])->name('reminders.today');
             Route::get('/reminders/upcoming', [FarmerCalendarController::class, 'getUpcomingReminders'])->name('reminders.upcoming');
 

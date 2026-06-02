@@ -295,6 +295,7 @@ class FarmerCalendarController extends Controller
             ->map(function (FarmerCalendarEvent $plan) {
                 $reportedDamage = $this->getReportedDamageArea($plan->id);
                 $plantedArea = (float) $plan->desired_area_sqm;
+                $harvestRecord = $this->getHarvestRecordForPlan($plan);
 
                 return [
                     'id' => $plan->id,
@@ -310,6 +311,14 @@ class FarmerCalendarController extends Controller
                     'estimated_harvest_days' => $plan->estimated_harvest_days,
                     'predicted_production_mt' => $plan->predicted_production_mt !== null ? (float) $plan->predicted_production_mt : null,
                     'prediction_confidence' => $plan->prediction_confidence !== null ? (float) $plan->prediction_confidence : null,
+                    'harvest_event_id' => $plan->harvest_event_id,
+                    'is_completed' => (bool) $plan->is_completed,
+                    'actual_harvest_date' => $harvestRecord?->actual_harvest_date?->format('Y-m-d'),
+                    'actual_harvest_amount' => $harvestRecord?->actual_harvest_amount !== null ? (float) $harvestRecord->actual_harvest_amount : null,
+                    'actual_harvest_unit' => $harvestRecord?->actual_harvest_unit,
+                    'actual_harvest_production_mt' => $harvestRecord?->actual_harvest_production_mt !== null ? (float) $harvestRecord->actual_harvest_production_mt : null,
+                    'actual_harvest_notes' => $harvestRecord?->actual_harvest_notes,
+                    'actual_harvest_recorded_at' => $harvestRecord?->actual_harvest_recorded_at?->toIso8601String(),
                     'description' => $plan->description,
                 ];
             });
@@ -423,6 +432,70 @@ class FarmerCalendarController extends Controller
         ]);
     }
 
+    public function recordHarvest(Request $request, $id)
+    {
+        if (! $this->supportsCalendarColumns([
+            'actual_harvest_date',
+            'actual_harvest_amount',
+            'actual_harvest_unit',
+            'actual_harvest_production_mt',
+            'actual_harvest_notes',
+            'actual_harvest_recorded_at',
+        ])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Harvest recording is not available until the latest calendar migration is applied.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'actual_harvest_date' => 'required|date|before_or_equal:today',
+            'actual_harvest_amount' => 'required|numeric|min:0.01|max:999999999.99',
+            'actual_harvest_unit' => 'required|string|in:kg,mt',
+            'actual_harvest_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $event = FarmerCalendarEvent::where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        [$cropPlan, $harvestRecord] = $this->resolveHarvestRecordTarget($event);
+
+        if (! $harvestRecord || ! in_array($event->category, ['crop_plan', 'harvest'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only crop plans and harvest events can record actual harvest.',
+            ], 422);
+        }
+
+        $actualAmount = (float) $validated['actual_harvest_amount'];
+        $actualProductionMt = $validated['actual_harvest_unit'] === 'kg'
+            ? $actualAmount / 1000
+            : $actualAmount;
+
+        DB::transaction(function () use ($validated, $actualAmount, $actualProductionMt, $harvestRecord, $cropPlan) {
+            $harvestRecord->update([
+                'actual_harvest_date' => $validated['actual_harvest_date'],
+                'actual_harvest_amount' => $actualAmount,
+                'actual_harvest_unit' => $validated['actual_harvest_unit'],
+                'actual_harvest_production_mt' => round($actualProductionMt, 4),
+                'actual_harvest_notes' => $validated['actual_harvest_notes'] ?? null,
+                'actual_harvest_recorded_at' => now(),
+                'is_completed' => true,
+            ]);
+
+            if ($cropPlan && $cropPlan->id !== $harvestRecord->id) {
+                $cropPlan->update(['is_completed' => true]);
+            }
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Actual harvest recorded successfully!',
+            'harvest_event' => $this->formatEvent($harvestRecord->fresh()),
+            'crop_plan' => $cropPlan ? $this->formatEvent($cropPlan->fresh()) : null,
+        ]);
+    }
+
     /**
      * Get today's reminders for the user
      */
@@ -513,9 +586,48 @@ class FarmerCalendarController extends Controller
             'predicted_production_mt' => $event->predicted_production_mt !== null ? (float) $event->predicted_production_mt : null,
             'prediction_confidence' => $event->prediction_confidence !== null ? (float) $event->prediction_confidence : null,
             'prediction_source' => $event->prediction_source,
+            'actual_harvest_date' => $event->actual_harvest_date?->format('Y-m-d'),
+            'actual_harvest_amount' => $event->actual_harvest_amount !== null ? (float) $event->actual_harvest_amount : null,
+            'actual_harvest_unit' => $event->actual_harvest_unit,
+            'actual_harvest_production_mt' => $event->actual_harvest_production_mt !== null ? (float) $event->actual_harvest_production_mt : null,
+            'actual_harvest_notes' => $event->actual_harvest_notes,
+            'actual_harvest_recorded_at' => $event->actual_harvest_recorded_at?->toIso8601String(),
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
+    }
+
+    private function resolveHarvestRecordTarget(FarmerCalendarEvent $event): array
+    {
+        if ($event->category === 'crop_plan') {
+            $harvestRecord = $event->harvest_event_id
+                ? FarmerCalendarEvent::where('user_id', Auth::id())->where('id', $event->harvest_event_id)->first()
+                : null;
+
+            return [$event, $harvestRecord ?: $event];
+        }
+
+        if ($event->category === 'harvest') {
+            $cropPlan = FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('category', 'crop_plan')
+                ->where('harvest_event_id', $event->id)
+                ->first();
+
+            return [$cropPlan, $event];
+        }
+
+        return [null, null];
+    }
+
+    private function getHarvestRecordForPlan(FarmerCalendarEvent $plan): ?FarmerCalendarEvent
+    {
+        if ($plan->harvest_event_id) {
+            return FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('id', $plan->harvest_event_id)
+                ->first();
+        }
+
+        return $plan;
     }
 
     private function validateDamageReport(array $validated): FarmerCalendarEvent|\Illuminate\Http\JsonResponse

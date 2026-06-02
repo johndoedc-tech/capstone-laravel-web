@@ -373,6 +373,7 @@ class ReportController extends Controller
         $query = FarmerCalendarEvent::query()
             ->from('farmer_calendar_events as plans')
             ->join('users', 'users.id', '=', 'plans.user_id')
+            ->leftJoin('farmer_calendar_events as harvests', 'harvests.id', '=', 'plans.harvest_event_id')
             ->leftJoinSub($damageTotals, 'damage_totals', function ($join) {
                 $join->on('damage_totals.crop_plan_event_id', '=', 'plans.id');
             })
@@ -391,6 +392,11 @@ class ReportController extends Controller
                 'plans.predicted_production_mt',
                 'plans.is_completed',
                 'plans.created_at',
+                DB::raw('COALESCE(harvests.actual_harvest_date, plans.actual_harvest_date) as actual_harvest_date'),
+                DB::raw('COALESCE(harvests.actual_harvest_amount, plans.actual_harvest_amount) as actual_harvest_amount'),
+                DB::raw('COALESCE(harvests.actual_harvest_unit, plans.actual_harvest_unit) as actual_harvest_unit'),
+                DB::raw('COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) as actual_harvest_production_mt'),
+                DB::raw('COALESCE(harvests.actual_harvest_notes, plans.actual_harvest_notes) as actual_harvest_notes'),
                 'users.name as farmer_name',
                 'users.email as farmer_email',
                 'users.preferred_municipality',
@@ -469,6 +475,9 @@ class ReportController extends Controller
             $harvestDate = $row->estimated_harvest_date ? Carbon::parse($row->estimated_harvest_date) : null;
             $latestDamage = $damageReports->get($row->id, collect())->first();
             $status = $this->resolvePlantingReportStatus($row, $reportedDamageSqm, $harvestDate);
+            $actualHarvestProduction = $row->actual_harvest_production_mt !== null
+                ? max(0, (float) $row->actual_harvest_production_mt)
+                : null;
 
             return [
                 'id' => (int) $row->id,
@@ -487,6 +496,11 @@ class ReportController extends Controller
                 'damage_ha' => round($reportedDamageSqm / 10000, 4),
                 'original_production_mt' => round($originalProduction, 2),
                 'adjusted_production_mt' => $adjustedProduction,
+                'actual_harvest_production_mt' => $actualHarvestProduction !== null ? round($actualHarvestProduction, 2) : null,
+                'actual_harvest_amount' => $row->actual_harvest_amount !== null ? (float) $row->actual_harvest_amount : null,
+                'actual_harvest_unit' => $row->actual_harvest_unit,
+                'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
+                'actual_harvest_notes' => $row->actual_harvest_notes,
                 'loss_production_mt' => $lossProduction,
                 'farm_type' => $this->formatReportLabel($row->water_source),
                 'seed_type' => $this->formatReportLabel($row->planting_material),
@@ -509,6 +523,10 @@ class ReportController extends Controller
 
     private function resolvePlantingReportStatus($row, float $reportedDamageSqm, ?Carbon $harvestDate): string
     {
+        if ($row->actual_harvest_production_mt !== null && (float) $row->actual_harvest_production_mt > 0) {
+            return 'harvested';
+        }
+
         if ($reportedDamageSqm > 0) {
             return 'damaged';
         }
@@ -527,6 +545,7 @@ class ReportController extends Controller
         $healthyAreaHa = max(0, round($totalAreaHa - $damageAreaHa, 2));
         $originalProduction = round($records->sum('original_production_mt'), 2);
         $adjustedProduction = round($records->sum('adjusted_production_mt'), 2);
+        $actualHarvestProduction = round($records->sum(fn ($record) => $record['actual_harvest_production_mt'] ?? 0), 2);
         $lossProduction = max(0, round($originalProduction - $adjustedProduction, 2));
         $cropBreakdown = $records
             ->groupBy('crop')
@@ -554,6 +573,7 @@ class ReportController extends Controller
             'healthy_area_percent' => $totalAreaHa > 0 ? round(($healthyAreaHa / $totalAreaHa) * 100, 1) : 0,
             'original_production_mt' => $originalProduction,
             'adjusted_production_mt' => $adjustedProduction,
+            'actual_harvest_production_mt' => $actualHarvestProduction,
             'loss_production_mt' => $lossProduction,
             'loss_percent' => $originalProduction > 0 ? round(($lossProduction / $originalProduction) * 100, 1) : 0,
             'crop_breakdown' => $cropBreakdown,

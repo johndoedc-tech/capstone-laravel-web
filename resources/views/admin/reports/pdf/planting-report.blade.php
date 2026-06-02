@@ -41,6 +41,10 @@
                 <div class="value">{{ number_format($summary['adjusted_production_mt'], 2) }} mt</div>
             </div>
             <div class="summary-card">
+                <div class="label">Actual Harvest</div>
+                <div class="value">{{ number_format($summary['actual_harvest_production_mt'] ?? 0, 2) }} mt</div>
+            </div>
+            <div class="summary-card">
                 <div class="label">Loss</div>
                 <div class="value">{{ number_format($summary['loss_production_mt'], 2) }} mt</div>
             </div>
@@ -80,6 +84,14 @@
                         <strong>{{ number_format($record['area_ha'], 2) }} ha</strong><br>
                         Original: {{ number_format($record['original_production_mt'], 2) }} mt<br>
                         Adjusted: {{ number_format($record['adjusted_production_mt'], 2) }} mt
+                        @if($record['actual_harvest_production_mt'] !== null)
+                            <br><span class="harvested">
+                                Actual: {{ number_format($record['actual_harvest_production_mt'], 2) }} mt
+                                @if($record['actual_harvest_date'])
+                                    on {{ $record['actual_harvest_date']->format('M d, Y') }}
+                                @endif
+                            </span>
+                        @endif
                         @if($record['damage_sqm'] > 0)
                             <br><span class="damaged">
                                 Damage:
