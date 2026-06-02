@@ -256,44 +256,28 @@
                             {{ Auth::user()->name }}! 👋
                         </h1>
                         <p class="text-primary-100 text-sm" x-text="t('dashboard_subtitle')"></p>
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                            @if($preferredMunicipality)
+                                <span class="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white ring-1 ring-white/20">
+                                    <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="truncate">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
+                                </span>
+                            @else
+                                <span class="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white ring-1 ring-white/20">
+                                    <span>No farm location set</span>
+                                </span>
+                            @endif
+                            <a href="{{ route('profile.edit') }}" class="text-xs font-medium text-white/90 underline underline-offset-2 hover:text-white">
+                                {{ $preferredMunicipality ? 'Edit location' : 'Set location' }}
+                            </a>
+                        </div>
                     </div>
                     <div class="text-left sm:text-right bg-white/10 rounded-lg px-4 py-2">
                         <p class="text-primary-100 text-xs">{{ now()->format('l') }}</p>
                         <p class="text-lg font-semibold">{{ now()->format('F d, Y') }}</p>
                     </div>
-                </div>
-            </div>
-
-            <!-- ============================================ -->
-            <!-- MY FARM (Read-only, set from onboarding) -->
-            <!-- ============================================ -->
-            <div x-data="farmPreferences()" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-2xl flex-shrink-0">🏡</span>
-                        <div class="min-w-0">
-                            <h2 class="text-lg font-semibold text-gray-900" x-text="t('my_farm')"></h2>
-                            <p class="text-xs text-gray-500" x-text="t('my_farm_desc')"></p>
-                        </div>
-                    </div>
-                    <a href="{{ route('profile.edit') }}" class="flex-shrink-0 text-xs text-primary-dark hover:text-primary-900 font-medium underline underline-offset-2 mt-1">Edit</a>
-                </div>
-
-                <!-- Municipality Display (from onboarding) -->
-                <div class="mt-4">
-                    <p class="block text-sm font-medium text-gray-700 mb-2">📍 <span x-text="t('where_is_farm')"></span></p>
-                    @if($preferredMunicipality)
-                        <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-green-50 border border-green-200">
-                            <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-green-800">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
-                        </div>
-                    @else
-                        <div class="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 italic">
-                            No location set — <a href="{{ route('profile.edit') }}" class="text-primary-dark underline">update your profile</a>.
-                        </div>
-                    @endif
                 </div>
             </div>
 
@@ -339,7 +323,7 @@
                 </div>
 
                 <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight ranking.</p>
+                    <p class="text-sm font-medium text-gray-700">Set your farm location from the header to unlock the crop insight ranking.</p>
                     <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the ranking focused on the same municipality.</p>
                 </div>
 
@@ -725,11 +709,7 @@
                 good_evening: 'Good evening,',
                 dashboard_subtitle: 'What shall we do on the farm today?',
                 
-                // My Farm
-                my_farm: 'My Farm',
-                my_farm_desc: 'Set your location so recommendations and crop trends stay focused on your area',
                 saved: 'Saved! ✓',
-                where_is_farm: 'Where is your farm?',
                 select_location: 'Select location...',
                 what_crops: 'What do you grow?',
                 
@@ -844,11 +824,7 @@
                 good_evening: 'Magandang gabi,',
                 dashboard_subtitle: 'Ano ang gagawin natin sa bukid ngayon?',
                 
-                // My Farm
-                my_farm: 'Ang Aking Bukid',
-                my_farm_desc: 'I-set ang iyong lokasyon para manatiling naka-focus sa iyong lugar ang rekomendasyon at crop trends',
                 saved: 'Na-save! ✓',
-                where_is_farm: 'Nasaan ang bukid mo?',
                 select_location: 'Pumili ng lugar...',
                 what_crops: 'Ano ang mga tinataniman mo?',
                 
@@ -1037,23 +1013,6 @@
                 .filter(Boolean)
                 .map(part => part.charAt(0).toUpperCase() + part.slice(1))
                 .join(' ');
-        }
-
-        // Farm Preferences Component
-        // Municipality is read from onboarding; no dropdown save needed.
-        function farmPreferences() {
-            return {
-                municipality: '{{ $preferredMunicipality ?? '' }}',
-
-                init() {
-                    // Broadcast once on init so all widgets pick up the saved location.
-                    if (this.municipality) {
-                        window.dispatchEvent(new CustomEvent('farm-preferences-updated', {
-                            detail: { municipality: this.municipality }
-                        }));
-                    }
-                }
-            }
         }
 
         // Crop Recommendations Component

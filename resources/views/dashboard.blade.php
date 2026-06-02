@@ -45,62 +45,6 @@
             </div>
 
             <!-- ============================================ -->
-            <!-- NEW: My Farm Preferences Section -->
-            <!-- ============================================ -->
-            <div x-data="farmPreferences()" class="bg-gradient-to-r from-sage-50 to-sage-100 rounded-lg shadow-sm border border-sage-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-3">
-                            <svg class="w-5 h-5 text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            <h2 class="text-lg font-semibold text-gray-900">My Farm</h2>
-                            <span x-show="saved" x-transition class="text-xs text-sage-dark bg-sage-light/50 px-2 py-0.5 rounded-full">Saved!</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Municipality Selection -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">My Municipality</label>
-                                <select x-model="municipality" @change="savePreferences()" 
-                                    class="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary-dark focus:ring focus:ring-primary-200 focus:ring-opacity-50 text-sm">
-                                    <option value="">Select your location...</option>
-                                    <option value="ATOK">Atok</option>
-                                    <option value="BAKUN">Bakun</option>
-                                    <option value="BOKOD">Bokod</option>
-                                    <option value="BUGUIAS">Buguias</option>
-                                    <option value="ITOGON">Itogon</option>
-                                    <option value="KABAYAN">Kabayan</option>
-                                    <option value="KAPANGAN">Kapangan</option>
-                                    <option value="KIBUNGAN">Kibungan</option>
-                                    <option value="LA TRINIDAD">La Trinidad</option>
-                                    <option value="MANKAYAN">Mankayan</option>
-                                    <option value="SABLAN">Sablan</option>
-                                    <option value="TUBA">Tuba</option>
-                                    <option value="TUBLAY">Tublay</option>
-                                </select>
-                            </div>
-
-                            <!-- Favorite Crops -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Favorite Crops <span class="text-gray-400">(up to 5)</span></label>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <template x-for="crop in availableCrops" :key="crop">
-                                        <button type="button" 
-                                            @click="toggleCrop(crop)"
-                                            :class="favoriteCrops.includes(crop) ? 'bg-primary-dark text-white border-primary-dark' : 'bg-white text-gray-700 border-gray-300 hover:border-primary'"
-                                            class="crop-tag px-2 py-1 text-xs rounded-full border transition-colors">
-                                            <span x-text="crop"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ============================================ -->
             <!-- NEW: Best Crop Recommendations Widget -->
             <!-- ============================================ -->
             <div x-data="cropRecommendations()" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
@@ -842,54 +786,6 @@
         // ============================================
         // Alpine.js Components for Interactive Dashboard
         // ============================================
-
-        // Farm Preferences Component
-        function farmPreferences() {
-            return {
-                municipality: '{{ $preferredMunicipality ?? '' }}',
-                favoriteCrops: @json($favoriteCrops ?? []),
-                availableCrops: ['Cabbage', 'Broccoli', 'Lettuce', 'Cauliflower', 'Chinese Cabbage', 'Carrots', 'Garden Peas', 'White Potato', 'Snap Beans', 'Sweet Pepper'],
-                saved: false,
-                saving: false,
-
-                toggleCrop(crop) {
-                    if (this.favoriteCrops.includes(crop)) {
-                        this.favoriteCrops = this.favoriteCrops.filter(c => c !== crop);
-                    } else if (this.favoriteCrops.length < 5) {
-                        this.favoriteCrops.push(crop);
-                    }
-                    this.savePreferences();
-                },
-
-                async savePreferences() {
-                    if (this.saving) return;
-                    this.saving = true;
-
-                    try {
-                        const response = await fetch('{{ route('farmer.preferences.save') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                preferred_municipality: this.municipality,
-                                favorite_crops: this.favoriteCrops
-                            })
-                        });
-
-                        if (response.ok) {
-                            this.saved = true;
-                            setTimeout(() => this.saved = false, 2000);
-                        }
-                    } catch (error) {
-                        console.error('Failed to save preferences:', error);
-                    } finally {
-                        this.saving = false;
-                    }
-                }
-            }
-        }
 
         // Crop Recommendations Component
         function cropRecommendations() {
