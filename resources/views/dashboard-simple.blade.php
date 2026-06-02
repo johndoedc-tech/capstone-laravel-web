@@ -281,6 +281,87 @@
                 </div>
             </div>
 
+            @if(($harvestProgress['items'] ?? collect())->isNotEmpty())
+                <!-- ============================================ -->
+                <!-- HARVEST PROGRESS -->
+                <!-- ============================================ -->
+                <div class="mb-4 lg:mb-6 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                    <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Harvest Progress</p>
+                            <h2 class="text-base font-semibold text-gray-900">Nearest crops to monitor</h2>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            @if(($harvestProgress['due_soon_count'] ?? 0) > 0)
+                                <span class="rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 font-medium text-orange-700">
+                                    {{ $harvestProgress['due_soon_count'] }} {{ $harvestProgress['due_soon_count'] === 1 ? 'needs' : 'need' }} attention
+                                </span>
+                            @endif
+                            @if(($harvestProgress['expected_production_mt'] ?? 0) > 0)
+                                <span class="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
+                                    {{ number_format($harvestProgress['expected_production_mt'], 2) }} mt expected
+                                </span>
+                            @endif
+                            <a href="{{ route('farmer.calendar.page') }}" class="rounded-full border border-gray-200 px-2.5 py-1 font-medium text-gray-600 hover:border-primary hover:text-primary-dark">
+                                Open calendar
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                        @foreach($harvestProgress['items'] as $item)
+                            <a href="{{ route('farmer.calendar.page') }}" class="block rounded-xl border border-gray-100 bg-gray-50 p-3 transition hover:border-emerald-200 hover:bg-emerald-50/70">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <h3 class="truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
+                                        <p class="mt-0.5 text-xs text-gray-500">
+                                            Harvest: {{ $item['harvest_date'] }}
+                                        </p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium {{ $item['status']['classes'] }}">
+                                        {{ $item['status']['label'] }}
+                                    </span>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="mb-1 flex items-center justify-between text-[11px] text-gray-500">
+                                        <span>{{ $item['planning_date'] }}</span>
+                                        <span>{{ $item['progress_percent'] }}%</span>
+                                    </div>
+                                    <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $item['progress_percent'] }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
+                                    @if($item['adjusted_production_mt'] !== null)
+                                        <span class="rounded bg-white px-1.5 py-0.5 text-emerald-700">
+                                            {{ number_format($item['adjusted_production_mt'], 2) }} mt est.
+                                        </span>
+                                    @endif
+                                    @if($item['damage_area_sqm'] > 0)
+                                        <span class="rounded bg-red-50 px-1.5 py-0.5 text-red-700">
+                                            {{ number_format($item['damage_area_sqm']) }} sqm damaged
+                                        </span>
+                                    @endif
+                                    @if($item['next_task'])
+                                        <span class="rounded bg-sky-50 px-1.5 py-0.5 text-sky-700">
+                                            Next: {{ $item['next_task']['date'] }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+
+                    @if(($harvestProgress['hidden_count'] ?? 0) > 0)
+                        <p class="mt-3 text-xs text-gray-500">
+                            {{ $harvestProgress['hidden_count'] }} more crop {{ $harvestProgress['hidden_count'] === 1 ? 'plan is' : 'plans are' }} available in the calendar.
+                        </p>
+                    @endif
+                </div>
+            @endif
+
             <!-- ============================================ -->
             <!-- TOP 5 CROPS INSIGHT -->
             <!-- ============================================ -->
