@@ -879,16 +879,17 @@
 
                                     <!-- Production Prediction (only for crop plans) -->
                                     <div x-show="productionPrediction.loading || productionPrediction.data || productionPrediction.error" class="rounded-md border border-orange-200 bg-orange-50 px-3 py-2">
-                                        <p class="text-[11px] font-semibold uppercase text-orange-700">Production</p>
+                                        <p class="text-[11px] font-semibold uppercase text-orange-700">Estimated Production</p>
                                         <div x-show="productionPrediction.loading" class="mt-1 text-xs text-orange-700">Calculating...</div>
                                         <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-0.5">
-                                            <p class="text-sm font-semibold text-gray-900 leading-tight" x-text="productionPrediction.data ? formatMetricTons(productionPrediction.data.predicted_production_mt) : ''"></p>
-                                            <p class="text-[11px] text-orange-700 leading-tight mt-0.5">
-                                                <span x-text="productionPrediction.data ? formatSquareMeters(productionPrediction.data.area_sqm) : ''"></span>
-                                                <span x-show="productionPrediction.data"> / </span>
-                                                <span x-text="productionPrediction.data ? productionPrediction.data.area_hectares + ' ha' : ''"></span>
-                                            </p>
-                                            <p x-show="productionPrediction.data && productionPrediction.data.production_per_ha_mt" class="text-[11px] text-orange-600 leading-tight mt-0.5" x-text="formatMetricTons(productionPrediction.data.production_per_ha_mt) + ' per ha'"></p>
+                                            <p class="text-base font-semibold text-gray-900 leading-tight" x-text="productionPrediction.data ? formatEstimatedProduction(productionPrediction.data) : ''"></p>
+                                            <p class="text-[11px] text-orange-700 leading-tight mt-0.5">Based on your crop, area, water source, and expected harvest month.</p>
+                                            <button type="button" @click="showProductionCalculation = !showProductionCalculation" class="mt-2 text-[11px] font-semibold text-orange-700 underline underline-offset-2">
+                                                <span x-text="showProductionCalculation ? 'Hide calculation' : 'Show calculation'"></span>
+                                            </button>
+                                            <div x-show="showProductionCalculation" x-transition class="mt-2 rounded-md bg-white/80 px-2.5 py-2 text-[11px] leading-relaxed text-gray-600">
+                                                <p x-text="formatProductionCalculation(productionPrediction.data)"></p>
+                                            </div>
                                         </div>
                                         <p x-show="!productionPrediction.loading && productionPrediction.error" class="mt-1 text-xs text-orange-700" x-text="productionPrediction.error"></p>
                                     </div>
@@ -979,6 +980,7 @@
                 },
                 productionPredictionTimer: null,
                 productionPredictionRequestId: 0,
+                showProductionCalculation: false,
                 categories: [
                     { value: 'pest', label: 'Pest', icon: '🐛' },
                     { value: 'harvest', label: 'Harvest', icon: '🌾' },
@@ -1341,6 +1343,42 @@
                     if (!Number.isFinite(amount)) return '';
 
                     return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+                },
+
+                formatKilogramsFromMetricTons(value) {
+                    const amount = Number(value);
+                    if (!Number.isFinite(amount)) return '';
+
+                    const kilograms = amount * 1000;
+                    const options = kilograms >= 10
+                        ? { maximumFractionDigits: 0 }
+                        : { maximumFractionDigits: 1 };
+
+                    return `${kilograms.toLocaleString(undefined, options)} kg`;
+                },
+
+                formatEstimatedProduction(prediction) {
+                    return `About ${this.formatKilogramsFromMetricTons(prediction?.predicted_production_mt)}`;
+                },
+
+                formatProductionCalculation(prediction) {
+                    if (!prediction) return '';
+
+                    const production = this.formatMetricTons(prediction.predicted_production_mt);
+                    const areaSqm = this.formatSquareMeters(prediction.area_sqm);
+                    const hectares = Number(prediction.area_hectares);
+                    const hectaresText = Number.isFinite(hectares)
+                        ? `${hectares.toLocaleString(undefined, { maximumFractionDigits: 4 })} ha`
+                        : '';
+                    const yieldRate = prediction.production_per_ha_mt
+                        ? `${this.formatMetricTons(prediction.production_per_ha_mt)} per ha`
+                        : 'model-estimated yield';
+
+                    if (!prediction.production_per_ha_mt) {
+                        return `${areaSqm} field. The ML model estimated ${production} for this crop plan.`;
+                    }
+
+                    return `${areaSqm} field (${hectaresText}). ${yieldRate} x ${hectaresText} = ${production}.`;
                 },
 
                 formatPercent(value) {
@@ -1721,6 +1759,7 @@
                         data: null,
                         error: '',
                     };
+                    this.showProductionCalculation = false;
                     if (this.productionPredictionTimer) {
                         clearTimeout(this.productionPredictionTimer);
                         this.productionPredictionTimer = null;
@@ -1739,6 +1778,7 @@
 
                     this.productionPrediction.loading = true;
                     this.productionPrediction.error = '';
+                    this.showProductionCalculation = false;
                     this.productionPredictionTimer = setTimeout(() => this.loadProductionPrediction(), 500);
                 },
 
@@ -1776,6 +1816,7 @@
                                 data: data.prediction,
                                 error: '',
                             };
+                            this.showProductionCalculation = false;
                             return;
                         }
 
