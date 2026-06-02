@@ -228,8 +228,8 @@
                             <a href="{{ route('admin.reports.planting-report') }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Reset</a>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <a href="{{ $csvUrl }}" class="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">Export CSV</a>
-                            <a href="{{ $pdfUrl }}" class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Export PDF</a>
+                            <a href="{{ $csvUrl }}" data-no-page-loader class="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">Export CSV</a>
+                            <a href="{{ $pdfUrl }}" data-no-page-loader class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">Export PDF</a>
                         </div>
                     </div>
                 </form>

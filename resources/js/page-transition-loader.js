@@ -68,6 +68,16 @@ const initPageTransitionLoader = () => {
 
     const hasLoaderOptOut = (element) => Boolean(element.closest('[data-no-page-loader], [data-no-loader]'));
 
+    const isDownloadUrl = (url) => {
+        const format = (url.searchParams.get('format') || '').toLowerCase();
+
+        if (['csv', 'pdf', 'xlsx', 'xls', 'zip'].includes(format)) {
+            return true;
+        }
+
+        return /\.(csv|pdf|xlsx?|zip)$/i.test(url.pathname);
+    };
+
     const shouldLoadForLink = (link, event) => {
         if (!link || isModifiedClick(event) || hasLoaderOptOut(link)) {
             return false;
@@ -93,14 +103,18 @@ const initPageTransitionLoader = () => {
             return false;
         }
 
+        if (isDownloadUrl(url)) {
+            return false;
+        }
+
         const current = new URL(window.location.href);
         const sameDocument = url.pathname === current.pathname && url.search === current.search;
 
         return !(sameDocument && url.hash);
     };
 
-    const shouldLoadForForm = (form) => {
-        if (!form || hasLoaderOptOut(form)) {
+    const shouldLoadForForm = (form, submitter = null) => {
+        if (!form || hasLoaderOptOut(form) || (submitter instanceof Element && hasLoaderOptOut(submitter))) {
             return false;
         }
 
@@ -124,7 +138,7 @@ const initPageTransitionLoader = () => {
     document.addEventListener('submit', (event) => {
         const form = event.target;
 
-        if (!(form instanceof HTMLFormElement) || !shouldLoadForForm(form) || event.defaultPrevented) {
+        if (!(form instanceof HTMLFormElement) || !shouldLoadForForm(form, event.submitter) || event.defaultPrevented) {
             return;
         }
 
@@ -134,6 +148,12 @@ const initPageTransitionLoader = () => {
     window.addEventListener('pageshow', hidePageLoader);
     window.addEventListener('pagehide', clearTimers);
     window.addEventListener('load', hidePageLoader);
+    window.addEventListener('focus', hidePageLoader);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            hidePageLoader();
+        }
+    });
     window.addEventListener('online', hidePageLoader);
 
     window.HarvianaPageLoader = {
