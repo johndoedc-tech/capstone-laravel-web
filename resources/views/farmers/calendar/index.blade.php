@@ -48,7 +48,164 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+            <!-- Mobile agenda-first calendar -->
+            <div class="lg:hidden space-y-4">
+                <div class="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+                    <div class="grid grid-cols-4 gap-1 rounded-xl bg-gray-100 p-1 text-xs font-semibold">
+                        <button type="button" @click="mobileAgendaMode = 'today'; selectMobileDate(todayDate)" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'today' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Today</button>
+                        <button type="button" @click="mobileAgendaMode = 'week'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'week' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Week</button>
+                        <button type="button" @click="mobileAgendaMode = 'crops'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'crops' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Crops</button>
+                        <button type="button" @click="mobileAgendaMode = 'month'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'month' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Month</button>
+                    </div>
+                </div>
+
+                <div class="grid gap-2" :class="canReportDamageOnSelectedDate ? 'grid-cols-3' : 'grid-cols-2'">
+                    <button type="button" @click="openAddModal('crop_plan')" class="rounded-xl bg-emerald-600 px-3 py-3 text-sm font-semibold text-white shadow-sm">Plan Crop</button>
+                    <button type="button" @click="openAddModal('reminder')" class="rounded-xl bg-orange-100 px-3 py-3 text-sm font-semibold text-orange-700 shadow-sm">Reminder</button>
+                    <button type="button" x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="rounded-xl bg-red-50 px-3 py-3 text-sm font-semibold text-red-700 shadow-sm">Damage</button>
+                </div>
+
+                <div x-show="mobileAgendaMode === 'today' || mobileAgendaMode === 'week'" class="space-y-4">
+                    <div class="flex gap-2 overflow-x-auto pb-1">
+                        <template x-for="day in mobileDateStrip" :key="'mobile-date-' + day.date">
+                            <button type="button" @click="selectMobileDate(day.date); mobileAgendaMode = day.date === todayDate ? 'today' : 'week'" class="min-w-[4.25rem] rounded-xl border px-3 py-2 text-center transition" :class="selectedDate === day.date ? 'border-primary bg-primary text-white' : 'border-gray-200 bg-white text-gray-600'">
+                                <p class="text-[11px] font-semibold uppercase" x-text="day.weekday"></p>
+                                <p class="mt-0.5 text-lg font-bold leading-none" x-text="day.day"></p>
+                                <p class="mt-0.5 text-[11px]" x-text="day.month"></p>
+                            </button>
+                        </template>
+                    </div>
+
+                    <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                        <div class="mb-3 flex items-center justify-between gap-3">
+                            <div>
+                                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500" x-text="mobileAgendaMode === 'today' ? 'Today' : 'This week'"></p>
+                                <h2 class="text-base font-semibold text-gray-900" x-text="mobileAgendaTitle"></h2>
+                            </div>
+                            <button type="button" @click="goToToday(); mobileAgendaMode = 'today'" class="rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">Today</button>
+                        </div>
+
+                        <div x-show="mobileAgendaGroups.length > 0" class="space-y-3">
+                            <template x-for="group in mobileAgendaGroups" :key="'mobile-agenda-' + group.date">
+                                <div class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                    <button type="button" @click="openEventGroupModal(group.date)" class="flex w-full items-center justify-between gap-3 text-left">
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-900" x-text="group.display"></p>
+                                            <p class="mt-0.5 text-xs text-gray-500">
+                                                <span x-text="group.count"></span>
+                                                <span x-text="group.count === 1 ? ' event' : ' events'"></span>
+                                            </p>
+                                        </div>
+                                        <span class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-primary-dark" x-text="group.count"></span>
+                                    </button>
+
+                                    <div class="mt-2 space-y-2">
+                                        <template x-for="event in group.previewEvents" :key="'mobile-event-' + group.date + '-' + event.id">
+                                            <button type="button" @click="openEventGroupModal(group.date)" class="calendar-event-card flex w-full items-start gap-2 rounded-lg bg-white p-2 text-left">
+                                                <span class="text-sm" x-text="event.category_icon"></span>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="calendar-event-title text-sm font-medium text-gray-900" :class="event.is_completed ? 'line-through text-gray-400' : ''" x-text="event.title"></p>
+                                                    <div class="mt-1 flex flex-wrap gap-1">
+                                                        <span x-show="event.crop" class="calendar-chip rounded bg-green-50 px-1.5 py-0.5 text-[11px] text-green-700" x-text="event.crop"></span>
+                                                        <span x-show="event.category === 'crop_plan'" class="calendar-chip rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700">Crop Plan</span>
+                                                        <span x-show="event.category === 'damage_report'" class="calendar-chip rounded bg-red-50 px-1.5 py-0.5 text-[11px] text-red-700">Damage</span>
+                                                        <span x-show="event.reminder_time" class="calendar-chip rounded bg-orange-50 px-1.5 py-0.5 text-[11px] text-orange-700" x-text="event.reminder_time"></span>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div x-show="mobileAgendaGroups.length === 0" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center">
+                            <p class="text-sm font-medium text-gray-700">No scheduled work here yet.</p>
+                            <p class="mt-1 text-xs text-gray-500">Plan a crop, add a reminder, or check the crops tab.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="mobileAgendaMode === 'crops'" class="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Crops in Progress</p>
+                            <h2 class="text-base font-semibold text-gray-900">Visible until harvest</h2>
+                        </div>
+                        <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                            <span x-text="activeCropTimelines.length"></span>
+                            <span x-text="activeCropTimelines.length === 1 ? ' crop' : ' crops'"></span>
+                        </span>
+                    </div>
+
+                    <div x-show="activeCropTimelines.length > 0" class="space-y-2">
+                        <template x-for="timeline in activeCropTimelines" :key="'mobile-crop-' + timeline.plan.id">
+                            <button type="button" @click="openCropTimelineModal(timeline.plan.id)" class="calendar-event-card w-full rounded-xl border border-emerald-100 bg-emerald-50/70 p-3 text-left">
+                                <div class="flex min-w-0 items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="timeline.plan.crop || timeline.plan.title"></p>
+                                        <p class="mt-0.5 text-xs text-emerald-700">
+                                            <span x-text="formatDisplayDate(timeline.startDate)"></span>
+                                            <span x-show="timeline.endDate"> to </span>
+                                            <span x-show="timeline.endDate" x-text="formatDisplayDate(timeline.endDate)"></span>
+                                        </p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-700" x-text="timeline.daysLeftText"></span>
+                                </div>
+                                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white">
+                                    <div class="h-full rounded-full bg-emerald-500" :style="`width: ${timeline.progress}%`"></div>
+                                </div>
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
+                                    <span x-show="timeline.nextTask" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
+                                        <span x-text="'Next: ' + timeline.nextTask.label"></span>
+                                    </span>
+                                </div>
+                            </button>
+                        </template>
+                    </div>
+
+                    <div x-show="activeCropTimelines.length === 0" class="rounded-xl border border-dashed border-emerald-100 bg-emerald-50/60 px-4 py-6 text-center">
+                        <p class="text-sm font-medium text-gray-700">No crops in progress.</p>
+                        <button type="button" @click="openAddModal('crop_plan')" class="mt-3 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">Plan a crop</button>
+                    </div>
+                </div>
+
+                <div x-show="mobileAgendaMode === 'month'" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="mb-4 flex items-center justify-between">
+                        <button @click="prevMonth()" class="rounded-lg p-2 text-gray-600 hover:bg-gray-100">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h2 class="text-base font-bold text-gray-900" x-text="monthYearDisplay"></h2>
+                        <button @click="nextMonth()" class="rounded-lg p-2 text-gray-600 hover:bg-gray-100">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1">
+                        <template x-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']">
+                            <div class="py-1 text-center text-[11px] font-semibold text-gray-400" x-text="day"></div>
+                        </template>
+                        <template x-for="day in calendarDays" :key="'mobile-month-' + day.date">
+                            <button type="button" @click="day.isCurrentMonth && selectDay(day)" class="min-h-12 rounded-lg border p-1 text-center text-xs transition" :class="{
+                                'border-gray-100 bg-gray-50 text-gray-300': !day.isCurrentMonth,
+                                'border-gray-100 bg-white text-gray-700': day.isCurrentMonth,
+                                'border-orange-400 bg-orange-50 text-orange-700': day.isSelected,
+                                'font-bold text-orange-600': day.isToday && !day.isSelected
+                            }">
+                                <span x-text="day.day"></span>
+                                <span x-show="(eventsByDay[day.date] || []).length > 0" class="mx-auto mt-1 block h-1.5 w-1.5 rounded-full bg-primary"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                 
                 <!-- Calendar Section -->
                 <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
@@ -288,10 +445,10 @@
 
             <!-- Planted Crop Details Modal -->
             <div x-show="showCropDetailsModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="crop-details-title" role="dialog" aria-modal="true">
-                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                <div class="flex min-h-screen items-end justify-center px-0 pt-10 sm:items-center sm:px-4 sm:py-6">
                     <div x-show="showCropDetailsModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeCropDetailsModal()"></div>
 
-                    <div x-show="showCropDetailsModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                    <div x-show="showCropDetailsModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-lg">
                         <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Planted Crop Details</p>
@@ -382,10 +539,10 @@
 
             <!-- Grouped Events Modal -->
             <div x-show="showEventGroupModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="event-group-title" role="dialog" aria-modal="true">
-                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                <div class="flex min-h-screen items-end justify-center px-0 pt-10 sm:items-center sm:px-4 sm:py-6">
                     <div x-show="showEventGroupModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeEventGroupModal()"></div>
 
-                    <div x-show="showEventGroupModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                    <div x-show="showEventGroupModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-xl overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-lg">
                         <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
                             <div class="min-w-0">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-orange-700">Grouped Events</p>
@@ -451,10 +608,10 @@
 
             <!-- Active Crop Timeline Modal -->
             <div x-show="showCropTimelineModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="crop-timeline-title" role="dialog" aria-modal="true">
-                <div class="flex min-h-screen items-center justify-center px-4 py-6">
+                <div class="flex min-h-screen items-end justify-center px-0 pt-10 sm:items-center sm:px-4 sm:py-6">
                     <div x-show="showCropTimelineModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeCropTimelineModal()"></div>
 
-                    <div x-show="showCropTimelineModal && activeCropPlan" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-3 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-lg bg-white text-left shadow-xl">
+                    <div x-show="showCropTimelineModal && activeCropPlan" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-2xl overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-lg">
                         <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
                             <div class="min-w-0">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Active Crop Timeline</p>
@@ -728,6 +885,7 @@
             return {
                 currentDate: new Date(),
                 selectedDate: null,
+                mobileAgendaMode: 'today',
                 events: [],
                 eventsByDay: {},
                 upcomingReminders: [],
@@ -926,6 +1084,62 @@
                     return this.eventsByDay[this.selectedDate] || [];
                 },
 
+                get mobileDateStrip() {
+                    return Array.from({ length: 7 }, (_, index) => {
+                        const date = new Date();
+                        date.setDate(date.getDate() + index);
+                        const dateString = formatLocalDate(date);
+
+                        return {
+                            date: dateString,
+                            weekday: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                            day: date.getDate(),
+                            month: date.toLocaleDateString('en-US', { month: 'short' }),
+                        };
+                    });
+                },
+
+                get mobileAgendaDates() {
+                    if (this.mobileAgendaMode === 'today') {
+                        return [this.selectedDate || this.todayDate];
+                    }
+
+                    if (this.mobileAgendaMode === 'week') {
+                        return this.mobileDateStrip.map((day) => day.date);
+                    }
+
+                    return [];
+                },
+
+                get mobileAgendaGroups() {
+                    const groups = this.mobileAgendaDates
+                        .map((date) => {
+                            const events = this.eventsByDay[date] || [];
+
+                            return {
+                                date,
+                                display: this.formatMobileAgendaDate(date),
+                                count: events.length,
+                                previewEvents: events.slice(0, 3),
+                                hiddenCount: Math.max(events.length - 3, 0),
+                            };
+                        });
+
+                    if (this.mobileAgendaMode === 'today') {
+                        return groups.filter((group) => group.date === (this.selectedDate || this.todayDate) && group.count > 0);
+                    }
+
+                    return groups.filter((group) => group.count > 0);
+                },
+
+                get mobileAgendaTitle() {
+                    if (this.mobileAgendaMode === 'today') {
+                        return this.selectedDate ? this.formatMobileAgendaDate(this.selectedDate) : 'Today';
+                    }
+
+                    return 'Next 7 days';
+                },
+
                 get calendarEventGroups() {
                     return Object.entries(this.eventsByDay)
                         .filter(([, events]) => Array.isArray(events) && events.length > 0)
@@ -1042,6 +1256,25 @@
                     return parseLocalDate(dateString).toLocaleDateString('en-US', {
                         weekday: 'long',
                         month: 'long',
+                        day: 'numeric',
+                    });
+                },
+
+                formatMobileAgendaDate(dateString) {
+                    if (!dateString) return '';
+
+                    const date = parseLocalDate(dateString);
+                    const today = this.todayDate;
+                    const tomorrowDate = new Date();
+                    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+                    const tomorrow = formatLocalDate(tomorrowDate);
+
+                    if (dateString === today) return 'Today';
+                    if (dateString === tomorrow) return 'Tomorrow';
+
+                    return date.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
                         day: 'numeric',
                     });
                 },
@@ -1460,6 +1693,18 @@
                 selectDay(day) {
                     this.selectedDate = day.date;
                     this.showCropDetailsModal = this.selectedCropPlanEvents.length > 0;
+                },
+
+                selectMobileDate(dateString) {
+                    const date = parseLocalDate(dateString);
+                    const currentMonth = this.currentDate.getMonth();
+                    const currentYear = this.currentDate.getFullYear();
+                    this.selectedDate = dateString;
+
+                    if (date.getMonth() !== currentMonth || date.getFullYear() !== currentYear) {
+                        this.currentDate = new Date(date.getFullYear(), date.getMonth(), 1);
+                        this.loadEvents();
+                    }
                 },
 
                 openEventGroupModal(date) {
