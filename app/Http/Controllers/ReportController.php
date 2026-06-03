@@ -55,10 +55,12 @@ class ReportController extends Controller
             'window_start' => $lastThirtyDays,
             'week_start' => $startOfWeek,
         ];
-        $plantingSummary = $this->buildPlantingReportSummary($this->getPlantingReportRecords(new Request()));
+        $plantingRecords = $this->getPlantingReportRecords(new Request());
+        $plantingSummary = $this->buildPlantingReportSummary($plantingRecords);
         $harvestAccuracySummary = $plantingSummary['accuracy'];
+        $correctionModelReadiness = $this->buildCorrectionModelReadiness($plantingRecords);
 
-        return view('admin.reports.index', compact('stats', 'predictionSummary', 'harvestAccuracySummary'));
+        return view('admin.reports.index', compact('stats', 'predictionSummary', 'harvestAccuracySummary', 'correctionModelReadiness'));
     }
 
     /**
@@ -364,6 +366,15 @@ class ReportController extends Controller
         return view('admin.reports.planting-report', compact('paginatedRecords', 'summary', 'filters'));
     }
 
+    public function mlCorrectionDataset(Request $request)
+    {
+        $records = $this->getPlantingReportRecords($request)
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+
+        return $this->exportMlCorrectionDatasetCSV($records);
+    }
+
     private function getPlantingReportRecords(Request $request): Collection
     {
         $damageTotals = FarmerCalendarEvent::query()
@@ -392,6 +403,8 @@ class ReportController extends Controller
                 'plans.planting_material',
                 'plans.estimated_harvest_date',
                 'plans.predicted_production_mt',
+                'plans.prediction_confidence',
+                'plans.prediction_source',
                 'plans.is_completed',
                 'plans.created_at',
                 DB::raw('COALESCE(harvests.actual_harvest_date, plans.actual_harvest_date) as actual_harvest_date'),
@@ -514,6 +527,8 @@ class ReportController extends Controller
                 'accuracy_percent' => $accuracyPercent,
                 'error_percent' => $errorPercent,
                 'error_direction' => $this->resolvePredictionErrorDirection($predictionError),
+                'prediction_confidence' => $row->prediction_confidence !== null ? round((float) $row->prediction_confidence, 4) : null,
+                'prediction_source' => $row->prediction_source ?: null,
                 'actual_harvest_amount' => $row->actual_harvest_amount !== null ? (float) $row->actual_harvest_amount : null,
                 'actual_harvest_unit' => $row->actual_harvest_unit,
                 'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
@@ -636,6 +651,50 @@ class ReportController extends Controller
             'bias_label' => $this->resolvePredictionBiasLabel($signedErrorTotal),
             'by_crop' => $this->buildAccuracyBreakdown($records, 'crop'),
             'by_municipality' => $this->buildAccuracyBreakdown($records, 'municipality'),
+        ];
+    }
+
+    private function buildCorrectionModelReadiness(Collection $records): array
+    {
+        $actualHarvestRecords = $records
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+        $sampleCount = $actualHarvestRecords->count();
+        $pilotMinimum = 30;
+        $trainingMinimum = 100;
+        $readinessPercent = min(100, round(($sampleCount / $trainingMinimum) * 100));
+
+        if ($sampleCount >= $trainingMinimum) {
+            $status = 'Ready for training';
+            $statusTone = 'emerald';
+            $message = 'Enough real harvest records are available to start a correction-model training run.';
+        } elseif ($sampleCount >= $pilotMinimum) {
+            $status = 'Pilot-ready';
+            $statusTone = 'amber';
+            $message = 'Enough samples are available for pilot testing, but more harvest records will improve reliability.';
+        } else {
+            $status = 'Collecting data';
+            $statusTone = 'slate';
+            $message = 'Keep collecting actual harvest records before training a correction model.';
+        }
+
+        return [
+            'sample_count' => $sampleCount,
+            'pilot_minimum' => $pilotMinimum,
+            'training_minimum' => $trainingMinimum,
+            'readiness_percent' => $readinessPercent,
+            'status' => $status,
+            'status_tone' => $statusTone,
+            'message' => $message,
+            'crop_count' => $actualHarvestRecords->pluck('crop')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'municipality_count' => $actualHarvestRecords->pluck('municipality')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'water_source_count' => $actualHarvestRecords->pluck('farm_type')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'latest_actual_harvest_date' => $actualHarvestRecords
+                ->pluck('actual_harvest_date')
+                ->filter()
+                ->sortDesc()
+                ->first(),
+            'export_ready' => $sampleCount > 0,
         ];
     }
 
@@ -821,6 +880,82 @@ class ReportController extends Controller
                     $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1) : '',
                     $record['damage_title'] ?: '',
                     $record['recorded_at']?->format('Y-m-d H:i'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function exportMlCorrectionDatasetCSV(Collection $records)
+    {
+        $filename = 'harviana-ml-correction-dataset-' . now()->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($records) {
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, [
+                'record_id',
+                'farmer_id',
+                'municipality',
+                'crop',
+                'water_source',
+                'planting_material',
+                'planting_date',
+                'estimated_harvest_date',
+                'actual_harvest_date',
+                'area_sqm',
+                'area_ha',
+                'damage_sqm',
+                'damage_ratio',
+                'predicted_production_mt',
+                'damage_adjusted_prediction_mt',
+                'actual_harvest_mt',
+                'prediction_error_mt',
+                'absolute_error_mt',
+                'accuracy_percent',
+                'prediction_confidence',
+                'prediction_source',
+                'actual_harvest_unit',
+                'actual_harvest_notes',
+            ]);
+
+            foreach ($records as $record) {
+                $damageRatio = $record['area_sqm'] > 0
+                    ? round($record['damage_sqm'] / $record['area_sqm'], 4)
+                    : 0;
+
+                fputcsv($file, [
+                    $record['id'],
+                    $record['farmer_id'],
+                    $record['municipality'],
+                    $record['crop'],
+                    $record['farm_type'],
+                    $record['seed_type'],
+                    $record['planting_date']?->format('Y-m-d'),
+                    $record['harvest_date']?->format('Y-m-d'),
+                    $record['actual_harvest_date']?->format('Y-m-d'),
+                    number_format($record['area_sqm'], 2, '.', ''),
+                    number_format($record['area_ha'], 4, '.', ''),
+                    number_format($record['damage_sqm'], 2, '.', ''),
+                    number_format($damageRatio, 4, '.', ''),
+                    number_format($record['original_production_mt'], 2, '.', ''),
+                    number_format($record['adjusted_production_mt'], 2, '.', ''),
+                    number_format($record['actual_harvest_production_mt'], 2, '.', ''),
+                    $record['prediction_error_mt'] !== null ? number_format($record['prediction_error_mt'], 2, '.', '') : '',
+                    $record['absolute_prediction_error_mt'] !== null ? number_format($record['absolute_prediction_error_mt'], 2, '.', '') : '',
+                    $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1, '.', '') : '',
+                    $record['prediction_confidence'] !== null ? number_format($record['prediction_confidence'], 4, '.', '') : '',
+                    $record['prediction_source'] ?? '',
+                    $record['actual_harvest_unit'] ?? '',
+                    $record['actual_harvest_notes'] ?? '',
                 ]);
             }
 
