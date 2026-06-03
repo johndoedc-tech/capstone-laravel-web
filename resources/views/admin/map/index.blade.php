@@ -62,6 +62,29 @@
         .map-pinpoint.no-data {
             background: #94a3b8;
         }
+        .pwa-map-viewport {
+            height: min(64vh, 34rem);
+            min-height: 24rem;
+        }
+        .pwa-map-details-panel {
+            top: calc(4.5rem + var(--harviana-safe-top));
+            height: calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top));
+            padding-bottom: var(--harviana-safe-bottom);
+        }
+        @media (min-width: 640px) {
+            .pwa-map-viewport {
+                height: 650px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .pwa-map-viewport {
+                height: 800px;
+            }
+            .pwa-map-details-panel {
+                top: 0;
+                height: var(--harviana-viewport-height);
+            }
+        }
     </style>
     <div class="py-4 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-full mx-auto">
@@ -139,18 +162,25 @@
                             <span>Loading map data...</span>
                         </div>
                     </div>
+
+                    <div id="map-error" class="hidden mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <div class="flex items-start justify-between gap-3">
+                            <p class="min-w-0" data-map-error-message></p>
+                            <button type="button" onclick="clearMapError()" class="shrink-0 font-semibold text-red-700">Dismiss</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Map Container -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 lg:p-6 relative">
-                    <div id="map" style="height: 500px; width: 100%;"
-                        class="relative z-0 rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
+                    <div id="map"
+                        class="pwa-map-viewport relative z-0 rounded-lg shadow-inner"></div>
 
                     <!-- Municipality Details Panel - Slides from right -->
                     <div id="details-panel"
-                        class="fixed top-0 right-0 h-full bg-white shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
+                        class="pwa-map-details-panel fixed right-0 bg-white shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
                         <div class="p-4 lg:p-6">
                             <!-- Close Button -->
                             <button onclick="closeDetailsPanel()"
@@ -182,6 +212,8 @@
                                     </svg>
                                 </div>
                             </div>
+
+                            <div id="panel-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
 
                             <!-- Panel Content -->
                             <div id="panel-content" class="space-y-6">
@@ -394,6 +426,53 @@
             return (name || '').toString().toUpperCase().replace(/\s+/g, '');
         }
 
+        function showMapError(message) {
+            const errorEl = document.getElementById('map-error');
+            const messageEl = errorEl?.querySelector('[data-map-error-message]');
+
+            if (!errorEl || !messageEl) {
+                return;
+            }
+
+            messageEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function clearMapError() {
+            const errorEl = document.getElementById('map-error');
+            const messageEl = errorEl?.querySelector('[data-map-error-message]');
+
+            if (!errorEl || !messageEl) {
+                return;
+            }
+
+            messageEl.textContent = '';
+            errorEl.classList.add('hidden');
+        }
+
+        function showPanelError(message) {
+            const loadingEl = document.getElementById('panel-loading');
+            const contentEl = document.getElementById('panel-content');
+            const errorEl = document.getElementById('panel-error');
+
+            loadingEl?.classList.add('hidden');
+            contentEl?.classList.add('hidden');
+
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearPanelError() {
+            const errorEl = document.getElementById('panel-error');
+
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
+        }
+
         // Initialize map
         function initMap() {
             console.log('Initializing map...');
@@ -413,8 +492,13 @@
         // Load filter options from API
         async function loadFilters() {
             try {
+                clearMapError();
                 console.log('Fetching filters from:', `${apiBase}/filters`);
                 const response = await fetch(`${apiBase}/filters`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 console.log('Filter response:', response);
                 filterOptions = await response.json();
                 console.log('Filter options loaded:', filterOptions);
@@ -440,7 +524,7 @@
                 loadMapData();
             } catch (error) {
                 console.error('Error loading filters:', error);
-                alert('Error loading filters. Please check console for details.');
+                showMapError('Unable to load map filters. Check your connection and try again.');
                 document.getElementById('crop-filter').innerHTML = '<option value="">Error loading crops</option>';
                 document.getElementById('year-filter').innerHTML = '<option value="">Error loading years</option>';
             }
@@ -454,6 +538,7 @@
             const farmType = document.getElementById('farm-type-filter').value;
 
             // Show loading
+            clearMapError();
             document.getElementById('loading-indicator').classList.remove('hidden');
 
             try {
@@ -464,6 +549,10 @@
                 if (farmType) params.append('farm_type', farmType);
 
                 const response = await fetch(`${apiBase}/data?${params}`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 const data = await response.json();
 
                 currentData = data;
@@ -471,7 +560,7 @@
                 updateStats(data);
             } catch (error) {
                 console.error('Error loading map data:', error);
-                alert('Error loading map data: ' + error.message);
+                showMapError('Unable to load map data. Check your connection and try again.');
             } finally {
                 document.getElementById('loading-indicator').classList.add('hidden');
             }
@@ -952,6 +1041,7 @@
             renderProductionOutlook([]);
 
             // Show loading
+            clearPanelError();
             document.getElementById('panel-loading').classList.remove('hidden');
             document.getElementById('panel-content').classList.add('hidden');
 
@@ -968,6 +1058,10 @@
                 if (farmType) params.append('farm_type', farmType);
 
                 const response = await fetch(`${apiBase}/municipality/${encodeURIComponent(municipalityName)}?${params}`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 const data = await response.json();
 
                 if (requestToken !== detailsRequestToken) {
@@ -1010,8 +1104,7 @@
                 }
 
                 console.error('Error loading municipality details:', error);
-                alert('Error loading details: ' + error.message);
-                closeDetailsPanel();
+                showPanelError('Unable to load municipality details. Check your connection and try again.');
             }
         }
 
