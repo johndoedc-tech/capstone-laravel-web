@@ -210,6 +210,84 @@
                 </a>
             </div>
 
+            <!-- Real-time Municipal Supply Forecast -->
+            <div class="mb-5 lg:mb-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-5">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 13.5l7.5-7.5L14 9.5l7-7m0 0v6m0-6h-6M4 20h16" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Real-time Supply Forecast</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Live view from crop plans, reported damage, and actual harvest records.</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                                <span id="adminSupplyForecastYear"
+                                    class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-700">Current season</span>
+                                <span id="adminSupplyForecastStatus" class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1">Loading live supply...</span>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.map.index') }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700">
+                            Open map
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Supply Forecast</p>
+                            <p id="adminSupplyForecastTotal" class="mt-2 text-xl lg:text-2xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-xl border border-green-100 bg-green-50/70 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-green-700">Harvested</p>
+                            <p id="adminSupplyHarvestedTotal" class="mt-2 text-xl lg:text-2xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-xl border border-sky-100 bg-sky-50/70 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Remaining</p>
+                            <p id="adminSupplyRemainingTotal" class="mt-2 text-xl lg:text-2xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-xl border border-red-100 bg-red-50/70 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-red-700">Damaged</p>
+                            <p id="adminSupplyDamagedTotal" class="mt-2 text-xl lg:text-2xl font-bold text-gray-900">-</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-900">Top Municipalities</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Ranked by live supply forecast</p>
+                                </div>
+                                <span id="adminSupplyPlanCount" class="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-600">- plans</span>
+                            </div>
+                            <div id="adminSupplyMunicipalityList" class="space-y-2">
+                                <p class="text-sm text-gray-500">Loading municipality supply...</p>
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl border border-gray-200 p-4">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-900">Selected Area Crop Supply</h4>
+                                    <p id="adminSupplySelectedArea" class="text-xs text-gray-500 mt-0.5">La Trinidad</p>
+                                </div>
+                                <span id="adminSupplySelectedCropCount" class="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-600">- crops</span>
+                            </div>
+                            <div id="adminSupplyCropList" class="space-y-2">
+                                <p class="text-sm text-gray-500">Loading crop supply...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Top 5 Crops by Production Chart -->
             <div class="mb-5 lg:mb-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
@@ -563,7 +641,7 @@
                 return 'the selected municipality';
             }
 
-            if (municipality === 'LATRINIDAD') {
+            if (String(municipality).replace(/\s+/g, '').toUpperCase() === 'LATRINIDAD') {
                 return 'La Trinidad';
             }
 
@@ -591,6 +669,188 @@
             };
 
             return monthNames[monthCode] || monthCode;
+        }
+
+        function escapeAdminHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            })[char]);
+        }
+
+        function formatAdminMetricTons(value) {
+            const amount = Number(value) || 0;
+            return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+        }
+
+        function formatAdminCompactNumber(value) {
+            return (Number(value) || 0).toLocaleString();
+        }
+
+        function getAdminSupplyApiUrl(params = {}) {
+            const url = new URL('{{ url('/api/map/supply-forecast') }}', window.location.origin);
+
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    url.searchParams.set(key, value);
+                }
+            });
+
+            return url.toString();
+        }
+
+        function summarizeAdminSupply(rows) {
+            return rows.reduce((summary, row) => {
+                summary.supply += Number(row.supply_forecast_mt || 0);
+                summary.harvested += Number(row.harvested_production_mt || 0);
+                summary.remaining += Number(row.net_expected_production_mt || 0);
+                summary.damaged += Number(row.damaged_production_mt || 0);
+                summary.plans += Number(row.plan_count || 0);
+                return summary;
+            }, {
+                supply: 0,
+                harvested: 0,
+                remaining: 0,
+                damaged: 0,
+                plans: 0
+            });
+        }
+
+        function setAdminSupplyStatus(text, tone = 'neutral') {
+            const statusEl = document.getElementById('adminSupplyForecastStatus');
+            if (!statusEl) return;
+
+            const toneClasses = {
+                neutral: 'bg-gray-100 text-gray-600',
+                ready: 'bg-emerald-50 text-emerald-700',
+                error: 'bg-red-50 text-red-700'
+            };
+
+            statusEl.className = `inline-flex items-center rounded-full px-3 py-1 ${toneClasses[tone] || toneClasses.neutral}`;
+            statusEl.textContent = text;
+        }
+
+        function renderAdminSupplyMunicipalities(rows) {
+            const listEl = document.getElementById('adminSupplyMunicipalityList');
+            if (!listEl) return;
+
+            const rankedRows = [...rows]
+                .filter((row) => Number(row.supply_forecast_mt || 0) > 0 || Number(row.plan_count || 0) > 0)
+                .sort((a, b) => Number(b.supply_forecast_mt || 0) - Number(a.supply_forecast_mt || 0))
+                .slice(0, 5);
+
+            if (!rankedRows.length) {
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No live crop plans have been reported for this season yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = rankedRows.map((row, index) => `
+                <div class="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50/70 px-3 py-2">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">${index + 1}. ${escapeAdminHtml(formatAdminMunicipalityName(row.normalized_municipality || row.municipality))}</p>
+                        <p class="text-[11px] text-gray-500">${formatAdminCompactNumber(row.plan_count)} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} &middot; ${formatAdminCompactNumber(row.farmer_count)} ${Number(row.farmer_count || 0) === 1 ? 'farmer' : 'farmers'}</p>
+                    </div>
+                    <p class="shrink-0 text-sm font-bold text-emerald-700">${formatAdminMetricTons(row.supply_forecast_mt)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminSelectedSupply(rows, municipalityName) {
+            const listEl = document.getElementById('adminSupplyCropList');
+            const areaEl = document.getElementById('adminSupplySelectedArea');
+            const countEl = document.getElementById('adminSupplySelectedCropCount');
+
+            if (areaEl) {
+                areaEl.textContent = municipalityName;
+            }
+
+            const cropRows = [...rows]
+                .filter((row) => Number(row.supply_forecast_mt || 0) > 0 || Number(row.plan_count || 0) > 0)
+                .sort((a, b) => Number(b.supply_forecast_mt || 0) - Number(a.supply_forecast_mt || 0))
+                .slice(0, 4);
+
+            if (countEl) {
+                countEl.textContent = `${cropRows.length} ${cropRows.length === 1 ? 'crop' : 'crops'}`;
+            }
+
+            if (!listEl) return;
+
+            if (!cropRows.length) {
+                listEl.innerHTML = `<p class="text-sm text-gray-500">No live crop plans for ${escapeAdminHtml(municipalityName)} yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = cropRows.map((row) => `
+                <div class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 break-words">${escapeAdminHtml(row.crop || 'Crop')}</p>
+                            <p class="text-[11px] text-gray-500">${formatAdminCompactNumber(row.plan_count)} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} &middot; ${formatAdminCompactNumber(row.harvested_count)} harvested</p>
+                        </div>
+                        <p class="shrink-0 text-sm font-bold text-emerald-700">${formatAdminMetricTons(row.supply_forecast_mt)}</p>
+                    </div>
+                    <div class="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+                        <div class="rounded bg-green-50 px-2 py-1">
+                            <p class="font-semibold text-green-700">Harvested</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.harvested_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-sky-50 px-2 py-1">
+                            <p class="font-semibold text-sky-700">Remaining</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.net_expected_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-red-50 px-2 py-1">
+                            <p class="font-semibold text-red-700">Damage</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.damaged_production_mt)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadAdminSupplyForecast(municipality) {
+            const currentYear = new Date().getFullYear();
+            const municipalityName = formatAdminMunicipalityName(municipality);
+
+            document.getElementById('adminSupplyForecastYear').textContent = `${currentYear} season`;
+            setAdminSupplyStatus('Loading live supply...', 'neutral');
+
+            try {
+                const [allResponse, selectedResponse] = await Promise.all([
+                    fetch(getAdminSupplyApiUrl({ year: currentYear }), { headers: { 'Accept': 'application/json' } }),
+                    fetch(getAdminSupplyApiUrl({ year: currentYear, municipality }), { headers: { 'Accept': 'application/json' } })
+                ]);
+
+                if (!allResponse.ok || !selectedResponse.ok) {
+                    throw new Error('Supply forecast request failed');
+                }
+
+                const [allPayload, selectedPayload] = await Promise.all([
+                    allResponse.json(),
+                    selectedResponse.json()
+                ]);
+
+                const allRows = Array.isArray(allPayload.data) ? allPayload.data : [];
+                const selectedRows = Array.isArray(selectedPayload.data) ? selectedPayload.data : [];
+                const summary = summarizeAdminSupply(allRows);
+
+                document.getElementById('adminSupplyForecastTotal').textContent = formatAdminMetricTons(summary.supply);
+                document.getElementById('adminSupplyHarvestedTotal').textContent = formatAdminMetricTons(summary.harvested);
+                document.getElementById('adminSupplyRemainingTotal').textContent = formatAdminMetricTons(summary.remaining);
+                document.getElementById('adminSupplyDamagedTotal').textContent = formatAdminMetricTons(summary.damaged);
+                document.getElementById('adminSupplyPlanCount').textContent = `${formatAdminCompactNumber(summary.plans)} ${summary.plans === 1 ? 'plan' : 'plans'}`;
+
+                renderAdminSupplyMunicipalities(allRows);
+                renderAdminSelectedSupply(selectedRows, municipalityName);
+                setAdminSupplyStatus(allRows.length ? 'Live supply loaded' : 'No live crop plans yet', allRows.length ? 'ready' : 'neutral');
+            } catch (error) {
+                console.error('Unable to load live supply forecast:', error);
+                setAdminSupplyStatus('Live supply unavailable', 'error');
+                document.getElementById('adminSupplyMunicipalityList').innerHTML = '<p class="text-sm text-red-600">Unable to load municipality supply right now.</p>';
+                document.getElementById('adminSupplyCropList').innerHTML = '<p class="text-sm text-red-600">Unable to load selected-area crop supply.</p>';
+            }
         }
 
         async function fetchAdminRecommendationContext(municipality) {
@@ -1061,9 +1321,11 @@
             const adminMobileLayoutQuery = window.matchMedia('(max-width: 767px)');
 
             initAdminInsightAnimation();
+            loadAdminSupplyForecast(municipalitySelect.value);
             loadAdminTopCropsChart(municipalitySelect.value);
 
             municipalitySelect.addEventListener('change', function() {
+                loadAdminSupplyForecast(this.value);
                 loadAdminTopCropsChart(this.value);
             });
 
