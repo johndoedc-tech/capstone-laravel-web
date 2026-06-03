@@ -167,7 +167,8 @@
                             </label>
                             <select id="view-filter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm lg:text-base">
-                                <option value="production">Total Production (mt)</option>
+                                <option value="supply_forecast">Real-time Supply Forecast (mt)</option>
+                                <option value="production">Historical Production (mt)</option>
                                 <option value="area_harvested">Area Harvested (ha)</option>
                                 <option value="productivity">Productivity (mt/ha)</option>
                             </select>
@@ -549,8 +550,10 @@
                     yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
                 });
 
-                // Set default year to latest
-                yearSelect.value = filterOptions.years[filterOptions.years.length - 1];
+                // Real-time supply uses the current season when year is left blank.
+                yearSelect.value = document.getElementById('view-filter').value === 'supply_forecast'
+                    ? ''
+                    : filterOptions.years[filterOptions.years.length - 1];
 
                 // Load initial map data
                 loadMapData();
@@ -714,6 +717,7 @@
         // Get unit label
         function getUnit(viewType) {
             switch (viewType) {
+                case 'supply_forecast': return 'mt';
                 case 'production': return 'mt';
                 case 'area_harvested': return 'ha';
                 case 'productivity': return 'mt/ha';
@@ -724,6 +728,7 @@
         // Get view label
         function getViewLabel(viewType) {
             switch (viewType) {
+                case 'supply_forecast': return 'Supply Forecast';
                 case 'production': return 'Production';
                 case 'area_harvested': return 'Area Harvested';
                 case 'productivity': return 'Productivity';
@@ -914,7 +919,7 @@
                             <p class="text-sm font-semibold text-gray-900 break-words">${escapeHtml(row.crop || 'Crop')}</p>
                             <p class="mt-0.5 text-[11px] text-gray-500">${Number(row.plan_count || 0).toLocaleString()} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} · ${Number(row.harvested_count || 0).toLocaleString()} harvested</p>
                         </div>
-                        <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(row.net_expected_production_mt)}</span>
+                        <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(row.supply_forecast_mt ?? row.net_expected_production_mt)}</span>
                     </div>
                     <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
                         <div class="rounded bg-orange-50 px-2 py-1.5">
@@ -930,7 +935,7 @@
                             <p class="text-gray-900">${formatMetricTons(row.damaged_production_mt)}</p>
                         </div>
                         <div class="rounded bg-emerald-50 px-2 py-1.5">
-                            <p class="font-semibold text-emerald-700">Net Expected</p>
+                            <p class="font-semibold text-emerald-700">Remaining</p>
                             <p class="text-gray-900">${formatMetricTons(row.net_expected_production_mt)}</p>
                         </div>
                     </div>
