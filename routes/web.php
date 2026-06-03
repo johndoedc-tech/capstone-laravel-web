@@ -153,6 +153,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
             Route::get('/calendar-crop-plans', [FarmerCalendarController::class, 'getCropPlans'])->name('calendar.crop-plans');
             Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
             Route::post('/calendar-events/production-prediction', [FarmerCalendarController::class, 'predictProduction'])->name('calendar.production-prediction');
+            Route::post('/calendar-events/crop-balance', [FarmerCalendarController::class, 'cropBalanceAdvice'])->name('calendar.crop-balance');
             Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');
             Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
             Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');

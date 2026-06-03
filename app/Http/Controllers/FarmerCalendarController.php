@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FarmerCalendarEvent;
+use App\Services\CommunityCropSignalService;
 use App\Services\CropPredictionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -730,6 +731,41 @@ class FarmerCalendarController extends Controller
         return response()->json([
             'success' => true,
             'prediction' => $prediction,
+        ]);
+    }
+
+    public function cropBalanceAdvice(Request $request, CommunityCropSignalService $cropSignalService)
+    {
+        $validated = $request->validate([
+            'crop' => 'required|string|max:100',
+            'water_source' => 'required|string|in:rainfed,irrigated',
+            'planting_material' => 'required|string|in:seed,seedling',
+            'planning_date' => 'required|date',
+        ]);
+
+        $user = Auth::user();
+
+        if (! $user?->preferred_municipality) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set your farm municipality first to see community planting signals.',
+            ], 422);
+        }
+
+        $harvestEstimate = $this->getHarvestEstimate(
+            $validated['crop'],
+            $validated['water_source'],
+            $validated['planting_material'],
+            $validated['planning_date'],
+        );
+
+        return response()->json([
+            'success' => true,
+            'advice' => $cropSignalService->cropPlanAdvice(
+                $user,
+                $validated['crop'],
+                $harvestEstimate['date'],
+            ),
         ]);
     }
 

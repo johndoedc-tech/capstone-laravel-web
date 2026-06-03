@@ -825,6 +825,39 @@
                                     </select>
                                 </div>
 
+                                <div x-show="modalType === 'crop_plan' && (communityCropSignal.loading || communityCropSignal.data || communityCropSignal.error)"
+                                    class="rounded-md border border-sky-200 bg-sky-50 px-3 py-2">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <p class="text-[11px] font-semibold uppercase text-sky-700">Planting Around Your Area</p>
+                                            <p x-show="communityCropSignal.loading" class="mt-1 text-xs text-sky-700">Checking live crop plans...</p>
+                                            <template x-if="!communityCropSignal.loading && communityCropSignal.data">
+                                                <div class="mt-1">
+                                                    <p class="text-xs font-medium text-gray-900" x-text="communityCropSignal.data.message"></p>
+                                                    <p class="mt-1 text-[11px] text-gray-500" x-text="communityCropSignal.data.privacy_note"></p>
+                                                </div>
+                                            </template>
+                                            <p x-show="!communityCropSignal.loading && communityCropSignal.error" class="mt-1 text-xs text-sky-700" x-text="communityCropSignal.error"></p>
+                                        </div>
+                                        <template x-if="communityCropSignal.data?.selected">
+                                            <span class="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                                                :class="cropSignalToneClass(communityCropSignal.data.selected.tone)"
+                                                x-text="communityCropSignal.data.selected.label"></span>
+                                        </template>
+                                    </div>
+                                    <template x-if="communityCropSignal.data?.alternatives?.length">
+                                        <div class="mt-2 border-t border-sky-100 pt-2">
+                                            <p class="text-[11px] font-semibold text-sky-800">Other crops to compare</p>
+                                            <div class="mt-1 flex flex-wrap gap-1.5">
+                                                <template x-for="alternative in communityCropSignal.data.alternatives" :key="alternative.crop_key">
+                                                    <span class="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-sky-700"
+                                                        x-text="alternative.crop + ' · ' + alternative.label"></span>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
                                 <div x-show="modalType === 'damage_report'" class="space-y-3">
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Cause of Damage *</label>
@@ -1002,6 +1035,13 @@
                 },
                 productionPredictionTimer: null,
                 productionPredictionRequestId: 0,
+                communityCropSignal: {
+                    loading: false,
+                    data: null,
+                    error: '',
+                },
+                communityCropSignalTimer: null,
+                communityCropSignalRequestId: 0,
                 showProductionCalculation: false,
                 categories: [
                     { value: 'pest', label: 'Pest', icon: '🐛' },
@@ -1119,6 +1159,9 @@
                     this.loadCropPlans();
                     ['crop', 'desired_area_sqm', 'water_source', 'planting_material', 'planning_date'].forEach((field) => {
                         this.$watch(`eventForm.${field}`, () => this.scheduleProductionPrediction());
+                    });
+                    ['crop', 'water_source', 'planting_material', 'planning_date'].forEach((field) => {
+                        this.$watch(`eventForm.${field}`, () => this.scheduleCommunityCropSignal());
                     });
                 },
 
@@ -1419,6 +1462,12 @@
                     };
 
                     return labels[value] || value;
+                },
+
+                cropSignalToneClass(tone) {
+                    if (tone === 'amber') return 'bg-amber-100 text-amber-700';
+                    if (tone === 'sky') return 'bg-sky-100 text-sky-700';
+                    return 'bg-emerald-100 text-emerald-700';
                 },
 
                 formatDamageCause(value) {
@@ -1775,6 +1824,14 @@
                         && Boolean(this.eventForm.planning_date);
                 },
 
+                get canRequestCommunityCropSignal() {
+                    return this.modalType === 'crop_plan'
+                        && Boolean(this.eventForm.crop)
+                        && Boolean(this.eventForm.water_source)
+                        && Boolean(this.eventForm.planting_material)
+                        && Boolean(this.eventForm.planning_date);
+                },
+
                 resetProductionPrediction() {
                     this.productionPrediction = {
                         loading: false,
@@ -1785,6 +1842,18 @@
                     if (this.productionPredictionTimer) {
                         clearTimeout(this.productionPredictionTimer);
                         this.productionPredictionTimer = null;
+                    }
+                },
+
+                resetCommunityCropSignal() {
+                    this.communityCropSignal = {
+                        loading: false,
+                        data: null,
+                        error: '',
+                    };
+                    if (this.communityCropSignalTimer) {
+                        clearTimeout(this.communityCropSignalTimer);
+                        this.communityCropSignalTimer = null;
                     }
                 },
 
@@ -1854,6 +1923,73 @@
                             loading: false,
                             data: null,
                             error: 'Production prediction is unavailable.',
+                        };
+                    }
+                },
+
+                scheduleCommunityCropSignal() {
+                    if (!this.canRequestCommunityCropSignal) {
+                        this.resetCommunityCropSignal();
+                        return;
+                    }
+
+                    if (this.communityCropSignalTimer) {
+                        clearTimeout(this.communityCropSignalTimer);
+                    }
+
+                    this.communityCropSignal.loading = true;
+                    this.communityCropSignal.error = '';
+                    this.communityCropSignalTimer = setTimeout(() => this.loadCommunityCropSignal(), 350);
+                },
+
+                async loadCommunityCropSignal() {
+                    if (!this.canRequestCommunityCropSignal) {
+                        this.resetCommunityCropSignal();
+                        return;
+                    }
+
+                    const requestId = ++this.communityCropSignalRequestId;
+
+                    try {
+                        const response = await fetch('{{ route('farmer.calendar.crop-balance') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                crop: this.eventForm.crop,
+                                water_source: this.eventForm.water_source,
+                                planting_material: this.eventForm.planting_material,
+                                planning_date: this.eventForm.planning_date,
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (requestId !== this.communityCropSignalRequestId) return;
+
+                        if (response.ok && data.success) {
+                            this.communityCropSignal = {
+                                loading: false,
+                                data: data.advice,
+                                error: '',
+                            };
+                            return;
+                        }
+
+                        this.communityCropSignal = {
+                            loading: false,
+                            data: null,
+                            error: data.message || 'Community crop signal is unavailable.',
+                        };
+                    } catch (error) {
+                        if (requestId !== this.communityCropSignalRequestId) return;
+
+                        this.communityCropSignal = {
+                            loading: false,
+                            data: null,
+                            error: 'Community crop signal is unavailable.',
                         };
                     }
                 },
@@ -2005,6 +2141,7 @@
                 openAddModal(type) {
                     this.modalType = type;
                     this.resetProductionPrediction();
+                    this.resetCommunityCropSignal();
                     if (type === 'damage_report') {
                         this.loadCropPlans();
                     }

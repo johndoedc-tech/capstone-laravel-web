@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CropProduction;
 use App\Models\FarmerCalendarEvent;
 use App\Models\Prediction;
+use App\Services\CommunityCropSignalService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,7 @@ class FarmerDashboardController extends Controller
         $preferredMunicipality = $user->preferred_municipality;
         $favoriteCrops = $user->favorite_crops ?? [];
         $harvestProgress = $this->getHarvestProgress($user->id);
+        $cropBalancePulse = app(CommunityCropSignalService::class)->dashboardPulse($user);
 
         return view('dashboard-simple', compact(
             'totalRecords',
@@ -62,7 +64,8 @@ class FarmerDashboardController extends Controller
             'predictionsCount',
             'preferredMunicipality',
             'favoriteCrops',
-            'harvestProgress'
+            'harvestProgress',
+            'cropBalancePulse'
         ));
     }
 

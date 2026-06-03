@@ -363,6 +363,76 @@
             @endif
 
             <!-- ============================================ -->
+            <!-- COMMUNITY CROP BALANCE -->
+            <!-- ============================================ -->
+            <div class="mb-4 lg:mb-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-700">Planting Around Your Area</p>
+                        <h2 class="mt-1 text-base font-semibold text-gray-900">
+                            @if($cropBalancePulse['has_location'])
+                                Crop balance in {{ $cropBalancePulse['municipality'] }}
+                            @else
+                                Set your farm location
+                            @endif
+                        </h2>
+                        <p class="mt-1 text-xs text-gray-600">{{ $cropBalancePulse['message'] }}</p>
+                    </div>
+                    <span class="inline-flex w-fit items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
+                        {{ $cropBalancePulse['window_label'] }}
+                    </span>
+                </div>
+
+                @if($cropBalancePulse['has_data'])
+                    <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-4">
+                        @foreach($cropBalancePulse['items'] as $item)
+                            <div class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="min-w-0 truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
+                                    @if($item['tone'] === 'amber')
+                                        <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{{ $item['label'] }}</span>
+                                    @elseif($item['tone'] === 'sky')
+                                        <span class="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">{{ $item['label'] }}</span>
+                                    @else
+                                        <span class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{{ $item['label'] }}</span>
+                                    @endif
+                                </div>
+                                <p class="mt-2 text-xs text-gray-600">{{ $item['short_message'] }}</p>
+                                <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
+                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['plan_count'] }} plans</span>
+                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ number_format($item['expected_production_mt'], 2) }} mt expected</span>
+                                    @if($item['harvest_window'])
+                                        <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['harvest_window'] }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if(($cropBalancePulse['alternatives'] ?? collect())->isNotEmpty())
+                        <div class="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
+                            <p class="text-xs font-semibold text-emerald-800">Good alternatives to compare</p>
+                            <div class="mt-2 flex flex-wrap gap-1.5">
+                                @foreach($cropBalancePulse['alternatives'] as $alternative)
+                                    <span class="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                        {{ $alternative['crop'] }} · {{ $alternative['label'] }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                @elseif($cropBalancePulse['has_location'])
+                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
+                        Once farmers in {{ $cropBalancePulse['municipality'] }} add crop plans, Harviana will show which crops may have high supply and which crops are less crowded.
+                    </div>
+                @else
+                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
+                        Add your municipality in your profile so Harviana can compare live crop plans around your area.
+                    </div>
+                @endif
+            </div>
+
+            <!-- ============================================ -->
             <!-- TOP 5 CROPS INSIGHT -->
             <!-- ============================================ -->
             <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
