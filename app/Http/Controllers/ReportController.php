@@ -787,6 +787,11 @@ class ReportController extends Controller
         return $value === '' ? '-' : ucwords(strtolower(str_replace('_', ' ', $value)));
     }
 
+    private function writeCsvRow($file, array $fields): void
+    {
+        fputcsv($file, $fields, ',', '"', '', "\n");
+    }
+
     /**
      * Export production data to CSV
      */
@@ -803,11 +808,11 @@ class ReportController extends Controller
             $file = fopen('php://output', 'w');
             
             // Add header row
-            fputcsv($file, ['Municipality', 'Crop', 'Total Production (MT)', 'Total Area (Ha)', 'Avg Productivity (MT/Ha)', 'Records']);
+            $this->writeCsvRow($file, ['Municipality', 'Crop', 'Total Production (MT)', 'Total Area (Ha)', 'Avg Productivity (MT/Ha)', 'Records']);
             
             // Add data rows
             foreach ($data as $row) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $row->municipality,
                     $row->crop,
                     number_format($row->total_production, 2),
@@ -835,7 +840,7 @@ class ReportController extends Controller
         $callback = function () use ($records) {
             $file = fopen('php://output', 'w');
 
-            fputcsv($file, [
+            $this->writeCsvRow($file, [
                 'Farmer',
                 'Farmer ID',
                 'Municipality',
@@ -859,7 +864,7 @@ class ReportController extends Controller
             ]);
 
             foreach ($records as $record) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $record['farmer_name'],
                     $record['farmer_id'],
                     $record['municipality'],
@@ -901,7 +906,7 @@ class ReportController extends Controller
         $callback = function () use ($records) {
             $file = fopen('php://output', 'w');
 
-            fputcsv($file, [
+            $this->writeCsvRow($file, [
                 'record_id',
                 'farmer_id',
                 'municipality',
@@ -932,7 +937,7 @@ class ReportController extends Controller
                     ? round($record['damage_sqm'] / $record['area_sqm'], 4)
                     : 0;
 
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $record['id'],
                     $record['farmer_id'],
                     $record['municipality'],
@@ -981,14 +986,14 @@ class ReportController extends Controller
             $file = fopen('php://output', 'w');
             
             // Add header row
-            fputcsv($file, [
+            $this->writeCsvRow($file, [
                 'Date', 'User', 'Municipality', 'Crop', 'Farm Type', 'Year', 'Month',
                 'Area Planted', 'Predicted Production', 'Confidence Score', 'Status'
             ]);
             
             // Add data rows
             foreach ($predictions as $pred) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $pred->created_at->format('Y-m-d H:i'),
                     $pred->user->name ?? 'N/A',
                     $pred->municipality,
