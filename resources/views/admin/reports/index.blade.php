@@ -53,6 +53,55 @@
                 </div>
             </div>
 
+            <!-- Actual Harvest Accuracy Snapshot -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 lg:mb-6">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div>
+                            <h3 class="text-base lg:text-lg font-semibold text-gray-900">Actual Harvest Accuracy</h3>
+                            <p class="mt-1 text-xs lg:text-sm text-gray-600">
+                                Compares adjusted crop-plan estimates against farmer-recorded actual harvest.
+                            </p>
+                        </div>
+                        <a href="{{ route('admin.reports.planting-report', ['status' => 'harvested']) }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
+                            View harvested records
+                        </a>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Weighted Accuracy</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">
+                                {{ $harvestAccuracySummary['accuracy_percent'] !== null ? number_format($harvestAccuracySummary['accuracy_percent'], 1) . '%' : '-' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">{{ number_format($harvestAccuracySummary['records']) }} actual harvest records</p>
+                        </div>
+                        <div class="rounded-xl border border-sky-100 bg-sky-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Mean Error</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">
+                                {{ $harvestAccuracySummary['mean_absolute_error_mt'] !== null ? number_format($harvestAccuracySummary['mean_absolute_error_mt'], 2) . ' mt' : '-' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">Average absolute difference</p>
+                        </div>
+                        <div class="rounded-xl border border-purple-100 bg-purple-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-purple-700">Predicted / Actual</p>
+                            <p class="mt-2 text-sm font-bold text-gray-900">
+                                {{ number_format($harvestAccuracySummary['predicted_total_mt'], 2) }} mt / {{ number_format($harvestAccuracySummary['actual_total_mt'], 2) }} mt
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">Totals from harvested crop plans</p>
+                        </div>
+                        <div class="rounded-xl border border-amber-100 bg-amber-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Current Bias</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">{{ $harvestAccuracySummary['bias_label'] }}</p>
+                            <p class="mt-1 text-xs text-gray-600">
+                                {{ $harvestAccuracySummary['bias_percent'] !== null ? number_format(abs($harvestAccuracySummary['bias_percent']), 1) . '%' : '-' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Report Types Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 mb-4 lg:mb-6">
                 

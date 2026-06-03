@@ -17,7 +17,7 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 border-l-4 border-purple-500">
                     <p class="text-xs text-gray-600">Avg Confidence</p>
                     <p class="text-2xl font-bold text-gray-900">{{ number_format(($analytics['avg_confidence'] ?? 0) * 100, 1) }}%</p>
-                    <p class="text-xs text-gray-500">Model accuracy</p>
+                    <p class="text-xs text-gray-500">Model confidence</p>
                 </div>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 border-l-4 border-orange-500">
                     <p class="text-xs text-gray-600">Total Predicted</p>

@@ -10,6 +10,7 @@
             'damaged' => 'bg-orange-100 text-orange-700',
             'harvested' => 'bg-emerald-100 text-emerald-700',
         ];
+        $accuracy = $summary['accuracy'];
     @endphp
 
     <div class="py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
@@ -140,6 +141,76 @@
                     </div>
                 </section>
             </div>
+
+            <section class="rounded-lg bg-white border border-gray-200 shadow-sm p-4 lg:p-6">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <div>
+                        <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500">Actual Harvest Accuracy</p>
+                        <h2 class="mt-1 text-base font-semibold text-gray-900">Forecast vs farmer-recorded harvest</h2>
+                        <p class="mt-1 text-xs text-gray-500">Uses adjusted production after reported damage, then compares it with actual harvest submitted by farmers.</p>
+                    </div>
+                    <span class="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
+                        {{ number_format($accuracy['records']) }} harvest {{ $accuracy['records'] === 1 ? 'record' : 'records' }}
+                    </span>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                    <div class="rounded-lg bg-emerald-50 px-3 py-3">
+                        <p class="text-[11px] font-semibold uppercase text-emerald-700">Weighted Accuracy</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-900">
+                            {{ $accuracy['accuracy_percent'] !== null ? number_format($accuracy['accuracy_percent'], 1) . '%' : '-' }}
+                        </p>
+                    </div>
+                    <div class="rounded-lg bg-sky-50 px-3 py-3">
+                        <p class="text-[11px] font-semibold uppercase text-sky-700">Mean Error</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-900">
+                            {{ $accuracy['mean_absolute_error_mt'] !== null ? number_format($accuracy['mean_absolute_error_mt'], 2) . ' mt' : '-' }}
+                        </p>
+                    </div>
+                    <div class="rounded-lg bg-purple-50 px-3 py-3">
+                        <p class="text-[11px] font-semibold uppercase text-purple-700">Predicted vs Actual</p>
+                        <p class="mt-1 text-sm font-bold text-gray-900">
+                            {{ number_format($accuracy['predicted_total_mt'], 2) }} mt / {{ number_format($accuracy['actual_total_mt'], 2) }} mt
+                        </p>
+                    </div>
+                    <div class="rounded-lg bg-amber-50 px-3 py-3">
+                        <p class="text-[11px] font-semibold uppercase text-amber-700">Bias</p>
+                        <p class="mt-1 text-2xl font-bold text-gray-900">{{ $accuracy['bias_label'] }}</p>
+                        <p class="mt-1 text-xs text-gray-600">
+                            {{ $accuracy['bias_percent'] !== null ? number_format(abs($accuracy['bias_percent']), 1) . '%' : '-' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                        <h3 class="text-sm font-semibold text-gray-900">Crop Accuracy</h3>
+                        <div class="mt-3 space-y-2">
+                            @forelse($accuracy['by_crop']->take(5) as $row)
+                                <div class="flex items-center justify-between gap-3 text-xs">
+                                    <span class="min-w-0 truncate font-medium text-gray-700">{{ $row['label'] }}</span>
+                                    <span class="shrink-0 font-bold text-emerald-700">{{ $row['accuracy_percent'] !== null ? number_format($row['accuracy_percent'], 1) . '%' : '-' }}</span>
+                                </div>
+                            @empty
+                                <p class="text-xs text-gray-500">No actual harvest records yet.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                        <h3 class="text-sm font-semibold text-gray-900">Municipality Accuracy</h3>
+                        <div class="mt-3 space-y-2">
+                            @forelse($accuracy['by_municipality']->take(5) as $row)
+                                <div class="flex items-center justify-between gap-3 text-xs">
+                                    <span class="min-w-0 truncate font-medium text-gray-700">{{ $row['label'] }}</span>
+                                    <span class="shrink-0 font-bold text-emerald-700">{{ $row['accuracy_percent'] !== null ? number_format($row['accuracy_percent'], 1) . '%' : '-' }}</span>
+                                </div>
+                            @empty
+                                <p class="text-xs text-gray-500">No actual harvest records yet.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section class="rounded-lg bg-white border border-gray-200 shadow-sm p-4 lg:p-6">
                 <form method="GET" action="{{ route('admin.reports.planting-report') }}" class="space-y-4">
@@ -286,6 +357,15 @@
                                                 Actual: {{ number_format($record['actual_harvest_production_mt'], 2) }} mt
                                                 @if($record['actual_harvest_date'])
                                                     on {{ $record['actual_harvest_date']->format('M d, Y') }}
+                                                @endif
+                                            </p>
+                                            <p class="text-[11px] {{ $record['error_direction'] === 'overestimated' ? 'text-orange-700' : 'text-blue-700' }}">
+                                                {{ $record['error_direction'] === 'overestimated' ? 'Over by' : ($record['error_direction'] === 'underestimated' ? 'Under by' : 'On target') }}
+                                                @if($record['absolute_prediction_error_mt'] !== null)
+                                                    {{ number_format($record['absolute_prediction_error_mt'], 2) }} mt
+                                                @endif
+                                                @if($record['accuracy_percent'] !== null)
+                                                    ({{ number_format($record['accuracy_percent'], 1) }}% accuracy)
                                                 @endif
                                             </p>
                                         @endif

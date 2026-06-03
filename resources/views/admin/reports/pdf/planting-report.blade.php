@@ -51,6 +51,30 @@
         </div>
     </div>
 
+    <h2>Actual Harvest Accuracy</h2>
+    <table>
+        <tbody>
+            <tr>
+                <th>Harvest Records</th>
+                <td>{{ number_format($summary['accuracy']['records']) }}</td>
+                <th>Weighted Accuracy</th>
+                <td>{{ $summary['accuracy']['accuracy_percent'] !== null ? number_format($summary['accuracy']['accuracy_percent'], 1) . '%' : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Predicted vs Actual</th>
+                <td>{{ number_format($summary['accuracy']['predicted_total_mt'], 2) }} mt / {{ number_format($summary['accuracy']['actual_total_mt'], 2) }} mt</td>
+                <th>Mean Error</th>
+                <td>{{ $summary['accuracy']['mean_absolute_error_mt'] !== null ? number_format($summary['accuracy']['mean_absolute_error_mt'], 2) . ' mt' : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Bias</th>
+                <td>{{ $summary['accuracy']['bias_label'] }}</td>
+                <th>Total Error</th>
+                <td>{{ number_format($summary['accuracy']['signed_error_total_mt'], 2) }} mt</td>
+            </tr>
+        </tbody>
+    </table>
+
     <h2>Planting Records</h2>
     <table>
         <thead>
@@ -91,6 +115,13 @@
                                     on {{ $record['actual_harvest_date']->format('M d, Y') }}
                                 @endif
                             </span>
+                            @if($record['absolute_prediction_error_mt'] !== null)
+                                <br>
+                                Error: {{ number_format($record['prediction_error_mt'], 2) }} mt
+                                @if($record['accuracy_percent'] !== null)
+                                    ({{ number_format($record['accuracy_percent'], 1) }}% accuracy)
+                                @endif
+                            @endif
                         @endif
                         @if($record['damage_sqm'] > 0)
                             <br><span class="damaged">

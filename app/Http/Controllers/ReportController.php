@@ -55,8 +55,10 @@ class ReportController extends Controller
             'window_start' => $lastThirtyDays,
             'week_start' => $startOfWeek,
         ];
+        $plantingSummary = $this->buildPlantingReportSummary($this->getPlantingReportRecords(new Request()));
+        $harvestAccuracySummary = $plantingSummary['accuracy'];
 
-        return view('admin.reports.index', compact('stats', 'predictionSummary'));
+        return view('admin.reports.index', compact('stats', 'predictionSummary', 'harvestAccuracySummary'));
     }
 
     /**
@@ -478,6 +480,16 @@ class ReportController extends Controller
             $actualHarvestProduction = $row->actual_harvest_production_mt !== null
                 ? max(0, (float) $row->actual_harvest_production_mt)
                 : null;
+            $predictionError = $actualHarvestProduction !== null
+                ? round($adjustedProduction - $actualHarvestProduction, 2)
+                : null;
+            $absolutePredictionError = $predictionError !== null ? abs($predictionError) : null;
+            $accuracyPercent = $actualHarvestProduction !== null && $actualHarvestProduction > 0
+                ? max(0, round(100 - (($absolutePredictionError / $actualHarvestProduction) * 100), 1))
+                : null;
+            $errorPercent = $actualHarvestProduction !== null && $actualHarvestProduction > 0
+                ? round(($predictionError / $actualHarvestProduction) * 100, 1)
+                : null;
 
             return [
                 'id' => (int) $row->id,
@@ -497,6 +509,11 @@ class ReportController extends Controller
                 'original_production_mt' => round($originalProduction, 2),
                 'adjusted_production_mt' => $adjustedProduction,
                 'actual_harvest_production_mt' => $actualHarvestProduction !== null ? round($actualHarvestProduction, 2) : null,
+                'prediction_error_mt' => $predictionError,
+                'absolute_prediction_error_mt' => $absolutePredictionError !== null ? round($absolutePredictionError, 2) : null,
+                'accuracy_percent' => $accuracyPercent,
+                'error_percent' => $errorPercent,
+                'error_direction' => $this->resolvePredictionErrorDirection($predictionError),
                 'actual_harvest_amount' => $row->actual_harvest_amount !== null ? (float) $row->actual_harvest_amount : null,
                 'actual_harvest_unit' => $row->actual_harvest_unit,
                 'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
@@ -559,6 +576,10 @@ class ReportController extends Controller
             })
             ->sortByDesc('records')
             ->values();
+        $accuracyRecords = $records
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+        $accuracySummary = $this->buildHarvestAccuracySummary($accuracyRecords);
 
         $maxCropRecords = max(1, (int) ($cropBreakdown->max('records') ?? 1));
 
@@ -579,7 +600,90 @@ class ReportController extends Controller
             'crop_breakdown' => $cropBreakdown,
             'crop_types' => $cropBreakdown->count(),
             'max_crop_records' => $maxCropRecords,
+            'accuracy' => $accuracySummary,
         ];
+    }
+
+    private function buildHarvestAccuracySummary(Collection $records): array
+    {
+        $actualTotal = round($records->sum(fn (array $record) => $record['actual_harvest_production_mt'] ?? 0), 2);
+        $predictedTotal = round($records->sum('adjusted_production_mt'), 2);
+        $absoluteErrorTotal = round($records->sum(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2);
+        $signedErrorTotal = round($predictedTotal - $actualTotal, 2);
+        $accuracyPercent = $actualTotal > 0
+            ? max(0, round(100 - (($absoluteErrorTotal / $actualTotal) * 100), 1))
+            : null;
+        $meanAbsoluteError = $records->count() > 0
+            ? round($records->avg(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2)
+            : null;
+        $meanAccuracy = $records->count() > 0
+            ? round($records->avg(fn (array $record) => $record['accuracy_percent'] ?? 0), 1)
+            : null;
+        $biasPercent = $actualTotal > 0
+            ? round(($signedErrorTotal / $actualTotal) * 100, 1)
+            : null;
+
+        return [
+            'records' => $records->count(),
+            'predicted_total_mt' => $predictedTotal,
+            'actual_total_mt' => $actualTotal,
+            'absolute_error_total_mt' => $absoluteErrorTotal,
+            'signed_error_total_mt' => $signedErrorTotal,
+            'accuracy_percent' => $accuracyPercent,
+            'mean_accuracy_percent' => $meanAccuracy,
+            'mean_absolute_error_mt' => $meanAbsoluteError,
+            'bias_percent' => $biasPercent,
+            'bias_label' => $this->resolvePredictionBiasLabel($signedErrorTotal),
+            'by_crop' => $this->buildAccuracyBreakdown($records, 'crop'),
+            'by_municipality' => $this->buildAccuracyBreakdown($records, 'municipality'),
+        ];
+    }
+
+    private function buildAccuracyBreakdown(Collection $records, string $field): Collection
+    {
+        return $records
+            ->groupBy($field)
+            ->map(function (Collection $groupRecords, string $label) {
+                $actualTotal = round($groupRecords->sum(fn (array $record) => $record['actual_harvest_production_mt'] ?? 0), 2);
+                $predictedTotal = round($groupRecords->sum('adjusted_production_mt'), 2);
+                $absoluteErrorTotal = round($groupRecords->sum(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2);
+                $accuracyPercent = $actualTotal > 0
+                    ? max(0, round(100 - (($absoluteErrorTotal / $actualTotal) * 100), 1))
+                    : null;
+
+                return [
+                    'label' => $label,
+                    'records' => $groupRecords->count(),
+                    'predicted_total_mt' => $predictedTotal,
+                    'actual_total_mt' => $actualTotal,
+                    'absolute_error_total_mt' => $absoluteErrorTotal,
+                    'accuracy_percent' => $accuracyPercent,
+                ];
+            })
+            ->sortByDesc('records')
+            ->values();
+    }
+
+    private function resolvePredictionErrorDirection(?float $predictionError): ?string
+    {
+        if ($predictionError === null) {
+            return null;
+        }
+
+        if (abs($predictionError) < 0.01) {
+            return 'on_target';
+        }
+
+        return $predictionError > 0 ? 'overestimated' : 'underestimated';
+    }
+
+    private function resolvePredictionBiasLabel(float $signedErrorTotal): string
+    {
+        if (abs($signedErrorTotal) < 0.01) {
+            return 'On target';
+        }
+
+        return $signedErrorTotal > 0 ? 'Overestimated' : 'Underestimated';
     }
 
     private function getPlantingReportFilters(): array
@@ -688,6 +792,9 @@ class ReportController extends Controller
                 'Farm Type',
                 'Seed Type',
                 'Status',
+                'Actual Harvest (MT)',
+                'Prediction Error (MT)',
+                'Accuracy (%)',
                 'Damage Details',
                 'Recorded At',
             ]);
@@ -709,6 +816,9 @@ class ReportController extends Controller
                     $record['farm_type'],
                     $record['seed_type'],
                     $record['status_label'],
+                    $record['actual_harvest_production_mt'] !== null ? number_format($record['actual_harvest_production_mt'], 2) : '',
+                    $record['prediction_error_mt'] !== null ? number_format($record['prediction_error_mt'], 2) : '',
+                    $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1) : '',
                     $record['damage_title'] ?: '',
                     $record['recorded_at']?->format('Y-m-d H:i'),
                 ]);
