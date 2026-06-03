@@ -433,7 +433,7 @@
             </div>
 
             <!-- ============================================ -->
-            <!-- TOP 5 CROPS INSIGHT -->
+            <!-- CROP OUTLOOK INSIGHT -->
             <!-- ============================================ -->
             <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
@@ -442,12 +442,17 @@
                             <span class="text-xl">📊</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">This ranking shows the broader full-year crop outlook in your area.</p>
+                                <p class="text-sm text-gray-600">A broader crop outlook based on past records and this year's forecast.</p>
                             </div>
                         </div>
-                        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                            <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
-                            <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                                <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
+                                <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                            </div>
+                            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">
+                                Check crop balance before planting
+                            </span>
                         </div>
                     </div>
 
@@ -484,74 +489,69 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
+                    <p class="mt-1 text-xs text-gray-400">This uses the forecast service, so it may take a moment on slow connections.</p>
                 </div>
 
                 <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm" x-text="t('load_error')"></p>
+                    <p class="text-sm font-medium" x-text="timedOut ? 'Crop outlook is taking too long right now.' : t('load_error')"></p>
+                    <p class="mt-1 text-xs text-red-500">You can still use Planting Around Your Area above for live crop balance.</p>
                 </div>
 
                 <div x-show="!loading && !error && municipality" class="space-y-3">
-                    <template x-for="row in rankedCropRows" :key="row.rank + '-' + row.crop">
+                    <template x-for="row in visibleCropRows" :key="row.rank + '-' + row.crop">
                         <div
-                            class="rounded-2xl border p-4 transition-all duration-200"
+                            class="rounded-2xl border p-3.5 sm:p-4 transition-all duration-200"
                             :class="row.rank === 1
-                                ? 'border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 shadow-md shadow-amber-100/70'
+                                ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-sky-50 shadow-sm'
                                 : 'border-gray-200 bg-white shadow-sm'"
                         >
-                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div
-                                        class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl text-center"
-                                        :class="row.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-200/80' : 'bg-slate-100 text-slate-700'"
-                                    >
-                                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Rank</span>
-                                        <span class="text-base font-bold leading-none" x-text="row.rank"></span>
-                                    </div>
-
-                                    <div class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
-                                        <template x-if="row.image && !isCropImageMissing(row.crop)">
-                                            <img
-                                                :src="row.image"
-                                                :alt="row.crop"
-                                                class="h-full w-full object-cover"
-                                                x-on:error="markCropImageMissing(row.crop)"
-                                            >
-                                        </template>
-                                        <template x-if="!row.image || isCropImageMissing(row.crop)">
-                                            <div
-                                                class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
-                                            >
-                                                No Image
-                                            </div>
-                                        </template>
-                                    </div>
-
-                                    <div class="min-w-0">
-                                        <p
-                                            class="text-[11px] font-semibold uppercase tracking-[0.2em]"
-                                            :class="row.rank === 1 ? 'text-amber-600' : 'text-slate-500'"
-                                            x-text="row.rank === 1 ? 'Top Performer' : `Rank ${row.rank}`"
-                                        ></p>
-                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
-                                        <p class="text-xs text-gray-500">
-                                            Ranked by forecast, using historical average when this year's forecast is zero.
-                                        </p>
-                                    </div>
+                            <div class="flex items-start gap-3">
+                                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
+                                    <template x-if="row.image && !isCropImageMissing(row.crop)">
+                                        <img
+                                            :src="row.image"
+                                            :alt="row.crop"
+                                            class="h-full w-full object-cover"
+                                            x-on:error="markCropImageMissing(row.crop)"
+                                        >
+                                    </template>
+                                    <template x-if="!row.image || isCropImageMissing(row.crop)">
+                                        <div
+                                            class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
+                                        >
+                                            Crop
+                                        </div>
+                                    </template>
                                 </div>
 
-                                <div class="grid grid-cols-1 gap-3 sm:min-w-[280px] sm:grid-cols-2">
-                                    <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Historical Average</p>
-                                        <p class="mt-1 text-lg font-semibold text-emerald-900" x-text="formatCropValue(row.historical)"></p>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
+                                        <span
+                                            class="rounded-full px-2.5 py-1 text-[11px] font-medium ring-1"
+                                            :class="cropOutlookClass(row)"
+                                            x-text="cropOutlookLabel(row)"
+                                        ></span>
                                     </div>
-                                    <div class="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">This Year Forecast</p>
-                                        <p class="mt-1 text-lg font-semibold text-sky-900" x-text="formatCropValue(row.predicted)"></p>
+                                    <p class="mt-1 text-xs leading-relaxed text-gray-500" x-text="cropOutlookDescription(row)"></p>
+                                    <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                                        <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium" x-text="'Rank ' + row.rank"></span>
+                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="cropOutlookSource(row)"></span>
+                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Use with live crop balance</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
+
+                    <div x-show="hasExtraCropRows" class="pt-1 text-center">
+                        <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
+                            x-on:click="showAllRows = !showAllRows"
+                            x-text="showAllRows ? 'Show top 3 only' : 'View all crop outlooks'"
+                        ></button>
+                    </div>
                 </div>
             </div>
 
@@ -946,7 +946,7 @@
                 month_dec: 'December',
                 
                 // Chart
-                top_5_crops: 'Top 5 Crops',
+                top_5_crops: 'Crop Outlook',
                 location: 'Location',
                 loading: 'Loading...',
                 load_error: 'Failed to load data. Please try again.',
@@ -1061,7 +1061,7 @@
                 month_dec: 'Disyembre',
                 
                 // Chart
-                top_5_crops: 'Top 5 Pananim',
+                top_5_crops: 'Crop Outlook',
                 location: 'Lugar',
                 loading: 'Nag-loload...',
                 load_error: 'Hindi ma-load ang data. Subukan ulit.',
@@ -1304,6 +1304,8 @@
                 municipality: '{{ $preferredMunicipality ?? '' }}',
                 loading: false,
                 error: false,
+                timedOut: false,
+                showAllRows: false,
                 insightText: '',
                 insightDisplayText: '',
                 recommendedCrop: '',
@@ -1365,6 +1367,14 @@
                     }));
                 },
 
+                get visibleCropRows() {
+                    return this.showAllRows ? this.rankedCropRows : this.rankedCropRows.slice(0, 3);
+                },
+
+                get hasExtraCropRows() {
+                    return this.rankedCropRows.length > 3;
+                },
+
                 getCropImage(crop) {
                     const key = String(crop || '').trim().toUpperCase();
                     return this.cropImageMap[key] || '';
@@ -1390,6 +1400,62 @@
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 2,
                     }).format(number);
+                },
+
+                cropOutlookLabel(row) {
+                    if (row.rank === 1) {
+                        return 'Strong outlook';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'Improving forecast';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'Usually performs well';
+                    }
+
+                    return 'Worth comparing';
+                },
+
+                cropOutlookClass(row) {
+                    if (row.rank === 1) {
+                        return 'bg-emerald-50 text-emerald-700 ring-emerald-100';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'bg-sky-50 text-sky-700 ring-sky-100';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'bg-amber-50 text-amber-700 ring-amber-100';
+                    }
+
+                    return 'bg-slate-50 text-slate-700 ring-slate-100';
+                },
+
+                cropOutlookDescription(row) {
+                    if (row.rank === 1) {
+                        return 'This crop has the strongest broader outlook in your area. Still compare it with live crop balance before planting.';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'The forecast looks healthy compared with past records, so it is a good crop to compare with nearby planting plans.';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'Past records show this crop can perform in your area, but live supply should guide the final decision.';
+                    }
+
+                    return 'This crop is still part of the local outlook, but check neighbor planting and your farm conditions first.';
+                },
+
+                cropOutlookSource(row) {
+                    if (Number(row.predicted || 0) > 0) {
+                        return 'Forecast plus past records';
+                    }
+
+                    return 'Past records baseline';
                 },
 
                 prefersReducedMotion() {
@@ -1591,6 +1657,8 @@
                 async loadChart() {
                     this.cancelInsightNarration();
                     this.error = false;
+                    this.timedOut = false;
+                    this.showAllRows = false;
                     this.insightText = '';
                     this.insightDisplayText = '';
                     this.stopInsightAnimation();
@@ -1606,11 +1674,18 @@
 
                     this.loading = true;
 
+                    const controller = new AbortController();
+                    const timeoutId = window.setTimeout(() => {
+                        this.timedOut = true;
+                        controller.abort();
+                    }, 9000);
+
                     try {
                         const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) })
+                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) }),
+                            signal: controller.signal,
                         });
 
                         if (!response.ok) {
@@ -1695,11 +1770,14 @@
                         this.loading = false;
                     } catch (error) {
                         console.error('Error loading crop ranking:', error);
+                        this.timedOut = error?.name === 'AbortError' || this.timedOut;
                         this.error = true;
                         this.chartCrops = [];
                         this.chartHistoricalData = [];
                         this.chartPredictedData = [];
                         this.loading = false;
+                    } finally {
+                        window.clearTimeout(timeoutId);
                     }
                 }
             }
