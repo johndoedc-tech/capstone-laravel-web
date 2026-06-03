@@ -248,35 +248,35 @@
             <!-- ============================================ -->
             <!-- SIMPLE GREETING HEADER -->
             <!-- ============================================ -->
-            <div class="rounded-2xl shadow-sm p-4 lg:p-6 mb-4 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <p class="text-white/80 text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
-                        <h1 class="text-2xl lg:text-3xl font-bold mb-1">
+            <div class="rounded-xl sm:rounded-2xl shadow-sm px-3 py-3 sm:p-4 lg:p-6 mb-3 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+                    <div class="min-w-0">
+                        <p class="text-white/80 text-[11px] sm:text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
+                        <h1 class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
                             {{ Auth::user()->name }}! 👋
                         </h1>
-                        <p class="text-primary-100 text-sm" x-text="t('dashboard_subtitle')"></p>
-                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <p class="mt-1 text-primary-100 text-xs sm:text-sm leading-snug" x-text="t('dashboard_subtitle')"></p>
+                        <div class="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
                             @if($preferredMunicipality)
-                                <span class="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white ring-1 ring-white/20">
-                                    <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
+                                    <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     </svg>
                                     <span class="truncate">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
                                 </span>
                             @else
-                                <span class="inline-flex max-w-full items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white ring-1 ring-white/20">
+                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
                                     <span>No farm location set</span>
                                 </span>
                             @endif
-                            <a href="{{ route('profile.edit') }}" class="text-xs font-medium text-white/90 underline underline-offset-2 hover:text-white">
+                            <a href="{{ route('profile.edit') }}" class="text-[11px] sm:text-xs font-medium text-white/90 underline underline-offset-2 hover:text-white">
                                 {{ $preferredMunicipality ? 'Edit location' : 'Set location' }}
                             </a>
                         </div>
                     </div>
-                    <div class="text-left sm:text-right bg-white/10 rounded-lg px-4 py-2">
-                        <p class="text-primary-100 text-xs">{{ now()->format('l') }}</p>
-                        <p class="text-lg font-semibold">{{ now()->format('F d, Y') }}</p>
+                    <div class="w-fit text-left sm:text-right bg-white/10 rounded-full sm:rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+                        <p class="hidden sm:block text-primary-100 text-xs">{{ now()->format('l') }}</p>
+                        <p class="text-xs sm:text-lg font-semibold whitespace-nowrap"><span class="sm:hidden">{{ now()->format('D') }} - </span>{{ now()->format('M d, Y') }}</p>
                     </div>
                 </div>
             </div>

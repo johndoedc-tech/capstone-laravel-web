@@ -61,7 +61,7 @@ class PwaTest extends TestCase
 
         $contents = file_get_contents($path);
 
-        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.25'", $contents);
+        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.26'", $contents);
         $this->assertStringContainsString("const OFFLINE_URL = '/offline'", $contents);
         $this->assertStringContainsString("'/app'", $contents);
         $this->assertStringContainsString('CLEAR_RUNTIME_CACHES', $contents);
