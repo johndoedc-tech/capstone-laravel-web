@@ -31,7 +31,7 @@ class EnsureProfileCompleteMiddleware
         $user = $request->user();
 
         // Not authenticated or is admin — skip this check.
-        if (! $user || $user->isAdmin()) {
+        if (! $user || $user->isAdmin() || $user->isLguValidator()) {
             return $next($request);
         }
 

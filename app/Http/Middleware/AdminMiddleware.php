@@ -23,7 +23,9 @@ class AdminMiddleware
 
         // Check if user is not an admin
         if (!Auth::user()->isAdmin()) {
-            return redirect()->route('dashboard')->with('error', 'You do not have permission to access the admin area.');
+            $route = Auth::user()->isLguValidator() ? 'lgu.dashboard' : 'dashboard';
+
+            return redirect()->route($route)->with('error', 'You do not have permission to access the admin area.');
         }
 
         return $next($request);

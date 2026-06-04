@@ -12,6 +12,10 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_FARMER = 'farmer';
+    public const ROLE_LGU_VALIDATOR = 'lgu_validator';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -28,6 +32,9 @@ class User extends Authenticatable
         'preferred_municipality',
         'cooperative',
         'favorite_crops',
+        'lgu_municipality',
+        'lgu_barangay',
+        'is_active',
     ];
 
     /**
@@ -35,7 +42,7 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === self::ROLE_ADMIN;
     }
 
     /**
@@ -43,7 +50,31 @@ class User extends Authenticatable
      */
     public function isFarmer(): bool
     {
-        return $this->role === 'farmer';
+        return $this->role === self::ROLE_FARMER;
+    }
+
+    public function isLguValidator(): bool
+    {
+        return $this->role === self::ROLE_LGU_VALIDATOR;
+    }
+
+    public function isActiveLguValidator(): bool
+    {
+        return $this->isLguValidator() && (bool) $this->is_active;
+    }
+
+    public function normalizedLguMunicipality(): ?string
+    {
+        $municipality = trim((string) $this->lgu_municipality);
+
+        return $municipality !== '' ? strtoupper($municipality) : null;
+    }
+
+    public function normalizedLguBarangay(): ?string
+    {
+        $barangay = trim((string) $this->lgu_barangay);
+
+        return $barangay !== '' ? strtoupper($barangay) : null;
     }
 
     /**
@@ -84,6 +115,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'must_change_password' => 'boolean',
             'favorite_crops' => 'array',
+            'is_active' => 'boolean',
         ];
     }
 

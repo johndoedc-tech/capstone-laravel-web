@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto">
             
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-4 lg:mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 lg:gap-4 mb-4 lg:mb-6">
                 <!-- Total Users -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-blue-500">
                     <div class="flex items-center justify-between">
@@ -44,6 +44,21 @@
                         <div class="bg-green-100 p-3 rounded-full flex-shrink-0">
                             <svg class="w-6 h-6 lg:w-8 lg:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LGU Validators -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-teal-500">
+                    <div class="flex items-center justify-between">
+                        <div class="min-w-0">
+                            <p class="text-xs lg:text-sm text-gray-600 mb-1">LGU Validators</p>
+                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $lguValidatorCount }}</p>
+                        </div>
+                        <div class="bg-teal-100 p-3 rounded-full flex-shrink-0">
+                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m4-5v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V5l7-3 7 3z"></path>
                             </svg>
                         </div>
                     </div>
@@ -104,6 +119,7 @@
                                     <option value="">All Roles</option>
                                     <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                                     <option value="farmer" {{ request('role') == 'farmer' ? 'selected' : '' }}>Farmer</option>
+                                    <option value="lgu_validator" {{ request('role') == 'lgu_validator' ? 'selected' : '' }}>LGU Validator</option>
                                 </select>
                             </div>
                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
@@ -171,6 +187,19 @@
                                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
                                                 Admin
                                             </span>
+                                        @elseif($user->role === 'lgu_validator')
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-teal-100 text-teal-800">
+                                                LGU Validator
+                                            </span>
+                                            <p class="mt-1 text-xs text-gray-500">
+                                                {{ $user->lgu_municipality ? ucwords(strtolower($user->lgu_municipality)) : 'No area' }}
+                                                @if($user->lgu_barangay)
+                                                    / {{ ucwords(strtolower($user->lgu_barangay)) }}
+                                                @endif
+                                            </p>
+                                            <p class="mt-1 text-[11px] {{ $user->is_active ? 'text-green-600' : 'text-gray-400' }}">
+                                                {{ $user->is_active ? 'Active' : 'Inactive' }}
+                                            </p>
                                         @else
                                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                 Farmer
@@ -188,6 +217,9 @@
                                             data-user-name="{{ $user->name }}"
                                             data-user-email="{{ $user->email }}"
                                             data-user-role="{{ $user->role }}"
+                                            data-user-lgu-municipality="{{ $user->lgu_municipality }}"
+                                            data-user-lgu-barangay="{{ $user->lgu_barangay }}"
+                                            data-user-is-active="{{ $user->is_active ? '1' : '0' }}"
                                             class="text-blue-600 hover:text-blue-900 mr-3"
                                         >
                                             Edit
@@ -271,7 +303,31 @@
                         <select name="role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="farmer">Farmer</option>
                             <option value="admin">Administrator</option>
+                            <option value="lgu_validator">LGU Validator</option>
                         </select>
+                    </div>
+
+                    <div class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">LGU assignment</p>
+                        <div class="mt-3 space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Municipality</label>
+                                <select name="lgu_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="">Only required for LGU Validator</option>
+                                    @foreach($municipalities as $municipality)
+                                        <option value="{{ $municipality }}">{{ ucwords(strtolower($municipality)) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Barangay</label>
+                                <input type="text" name="lgu_barangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Optional">
+                            </div>
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" name="is_active" value="1" checked class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                Active validator account
+                            </label>
+                        </div>
                     </div>
 
                     <div>
@@ -344,10 +400,34 @@
                         <select name="role" id="edit_role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="farmer">Farmer</option>
                             <option value="admin">Administrator</option>
+                            <option value="lgu_validator">LGU Validator</option>
                         </select>
                         @if($errors->has('role'))
                             <p class="text-xs text-red-600 mt-1">{{ $errors->first('role') }}</p>
                         @endif
+                    </div>
+
+                    <div class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">LGU assignment</p>
+                        <div class="mt-3 space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Municipality</label>
+                                <select name="lgu_municipality" id="edit_lgu_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="">Only required for LGU Validator</option>
+                                    @foreach($municipalities as $municipality)
+                                        <option value="{{ $municipality }}">{{ ucwords(strtolower($municipality)) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Barangay</label>
+                                <input type="text" name="lgu_barangay" id="edit_lgu_barangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Optional">
+                            </div>
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                Active validator account
+                            </label>
+                        </div>
                     </div>
 
                     <div>
@@ -453,7 +533,7 @@
 
             const buildRoute = (template, id) => template.replace('__USER__', id);
 
-            const openEditModal = (id, name, email, role) => {
+            const openEditModal = (id, name, email, role, lguMunicipality = '', lguBarangay = '', isActive = '1') => {
                 document.getElementById('edit_user_id').value = id;
                 document.getElementById('edit_user_name').value = name;
                 document.getElementById('edit_user_email').value = email;
@@ -461,6 +541,9 @@
                 document.getElementById('edit_name').value = name;
                 document.getElementById('edit_email').value = email;
                 document.getElementById('edit_role').value = role;
+                document.getElementById('edit_lgu_municipality').value = lguMunicipality || '';
+                document.getElementById('edit_lgu_barangay').value = lguBarangay || '';
+                document.getElementById('edit_is_active').checked = isActive !== '0';
                 editUserForm.action = buildRoute(editUserRouteTemplate, id);
                 showModal(editUserModal);
             };
@@ -481,7 +564,10 @@
                         button.dataset.userId,
                         button.dataset.userName,
                         button.dataset.userEmail,
-                        button.dataset.userRole
+                        button.dataset.userRole,
+                        button.dataset.userLguMunicipality,
+                        button.dataset.userLguBarangay,
+                        button.dataset.userIsActive
                     );
                 });
             });

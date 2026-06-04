@@ -91,6 +91,13 @@
             <span class="font-medium">Users</span>
         </a>
 
+        <a href="{{ route('admin.users.index', ['role' => 'lgu_validator']) }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base text-cream hover:bg-primary-700/50">
+            <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m4-5v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V5l7-3 7 3z"></path>
+            </svg>
+            <span class="font-medium">LGU Validators</span>
+        </a>
+
         <!-- Forum Moderation -->
         <a href="{{ route('forum.index') }}" class="flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-sm lg:text-base {{ request()->routeIs('forum.*') ? 'bg-primary text-white' : 'text-cream hover:bg-primary-700/50' }}">
             <svg class="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

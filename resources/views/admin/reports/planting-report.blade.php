@@ -369,6 +369,11 @@
                                                 @endif
                                             </p>
                                         @endif
+                                        @if(($record['actual_harvest_validation_status'] ?? 'approved') !== 'approved')
+                                            <p class="mt-1 rounded bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
+                                                Actual harvest: {{ $record['actual_harvest_validation_label'] }}
+                                            </p>
+                                        @endif
                                         @if($record['damage_sqm'] > 0)
                                             <p class="mt-1 font-semibold text-orange-700">
                                                 Damage:
@@ -393,6 +398,14 @@
                                                 <p>Date damaged: {{ $record['damage_date']?->format('M d, Y') ?? '-' }}</p>
                                                 <p>Reported: {{ $record['damage_reported_at']?->format('M d, Y h:i A') ?? '-' }}</p>
                                                 <p>{{ $record['damage_description'] ?: 'No additional notes' }}</p>
+                                                @if($record['damage_validation_label'])
+                                                    <p class="font-semibold {{ $record['damage_validation_status'] === 'approved' ? 'text-green-700' : 'text-amber-700' }}">
+                                                        {{ $record['damage_validation_label'] }}
+                                                    </p>
+                                                @endif
+                                                @if($record['damage_photo_path'])
+                                                    <a href="{{ route('calendar.damage-photo', $record['damage_event_id']) }}" target="_blank" class="inline-flex text-blue-700 underline">View photo evidence</a>
+                                                @endif
                                             </div>
                                         @endif
                                     </td>

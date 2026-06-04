@@ -21,7 +21,9 @@ class FarmerMiddleware
         }
 
         if (!Auth::user()->isFarmer()) {
-            $redirectRoute = Auth::user()->isAdmin() ? 'admin.dashboard' : 'dashboard';
+            $redirectRoute = Auth::user()->isAdmin()
+                ? 'admin.dashboard'
+                : (Auth::user()->isLguValidator() ? 'lgu.dashboard' : 'dashboard');
 
             return redirect()->route($redirectRoute)->with('error', 'You do not have permission to access the farmer area.');
         }

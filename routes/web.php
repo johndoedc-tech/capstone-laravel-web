@@ -11,6 +11,8 @@ use App\Http\Controllers\FarmerDashboardController;
 use App\Http\Controllers\FarmerCalendarController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\FarmerChatbotController;
+use App\Http\Controllers\LguValidationController;
+use App\Http\Controllers\CalendarEvidenceController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
@@ -116,6 +118,10 @@ Route::get('/app', function () {
         return redirect()->route('admin.dashboard');
     }
 
+    if (auth()->user()->isLguValidator()) {
+        return redirect()->route('lgu.dashboard');
+    }
+
     return redirect()->route('dashboard');
 })->name('app.launch');
 
@@ -123,6 +129,10 @@ Route::get('/app', function () {
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
+    }
+
+    if (auth()->user()->isLguValidator()) {
+        return redirect()->route('lgu.dashboard');
     }
 
     return app(FarmerDashboardController::class)->index();
@@ -204,6 +214,16 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
         Route::post('/vote', [ForumController::class, 'vote'])->name('vote');
         Route::post('/best-answer/{commentId}', [ForumController::class, 'markBestAnswer'])->name('best-answer');
     });
+});
+
+Route::middleware(['auth', 'force-password-change'])->group(function () {
+    Route::get('/calendar-events/{event}/damage-photo', [CalendarEvidenceController::class, 'show'])->name('calendar.damage-photo');
+});
+
+Route::middleware(['auth', 'force-password-change', 'lgu'])->prefix('lgu')->name('lgu.')->group(function () {
+    Route::get('/dashboard', [LguValidationController::class, 'index'])->name('dashboard');
+    Route::post('/validation/{event}/approve', [LguValidationController::class, 'approve'])->name('validation.approve');
+    Route::post('/validation/{event}/reject', [LguValidationController::class, 'reject'])->name('validation.reject');
 });
 
 // Admin Routes

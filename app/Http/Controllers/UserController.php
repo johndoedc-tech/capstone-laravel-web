@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminActivityLog;
+use App\Models\CropProduction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,9 +45,16 @@ class UserController extends Controller
         $totalUsers = User::count();
         $adminCount = User::where('role', 'admin')->count();
         $farmerCount = User::where('role', 'farmer')->count();
+        $lguValidatorCount = User::where('role', User::ROLE_LGU_VALIDATOR)->count();
         $recentUsers = User::where('created_at', '>=', now()->subDays(30))->count();
+        $municipalities = CropProduction::query()
+            ->distinct()
+            ->orderBy('municipality')
+            ->pluck('municipality')
+            ->filter()
+            ->values();
 
-        return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'recentUsers'));
+        return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'lguValidatorCount', 'recentUsers', 'municipalities'));
     }
 
     /**
@@ -58,7 +66,10 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,farmer'],
+            'role' => ['required', 'in:admin,farmer,lgu_validator'],
+            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255'],
+            'lgu_barangay' => ['nullable', 'string', 'max:255'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
 
         $user = User::create([
@@ -66,6 +77,9 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'lgu_municipality' => $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null,
+            'lgu_barangay' => $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null,
+            'is_active' => $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active', true) : true,
             'email_verified_at' => now(),
         ]);
 
@@ -80,12 +94,18 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'role' => ['required', 'in:admin,farmer'],
+            'role' => ['required', 'in:admin,farmer,lgu_validator'],
+            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255'],
+            'lgu_barangay' => ['nullable', 'string', 'max:255'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
+        $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
+        $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
+        $user->is_active = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active') : true;
 
         $user->save();
 

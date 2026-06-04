@@ -380,6 +380,7 @@ class ReportController extends Controller
         $damageTotals = FarmerCalendarEvent::query()
             ->select('crop_plan_event_id', DB::raw('SUM(COALESCE(damage_area_sqm, 0)) as reported_damage_sqm'))
             ->where('category', 'damage_report')
+            ->where('lgu_validation_status', FarmerCalendarEvent::VALIDATION_APPROVED)
             ->whereNotNull('crop_plan_event_id')
             ->groupBy('crop_plan_event_id');
 
@@ -406,12 +407,16 @@ class ReportController extends Controller
                 'plans.prediction_confidence',
                 'plans.prediction_source',
                 'plans.is_completed',
+                'plans.lgu_validation_status as plan_validation_status',
+                'plans.lgu_validation_notes as plan_validation_notes',
                 'plans.created_at',
                 DB::raw('COALESCE(harvests.actual_harvest_date, plans.actual_harvest_date) as actual_harvest_date'),
                 DB::raw('COALESCE(harvests.actual_harvest_amount, plans.actual_harvest_amount) as actual_harvest_amount'),
                 DB::raw('COALESCE(harvests.actual_harvest_unit, plans.actual_harvest_unit) as actual_harvest_unit'),
-                DB::raw('COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) as actual_harvest_production_mt'),
+                DB::raw("CASE WHEN COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') = 'approved' THEN COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) ELSE NULL END as actual_harvest_production_mt"),
                 DB::raw('COALESCE(harvests.actual_harvest_notes, plans.actual_harvest_notes) as actual_harvest_notes'),
+                DB::raw("COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') as actual_harvest_validation_status"),
+                DB::raw('COALESCE(harvests.lgu_validation_notes, plans.lgu_validation_notes) as actual_harvest_validation_notes'),
                 'users.name as farmer_name',
                 'users.email as farmer_email',
                 'users.preferred_municipality',
@@ -533,15 +538,22 @@ class ReportController extends Controller
                 'actual_harvest_unit' => $row->actual_harvest_unit,
                 'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
                 'actual_harvest_notes' => $row->actual_harvest_notes,
+                'actual_harvest_validation_status' => $row->actual_harvest_validation_status ?: 'approved',
+                'actual_harvest_validation_label' => $this->formatValidationStatus($row->actual_harvest_validation_status ?: 'approved'),
+                'actual_harvest_validation_notes' => $row->actual_harvest_validation_notes,
                 'loss_production_mt' => $lossProduction,
                 'farm_type' => $this->formatReportLabel($row->water_source),
                 'seed_type' => $this->formatReportLabel($row->planting_material),
                 'status' => $status,
                 'status_label' => $this->formatReportLabel($status),
                 'damage_title' => $latestDamage?->title,
+                'damage_event_id' => $latestDamage?->id,
                 'damage_description' => $latestDamage?->description,
                 'damage_date' => $latestDamage?->event_date ? Carbon::parse($latestDamage->event_date) : null,
                 'damage_reported_at' => $latestDamage?->created_at ? Carbon::parse($latestDamage->created_at) : null,
+                'damage_validation_status' => $latestDamage?->lgu_validation_status,
+                'damage_validation_label' => $latestDamage ? $this->formatValidationStatus($latestDamage->lgu_validation_status) : null,
+                'damage_photo_path' => $latestDamage?->damage_photo_path,
                 'recorded_at' => $row->created_at ? Carbon::parse($row->created_at) : null,
             ];
         });
@@ -785,6 +797,12 @@ class ReportController extends Controller
         $value = trim((string) $value);
 
         return $value === '' ? '-' : ucwords(strtolower(str_replace('_', ' ', $value)));
+    }
+
+    private function formatValidationStatus(?string $status): string
+    {
+        return FarmerCalendarEvent::VALIDATION_STATUS_LABELS[$status]
+            ?? $this->formatReportLabel($status);
     }
 
     private function writeCsvRow($file, array $fields): void

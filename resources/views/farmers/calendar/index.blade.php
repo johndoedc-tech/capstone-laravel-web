@@ -608,6 +608,9 @@
                                                 <span x-show="calEvent.crop_plan_stage" class="calendar-chip inline-flex text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded" x-text="formatCropPlanStage(calEvent.crop_plan_stage)"></span>
                                                 <span x-show="calEvent.predicted_production_mt" class="calendar-chip inline-flex text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded" x-text="'Pred: ' + formatMetricTons(calEvent.predicted_production_mt)"></span>
                                                 <span x-show="calEvent.actual_harvest_production_mt" class="calendar-chip inline-flex text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded" x-text="'Actual: ' + formatMetricTons(calEvent.actual_harvest_production_mt)"></span>
+                                                <span x-show="calEvent.lgu_validation_status && calEvent.lgu_validation_status !== 'approved'" class="calendar-chip inline-flex text-xs px-1.5 py-0.5 rounded"
+                                                    :class="calEvent.lgu_validation_status === 'rejected' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'"
+                                                    x-text="calEvent.lgu_validation_status_label"></span>
                                                 <span x-show="calEvent.reminder_time" class="calendar-chip inline-flex text-xs text-gray-400" x-text="calEvent.reminder_time"></span>
                                             </div>
                                         </div>
@@ -888,6 +891,12 @@
                                             <span x-text="' of ' + formatSquareMeters(selectedDamageCropPlan.planted_area_sqm)"></span>
                                         </p>
                                     </div>
+
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Photo Evidence</label>
+                                        <input type="file" accept="image/*" capture="environment" @change="eventForm.damage_photo = $event.target.files[0] || null" class="w-full rounded-md border border-gray-300 bg-white text-xs file:mr-3 file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-red-700">
+                                        <p class="text-[11px] text-gray-500 mt-1">Optional, but helpful for LGU validation. Max 5MB.</p>
+                                    </div>
                                 </div>
 
                                 <!-- Desired Area (only for crop plans) -->
@@ -1137,6 +1146,7 @@
                     crop: '',
                     desired_area_sqm: '',
                     damage_area_sqm: '',
+                    damage_photo: null,
                     crop_plan_event_id: '',
                     damage_cause: '',
                     water_source: '',
@@ -2152,6 +2162,7 @@
                         crop: '',
                         desired_area_sqm: '',
                         damage_area_sqm: '',
+                        damage_photo: null,
                         crop_plan_event_id: '',
                         damage_cause: '',
                         water_source: '',
@@ -2186,28 +2197,40 @@
                             ? `Cause: ${damageCause}. Damage reported for ${selectedPlan?.crop || 'selected crop plan'}. Damaged area: ${this.formatSquareMeters(this.eventForm.damage_area_sqm)}.`
                             : this.eventForm.description;
 
-                        const response = await fetch('{{ route('farmer.calendar.store') }}', {
+                        const payload = {
+                            event_date: eventDate,
+                            event_type: this.modalType === 'reminder' ? 'reminder' : 'note',
+                            title: eventTitle,
+                            description: isDamageReport ? (this.eventForm.description || eventDescription) : this.eventForm.description,
+                            category: isCropPlan ? 'crop_plan' : (isDamageReport ? 'damage_report' : this.eventForm.category),
+                            crop: this.eventForm.crop,
+                            desired_area_sqm: isCropPlan && this.eventForm.desired_area_sqm ? this.eventForm.desired_area_sqm : '',
+                            damage_area_sqm: isDamageReport && this.eventForm.damage_area_sqm ? this.eventForm.damage_area_sqm : '',
+                            crop_plan_event_id: isDamageReport ? this.eventForm.crop_plan_event_id : '',
+                            water_source: isCropPlan ? this.eventForm.water_source : '',
+                            planting_material: isCropPlan ? this.eventForm.planting_material : '',
+                            reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || '') : '',
+                        };
+
+                        const requestOptions = {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json',
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: JSON.stringify({
-                                event_date: eventDate,
-                                event_type: this.modalType === 'reminder' ? 'reminder' : 'note',
-                                title: eventTitle,
-                                description: isDamageReport ? (this.eventForm.description || eventDescription) : this.eventForm.description,
-                                category: isCropPlan ? 'crop_plan' : (isDamageReport ? 'damage_report' : this.eventForm.category),
-                                crop: this.eventForm.crop,
-                                desired_area_sqm: isCropPlan && this.eventForm.desired_area_sqm ? this.eventForm.desired_area_sqm : null,
-                                damage_area_sqm: isDamageReport && this.eventForm.damage_area_sqm ? this.eventForm.damage_area_sqm : null,
-                                crop_plan_event_id: isDamageReport ? this.eventForm.crop_plan_event_id : null,
-                                water_source: isCropPlan ? this.eventForm.water_source : null,
-                                planting_material: isCropPlan ? this.eventForm.planting_material : null,
-                                reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || null) : null,
-                            })
-                        });
+                        };
+
+                        if (isDamageReport && this.eventForm.damage_photo) {
+                            const formData = new FormData();
+                            Object.entries(payload).forEach(([key, value]) => formData.append(key, value ?? ''));
+                            formData.append('damage_photo', this.eventForm.damage_photo);
+                            requestOptions.body = formData;
+                        } else {
+                            requestOptions.headers['Content-Type'] = 'application/json';
+                            requestOptions.body = JSON.stringify(payload);
+                        }
+
+                        const response = await fetch('{{ route('farmer.calendar.store') }}', requestOptions);
 
                         if (response.ok) {
                             this.closeModal();

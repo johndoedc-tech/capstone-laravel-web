@@ -78,6 +78,7 @@ class MunicipalSupplyForecastService
         $damageTotals = FarmerCalendarEvent::query()
             ->select('crop_plan_event_id', DB::raw('SUM(COALESCE(damage_area_sqm, 0)) as reported_damage_sqm'))
             ->where('category', 'damage_report')
+            ->where('lgu_validation_status', FarmerCalendarEvent::VALIDATION_APPROVED)
             ->whereNotNull('crop_plan_event_id')
             ->groupBy('crop_plan_event_id');
 
@@ -124,7 +125,7 @@ class MunicipalSupplyForecastService
                 'users.preferred_municipality',
                 DB::raw('COALESCE(damage_totals.reported_damage_sqm, 0) as reported_damage_sqm'),
                 DB::raw('harvests.is_completed as harvest_is_completed'),
-                DB::raw('COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) as actual_harvest_production_mt'),
+                DB::raw("CASE WHEN COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') = 'approved' THEN COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) ELSE NULL END as actual_harvest_production_mt"),
             ])
             ->get();
     }
