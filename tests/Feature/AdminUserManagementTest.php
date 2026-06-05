@@ -20,6 +20,35 @@ class AdminUserManagementTest extends TestCase
         parent::setUp();
     }
 
+    public function test_admin_can_view_general_user_management_page(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Sample Farmer',
+            'role' => User::ROLE_FARMER,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Sample Validator',
+            'role' => User::ROLE_LGU_VALIDATOR,
+            'lgu_municipality' => 'BUGUIAS',
+            'lgu_barangay' => 'ABATAN',
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.users.index'));
+
+        $response->assertOk();
+        $response->assertSee('User Management');
+        $response->assertSee('LGU Validators');
+        $response->assertSee('Sample Farmer');
+        $response->assertSee('Sample Validator');
+        $response->assertSee('Buguias');
+    }
+
     public function test_admin_can_create_farmer_without_lgu_assignment(): void
     {
         $admin = User::factory()->create([

@@ -1,259 +1,261 @@
 <x-admin-layout>
-    <div class="py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            
-            <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 lg:gap-4 mb-4 lg:mb-6">
-                <!-- Total Users -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-blue-500">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm text-gray-600 mb-1">Total Users</p>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-full flex-shrink-0">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+    @php
+        $stats = $stats ?? [
+            'total' => $totalUsers ?? 0,
+            'admins' => $adminCount ?? 0,
+            'farmers' => $farmerCount ?? 0,
+            'lgu_validators' => $lguValidatorCount ?? 0,
+            'active' => 0,
+            'inactive' => 0,
+            'recent' => $recentUsers ?? 0,
+        ];
+        $filters = $filters ?? request()->only(['search', 'role', 'status', 'sort_by', 'sort_order']);
 
-                <!-- Admins -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-purple-500">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm text-gray-600 mb-1">Administrators</p>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $adminCount }}</p>
-                        </div>
-                        <div class="bg-purple-100 p-3 rounded-full flex-shrink-0">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+        $roleClasses = [
+            'admin' => 'bg-purple-100 text-purple-800',
+            'farmer' => 'bg-emerald-100 text-emerald-800',
+            'lgu_validator' => 'bg-teal-100 text-teal-800',
+        ];
+        $roleLabels = [
+            'admin' => 'Admin',
+            'farmer' => 'Farmer',
+            'lgu_validator' => 'LGU Validator',
+        ];
+    @endphp
 
-                <!-- Farmers -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-green-500">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm text-gray-600 mb-1">Farmers</p>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $farmerCount }}</p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-full flex-shrink-0">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LGU Validators -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-teal-500">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm text-gray-600 mb-1">LGU Validators</p>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $lguValidatorCount }}</p>
-                        </div>
-                        <div class="bg-teal-100 p-3 rounded-full flex-shrink-0">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m4-5v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V5l7-3 7 3z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Users (Last 30 Days) -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 lg:p-6 border-l-4 border-orange-500">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0">
-                            <p class="text-xs lg:text-sm text-gray-600 mb-1">New (30 days)</p>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $recentUsers }}</p>
-                        </div>
-                        <div class="bg-orange-100 p-3 rounded-full flex-shrink-0">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Success/Error Messages -->
+    <div class="min-h-full bg-gray-50">
+        <div class="p-3 sm:p-6 space-y-5">
             @if(session('success'))
-                <div class="bg-primary-50 border-l-4 border-primary-500 p-4 mb-4 lg:mb-6 rounded">
-                    <div class="flex">
-                        <svg class="w-5 h-5 text-primary-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        <p class="text-sm text-primary-700">{{ session('success') }}</p>
-                    </div>
+                <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+                    {{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 lg:mb-6 rounded">
-                    <div class="flex">
-                        <svg class="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                        </svg>
-                        <p class="text-sm text-red-700">{{ session('error') }}</p>
-                    </div>
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+                    {{ session('error') }}
                 </div>
             @endif
 
-            <!-- Filters and Actions -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 lg:mb-6">
-                <div class="p-4 lg:p-6">
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                        <!-- Search and Filters -->
-                        <form method="GET" action="{{ route('admin.users.index') }}" class="flex-1 flex flex-col sm:flex-row gap-3">
-                            <div class="flex-1">
-                                <input type="text" name="search" value="{{ request('search') }}" 
-                                    placeholder="Search by name or email..."
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div class="w-full sm:w-48">
-                                <select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">All Roles</option>
-                                    <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                    <option value="farmer" {{ request('role') == 'farmer' ? 'selected' : '' }}>Farmer</option>
-                                    <option value="lgu_validator" {{ request('role') == 'lgu_validator' ? 'selected' : '' }}>LGU Validator</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                Filter
-                            </button>
-                            @if(request('search') || request('role'))
-                                <a href="{{ route('admin.users.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-center">
-                                    Clear
-                                </a>
-                            @endif
-                        </form>
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">User Administration</p>
+                        <h1 class="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">User Management</h1>
+                        <p class="mt-1 text-sm text-gray-500">Create and manage farmer, admin, and LGU validator accounts.</p>
+                    </div>
 
-                        <!-- Add User Button -->
+                    <div class="flex flex-col gap-2 sm:flex-row">
+                        <a href="{{ route('admin.lgu-validators.index') }}" class="inline-flex items-center justify-center rounded-lg border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-100">
+                            LGU Validators
+                        </a>
                         <button
                             type="button"
                             data-open-modal="addUserModal"
-                            class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition flex items-center gap-2 justify-center whitespace-nowrap">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Add User
                         </button>
                     </div>
-
-                    <p class="mt-3 text-xs text-gray-500">
-                        Need to change your own password? Use the password section on your profile page instead of user management.
-                    </p>
                 </div>
             </div>
 
-            <!-- Users Table -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+            <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+                <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['total']) }}</p>
+                </div>
+                <div class="rounded-lg border border-purple-100 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-purple-700">Admins</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['admins']) }}</p>
+                </div>
+                <div class="rounded-lg border border-emerald-100 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Farmers</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['farmers']) }}</p>
+                </div>
+                <div class="rounded-lg border border-teal-100 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">LGU</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['lgu_validators']) }}</p>
+                </div>
+                <div class="rounded-lg border border-blue-100 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Active</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['active']) }}</p>
+                </div>
+                <div class="rounded-lg border border-amber-100 bg-white p-4 shadow-sm">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">New 30 Days</p>
+                    <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($stats['recent']) }}</p>
+                </div>
+            </div>
+
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                <form method="GET" action="{{ route('admin.users.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.6fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(110px,0.6fr)_auto] lg:items-end">
+                    <div>
+                        <label for="search" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Search</label>
+                        <input
+                            id="search"
+                            type="search"
+                            name="search"
+                            value="{{ $filters['search'] ?? '' }}"
+                            placeholder="Name, email, role, or LGU area"
+                            class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                    </div>
+
+                    <div>
+                        <label for="role" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Role</label>
+                        <select id="role" name="role" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="">All roles</option>
+                            <option value="admin" @selected(($filters['role'] ?? '') === 'admin')>Admin</option>
+                            <option value="farmer" @selected(($filters['role'] ?? '') === 'farmer')>Farmer</option>
+                            <option value="lgu_validator" @selected(($filters['role'] ?? '') === 'lgu_validator')>LGU Validator</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="status" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Status</label>
+                        <select id="status" name="status" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="">All status</option>
+                            <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
+                            <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="sort_by" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Sort</label>
+                        <select id="sort_by" name="sort_by" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="created_at" @selected(($filters['sort_by'] ?? 'created_at') === 'created_at')>Created date</option>
+                            <option value="name" @selected(($filters['sort_by'] ?? '') === 'name')>Name</option>
+                            <option value="email" @selected(($filters['sort_by'] ?? '') === 'email')>Email</option>
+                            <option value="role" @selected(($filters['sort_by'] ?? '') === 'role')>Role</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="sort_order" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Order</label>
+                        <select id="sort_order" name="sort_order" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                            <option value="desc" @selected(($filters['sort_order'] ?? 'desc') === 'desc')>Newest</option>
+                            <option value="asc" @selected(($filters['sort_order'] ?? '') === 'asc')>Oldest</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="inline-flex flex-1 items-center justify-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 lg:flex-none">
+                            Filter
+                        </button>
+                        <a href="{{ route('admin.users.index') }}" class="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 lg:flex-none">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
+                <p class="mt-3 text-xs text-gray-500">Use profile settings to change your own password.</p>
+            </div>
+
+            <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <div class="flex flex-col gap-2 border-b border-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900">Accounts</h2>
+                        <p class="text-sm text-gray-500">{{ number_format($users->total()) }} {{ \Illuminate\Support\Str::plural('record', $users->total()) }} found</p>
+                    </div>
+                </div>
+
+                <div class="hidden overflow-x-auto md:block">
+                    <table class="min-w-full divide-y divide-gray-100">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">User</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Role and Scope</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Created</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100 bg-white">
                             @forelse($users as $user)
+                                @php
+                                    $isActive = (bool) ($user->is_active ?? true);
+                                    $displayRole = $roleLabels[$user->role] ?? ucfirst(str_replace('_', ' ', $user->role));
+                                    $displayRoleClass = $roleClasses[$user->role] ?? 'bg-gray-100 text-gray-700';
+                                    $municipality = $user->lgu_municipality ? ucwords(strtolower($user->lgu_municipality)) : null;
+                                    $barangay = $user->lgu_barangay ? ucwords(strtolower($user->lgu_barangay)) : null;
+                                @endphp
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $user->id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                    <td class="px-4 py-4">
+                                        <div class="flex min-w-0 items-center gap-3">
+                                            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 text-sm font-bold text-white">
                                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                                             </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                                @if($user->id === auth()->id())
-                                                    <div class="text-xs text-blue-600">(You)</div>
-                                                @endif
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-2">
+                                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $user->name }}</p>
+                                                    @if($user->id === auth()->id())
+                                                        <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">You</span>
+                                                    @endif
+                                                </div>
+                                                <p class="truncate text-sm text-gray-500">{{ $user->email }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $user->email }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($user->role === 'admin')
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                                                Admin
-                                            </span>
-                                        @elseif($user->role === 'lgu_validator')
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-teal-100 text-teal-800">
-                                                LGU Validator
-                                            </span>
+                                    <td class="px-4 py-4">
+                                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $displayRoleClass }}">
+                                            {{ $displayRole }}
+                                        </span>
+                                        @if($user->role === 'lgu_validator')
                                             <p class="mt-1 text-xs text-gray-500">
-                                                {{ $user->lgu_municipality ? ucwords(strtolower($user->lgu_municipality)) : 'No area' }}
-                                                @if($user->lgu_barangay)
-                                                    / {{ ucwords(strtolower($user->lgu_barangay)) }}
-                                                @endif
+                                                {{ $municipality ?? 'No area assigned' }}@if($barangay) / {{ $barangay }}@endif
                                             </p>
-                                            <p class="mt-1 text-[11px] {{ $user->is_active ? 'text-green-600' : 'text-gray-400' }}">
-                                                {{ $user->is_active ? 'Active' : 'Inactive' }}
-                                            </p>
-                                        @else
-                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                Farmer
-                                            </span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                        {{ $user->created_at->format('M d, Y') }}
+                                    <td class="px-4 py-4">
+                                        <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600' }}">
+                                            {{ $isActive ? 'Active' : 'Inactive' }}
+                                        </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        <button
-                                            type="button"
-                                            data-open-edit-user
-                                            data-user-id="{{ $user->id }}"
-                                            data-user-name="{{ $user->name }}"
-                                            data-user-email="{{ $user->email }}"
-                                            data-user-role="{{ $user->role }}"
-                                            data-user-lgu-municipality="{{ $user->lgu_municipality }}"
-                                            data-user-lgu-barangay="{{ $user->lgu_barangay }}"
-                                            data-user-is-active="{{ $user->is_active ? '1' : '0' }}"
-                                            class="text-blue-600 hover:text-blue-900 mr-3"
-                                        >
-                                            Edit
-                                        </button>
-                                        @if($user->id !== auth()->id())
+                                    <td class="px-4 py-4 text-sm text-gray-600">
+                                        {{ optional($user->created_at)->format('M d, Y') }}
+                                    </td>
+                                    <td class="px-4 py-4 text-right">
+                                        <div class="flex justify-end gap-2">
                                             <button
                                                 type="button"
-                                                data-open-reset-password
+                                                data-open-edit-user
                                                 data-user-id="{{ $user->id }}"
                                                 data-user-name="{{ $user->name }}"
                                                 data-user-email="{{ $user->email }}"
-                                                class="text-amber-600 hover:text-amber-800 mr-3"
-                                            >
-                                                Reset Password
+                                                data-user-role="{{ $user->role }}"
+                                                data-user-lgu-municipality="{{ $user->lgu_municipality }}"
+                                                data-user-lgu-barangay="{{ $user->lgu_barangay }}"
+                                                data-user-is-active="{{ $isActive ? '1' : '0' }}"
+                                                class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100">
+                                                Edit
                                             </button>
-                                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" 
-                                                onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">
-                                                    Delete
+                                            @if($user->id !== auth()->id())
+                                                <button
+                                                    type="button"
+                                                    data-open-reset-password
+                                                    data-user-id="{{ $user->id }}"
+                                                    data-user-name="{{ $user->name }}"
+                                                    data-user-email="{{ $user->email }}"
+                                                    class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:bg-amber-100">
+                                                    Reset
                                                 </button>
-                                            </form>
-                                        @endif
+                                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="rounded-lg border border-red-100 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                        </svg>
-                                        <p class="text-lg font-medium">No users found</p>
-                                        <p class="text-sm mt-1">Try adjusting your search or filters</p>
+                                    <td colspan="5" class="px-4 py-12 text-center">
+                                        <p class="text-sm font-semibold text-gray-700">No users found</p>
+                                        <p class="mt-1 text-sm text-gray-500">Try changing the search or filters.</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -261,9 +263,91 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
+                <div class="divide-y divide-gray-100 md:hidden">
+                    @forelse($users as $user)
+                        @php
+                            $isActive = (bool) ($user->is_active ?? true);
+                            $displayRole = $roleLabels[$user->role] ?? ucfirst(str_replace('_', ' ', $user->role));
+                            $displayRoleClass = $roleClasses[$user->role] ?? 'bg-gray-100 text-gray-700';
+                            $municipality = $user->lgu_municipality ? ucwords(strtolower($user->lgu_municipality)) : null;
+                            $barangay = $user->lgu_barangay ? ucwords(strtolower($user->lgu_barangay)) : null;
+                        @endphp
+                        <div class="p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 text-sm font-bold text-white">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <p class="break-words text-sm font-semibold text-gray-900">{{ $user->name }}</p>
+                                        @if($user->id === auth()->id())
+                                            <span class="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">You</span>
+                                        @endif
+                                    </div>
+                                    <p class="break-all text-sm text-gray-500">{{ $user->email }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $displayRoleClass }}">{{ $displayRole }}</span>
+                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600' }}">
+                                    {{ $isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                                <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
+                                    {{ optional($user->created_at)->format('M d, Y') }}
+                                </span>
+                            </div>
+
+                            @if($user->role === 'lgu_validator')
+                                <p class="mt-2 text-xs text-gray-500">
+                                    {{ $municipality ?? 'No area assigned' }}@if($barangay) / {{ $barangay }}@endif
+                                </p>
+                            @endif
+
+                            <div class="mt-4 grid gap-2 sm:grid-cols-3">
+                                <button
+                                    type="button"
+                                    data-open-edit-user
+                                    data-user-id="{{ $user->id }}"
+                                    data-user-name="{{ $user->name }}"
+                                    data-user-email="{{ $user->email }}"
+                                    data-user-role="{{ $user->role }}"
+                                    data-user-lgu-municipality="{{ $user->lgu_municipality }}"
+                                    data-user-lgu-barangay="{{ $user->lgu_barangay }}"
+                                    data-user-is-active="{{ $isActive ? '1' : '0' }}"
+                                    class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100">
+                                    Edit
+                                </button>
+                                @if($user->id !== auth()->id())
+                                    <button
+                                        type="button"
+                                        data-open-reset-password
+                                        data-user-id="{{ $user->id }}"
+                                        data-user-name="{{ $user->name }}"
+                                        data-user-email="{{ $user->email }}"
+                                        class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100">
+                                        Reset
+                                    </button>
+                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="px-4 py-12 text-center">
+                            <p class="text-sm font-semibold text-gray-700">No users found</p>
+                            <p class="mt-1 text-sm text-gray-500">Try changing the search or filters.</p>
+                        </div>
+                    @endforelse
+                </div>
+
                 @if($users->hasPages())
-                    <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="border-t border-gray-100 px-4 py-4">
                         {{ $users->links() }}
                     </div>
                 @endif

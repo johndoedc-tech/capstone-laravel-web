@@ -23,10 +23,20 @@ class UserController extends Controller
 
         // Search filter
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+            $search = strtolower(trim((string) $request->search));
+            $searchTerm = '%' . str_replace(['%', '_'], ['\%', '\_'], $search) . '%';
+
+            $supportsLguColumns = $this->supportsLguValidatorColumns();
+
+            $query->where(function($q) use ($searchTerm, $supportsLguColumns) {
+                $q->whereRaw('LOWER(name) LIKE ?', [$searchTerm])
+                  ->orWhereRaw('LOWER(email) LIKE ?', [$searchTerm])
+                  ->orWhereRaw('LOWER(role) LIKE ?', [$searchTerm]);
+
+                if ($supportsLguColumns) {
+                    $q->orWhereRaw('LOWER(COALESCE(lgu_municipality, \'\')) LIKE ?', [$searchTerm])
+                        ->orWhereRaw('LOWER(COALESCE(lgu_barangay, \'\')) LIKE ?', [$searchTerm]);
+                }
             });
         }
 
@@ -35,12 +45,19 @@ class UserController extends Controller
             $query->where('role', $request->role);
         }
 
+        if (in_array($request->get('status'), ['active', 'inactive'], true) && Schema::hasColumn('users', 'is_active')) {
+            $query->where('is_active', $request->get('status') === 'active');
+        }
+
         // Sort
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $allowedSorts = ['created_at', 'name', 'email', 'role'];
+        $sortBy = in_array($request->get('sort_by'), $allowedSorts, true)
+            ? $request->get('sort_by')
+            : 'created_at';
+        $sortOrder = $request->get('sort_order') === 'asc' ? 'asc' : 'desc';
         $query->orderBy($sortBy, $sortOrder);
 
-        $users = $query->paginate(15);
+        $users = $query->paginate(15)->withQueryString();
 
         // Statistics
         $totalUsers = User::count();
@@ -48,6 +65,22 @@ class UserController extends Controller
         $farmerCount = User::where('role', 'farmer')->count();
         $lguValidatorCount = User::where('role', User::ROLE_LGU_VALIDATOR)->count();
         $recentUsers = User::where('created_at', '>=', now()->subDays(30))->count();
+        $activeUsers = Schema::hasColumn('users', 'is_active')
+            ? User::where('is_active', true)->count()
+            : $totalUsers;
+        $inactiveUsers = Schema::hasColumn('users', 'is_active')
+            ? User::where('is_active', false)->count()
+            : 0;
+        $stats = [
+            'total' => $totalUsers,
+            'admins' => $adminCount,
+            'farmers' => $farmerCount,
+            'lgu_validators' => $lguValidatorCount,
+            'active' => $activeUsers,
+            'inactive' => $inactiveUsers,
+            'recent' => $recentUsers,
+        ];
+        $filters = $request->only(['search', 'role', 'status', 'sort_by', 'sort_order']);
         $municipalities = Schema::hasTable((new CropProduction)->getTable())
             ? CropProduction::query()
                 ->distinct()
@@ -57,7 +90,7 @@ class UserController extends Controller
                 ->values()
             : collect();
 
-        return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'lguValidatorCount', 'recentUsers', 'municipalities'));
+        return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'lguValidatorCount', 'recentUsers', 'municipalities', 'stats', 'filters'));
     }
 
     /**
