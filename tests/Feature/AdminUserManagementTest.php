@@ -70,4 +70,56 @@ class AdminUserManagementTest extends TestCase
         $this->assertSame('ABATAN', $validator->lgu_barangay);
         $this->assertTrue($validator->is_active);
     }
+
+    public function test_admin_can_use_dedicated_lgu_validator_management_flow(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.lgu-validators.store'), [
+            'name' => 'Dedicated LGU Validator',
+            'email' => 'dedicated.lgu@example.test',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'lgu_municipality' => 'BUGUIAS',
+            'lgu_barangay' => 'ABATAN',
+            'is_active' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.lgu-validators.index'));
+
+        $validator = User::where('email', 'dedicated.lgu@example.test')->firstOrFail();
+
+        $this->assertSame(User::ROLE_LGU_VALIDATOR, $validator->role);
+        $this->assertSame('BUGUIAS', $validator->lgu_municipality);
+        $this->assertSame('ABATAN', $validator->lgu_barangay);
+
+        $toggleResponse = $this->actingAs($admin)->patch(route('admin.lgu-validators.active', $validator));
+
+        $toggleResponse->assertRedirect();
+        $this->assertFalse($validator->fresh()->is_active);
+    }
+
+    public function test_lgu_validator_barangay_must_match_municipality(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.lgu-validators.store'), [
+            'name' => 'Invalid LGU Validator',
+            'email' => 'invalid.lgu@example.test',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'lgu_municipality' => 'ATOK',
+            'lgu_barangay' => 'ABATAN',
+            'is_active' => '1',
+        ]);
+
+        $response->assertSessionHasErrors('lgu_barangay');
+        $this->assertDatabaseMissing('users', [
+            'email' => 'invalid.lgu@example.test',
+        ]);
+    }
 }

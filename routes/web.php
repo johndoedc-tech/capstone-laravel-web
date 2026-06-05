@@ -13,6 +13,7 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\FarmerChatbotController;
 use App\Http\Controllers\LguValidationController;
 use App\Http\Controllers\CalendarEvidenceController;
+use App\Http\Controllers\Admin\LguValidatorController as AdminLguValidatorController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
@@ -275,6 +276,14 @@ Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.password.reset');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // LGU Validator Staff Management
+    Route::get('/lgu-validators', [AdminLguValidatorController::class, 'index'])->name('lgu-validators.index');
+    Route::get('/lgu-validators/create', [AdminLguValidatorController::class, 'create'])->name('lgu-validators.create');
+    Route::post('/lgu-validators', [AdminLguValidatorController::class, 'store'])->name('lgu-validators.store');
+    Route::get('/lgu-validators/{validator}/edit', [AdminLguValidatorController::class, 'edit'])->name('lgu-validators.edit');
+    Route::put('/lgu-validators/{validator}', [AdminLguValidatorController::class, 'update'])->name('lgu-validators.update');
+    Route::patch('/lgu-validators/{validator}/active', [AdminLguValidatorController::class, 'toggleActive'])->name('lgu-validators.active');
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
