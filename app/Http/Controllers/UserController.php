@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
@@ -47,12 +48,14 @@ class UserController extends Controller
         $farmerCount = User::where('role', 'farmer')->count();
         $lguValidatorCount = User::where('role', User::ROLE_LGU_VALIDATOR)->count();
         $recentUsers = User::where('created_at', '>=', now()->subDays(30))->count();
-        $municipalities = CropProduction::query()
-            ->distinct()
-            ->orderBy('municipality')
-            ->pluck('municipality')
-            ->filter()
-            ->values();
+        $municipalities = Schema::hasTable((new CropProduction)->getTable())
+            ? CropProduction::query()
+                ->distinct()
+                ->orderBy('municipality')
+                ->pluck('municipality')
+                ->filter()
+                ->values()
+            : collect();
 
         return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'lguValidatorCount', 'recentUsers', 'municipalities'));
     }
@@ -72,16 +75,27 @@ class UserController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $user = User::create([
+        if ($validated['role'] === User::ROLE_LGU_VALIDATOR && ! $this->supportsLguValidatorColumns()) {
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->with('error', 'LGU validator setup is still being prepared. Please run the latest database migrations, then try again.');
+        }
+
+        $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'lgu_municipality' => $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null,
-            'lgu_barangay' => $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null,
-            'is_active' => $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active', true) : true,
             'email_verified_at' => now(),
-        ]);
+        ];
+
+        if ($this->supportsLguValidatorColumns()) {
+            $userData['lgu_municipality'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
+            $userData['lgu_barangay'] = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
+            $userData['is_active'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active', true) : true;
+        }
+
+        $user = User::create($userData);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
     }
@@ -100,12 +114,20 @@ class UserController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
+        if ($validated['role'] === User::ROLE_LGU_VALIDATOR && ! $this->supportsLguValidatorColumns()) {
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->with('error', 'LGU validator setup is still being prepared. Please run the latest database migrations, then try again.');
+        }
+
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role = $validated['role'];
-        $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
-        $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
-        $user->is_active = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active') : true;
+        if ($this->supportsLguValidatorColumns()) {
+            $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
+            $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
+            $user->is_active = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active') : true;
+        }
 
         $user->save();
 
@@ -181,5 +203,12 @@ class UserController extends Controller
     {
         // This can be implemented later if you add a status field
         return redirect()->route('admin.users.index')->with('info', 'Status toggle feature coming soon!');
+    }
+
+    private function supportsLguValidatorColumns(): bool
+    {
+        return Schema::hasColumn('users', 'lgu_municipality')
+            && Schema::hasColumn('users', 'lgu_barangay')
+            && Schema::hasColumn('users', 'is_active');
     }
 }

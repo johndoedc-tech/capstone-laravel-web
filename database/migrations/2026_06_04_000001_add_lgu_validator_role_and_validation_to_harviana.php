@@ -14,7 +14,8 @@ return new class extends Migration
         if ($driver === 'mysql') {
             DB::statement("ALTER TABLE users MODIFY role VARCHAR(50) NOT NULL DEFAULT 'farmer'");
         } elseif ($driver === 'pgsql') {
-            DB::statement("ALTER TABLE users ALTER COLUMN role TYPE VARCHAR(50)");
+            DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+            DB::statement('ALTER TABLE users ALTER COLUMN role TYPE VARCHAR(50) USING role::text');
             DB::statement("ALTER TABLE users ALTER COLUMN role SET DEFAULT 'farmer'");
         }
 
