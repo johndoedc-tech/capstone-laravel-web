@@ -565,6 +565,15 @@
                                         </div>
 
                                         <p x-show="plan.description" class="mt-3 text-xs text-gray-600" x-text="plan.description"></p>
+
+                                        <div class="mt-3 border-t border-emerald-100 pt-3">
+                                            <button type="button" @click="deleteEvent(plan)" class="inline-flex items-center gap-1.5 rounded-md border border-red-100 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">
+                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Delete crop plan
+                                            </button>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
@@ -2510,7 +2519,14 @@
                 },
 
                 async deleteEvent(calEvent) {
-                    if (!confirm('Delete this event?')) return;
+                    const isCropPlan = calEvent?.category === 'crop_plan';
+                    const message = isCropPlan
+                        ? (this.hasActualHarvest(calEvent)
+                            ? 'Delete this crop plan and its harvest record?'
+                            : 'Delete this crop plan and its schedule?')
+                        : 'Delete this event?';
+
+                    if (!confirm(message)) return;
 
                     try {
                         const response = await fetch(`{{ url('farmer/calendar-events') }}/${calEvent.id}/delete`, {
@@ -2525,16 +2541,26 @@
                         if (response.ok) {
                             const data = await response.json();
                             if (data.success) {
-                                this.loadEvents();
-                                this.loadCropPlans();
+                                await Promise.all([
+                                    this.loadEvents(),
+                                    this.loadCropPlans(),
+                                ]);
                                 this.loadUpcomingReminders();
+                                if (isCropPlan) {
+                                    this.closeCropDetailsModal();
+                                    this.closeCropTimelineModal();
+                                }
+                                this.showToast(
+                                    isCropPlan ? 'Crop plan deleted' : 'Deleted',
+                                    isCropPlan ? 'Tinanggal na ang crop plan mo.' : 'Removed from your calendar.'
+                                );
                             }
                         } else {
-                            alert('Could not delete.');
+                            this.showToast('Could not delete', 'Please try again.', 'error');
                         }
                     } catch (error) {
                         console.error('Failed to delete event:', error);
-                        alert('Could not delete.');
+                        this.showToast('Could not delete', 'Please check your connection and try again.', 'error');
                     }
                 }
             }
