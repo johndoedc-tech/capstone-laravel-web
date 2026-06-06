@@ -361,30 +361,34 @@
                         </div>
 
                         <div x-show="selectedDate || calendarEventGroups.length > 0 || activeCropTimelines.length > 0">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-semibold text-gray-900 min-w-0 break-words" x-text="selectedDate ? selectedDateDisplay : 'Calendar Events'"></h3>
+                            <div class="mb-5">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Your Farm Schedule</p>
+                                <h3 class="mt-1 text-lg font-semibold text-gray-900 leading-tight" x-text="selectedDate ? selectedDateDisplay : 'Calendar Events'"></h3>
                             </div>
 
-                            <!-- Add Buttons -->
-                            <div x-show="selectedDate" class="grid grid-cols-2 gap-2 mb-4">
-                                <button @click="openAddModal('note')" class="min-w-0 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                                    <span>📝</span> Add Note
-                                </button>
-                                <button @click="openAddModal('reminder')" class="min-w-0 text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                                    <span>🔔</span> Reminder
-                                </button>
+                            <!-- Quick Actions -->
+                            <div x-show="selectedDate" class="mb-5">
+                                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Quick Actions</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button @click="openAddModal('note')" class="min-w-0 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-300">
+                                        <span>📝</span> Add Note
+                                    </button>
+                                    <button @click="openAddModal('reminder')" class="min-w-0 rounded-lg border border-orange-100 bg-orange-50 px-3 py-2.5 text-sm font-medium text-orange-700 transition-colors hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                        <span>🔔</span> Reminder
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Active Crop Timelines -->
-                            <div x-show="activeCropTimelines.length > 0" class="mb-5">
-                                <div class="mb-3 flex items-center justify-between gap-3">
+                            <div x-show="activeCropTimelines.length > 0" class="mb-6">
+                                <div class="mb-2 flex items-end justify-between gap-3">
                                     <div>
-                                        <p class="text-sm font-semibold text-gray-900">Crops in Progress</p>
-                                        <p class="text-xs text-gray-400">Until harvest.</p>
+                                        <p class="text-sm font-semibold text-gray-900">Active Crops</p>
+                                        <p class="text-xs text-gray-400">Tap a crop to see details.</p>
                                     </div>
-                                    <span class="calendar-chip inline-flex rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                                    <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                                         <span x-text="activeCropTimelines.length"></span>
-                                        <span x-text="activeCropTimelines.length === 1 ? ' crop' : ' crops'"></span>
+                                        <span> active</span>
                                     </span>
                                 </div>
 
@@ -395,38 +399,49 @@
                                                 <div class="min-w-0">
                                                     <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="timeline.plan.crop || timeline.plan.title"></p>
                                                     <p class="mt-0.5 text-xs text-emerald-700">
-                                                        <span x-text="'Planted ' + formatDisplayDate(timeline.startDate)"></span>
-                                                        <span x-show="timeline.endDate"> to </span>
-                                                        <span x-show="timeline.endDate" x-text="formatDisplayDate(timeline.endDate)"></span>
+                                                        <span>Harvest: </span>
+                                                        <span x-text="timeline.endDate ? formatDisplayDate(timeline.endDate) : 'Not set'"></span>
                                                     </p>
                                                 </div>
-                                                <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-700" x-text="timeline.daysLeftText"></span>
+                                                <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-emerald-700" x-text="timeline.daysLeftText"></span>
                                             </div>
 
-                                            <div class="mt-3 h-2 overflow-hidden rounded-full bg-white">
-                                                <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${timeline.progress}%`"></div>
+                                            <div class="mt-3 flex items-center gap-2">
+                                                <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-white">
+                                                    <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${timeline.progress}%`"></div>
+                                                </div>
+                                                <span class="text-[11px] font-medium text-emerald-700" x-text="timeline.progress + '%'"></span>
                                             </div>
 
-                                            <div class="mt-2 flex min-w-0 flex-wrap gap-1.5">
-                                                <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
-                                                <span x-show="timeline.plan.water_source" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-sky-700" x-text="formatCropPlanOption(timeline.plan.water_source)"></span>
-                                                <span x-show="timeline.nextTask" class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
-                                                    <span x-text="'Next: ' + timeline.nextTask.label"></span>
-                                                    <span class="ml-1 text-gray-400" x-text="formatDisplayDate(timeline.nextTask.date)"></span>
-                                                </span>
+                                            <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                                <div class="rounded-md bg-white/80 px-2 py-1.5">
+                                                    <p class="text-[10px] font-semibold uppercase text-gray-400">Area</p>
+                                                    <p class="mt-0.5 font-medium text-gray-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm) || '-'"></p>
+                                                </div>
+                                                <div class="rounded-md bg-white/80 px-2 py-1.5">
+                                                    <p class="text-[10px] font-semibold uppercase text-gray-400">Water</p>
+                                                    <p class="mt-0.5 font-medium text-gray-700" x-text="formatCropPlanOption(timeline.plan.water_source) || '-'"></p>
+                                                </div>
                                             </div>
+
+                                            <p x-show="timeline.nextTask" class="mt-2 rounded-md bg-white/80 px-2 py-1.5 text-xs text-gray-600">
+                                                <span class="font-semibold text-gray-700">Next: </span>
+                                                <span x-text="timeline.nextTask?.label"></span>
+                                                <span class="text-gray-400"> - </span>
+                                                <span class="text-gray-500" x-text="formatDisplayDate(timeline.nextTask?.date)"></span>
+                                            </p>
                                         </button>
                                     </template>
                                 </div>
                             </div>
 
                             <!-- Grouped Events List -->
-                            <div class="mb-3 flex items-center justify-between gap-3">
+                            <div class="mb-2 flex items-end justify-between gap-3">
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900">Plans by Date</p>
-                                    <p class="text-xs text-gray-400" x-text="monthYearDisplay"></p>
+                                    <p class="text-sm font-semibold text-gray-900">Calendar Events</p>
+                                    <p class="text-xs text-gray-400">Grouped by date.</p>
                                 </div>
-                                <span class="calendar-chip inline-flex rounded-full bg-orange-50 px-2 py-1 text-xs font-medium text-orange-700">
+                                <span class="shrink-0 rounded-full bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-600">
                                     <span x-text="calendarEventGroups.length"></span>
                                     <span x-text="calendarEventGroups.length === 1 ? ' date' : ' dates'"></span>
                                 </span>
@@ -434,7 +449,7 @@
 
                             <div x-show="calendarEventGroups.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden pr-1">
                                 <template x-for="group in calendarEventGroups" :key="'group-' + group.date">
-                                    <button type="button" @click="openEventGroupModal(group.date)" class="calendar-event-card w-full rounded-lg border border-gray-100 bg-gray-50 p-3 text-left transition-colors hover:border-orange-200 hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                                    <button type="button" @click="openEventGroupModal(group.date)" class="calendar-event-card w-full rounded-lg border border-gray-100 bg-gray-50 p-3 text-left transition-colors hover:border-emerald-200 hover:bg-emerald-50/60 focus:outline-none focus:ring-2 focus:ring-emerald-300">
                                         <div class="flex min-w-0 items-start justify-between gap-3">
                                             <div class="min-w-0">
                                                 <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="group.display"></p>
@@ -443,24 +458,24 @@
                                                     <span x-text="group.count === 1 ? ' event' : ' events'"></span>
                                                 </p>
                                             </div>
-                                            <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-orange-700" x-text="group.count"></span>
+                                            <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-700" x-text="group.count"></span>
                                         </div>
-                                        <div class="mt-2 flex min-w-0 flex-wrap gap-1.5">
+                                        <div class="mt-3 space-y-1.5">
                                             <template x-for="event in group.previewEvents" :key="'preview-' + group.date + '-' + event.id">
-                                                <span class="calendar-chip inline-flex rounded bg-white px-1.5 py-0.5 text-xs text-gray-700">
-                                                    <span x-text="event.category_icon"></span>
-                                                    <span class="ml-1" x-text="event.title"></span>
-                                                </span>
+                                                <div class="flex min-w-0 items-center gap-2 text-xs text-gray-700">
+                                                    <span class="h-1.5 w-1.5 shrink-0 rounded-full" :class="event.category === 'crop_plan' ? 'bg-emerald-500' : (event.category === 'fertilizer' ? 'bg-sky-500' : 'bg-orange-400')"></span>
+                                                    <span class="calendar-event-title truncate" x-text="event.title"></span>
+                                                </div>
                                             </template>
-                                            <span x-show="group.hiddenCount > 0" class="calendar-chip inline-flex rounded bg-orange-100 px-1.5 py-0.5 text-xs text-orange-700">
-                                                +<span x-text="group.hiddenCount"></span> more
-                                            </span>
+                                            <p x-show="group.hiddenCount > 0" class="text-xs font-medium text-emerald-700">
+                                                +<span x-text="group.hiddenCount"></span> more. Tap to view all.
+                                            </p>
                                         </div>
                                     </button>
                                 </template>
                             </div>
-                            <p x-show="calendarEventGroups.length === 0" class="text-sm text-gray-400 text-center py-6">
-                                No plans this month yet.<br>Plan a crop, add a note, or set a reminder.
+                            <p x-show="calendarEventGroups.length === 0" class="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-400">
+                                No calendar events yet.
                             </p>
                         </div>
                     </div>
@@ -1312,8 +1327,8 @@
                                 date,
                                 display: this.formatMobileAgendaDate(date),
                                 count: events.length,
-                                previewEvents: events.slice(0, 3),
-                                hiddenCount: Math.max(events.length - 3, 0),
+                                previewEvents: events.slice(0, 2),
+                                hiddenCount: Math.max(events.length - 2, 0),
                             };
                         });
 
@@ -1340,8 +1355,8 @@
                             date,
                             display: this.formatEventGroupDate(date),
                             count: events.length,
-                            previewEvents: events.slice(0, 3),
-                            hiddenCount: Math.max(events.length - 3, 0),
+                            previewEvents: events.slice(0, 2),
+                            hiddenCount: Math.max(events.length - 2, 0),
                         }));
                 },
 
