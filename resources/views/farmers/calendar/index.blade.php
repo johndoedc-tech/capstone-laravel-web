@@ -504,7 +504,7 @@
                                                     <span x-text="formatDisplayDate(plan.date)"></span>
                                                 </p>
                                             </div>
-                                            <span class="text-[11px] bg-white text-emerald-700 border border-emerald-100 rounded px-1.5 py-0.5">Crop Plan</span>
+                                            <span class="text-[11px] border rounded px-1.5 py-0.5" :class="harvestStatusClasses(plan)" x-text="harvestStatusLabel(plan)"></span>
                                         </div>
 
                                         <div class="grid grid-cols-2 gap-2 mt-3">
@@ -527,9 +527,9 @@
                                         </div>
 
                                         <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                            <div x-show="plan.predicted_production_mt" class="rounded-md border border-orange-100 bg-orange-50 px-2.5 py-2">
-                                                <p class="text-[11px] uppercase font-semibold text-orange-700" x-text="hasCropPlanDamage(plan) ? 'Adjusted Production' : 'Predicted Production'"></p>
-                                                <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanProduction(plan)"></p>
+                                            <div x-show="plan.predicted_production_mt || hasActualHarvest(plan)" class="rounded-md border border-orange-100 bg-orange-50 px-2.5 py-2">
+                                                <p class="text-[11px] uppercase font-semibold text-orange-700" x-text="cropPlanProductionLabel(plan)"></p>
+                                                <p class="text-sm font-semibold text-gray-900" x-text="formatCropPlanProductionSummary(plan)"></p>
                                                 <p x-show="hasCropPlanDamage(plan)" class="text-[11px] text-orange-700 mt-0.5" x-text="'Adjusted because of damage. Original: ' + formatMetricTons(plan.predicted_production_mt)"></p>
                                             </div>
 
@@ -540,13 +540,25 @@
                                             </div>
                                         </div>
 
-                                        <div x-show="getCropPlanSchedule(plan).length > 0" class="mt-3">
+                                        <div x-show="!hasActualHarvest(plan) && getCropPlanSchedule(plan).length > 0" class="mt-3">
                                             <p class="text-[11px] uppercase font-semibold text-gray-500 mb-1.5">Generated Schedule</p>
                                             <div class="space-y-1.5">
                                                 <template x-for="item in getCropPlanSchedule(plan)" :key="plan.id + '-' + item.label + '-' + item.date">
                                                     <div class="flex items-center justify-between gap-3 rounded-md bg-white/80 px-2.5 py-1.5">
                                                         <span class="text-xs font-medium text-gray-700 truncate" x-text="item.label"></span>
                                                         <span class="text-xs text-gray-500 whitespace-nowrap" x-text="formatDisplayDate(item.date)"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <div x-show="hasActualHarvest(plan)" class="mt-3">
+                                            <p class="text-[11px] uppercase font-semibold text-gray-500 mb-1.5">Harvest History</p>
+                                            <div class="space-y-1.5">
+                                                <template x-for="item in harvestHistoryItems(plan)" :key="plan.id + '-history-' + item.label">
+                                                    <div class="flex items-start justify-between gap-3 rounded-md bg-white/80 px-2.5 py-1.5">
+                                                        <span class="text-xs font-medium text-gray-700" x-text="item.label"></span>
+                                                        <span class="text-xs text-gray-500 text-right" x-text="item.value"></span>
                                                     </div>
                                                 </template>
                                             </div>
@@ -667,8 +679,8 @@
                                     <p class="text-sm font-medium text-gray-900" x-text="formatSquareMeters(activeCropPlan?.planted_area_sqm) || '-'"></p>
                                 </div>
                                 <div class="rounded-md bg-orange-50 px-2.5 py-2">
-                                    <p class="text-[11px] uppercase font-semibold text-orange-700">Production</p>
-                                    <p class="text-sm font-medium text-gray-900" x-text="activeCropPlan?.predicted_production_mt ? formatCropPlanProduction(activeCropPlan) : '-'"></p>
+                                    <p class="text-[11px] uppercase font-semibold text-orange-700" x-text="cropPlanProductionLabel(activeCropPlan)"></p>
+                                    <p class="text-sm font-medium text-gray-900" x-text="formatCropPlanProductionSummary(activeCropPlan)"></p>
                                 </div>
                                 <div class="rounded-md bg-sky-50 px-2.5 py-2">
                                     <p class="text-[11px] uppercase font-semibold text-sky-700">Water</p>
@@ -682,18 +694,18 @@
 
                             <div class="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
                                 <div class="flex items-center justify-between gap-3">
-                                    <p class="text-xs font-semibold uppercase text-emerald-700">Harvest Progress</p>
-                                    <p class="text-xs font-medium text-emerald-700" x-text="activeCropTimeline ? activeCropTimeline.daysLeftText : ''"></p>
+                                    <p class="text-xs font-semibold uppercase text-emerald-700" x-text="hasActualHarvest(activeCropPlan) ? 'Harvest Status' : 'Harvest Progress'"></p>
+                                    <p class="text-xs font-medium" :class="harvestStatusTextClasses(activeCropPlan)" x-text="hasActualHarvest(activeCropPlan) ? harvestStatusLabel(activeCropPlan) : (activeCropTimeline ? activeCropTimeline.daysLeftText : '')"></p>
                                 </div>
-                                <div class="mt-2 h-2 overflow-hidden rounded-full bg-white">
+                                <div x-show="!hasActualHarvest(activeCropPlan)" class="mt-2 h-2 overflow-hidden rounded-full bg-white">
                                     <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${activeCropTimeline ? activeCropTimeline.progress : 0}%`"></div>
                                 </div>
                                 <button type="button" x-show="activeCropPlan" @click="openHarvestModal(activeCropPlan)" class="mt-3 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-                                    <span x-text="activeCropPlan?.actual_harvest_production_mt ? 'Edit Actual Harvest' : 'Record Actual Harvest'"></span>
+                                    <span x-text="harvestActionLabel(activeCropPlan)"></span>
                                 </button>
                             </div>
 
-                            <div class="mt-4">
+                            <div x-show="!hasActualHarvest(activeCropPlan)" class="mt-4">
                                 <p class="text-xs font-semibold uppercase text-gray-500 mb-2">Schedule Until Harvest</p>
                                 <div class="space-y-2">
                                     <template x-for="item in getCropPlanSchedule(activeCropPlan || {})" :key="'crop-timeline-' + item.label + '-' + item.date">
@@ -706,6 +718,19 @@
                                         </div>
                                     </template>
                                 </div>
+                            </div>
+
+                            <div x-show="hasActualHarvest(activeCropPlan)" class="mt-4">
+                                <p class="text-xs font-semibold uppercase text-gray-500 mb-2">Harvest History</p>
+                                <div class="space-y-2">
+                                    <template x-for="item in harvestHistoryItems(activeCropPlan)" :key="'crop-history-' + item.label">
+                                        <div class="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
+                                            <p class="text-sm font-medium text-gray-900" x-text="item.label"></p>
+                                            <p class="text-sm text-gray-500 text-right" x-text="item.value"></p>
+                                        </div>
+                                    </template>
+                                </div>
+                                <p x-show="harvestValidationNotes(activeCropPlan)" class="mt-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700" x-text="harvestValidationNotes(activeCropPlan)"></p>
                             </div>
 
                             <div x-show="activeCropPlan?.description" class="mt-4 rounded-lg bg-gray-50 px-3 py-2">
@@ -1001,6 +1026,14 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Toast -->
+            <div x-show="toast.show" x-cloak x-transition class="fixed left-4 right-4 top-24 z-[70] sm:left-auto sm:right-6 sm:top-6 sm:w-96">
+                <div class="rounded-xl border bg-white px-4 py-3 shadow-lg" :class="toast.type === 'error' ? 'border-red-100' : 'border-emerald-100'">
+                    <p class="text-sm font-semibold" :class="toast.type === 'error' ? 'text-red-700' : 'text-emerald-700'" x-text="toast.title"></p>
+                    <p class="mt-0.5 text-sm text-gray-600" x-text="toast.message"></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1034,6 +1067,13 @@
                 showHarvestModal: false,
                 harvestTarget: null,
                 savingHarvest: false,
+                toast: {
+                    show: false,
+                    title: '',
+                    message: '',
+                    type: 'success',
+                    timer: null,
+                },
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -1494,6 +1534,19 @@
                     });
                 },
 
+                formatDisplayDateTime(dateString) {
+                    if (!dateString) return '';
+
+                    const date = new Date(dateString);
+                    if (Number.isNaN(date.getTime())) return this.formatDisplayDate(dateString);
+
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                    });
+                },
+
                 formatEventGroupDate(dateString) {
                     if (!dateString) return '';
 
@@ -1589,6 +1642,7 @@
                 },
 
                 getCropPlanDamageSummary(plan) {
+                    if (!plan) return null;
                     return this.cropPlans.find((cropPlan) => String(cropPlan.id) === String(plan.id)) || null;
                 },
 
@@ -1599,7 +1653,7 @@
 
                 getCropPlanHealthyAreaRatio(plan) {
                     const summary = this.getCropPlanDamageSummary(plan);
-                    const plantedArea = Number(summary?.planted_area_sqm || plan.desired_area_sqm || 0);
+                    const plantedArea = Number(summary?.planted_area_sqm || plan?.desired_area_sqm || 0);
                     const remainingArea = Number(summary?.remaining_damage_sqm || plantedArea);
 
                     if (!Number.isFinite(plantedArea) || plantedArea <= 0) {
@@ -1610,10 +1664,134 @@
                 },
 
                 formatCropPlanProduction(plan) {
-                    const production = Number(plan.predicted_production_mt);
+                    const production = Number(plan?.predicted_production_mt);
                     if (!Number.isFinite(production)) return '';
 
                     return this.formatMetricTons(production * this.getCropPlanHealthyAreaRatio(plan));
+                },
+
+                hasActualHarvest(record) {
+                    return Boolean(record?.actual_harvest_recorded_at)
+                        || (record?.actual_harvest_production_mt !== null
+                        && record?.actual_harvest_production_mt !== undefined
+                        && record?.actual_harvest_production_mt !== '');
+                },
+
+                cropPlanProductionLabel(plan) {
+                    if (!plan) return 'Production';
+                    if (this.hasActualHarvest(plan)) return 'Actual Harvest';
+                    return this.hasCropPlanDamage(plan) ? 'Adjusted Production' : 'Predicted Production';
+                },
+
+                formatCropPlanProductionSummary(plan) {
+                    if (this.hasActualHarvest(plan)) {
+                        return this.formatMetricTons(plan.actual_harvest_production_mt);
+                    }
+
+                    return plan?.predicted_production_mt ? this.formatCropPlanProduction(plan) : '-';
+                },
+
+                harvestValidationStatus(record) {
+                    return record?.actual_harvest_validation_status || record?.lgu_validation_status || '';
+                },
+
+                harvestValidationNotes(record) {
+                    return record?.actual_harvest_validation_notes || record?.lgu_validation_notes || '';
+                },
+
+                harvestStatusLabel(record) {
+                    if (!this.hasActualHarvest(record)) return 'Crop Plan';
+
+                    const status = this.harvestValidationStatus(record);
+                    if (status === 'approved') return 'Harvest Approved';
+                    if (status === 'rejected') return 'Needs Correction';
+                    return 'Pending LGU Validation';
+                },
+
+                harvestStatusClasses(record) {
+                    const status = this.harvestValidationStatus(record);
+
+                    if (!this.hasActualHarvest(record)) return 'bg-white text-emerald-700 border-emerald-100';
+                    if (status === 'approved') return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                    if (status === 'rejected') return 'bg-red-50 text-red-700 border-red-100';
+                    return 'bg-amber-50 text-amber-700 border-amber-100';
+                },
+
+                harvestStatusTextClasses(record) {
+                    const status = this.harvestValidationStatus(record);
+
+                    if (status === 'approved') return 'text-emerald-700';
+                    if (status === 'rejected') return 'text-red-700';
+                    return 'text-amber-700';
+                },
+
+                harvestActionLabel(record) {
+                    if (!this.hasActualHarvest(record)) return 'Record Actual Harvest';
+
+                    const status = this.harvestValidationStatus(record);
+                    if (status === 'approved') return 'View Harvest Record';
+                    if (status === 'rejected') return 'Fix Harvest Record';
+                    return 'Edit Harvest Submission';
+                },
+
+                formatHarvestAmount(record) {
+                    const amount = Number(record?.actual_harvest_amount);
+                    const unit = record?.actual_harvest_unit || '';
+                    const metricTons = Number(record?.actual_harvest_production_mt);
+
+                    if (!Number.isFinite(amount)) {
+                        return Number.isFinite(metricTons) ? this.formatMetricTons(metricTons) : '-';
+                    }
+
+                    const displayAmount = amount.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
+
+                    if (unit === 'kg' && Number.isFinite(metricTons)) {
+                        return `${displayAmount} kg (${this.formatMetricTons(metricTons)})`;
+                    }
+
+                    return `${displayAmount} ${unit || 'mt'}`;
+                },
+
+                harvestHistoryItems(record) {
+                    if (!record) return [];
+
+                    const items = [
+                        {
+                            label: 'Planted',
+                            value: this.formatDisplayDate(this.activeCropPlanStartDate(record)),
+                        },
+                        {
+                            label: 'Expected harvest',
+                            value: record.estimated_harvest_date ? this.formatDisplayDate(record.estimated_harvest_date) : '-',
+                        },
+                    ];
+
+                    if (this.hasActualHarvest(record)) {
+                        items.push({
+                            label: 'Submitted harvest',
+                            value: record.actual_harvest_date ? this.formatDisplayDate(record.actual_harvest_date) : '-',
+                        });
+                        items.push({
+                            label: 'Actual harvest',
+                            value: this.formatHarvestAmount(record),
+                        });
+                        items.push({
+                            label: 'LGU status',
+                            value: this.harvestStatusLabel(record),
+                        });
+
+                        if (record.lgu_validated_at) {
+                            items.push({
+                                label: 'LGU checked',
+                                value: this.formatDisplayDateTime(record.lgu_validated_at),
+                            });
+                        }
+                    }
+
+                    return items;
                 },
 
                 formatCropPlanDamageStatus(plan) {
@@ -2088,6 +2266,22 @@
                     this.savingHarvest = false;
                 },
 
+                showToast(title, message, type = 'success') {
+                    if (this.toast.timer) {
+                        clearTimeout(this.toast.timer);
+                    }
+
+                    this.toast = {
+                        show: true,
+                        title,
+                        message,
+                        type,
+                        timer: setTimeout(() => {
+                            this.toast.show = false;
+                        }, 4500),
+                    };
+                },
+
                 closeEventGroupModal() {
                     this.showEventGroupModal = false;
                     this.activeEventGroupDate = null;
@@ -2272,18 +2466,25 @@
                         });
 
                         if (response.ok) {
+                            const data = await response.json().catch(() => ({}));
                             this.closeHarvestModal();
-                            this.loadEvents();
-                            this.loadCropPlans();
+                            await Promise.all([
+                                this.loadEvents(),
+                                this.loadCropPlans(),
+                            ]);
                             this.loadUpcomingReminders();
+                            this.showToast(
+                                'Harvest saved',
+                                data.message || 'Na-save na ang harvest mo. Iche-check muna ito ng LGU staff.'
+                            );
                             return;
                         }
 
                         const data = await response.json().catch(() => ({}));
-                        alert(data.message || 'Could not save harvest.');
+                        this.showToast('Could not save', data.message || 'Please try again.', 'error');
                     } catch (error) {
                         console.error('Failed to record harvest:', error);
-                        alert('Could not save harvest.');
+                        this.showToast('Could not save', 'Please check your connection and try again.', 'error');
                     } finally {
                         this.savingHarvest = false;
                     }

@@ -345,6 +345,10 @@ class FarmerCalendarController extends Controller
                     'actual_harvest_validation_status' => $harvestRecord?->lgu_validation_status,
                     'actual_harvest_validation_status_label' => $harvestRecord?->lgu_validation_status_label,
                     'actual_harvest_validation_notes' => $harvestRecord?->lgu_validation_notes,
+                    'lgu_validation_status' => $harvestRecord?->lgu_validation_status,
+                    'lgu_validation_status_label' => $harvestRecord?->lgu_validation_status_label,
+                    'lgu_validation_notes' => $harvestRecord?->lgu_validation_notes,
+                    'lgu_validated_at' => $harvestRecord?->lgu_validated_at?->toIso8601String(),
                     'description' => $plan->description,
                 ];
             });
@@ -524,7 +528,7 @@ class FarmerCalendarController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Actual harvest submitted for LGU validation!',
+            'message' => 'Na-save na ang harvest mo. Iche-check muna ito ng LGU staff.',
             'harvest_event' => $this->formatEvent($harvestRecord->fresh()),
             'crop_plan' => $cropPlan ? $this->formatEvent($cropPlan->fresh()) : null,
         ]);
@@ -597,6 +601,11 @@ class FarmerCalendarController extends Controller
 
     private function formatEvent(FarmerCalendarEvent $event): array
     {
+        $harvestRecord = $event->category === 'crop_plan'
+            ? $this->getHarvestRecordForPlan($event)
+            : null;
+        $actualHarvestSource = $harvestRecord ?: $event;
+
         return [
             'id' => $event->id,
             'date' => $event->event_date->format('Y-m-d'),
@@ -620,16 +629,19 @@ class FarmerCalendarController extends Controller
             'predicted_production_mt' => $event->predicted_production_mt !== null ? (float) $event->predicted_production_mt : null,
             'prediction_confidence' => $event->prediction_confidence !== null ? (float) $event->prediction_confidence : null,
             'prediction_source' => $event->prediction_source,
-            'actual_harvest_date' => $event->actual_harvest_date?->format('Y-m-d'),
-            'actual_harvest_amount' => $event->actual_harvest_amount !== null ? (float) $event->actual_harvest_amount : null,
-            'actual_harvest_unit' => $event->actual_harvest_unit,
-            'actual_harvest_production_mt' => $event->actual_harvest_production_mt !== null ? (float) $event->actual_harvest_production_mt : null,
-            'actual_harvest_notes' => $event->actual_harvest_notes,
-            'actual_harvest_recorded_at' => $event->actual_harvest_recorded_at?->toIso8601String(),
-            'lgu_validation_status' => $event->lgu_validation_status,
-            'lgu_validation_status_label' => $event->lgu_validation_status_label,
-            'lgu_validation_notes' => $event->lgu_validation_notes,
-            'lgu_validated_at' => $event->lgu_validated_at?->toIso8601String(),
+            'actual_harvest_date' => $actualHarvestSource->actual_harvest_date?->format('Y-m-d'),
+            'actual_harvest_amount' => $actualHarvestSource->actual_harvest_amount !== null ? (float) $actualHarvestSource->actual_harvest_amount : null,
+            'actual_harvest_unit' => $actualHarvestSource->actual_harvest_unit,
+            'actual_harvest_production_mt' => $actualHarvestSource->actual_harvest_production_mt !== null ? (float) $actualHarvestSource->actual_harvest_production_mt : null,
+            'actual_harvest_notes' => $actualHarvestSource->actual_harvest_notes,
+            'actual_harvest_recorded_at' => $actualHarvestSource->actual_harvest_recorded_at?->toIso8601String(),
+            'actual_harvest_validation_status' => $actualHarvestSource->lgu_validation_status,
+            'actual_harvest_validation_status_label' => $actualHarvestSource->lgu_validation_status_label,
+            'actual_harvest_validation_notes' => $actualHarvestSource->lgu_validation_notes,
+            'lgu_validation_status' => $actualHarvestSource->lgu_validation_status,
+            'lgu_validation_status_label' => $actualHarvestSource->lgu_validation_status_label,
+            'lgu_validation_notes' => $actualHarvestSource->lgu_validation_notes,
+            'lgu_validated_at' => $actualHarvestSource->lgu_validated_at?->toIso8601String(),
             'damage_photo_url' => $event->damage_photo_path ? route('calendar.damage-photo', $event) : null,
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
