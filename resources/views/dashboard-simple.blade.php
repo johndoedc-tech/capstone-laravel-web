@@ -423,11 +423,11 @@
                     @endif
                 @elseif($cropBalancePulse['has_location'])
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        Once farmers in {{ $cropBalancePulse['municipality'] }} add crop plans, Harviana will show which crops may have high supply and which crops are less crowded.
+                        Once farmers in {{ $cropBalancePulse['municipality'] }} add crop plans, Harviana will show which crops may get crowded and which ones still have room.
                     </div>
                 @else
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        Add your municipality in your profile so Harviana can compare live crop plans around your area.
+                        Add your municipality in your profile so Harviana can compare crop plans near you.
                     </div>
                 @endif
             </div>
@@ -442,7 +442,7 @@
                             <span class="text-xl">📊</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">A broader crop outlook based on past records and this year's forecast.</p>
+                                <p class="text-sm text-gray-600">Here is a quick look at how crops may perform, based on past records and this year's forecast.</p>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
@@ -451,7 +451,7 @@
                                 <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
                             </div>
                             <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">
-                                Check crop balance before planting
+                                Check nearby planting before you decide
                             </span>
                         </div>
                     </div>
@@ -479,8 +479,8 @@
                 </div>
 
                 <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location from the header to unlock the crop insight ranking.</p>
-                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the ranking focused on the same municipality.</p>
+                    <p class="text-sm font-medium text-gray-700">Set your farm location first so we can show crop outlooks for your area.</p>
+                    <p class="mt-1 text-xs text-gray-500">That way, the ranking stays focused on your municipality.</p>
                 </div>
 
                 <div x-show="loading" class="text-center py-8">
@@ -489,12 +489,12 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
-                    <p class="mt-1 text-xs text-gray-400">This uses the forecast service, so it may take a moment on slow connections.</p>
+                    <p class="mt-1 text-xs text-gray-400">This may take a little longer when the connection is slow.</p>
                 </div>
 
                 <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm font-medium" x-text="timedOut ? 'Crop outlook is taking too long right now.' : t('load_error')"></p>
-                    <p class="mt-1 text-xs text-red-500">You can still use Planting Around Your Area above for live crop balance.</p>
+                    <p class="text-sm font-medium" x-text="timedOut ? 'Crop outlook is taking longer than usual.' : t('load_error')"></p>
+                    <p class="mt-1 text-xs text-red-500">You can still check Planting Around Your Area for nearby crop plans.</p>
                 </div>
 
                 <div x-show="!loading && !error && municipality" class="space-y-3">
@@ -537,7 +537,7 @@
                                     <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
                                         <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium" x-text="'Rank ' + row.rank"></span>
                                         <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="cropOutlookSource(row)"></span>
-                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Use with live crop balance</span>
+                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Compare with nearby plans</span>
                                     </div>
                                 </div>
                             </div>
@@ -549,7 +549,7 @@
                             type="button"
                             class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
                             x-on:click="showAllRows = !showAllRows"
-                            x-text="showAllRows ? 'Show top 3 only' : 'View all crop outlooks'"
+                            x-text="showAllRows ? 'Show top 3 only' : 'See all crop outlooks'"
                         ></button>
                     </div>
                 </div>
@@ -641,7 +641,7 @@
                     </div>
 
                     <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
-                        <p class="text-sm text-gray-600">The chart above shows the broader full-year outlook in your area, so it may not always match this month's top pick exactly.</p>
+                        <p class="text-sm text-gray-600">The chart shows the bigger full-year picture, so it may not always match this month's top pick.</p>
                     </div>
                 </div>
             </div>
@@ -654,7 +654,7 @@
             <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
-                    <p class="text-sm text-gray-500">Use these tools after reviewing your crop trends.</p>
+                    <p class="text-sm text-gray-500">Use these tools when you are ready to plan, compare, or check your farm records.</p>
                 </div>
 
                 <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
@@ -669,7 +669,7 @@
                                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
                             </div>
                             <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
-                                <span>Plan notes, reminders, and field work by date</span>
+                                <span>Keep notes, reminders, and field work by date</span>
                                 <span class="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-primary-dark shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg">
                                     Open
                                     <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -865,10 +865,10 @@
                 what_crops: 'What do you grow?',
                 
                 // Recommendations
-                recommendations: 'Recommendations for You',
-                recommendations_desc: 'Best crops to check for {month} in your area',
-                finding_best_crops: 'Finding best crops...',
-                select_location_first: 'Select a location above to see recommendations',
+                recommendations: 'Crops to Check',
+                recommendations_desc: 'Good crops to review for {month} in your area',
+                finding_best_crops: 'Checking good crop options...',
+                select_location_first: 'Set your location first to see crop suggestions',
                 best: 'BEST',
                 avg_harvest: 'Average harvest',
                 predict: 'Predict',
@@ -876,28 +876,28 @@
                 // Quick Actions
                 action_calendar: 'My Calendar',
                 action_calendar_desc: 'Plan farm tasks, notes, and reminders',
-                action_predict: 'Make Prediction',
-                action_predict_desc: 'Start a harvest forecast for your farm',
+                action_predict: 'Check Harvest Estimate',
+                action_predict_desc: 'Get a simple harvest estimate for your farm',
                 action_map: 'View Map',
-                action_map_desc: 'See crop patterns across municipalities',
+                action_map_desc: 'See what crops are showing up in nearby areas',
                 action_history: 'My History',
-                action_history_desc: 'Review your past predictions',
+                action_history_desc: 'Look back at your saved estimates',
                 action_forum: 'Ask Community',
                 action_forum_desc: 'Get help and tips from other farmers',
                 
                 // Stats
-                your_predictions: 'My Predictions',
+                your_predictions: 'My Saved Estimates',
                 crop_types: 'Available Crops',
                 municipalities: 'Covered Areas',
-                data_records: 'Historical Records',
+                data_records: 'Past Crop Records',
                 
                 // Advanced Tools
                 advanced_tools: 'Advanced Tools',
-                advanced_tools_desc: 'Additional features for detailed analysis',
+                advanced_tools_desc: 'Extra tools when you want to check more details',
                 
                 // Harvest Calendar
                 harvest_calendar: 'Harvest Calendar',
-                harvest_calendar_desc: 'See when is the best time to harvest each crop',
+                harvest_calendar_desc: 'See good harvest timing for each crop',
                 all_areas: 'All areas',
                 crop: 'Crop',
                 legend: 'Legend',
@@ -909,7 +909,7 @@
                 
                 // Comparison
                 compare_crops: 'Compare Crops',
-                compare_crops_desc: 'Select 2-3 crops to compare',
+                compare_crops_desc: 'Pick 2 or 3 crops and compare them side by side',
                 compare: 'Compare',
                 yearly_harvest: 'Yearly harvest',
                 avg_productivity: 'Average productivity',
@@ -918,18 +918,18 @@
                 
                 // What-If
                 what_if: 'What If...?',
-                what_if_desc: 'Try different scenarios and see possible yields',
+                what_if_desc: 'Try different choices and see the possible harvest',
                 where: 'Where?',
                 what_to_plant: 'What to plant?',
                 select_crop: 'Select crop...',
                 when: 'When?',
                 how_big: 'How big? (hectares)',
-                complete_details: 'Complete the details to see possible harvest',
+                complete_details: 'Fill in the details to see the possible harvest',
                 expected_harvest: 'Expected Harvest',
-                based_on_records: 'Based on {count} historical records',
+                based_on_records: 'Based on {count} past records',
                 highest: 'Highest',
                 lowest: 'Lowest',
-                get_detailed_prediction: 'Get Detailed Prediction',
+                get_detailed_prediction: 'Check Detailed Estimate',
                 
                 // Months
                 month_jan: 'January',
@@ -949,9 +949,9 @@
                 top_5_crops: 'Crop Outlook',
                 location: 'Location',
                 loading: 'Loading...',
-                load_error: 'Failed to load data. Please try again.',
-                chart_historical: 'Historical',
-                chart_historical_full: 'Historical Average',
+                load_error: 'We could not load this right now. Please try again.',
+                chart_historical: 'Past Records',
+                chart_historical_full: 'Past Average',
                 chart_predicted: 'This Year',
                 chart_predicted_year: 'This Year Forecast',
                 
@@ -1404,18 +1404,18 @@
 
                 cropOutlookLabel(row) {
                     if (row.rank === 1) {
-                        return 'Strong outlook';
+                        return 'Strong option';
                     }
 
                     if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'Improving forecast';
+                        return 'Looking better';
                     }
 
                     if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
                         return 'Usually performs well';
                     }
 
-                    return 'Worth comparing';
+                    return 'Worth checking';
                 },
 
                 cropOutlookClass(row) {
@@ -1436,18 +1436,18 @@
 
                 cropOutlookDescription(row) {
                     if (row.rank === 1) {
-                        return 'This crop has the strongest broader outlook in your area. Still compare it with live crop balance before planting.';
+                        return 'This crop looks like the strongest option in your area right now. Still compare it with nearby crop plans before planting.';
                     }
 
                     if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'The forecast looks healthy compared with past records, so it is a good crop to compare with nearby planting plans.';
+                        return 'The forecast looks good compared with past records. It is worth comparing with nearby planting plans.';
                     }
 
                     if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
                         return 'Past records show this crop can perform in your area, but live supply should guide the final decision.';
                     }
 
-                    return 'This crop is still part of the local outlook, but check neighbor planting and your farm conditions first.';
+                    return 'This crop is still worth checking, but look at nearby planting and your own farm conditions first.';
                 },
 
                 cropOutlookSource(row) {
@@ -1645,13 +1645,13 @@
 
                     if (normalizedRecommendedCrop && this.recommendationMonth) {
                         if (normalizedBestCrop === normalizedRecommendedCrop) {
-                            return `${bestCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, and it is also expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
+                            return `${bestCrop} looks like the strongest choice for ${this.recommendationMonth}, and it may also perform well in ${municipalityLabel} for the rest of the year.`;
                         }
 
-                        return `${this.recommendedCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, while ${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
+                        return `${this.recommendedCrop} looks good for ${this.recommendationMonth}, while ${bestCrop} may perform well in ${municipalityLabel} for the rest of the year.`;
                     }
 
-                    return `${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year, based on historical averages and this year's forecast.`;
+                    return `${bestCrop} looks like the strongest crop in ${municipalityLabel} for the rest of the year, based on past records and this year's forecast.`;
                 },
 
                 async loadChart() {

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Prediction History') }}
+            {{ __('My Forecast History') }}
         </h2>
     </x-slot>
 
@@ -43,7 +43,7 @@
                             <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm lg:text-base">
                                 <option value="">All Status</option>
                                 <option value="success" {{ request('status') == 'success' ? 'selected' : '' }}>Success</option>
-                                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                                <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Needs Retry</option>
                             </select>
                         </div>
 
@@ -51,7 +51,7 @@
                             <label for="prediction_type" class="block text-xs lg:text-sm font-medium text-gray-700">Type</label>
                             <select id="prediction_type" name="prediction_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm lg:text-base">
                                 <option value="">All Types</option>
-                                <option value="regular" {{ request('prediction_type') == 'regular' ? 'selected' : '' }}>Regular Prediction</option>
+                                <option value="regular" {{ request('prediction_type') == 'regular' ? 'selected' : '' }}>Harvest Estimate</option>
                                 <option value="forecast" {{ request('prediction_type') == 'forecast' ? 'selected' : '' }}>Forecast</option>
                             </select>
                         </div>
@@ -81,19 +81,19 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
-                                Clear Filters
+                                Reset Filters
                             </button>
                             <a href="{{ route('predictions.predict.form') }}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                New Prediction
+                                New Estimate
                             </a>
                             <button type="button" onclick="openClearHistoryModal()" class="inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
-                                Clear History
+                                Clear Saved History
                             </button>
                         </div>
                     </form>
@@ -114,8 +114,8 @@
                                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Municipality</th>
                                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Farm Type</th>
                                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Predicted (MT)</th>
-                                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Difference</th>
-                                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Confidence</th>
+                                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Change</th>
+                                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Model Score</th>
                                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
@@ -148,7 +148,7 @@
                                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                                                         </svg>
-                                                        Regular
+                                                        Estimate
                                                     </span>
                                                 @endif
                                             </td>
@@ -191,7 +191,7 @@
                                                     </span>
                                                 @else
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                        Failed
+                                                        Needs Retry
                                                     </span>
                                                 @endif
                                             </td>
@@ -225,11 +225,11 @@
                             <svg class="mx-auto h-10 w-10 lg:h-12 lg:w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 class="mt-2 text-sm lg:text-base font-medium text-gray-900">No predictions found</h3>
-                            <p class="mt-1 text-xs lg:text-sm text-gray-500">Get started by creating your first prediction.</p>
+                            <h3 class="mt-2 text-sm lg:text-base font-medium text-gray-900">No saved estimates yet</h3>
+                            <p class="mt-1 text-xs lg:text-sm text-gray-500">Start by checking a harvest estimate for one of your crops.</p>
                             <div class="mt-4 lg:mt-6">
                                 <a href="{{ route('predictions.predict.form') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-                                    Create Prediction
+                                    Check Estimate
                                 </a>
                             </div>
                         </div>
@@ -257,7 +257,7 @@
                                 Forecast Results
                             </h3>
                             <p class="mt-1 text-sm text-gray-500" id="modal-subtitle">
-                                Loading...
+                                Loading your forecast...
                             </p>
                         </div>
                         <button type="button" onclick="closeForecastModal()" class="text-gray-400 hover:text-gray-500">
@@ -274,7 +274,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="ml-2 text-gray-600">Loading forecast data...</span>
+                            <span class="ml-2 text-gray-600">Loading your forecast...</span>
                         </div>
                         <div id="chartContainer" class="hidden">
                             <canvas id="forecastChart" height="300"></canvas>
@@ -283,7 +283,7 @@
                             <svg class="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            <p class="mt-2" id="chartErrorMessage">Failed to load forecast data</p>
+                            <p class="mt-2" id="chartErrorMessage">We could not load this forecast right now.</p>
                         </div>
                     </div>
 
@@ -323,7 +323,7 @@
             document.getElementById('chartContainer').classList.add('hidden');
             document.getElementById('chartError').classList.add('hidden');
             document.getElementById('dataTableContainer').classList.add('hidden');
-            document.getElementById('modal-subtitle').textContent = 'Loading...';
+            document.getElementById('modal-subtitle').textContent = 'Loading your forecast...';
 
             // Fetch forecast data
             fetch(`{{ route('predictions.forecast-batch') }}?batch_id=${encodeURIComponent(batchId)}`)
@@ -429,13 +429,13 @@
                         });
                     } else {
                         document.getElementById('chartError').classList.remove('hidden');
-                        document.getElementById('chartErrorMessage').textContent = data.error || 'Failed to load forecast data';
+                        document.getElementById('chartErrorMessage').textContent = data.error || 'We could not load this forecast right now.';
                     }
                 })
                 .catch(error => {
                     document.getElementById('chartLoading').classList.add('hidden');
                     document.getElementById('chartError').classList.remove('hidden');
-                    document.getElementById('chartErrorMessage').textContent = 'Network error: ' + error.message;
+                    document.getElementById('chartErrorMessage').textContent = 'Connection problem: ' + error.message;
                 });
         }
 
@@ -479,7 +479,7 @@
                     // Reload page to show empty state
                     window.location.reload();
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to clear history'));
+                    alert('Error: ' + (data.error || 'We could not clear your saved history right now.'));
                     btn.disabled = false;
                     btnText.textContent = 'Yes, Clear All';
                     spinner.classList.add('hidden');
@@ -522,11 +522,11 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Clear Prediction History
+                                Clear Saved Forecast History
                             </h3>
                             <div class="mt-2">
                                 <p class="text-sm text-gray-500">
-                                    Are you sure you want to clear all your prediction history? This action cannot be undone and will permanently delete all your predictions and forecasts.
+                                    Are you sure you want to clear your saved estimates and forecasts? This cannot be undone.
                                 </p>
                             </div>
                         </div>

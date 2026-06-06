@@ -92,7 +92,7 @@
     </style>
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Interactive Crop Production Map') }}
+            {{ __('Crop Map') }}
         </h2>
     </x-slot>
 
@@ -117,12 +117,12 @@
                             <div>
                                 <p class="text-sm font-medium text-green-800">Your Farm Location: <span
                                         class="font-bold">{{ ucwords(strtolower($preferredMunicipality)) }}</span></p>
-                                <p class="text-xs text-green-600">Map is focused on your municipality</p>
+                                <p class="text-xs text-green-600">The map is centered on your municipality.</p>
                             </div>
                         </div>
                         <button onclick="focusOnMyMunicipality()"
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            Focus on My Location
+                            Show My Area
                         </button>
                     </div>
                 </div>
@@ -132,7 +132,7 @@
                 <!-- Control Panel -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Map Controls</h3>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Choose What to View</h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                         <!-- Crop Filter -->
@@ -163,12 +163,12 @@
                         <div>
                             <label for="view-filter"
                                 class="block text-xs lg:text-sm font-medium text-gray-700 mb-1 lg:mb-2">
-                                View Type
+                                What to show
                             </label>
                             <select id="view-filter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm lg:text-base">
-                                <option value="supply_forecast">Real-time Supply Forecast (mt)</option>
-                                <option value="production">Historical Production (mt)</option>
+                                <option value="supply_forecast">Expected Supply Now (mt)</option>
+                                <option value="production">Past Production (mt)</option>
                                 <option value="area_harvested">Area Harvested (ha)</option>
                                 <option value="productivity">Productivity (mt/ha)</option>
                             </select>
@@ -200,7 +200,7 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            <span>Loading map data...</span>
+                            <span>Loading map...</span>
                         </div>
                     </div>
 
@@ -237,7 +237,7 @@
                             <div class="mb-4 lg:mb-6 pr-8">
                                 <h2 id="panel-municipality-name"
                                     class="text-xl lg:text-2xl font-bold text-gray-800 mb-2">Municipality Name</h2>
-                                <p class="text-xs lg:text-sm text-gray-600">Click on municipality data below</p>
+                                <p class="text-xs lg:text-sm text-gray-600">Tap a municipality to see what is happening there.</p>
                             </div>
 
                             <!-- Loading Indicator -->
@@ -262,8 +262,8 @@
                                 <div class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
                                     <div class="flex items-center justify-between gap-4">
                                         <div>
-                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Registered Farmers</p>
-                                            <p class="mt-1 text-xs text-emerald-700">Based on saved farmer municipality</p>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Farmers in This Area</p>
+                                            <p class="mt-1 text-xs text-emerald-700">Based on farmers' saved municipality.</p>
                                         </div>
                                         <div class="text-right">
                                             <p id="panel-farmer-count" class="text-2xl font-bold text-emerald-700">-</p>
@@ -276,20 +276,20 @@
                                 <div class="rounded-lg border border-orange-200 bg-orange-50/50 p-4">
                                     <div class="mb-3 flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Current Season Crop Outlook</h3>
-                                            <p class="mt-1 text-xs text-orange-700">Predicted, harvested, damaged, and remaining supply from farmer crop plans</p>
+                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Current Crop Supply</h3>
+                                            <p class="mt-1 text-xs text-orange-700">Shows expected, harvested, damaged, and remaining supply from farmer crop plans.</p>
                                         </div>
                                         <span id="production-outlook-count" class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-orange-700">-</span>
                                     </div>
                                     <div id="production-outlook-list" class="space-y-2">
-                                        <p class="text-sm text-gray-500">Select a municipality to view current crop outlook.</p>
+                                        <p class="text-sm text-gray-500">Choose a municipality to see its current crop supply.</p>
                                     </div>
                                 </div>
 
                                 <!-- Weather Cards -->
                                 <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Outlook</h3>
+                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Check</h3>
                                         <span id="weather-source-badge"
                                             class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
                                             Cache</span>
@@ -336,7 +336,7 @@
                                 <!-- Contribution Per Municipality Chart -->
                                 <div id="contribution-section" class="hidden">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Contribution</h3>
+                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Share</h3>
                                         <span id="contribution-crop-badge"
                                             class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"></span>
                                     </div>
@@ -348,7 +348,7 @@
 
                                 <!-- Crop Distribution Chart -->
                                 <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crop Distribution
+                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crops in This Area
                                     </h3>
                                     <canvas id="crop-chart" height="250"></canvas>
                                 </div>
@@ -362,7 +362,7 @@
             <!-- Statistics Panel -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4 lg:mt-6">
                 <div class="p-4 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Summary Statistics</h3>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Quick Summary</h3>
                     <div id="stats-content" class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
                         <div class="text-center">
                             <p class="text-xs lg:text-sm text-gray-600">Total Production</p>
@@ -559,9 +559,9 @@
                 loadMapData();
             } catch (error) {
                 console.error('Error loading filters:', error);
-                showMapError('Unable to load map filters. Check your connection and try again.');
-                document.getElementById('crop-filter').innerHTML = '<option value="">Error loading crops</option>';
-                document.getElementById('year-filter').innerHTML = '<option value="">Error loading years</option>';
+                showMapError('We could not load the map choices. Check your connection and try again.');
+                document.getElementById('crop-filter').innerHTML = '<option value="">Could not load crops</option>';
+                document.getElementById('year-filter').innerHTML = '<option value="">Could not load years</option>';
             }
         }
 
@@ -595,7 +595,7 @@
                 updateStats(data);
             } catch (error) {
                 console.error('Error loading map data:', error);
-                showMapError('Unable to load map data. Check your connection and try again.');
+                showMapError('We could not load the map data. Check your connection and try again.');
             } finally {
                 document.getElementById('loading-indicator').classList.add('hidden');
             }
@@ -686,7 +686,7 @@
                 <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
                     <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                 </div>
-                <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
+                <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No records here yet</p>
                 <p class="mt-2 text-[10px] sm:text-xs font-semibold text-emerald-700">${farmerCount.toLocaleString()} ${farmerLabel}</p>
             `;
         }
@@ -728,8 +728,8 @@
         // Get view label
         function getViewLabel(viewType) {
             switch (viewType) {
-                case 'supply_forecast': return 'Supply Forecast';
-                case 'production': return 'Production';
+                case 'supply_forecast': return 'Expected Supply';
+                case 'production': return 'Past Production';
                 case 'area_harvested': return 'Area Harvested';
                 case 'productivity': return 'Productivity';
                 default: return 'Value';
@@ -908,7 +908,7 @@
             countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
 
             if (rows.length === 0) {
-                listEl.innerHTML = '<p class="text-sm text-gray-500">No current-season crop plans reported for this municipality yet.</p>';
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No crop plans reported here for the current season yet.</p>';
                 return;
             }
 
@@ -923,7 +923,7 @@
                     </div>
                     <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
                         <div class="rounded bg-orange-50 px-2 py-1.5">
-                            <p class="font-semibold text-orange-700">Predicted</p>
+                            <p class="font-semibold text-orange-700">Expected</p>
                             <p class="text-gray-900">${formatMetricTons(row.predicted_production_mt)}</p>
                         </div>
                         <div class="rounded bg-green-50 px-2 py-1.5">
@@ -983,7 +983,7 @@
                 errorEl.textContent = segmentErrors[0];
                 errorEl.classList.remove('hidden');
             } else if (hasErrors) {
-                errorEl.textContent = 'Some weather segments are temporarily unavailable.';
+                errorEl.textContent = 'Some weather details are not available right now.';
                 errorEl.classList.remove('hidden');
             }
 
@@ -999,7 +999,7 @@
             document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
             const hourlyListEl = document.getElementById('weather-hourly-list');
             if (hourlyItems.length === 0) {
-                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly data available.</p>';
+                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly weather details yet.</p>';
             } else {
                 hourlyListEl.innerHTML = hourlyItems.map(item => `
                     <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[90px] flex-shrink-0 snap-start text-center">
@@ -1015,7 +1015,7 @@
             document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
             const dailyListEl = document.getElementById('weather-daily-list');
             if (dailyItems.length === 0) {
-                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily data available.</p>';
+                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily weather details yet.</p>';
             } else {
                 dailyListEl.innerHTML = dailyItems.map(item => `
                     <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[100px] flex-shrink-0 snap-start text-center">
@@ -1060,7 +1060,7 @@
                 }
 
                 weatherLoadingEl.classList.add('hidden');
-                weatherErrorEl.textContent = `Weather data unavailable: ${error.message}`;
+                weatherErrorEl.textContent = `Weather is not available right now: ${error.message}`;
                 weatherErrorEl.classList.remove('hidden');
             }
         }
@@ -1133,7 +1133,7 @@
                 }
 
                 console.error('Error loading municipality details:', error);
-                showPanelError('Unable to load municipality details. Check your connection and try again.');
+                showPanelError('We could not load this municipality yet. Check your connection and try again.');
             }
         }
 
@@ -1154,7 +1154,7 @@
                 ctx.classList.add('hidden');
                 if (!emptyState) {
                     container.insertAdjacentHTML('beforeend',
-                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop data available</p>');
+                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop records here yet.</p>');
                 }
                 return;
             }
