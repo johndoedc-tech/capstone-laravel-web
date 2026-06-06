@@ -22,7 +22,7 @@ class CommunityCropSignalService
                 'window_label' => 'Next 180 days',
                 'items' => collect(),
                 'alternatives' => collect(),
-                'message' => 'Set your farm location to see what crops are being planned around your area.',
+                'message' => 'Set your farm location to see crops near you.',
             ];
         }
 
@@ -48,8 +48,8 @@ class CommunityCropSignalService
                 ->take(3)
                 ->values(),
             'message' => $signals->isNotEmpty()
-                ? 'Grouped from live crop plans in your municipality. Farmer names and exact locations stay private.'
-                : 'No nearby crop plans are recorded yet for the next 180 days.',
+                ? 'You are seeing grouped plans near your town. Names stay private.'
+                : 'No one near you has planned crops yet.',
         ];
     }
 
@@ -63,7 +63,7 @@ class CommunityCropSignalService
                 'has_data' => false,
                 'selected' => null,
                 'alternatives' => collect(),
-                'message' => 'Set your farm municipality first to see community planting signals.',
+                'message' => 'Set your town first to see nearby plans.',
             ];
         }
 
@@ -95,7 +95,7 @@ class CommunityCropSignalService
             'selected' => $selected,
             'alternatives' => $alternatives,
             'message' => $this->buildAdviceMessage($selected, $alternatives, $harvestDate),
-            'privacy_note' => 'Only grouped crop-plan data is shown. Farmer names and exact farm locations are hidden.',
+            'privacy_note' => 'You only see grouped plans. Names stay private.',
         ];
     }
 
@@ -214,7 +214,7 @@ class CommunityCropSignalService
             'pressure_key' => 'low',
             'label' => 'Low competition',
             'tone' => 'emerald',
-            'short_message' => 'Few nearby plans are recorded for this crop.',
+            'short_message' => 'Few nearby plans for this crop.',
             'harvest_window' => '',
         ];
     }
@@ -226,7 +226,7 @@ class CommunityCropSignalService
                 'key' => 'high',
                 'label' => 'High supply expected',
                 'tone' => 'amber',
-                'message' => 'Many nearby plans point to this crop.',
+                'message' => 'Your area has many plans for this crop.',
             ];
         }
 
@@ -235,7 +235,7 @@ class CommunityCropSignalService
                 'key' => 'balanced',
                 'label' => 'Balanced',
                 'tone' => 'sky',
-                'message' => 'There are some nearby plans, but it does not look crowded yet.',
+                'message' => 'Some near you plan this. Not crowded yet.',
             ];
         }
 
@@ -243,7 +243,7 @@ class CommunityCropSignalService
             'key' => 'low',
             'label' => 'Low competition',
             'tone' => 'emerald',
-            'message' => 'Few nearby plans are recorded for this crop.',
+            'message' => 'Few nearby plans for this crop.',
         ];
     }
 
@@ -251,17 +251,17 @@ class CommunityCropSignalService
     {
         if ($selected['pressure_key'] === 'high') {
             $alternativeText = $alternatives->isNotEmpty()
-                ? ' You may compare it with ' . $alternatives->pluck('crop')->take(2)->implode(' or ') . '.'
-                : ' Consider checking other crops before saving.';
+                ? ' You can compare it with ' . $alternatives->pluck('crop')->take(2)->implode(' or ') . '.'
+                : ' You may check other crops first.';
 
-            return "Many farmers in your municipality are also planning {$selected['crop']} for {$harvestDate->format('F')}.{$alternativeText}";
+            return "Your area has many {$selected['crop']} plans for {$harvestDate->format('F')}.{$alternativeText}";
         }
 
         if ($selected['pressure_key'] === 'balanced') {
-            return "{$selected['crop']} looks balanced for {$harvestDate->format('F')}. It is planned nearby, but not too crowded yet.";
+            return "{$selected['crop']} looks okay for {$harvestDate->format('F')}. Not crowded yet.";
         }
 
-        return "{$selected['crop']} has low nearby supply pressure for {$harvestDate->format('F')}. This may help avoid sabay-sabay na ani.";
+        return "Your area has few {$selected['crop']} plans for {$harvestDate->format('F')}. Good to check.";
     }
 
     private function applyMunicipalityFilter($query, string $municipality): void

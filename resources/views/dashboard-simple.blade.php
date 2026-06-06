@@ -411,7 +411,7 @@
 
                     @if(($cropBalancePulse['alternatives'] ?? collect())->isNotEmpty())
                         <div class="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
-                            <p class="text-xs font-semibold text-emerald-800">Good alternatives to compare</p>
+                            <p class="text-xs font-semibold text-emerald-800">You can compare these</p>
                             <div class="mt-2 flex flex-wrap gap-1.5">
                                 @foreach($cropBalancePulse['alternatives'] as $alternative)
                                     <span class="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-emerald-700">
@@ -423,7 +423,7 @@
                     @endif
                 @elseif($cropBalancePulse['has_location'])
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        When farmers add plans, Harviana will show crowded crops.
+                        You will see crowded crops here when nearby plans come in.
                     </div>
                 @else
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
