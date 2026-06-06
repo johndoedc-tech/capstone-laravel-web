@@ -1036,13 +1036,6 @@
                 </div>
             </div>
 
-            <!-- Toast -->
-            <div x-show="toast.show" x-cloak x-transition class="fixed left-4 right-4 top-24 z-[70] sm:left-auto sm:right-6 sm:top-6 sm:w-96">
-                <div class="rounded-xl border bg-white px-4 py-3 shadow-lg" :class="toast.type === 'error' ? 'border-red-100' : 'border-emerald-100'">
-                    <p class="text-sm font-semibold" :class="toast.type === 'error' ? 'text-red-700' : 'text-emerald-700'" x-text="toast.title"></p>
-                    <p class="mt-0.5 text-sm text-gray-600" x-text="toast.message"></p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1076,13 +1069,6 @@
                 showHarvestModal: false,
                 harvestTarget: null,
                 savingHarvest: false,
-                toast: {
-                    show: false,
-                    title: '',
-                    message: '',
-                    type: 'success',
-                    timer: null,
-                },
                 showModal: false,
                 modalType: 'note',
                 saving: false,
@@ -1878,6 +1864,20 @@
                     return 'Save Note';
                 },
 
+                calendarSaveToastTitle(isCropPlan, isDamageReport) {
+                    if (isCropPlan) return 'Crop plan saved';
+                    if (isDamageReport) return 'Damage report sent';
+                    if (this.modalType === 'reminder') return 'Reminder saved';
+                    return 'Note saved';
+                },
+
+                calendarSaveToastMessage(isCropPlan, isDamageReport) {
+                    if (isCropPlan) return 'Your crop plan has been added to the calendar.';
+                    if (isDamageReport) return 'Your report is waiting for LGU staff validation.';
+                    if (this.modalType === 'reminder') return 'Your reminder has been added.';
+                    return 'Your note has been added.';
+                },
+
                 get canSaveEvent() {
                     if (this.modalType === 'crop_plan') {
                         return Boolean(this.eventForm.crop)
@@ -2276,19 +2276,14 @@
                 },
 
                 showToast(title, message, type = 'success') {
-                    if (this.toast.timer) {
-                        clearTimeout(this.toast.timer);
+                    if (window.harvianaToast) {
+                        window.harvianaToast(title, message, type);
+                        return;
                     }
 
-                    this.toast = {
-                        show: true,
-                        title,
-                        message,
-                        type,
-                        timer: setTimeout(() => {
-                            this.toast.show = false;
-                        }, 4500),
-                    };
+                    window.dispatchEvent(new CustomEvent('harviana-toast', {
+                        detail: { title, message, type },
+                    }));
                 },
 
                 closeEventGroupModal() {
@@ -2436,22 +2431,30 @@
                         const response = await fetch('{{ route('farmer.calendar.store') }}', requestOptions);
 
                         if (response.ok) {
+                            const data = await response.json().catch(() => ({}));
                             this.closeModal();
                             if (isCropPlan || isDamageReport) {
                                 this.selectedDate = eventDate;
                                 this.currentDate = new Date(eventDate + 'T00:00:00');
                             }
-                            this.loadEvents();
-                            this.loadCropPlans();
+                            await Promise.all([
+                                this.loadEvents(),
+                                this.loadCropPlans(),
+                            ]);
                             if (this.modalType === 'reminder') {
                                 this.loadUpcomingReminders();
                             }
+                            this.showToast(
+                                this.calendarSaveToastTitle(isCropPlan, isDamageReport),
+                                data.message || this.calendarSaveToastMessage(isCropPlan, isDamageReport)
+                            );
                         } else {
                             const data = await response.json().catch(() => ({}));
-                            alert(data.message || 'Could not save. Try again.');
+                            this.showToast('Could not save', data.message || 'Please try again.', 'error');
                         }
                     } catch (error) {
                         console.error('Failed to save event:', error);
+                        this.showToast('Could not save', 'Please check your connection and try again.', 'error');
                     } finally {
                         this.saving = false;
                     }

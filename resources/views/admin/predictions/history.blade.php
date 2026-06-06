@@ -470,17 +470,17 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Reload page to show empty state
-                    window.location.reload();
+                    window.harvianaToast?.('History cleared', 'Prediction history has been cleared.');
+                    setTimeout(() => window.location.reload(), 700);
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to clear history'));
+                    window.harvianaToast?.('Could not clear history', data.error || 'Please try again.', 'error');
                     btn.disabled = false;
                     btnText.textContent = 'Yes, Clear All';
                     spinner.classList.add('hidden');
                 }
             })
             .catch(error => {
-                alert('Network error: ' + error.message);
+                window.harvianaToast?.('Could not clear history', error.message || 'Please check your connection and try again.', 'error');
                 btn.disabled = false;
                 btnText.textContent = 'Yes, Clear All';
                 spinner.classList.add('hidden');

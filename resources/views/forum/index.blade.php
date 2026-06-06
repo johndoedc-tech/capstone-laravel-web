@@ -89,12 +89,6 @@
                 <!-- Main Content - Posts List -->
                 <div class="lg:col-span-3">
                     
-                    @if(session('success'))
-                        <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
                     @if($posts->isEmpty())
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
                             <div class="text-6xl mb-4">🌱</div>

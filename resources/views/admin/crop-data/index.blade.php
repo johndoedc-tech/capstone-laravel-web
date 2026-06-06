@@ -157,19 +157,6 @@
                 </form>
             </div>
 
-            <!-- Success/Error Messages -->
-            @if(session('success'))
-                <div class="bg-primary-100 border-l-4 border-primary-500 text-primary-700 p-4 mb-6 rounded" role="alert">
-                    <p class="font-medium">{{ session('success') }}</p>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
-                    <p class="font-medium">{{ session('error') }}</p>
-                </div>
-            @endif
-
             <!-- Data Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto -mx-4 sm:mx-0">

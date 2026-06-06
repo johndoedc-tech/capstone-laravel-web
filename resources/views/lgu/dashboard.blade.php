@@ -39,18 +39,6 @@
         </header>
 
         <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:py-8">
-            @if(session('success'))
-                <div class="mb-4 rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             <section class="mb-5 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 px-4 py-5 text-white shadow-sm sm:px-6">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
@@ -180,5 +168,6 @@
         </main>
 
         @include('layouts.page-loader')
+        @include('layouts.toast')
     </body>
 </html>
