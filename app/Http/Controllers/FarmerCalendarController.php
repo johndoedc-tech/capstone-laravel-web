@@ -528,7 +528,7 @@ class FarmerCalendarController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Na-save na ang harvest mo. Iche-check muna ito ng LGU staff.',
+            'message' => 'Your harvest has been saved and is waiting for LGU staff validation.',
             'harvest_event' => $this->formatEvent($harvestRecord->fresh()),
             'crop_plan' => $cropPlan ? $this->formatEvent($cropPlan->fresh()) : null,
         ]);

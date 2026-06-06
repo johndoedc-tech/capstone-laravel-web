@@ -975,7 +975,7 @@
                 good_evening: 'Magandang gabi,',
                 dashboard_subtitle: 'Ano ang gagawin natin sa bukid ngayon?',
                 
-                saved: 'Na-save! ✓',
+                saved: 'Saved',
                 select_location: 'Pumili ng lugar...',
                 what_crops: 'Ano ang mga tinataniman mo?',
                 

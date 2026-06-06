@@ -2484,7 +2484,7 @@
                             this.loadUpcomingReminders();
                             this.showToast(
                                 'Harvest saved',
-                                data.message || 'Na-save na ang harvest mo. Iche-check muna ito ng LGU staff.'
+                                data.message || 'Your harvest has been saved and is waiting for LGU staff validation.'
                             );
                             return;
                         }
@@ -2552,7 +2552,7 @@
                                 }
                                 this.showToast(
                                     isCropPlan ? 'Crop plan deleted' : 'Deleted',
-                                    isCropPlan ? 'Tinanggal na ang crop plan mo.' : 'Removed from your calendar.'
+                                    isCropPlan ? 'Your crop plan has been deleted.' : 'Removed from your calendar.'
                                 );
                             }
                         } else {
