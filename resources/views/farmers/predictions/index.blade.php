@@ -24,8 +24,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Check Future Harvest</h3>
-                                <p class="mt-1 text-sm text-gray-500">Choose your area and crop to see a simple year-by-year harvest forecast.</p>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Check Harvest</h3>
+                                <p class="mt-1 text-sm text-gray-500">Choose area and crop.</p>
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                                         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md bg-gray-100 cursor-not-allowed">
                                         <option value="6" selected>6 Years (2025-2030)</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-gray-500">Shows how harvest may change year by year.</p>
+                                    <p class="mt-1 text-xs text-gray-500">Shows yearly change.</p>
                                 </div>
                             </div>
 
@@ -284,7 +284,7 @@
             
             // Show loading state
             forecastBtn.disabled = true;
-            forecastBtnText.textContent = 'Checking forecast...';
+            forecastBtnText.textContent = 'Checking...';
             forecastSpinner.classList.remove('hidden');
             
             try {
@@ -348,7 +348,7 @@
                     // Display summary card
                     let html = `
                         <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border-2 border-green-200 mb-6">
-                            <h4 class="text-lg font-bold text-gray-800 mb-2">Quick Forecast Summary</h4>
+                            <h4 class="text-lg font-bold text-gray-800 mb-2">Quick Summary</h4>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                                 <div>
                                     <p class="text-xs text-gray-600">Municipality</p>
@@ -359,7 +359,7 @@
                                     <p class="text-sm font-semibold text-gray-800">${result.crop || requestPayload.crop}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-600">Years Checked</p>
+                                        <p class="text-xs text-gray-600">Years</p>
                                     <p class="text-sm font-semibold text-gray-800">${forecast.length} years</p>
                                 </div>
                                 <div>
@@ -412,7 +412,7 @@
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-lg font-bold text-gray-800">${item.year}</span>
-                                        <p class="text-xs text-gray-500 mt-0.5">Expected harvest</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">Expected</p>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-lg font-bold text-green-700">${parseFloat(item.production).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
@@ -420,7 +420,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center pt-2 border-t border-gray-100">
-                                    <span class="text-xs text-gray-500">Change from last year:</span>
+                                    <span class="text-xs text-gray-500">Change:</span>
                                     <span class="text-sm font-semibold ${growthClass}">
                                         ${growthIcon} ${growthRate !== null ? growthSymbol + growthRate.toFixed(2) + '%' : 'Base Year'}
                                     </span>
@@ -504,7 +504,7 @@
                     // Add historical and trend statistics
                     html += `
                         <div class="mt-6">
-                            <h4 class="text-md font-semibold text-gray-800 mb-3">Past Records and Trend</h4>
+                            <h4 class="text-md font-semibold text-gray-800 mb-3">Past Trend</h4>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 ${historical.average ? `
                                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
@@ -547,7 +547,7 @@
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
                                             <span class="text-sm font-medium text-indigo-900">
-                                                Saved ${result.saved_count} forecast ${result.saved_count === 1 ? 'result' : 'results'} to your history
+                                                Saved ${result.saved_count} ${result.saved_count === 1 ? 'result' : 'results'}
                                             </span>
                                     </div>
                                     <a href="{{ route('predictions.history') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
@@ -562,12 +562,12 @@
                     forecastResults.classList.remove('hidden');
                     forecastResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
-                    throw new Error(result.error || 'We could not check the forecast right now.');
+                    throw new Error(result.error || 'Could not check forecast.');
                 }
                 
             } catch (error) {
                 console.error('Forecast Error:', error);
-                forecastErrorMessage.textContent = error.message || 'Something went wrong. Please try again.';
+                forecastErrorMessage.textContent = error.message || 'Something went wrong.';
                 forecastError.classList.remove('hidden');
                 forecastError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } finally {

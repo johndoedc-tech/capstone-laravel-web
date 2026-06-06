@@ -60,7 +60,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">📅 My Farm Calendar</h1>
-                        <p class="text-sm lg:text-base text-gray-600">Keep your farm plans, notes, and reminders in one place.</p>
+                        <p class="text-sm lg:text-base text-gray-600">Farm plans and reminders.</p>
                     </div>
                     <div class="flex gap-2">
                         <button @click="goToToday()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
@@ -143,8 +143,8 @@
                         </div>
 
                         <div x-show="mobileAgendaGroups.length === 0" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center">
-                            <p class="text-sm font-medium text-gray-700">Nothing scheduled here yet.</p>
-                            <p class="mt-1 text-xs text-gray-500">You can plan a crop, add a reminder, or check your crops in progress.</p>
+                            <p class="text-sm font-medium text-gray-700">No plans yet.</p>
+                            <p class="mt-1 text-xs text-gray-500">Plan a crop or add a reminder.</p>
                         </div>
                     </div>
                 </div>
@@ -357,7 +357,7 @@
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            <p class="text-sm">Pick a day to view plans or add a note.</p>
+                            <p class="text-sm">Pick a day.</p>
                         </div>
 
                         <div x-show="selectedDate || calendarEventGroups.length > 0 || activeCropTimelines.length > 0">
@@ -380,7 +380,7 @@
                                 <div class="mb-3 flex items-center justify-between gap-3">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">Crops in Progress</p>
-                                        <p class="text-xs text-gray-400">Shown here until harvest time.</p>
+                                        <p class="text-xs text-gray-400">Until harvest.</p>
                                     </div>
                                     <span class="calendar-chip inline-flex rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
                                         <span x-text="activeCropTimelines.length"></span>
@@ -727,7 +727,7 @@
                             <div class="min-w-0">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Actual Harvest</p>
                                 <h3 id="harvest-record-title" class="calendar-event-title mt-1 text-lg font-semibold text-gray-900" x-text="harvestTargetLabel"></h3>
-                                <p class="mt-0.5 text-xs text-gray-500">Enter the harvest you actually got from the field.</p>
+                                <p class="mt-0.5 text-xs text-gray-500">Enter actual harvest.</p>
                             </div>
                             <button @click="closeHarvestModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close harvest form">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -739,7 +739,7 @@
                         <div class="px-4 py-4 sm:px-5">
                             <div class="grid grid-cols-3 gap-2">
                                 <div class="col-span-2">
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Actual Harvest Amount *</label>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Actual Harvest *</label>
                                     <input type="number" min="0.01" step="0.01" inputmode="decimal" x-model="harvestForm.actual_harvest_amount" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="e.g., 850">
                                 </div>
                                 <div>
@@ -895,7 +895,7 @@
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Photo Evidence</label>
                                         <input type="file" accept="image/*" capture="environment" @change="eventForm.damage_photo = $event.target.files[0] || null" class="w-full rounded-md border border-gray-300 bg-white text-xs file:mr-3 file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-red-700">
-                                        <p class="text-[11px] text-gray-500 mt-1">Optional, but helpful when LGU checks the report. Max 5MB.</p>
+                                        <p class="text-[11px] text-gray-500 mt-1">Optional for LGU check. Max 5MB.</p>
                                     </div>
                                 </div>
 
@@ -930,7 +930,7 @@
                                 <div x-show="modalType === 'crop_plan' || modalType === 'damage_report'">
                                     <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'damage_report' ? 'Damage Date *' : 'Planning Date *'"></label>
                                     <input type="date" x-model="eventForm.planning_date" :max="modalType === 'damage_report' ? todayDate : null" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500">
-                                    <p x-show="modalType === 'damage_report'" class="text-[11px] text-gray-500 mt-1">Use the date when the damage happened. Future dates are not allowed.</p>
+                                    <p x-show="modalType === 'damage_report'" class="text-[11px] text-gray-500 mt-1">Use damage date. No future dates.</p>
                                 </div>
 
                                 <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 items-stretch sm:grid-cols-2 gap-2">
@@ -979,13 +979,13 @@
                                 <div x-show="modalType === 'reminder'">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Reminder Time</label>
                                     <input type="time" x-model="eventForm.reminder_time" class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
-                                    <p class="text-xs text-gray-400 mt-1">Choose a time if you want Harviana to remind you.</p>
+                                    <p class="text-xs text-gray-400 mt-1">Set reminder time.</p>
                                 </div>
 
                                 <!-- Description -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-700 mb-1">Notes (optional)</label>
-                                    <textarea x-model="eventForm.description" rows="2" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" placeholder="Add notes like field condition, buyer, or reminder details..."></textarea>
+                                    <textarea x-model="eventForm.description" rows="2" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" placeholder="Add notes..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1450,10 +1450,10 @@
                         : 'Harviana estimate';
 
                     if (!prediction.production_per_ha_mt) {
-                        return `${areaSqm} field. Harviana estimates about ${production} for this crop plan.`;
+                        return `${areaSqm} field. About ${production}.`;
                     }
 
-                    return `${areaSqm} field (${hectaresText}). Estimate uses ${yieldRate} times your area, giving about ${production}.`;
+                    return `${areaSqm} field. ${yieldRate} x area = about ${production}.`;
                 },
 
                 formatPercent(value) {
@@ -1625,7 +1625,7 @@
 
                 formatCropPlanRemainingStatus(plan) {
                     const summary = this.getCropPlanDamageSummary(plan);
-                    if (!summary) return 'Full planted area is still available';
+                    if (!summary) return 'Full area remains';
 
                     return `${this.formatSquareMeters(summary.remaining_damage_sqm)} remaining of ${this.formatSquareMeters(summary.planted_area_sqm)}`;
                 },
@@ -1810,7 +1810,7 @@
                 formatFertilizationTiming(stage, days) {
                     if (stage.key === 'basal') {
                         return days > 0
-                            ? `${days} days from planning, before or during field planting`
+                            ? `${days} days after planning`
                             : 'Apply before or during planting';
                     }
 
@@ -1924,7 +1924,7 @@
                         this.productionPrediction = {
                             loading: false,
                             data: null,
-                            error: data.message || data.error || 'Harvest estimate is not available right now.',
+                            error: data.message || data.error || 'Estimate unavailable.',
                         };
                     } catch (error) {
                         if (requestId !== this.productionPredictionRequestId) return;
@@ -1932,7 +1932,7 @@
                         this.productionPrediction = {
                             loading: false,
                             data: null,
-                            error: 'Harvest estimate is not available right now.',
+                            error: 'Estimate unavailable.',
                         };
                     }
                 },
@@ -1991,7 +1991,7 @@
                         this.communityCropSignal = {
                             loading: false,
                             data: null,
-                            error: data.message || 'Nearby crop plans are not available right now.',
+                            error: data.message || 'Nearby plans unavailable.',
                         };
                     } catch (error) {
                         if (requestId !== this.communityCropSignalRequestId) return;
@@ -1999,7 +1999,7 @@
                         this.communityCropSignal = {
                             loading: false,
                             data: null,
-                            error: 'Nearby crop plans are not available right now.',
+                            error: 'Nearby plans unavailable.',
                         };
                     }
                 },
@@ -2245,7 +2245,7 @@
                             }
                         } else {
                             const data = await response.json().catch(() => ({}));
-                            alert(data.message || 'We could not save this yet. Please try again.');
+                            alert(data.message || 'Could not save. Try again.');
                         }
                     } catch (error) {
                         console.error('Failed to save event:', error);
@@ -2280,10 +2280,10 @@
                         }
 
                         const data = await response.json().catch(() => ({}));
-                        alert(data.message || 'We could not save the harvest yet. Please try again.');
+                        alert(data.message || 'Could not save harvest.');
                     } catch (error) {
                         console.error('Failed to record harvest:', error);
-                        alert('We could not save the harvest yet. Please try again.');
+                        alert('Could not save harvest.');
                     } finally {
                         this.savingHarvest = false;
                     }
@@ -2329,11 +2329,11 @@
                                 this.loadUpcomingReminders();
                             }
                         } else {
-                            alert('We could not delete this yet. Please try again.');
+                            alert('Could not delete.');
                         }
                     } catch (error) {
                         console.error('Failed to delete event:', error);
-                        alert('We could not delete this yet. Please try again.');
+                        alert('Could not delete.');
                     }
                 }
             }
