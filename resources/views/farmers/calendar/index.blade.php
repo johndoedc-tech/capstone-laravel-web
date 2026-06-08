@@ -52,18 +52,19 @@
         }
     </style>
 
-    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="farmer-pwa py-3 lg:py-5 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto" x-data="farmerCalendar()">
             
             <!-- Header -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
+            <div class="farmer-hero rounded-2xl p-4 lg:p-5 mb-4 lg:mb-6 text-white">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">📅 My Farm Calendar</h1>
-                        <p class="text-sm lg:text-base text-gray-600">Farm plans and reminders.</p>
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-green-50/90">Your Farm Path</p>
+                        <h1 class="mt-1 text-2xl lg:text-3xl font-bold">My Farm Calendar</h1>
+                        <p class="mt-1 text-sm lg:text-base text-green-50">Plan crops, follow tasks, and record harvest.</p>
                     </div>
                     <div class="flex gap-2">
-                        <button @click="goToToday()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                        <button @click="goToToday()" class="rounded-full bg-white px-4 py-2 text-sm font-bold text-emerald-700 shadow-sm transition hover:bg-green-50">
                             Today
                         </button>
                     </div>
@@ -72,19 +73,19 @@
 
             <!-- Mobile agenda-first calendar -->
             <div class="lg:hidden space-y-4">
-                <div class="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
-                    <div class="grid grid-cols-4 gap-1 rounded-xl bg-gray-100 p-1 text-xs font-semibold">
-                        <button type="button" @click="mobileAgendaMode = 'today'; selectMobileDate(todayDate)" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'today' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Today</button>
-                        <button type="button" @click="mobileAgendaMode = 'week'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'week' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Week</button>
-                        <button type="button" @click="mobileAgendaMode = 'crops'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'crops' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Crops</button>
-                        <button type="button" @click="mobileAgendaMode = 'month'" class="rounded-lg px-2 py-2 transition" :class="mobileAgendaMode === 'month' ? 'bg-white text-primary-dark shadow-sm' : 'text-gray-500'">Month</button>
+                <div class="farmer-card rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm">
+                    <div class="grid grid-cols-4 gap-1 rounded-2xl bg-green-50 p-1 text-xs font-bold">
+                        <button type="button" @click="mobileAgendaMode = 'today'; selectMobileDate(todayDate)" class="rounded-xl px-2 py-2 transition" :class="mobileAgendaMode === 'today' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-500'">Today</button>
+                        <button type="button" @click="mobileAgendaMode = 'week'" class="rounded-xl px-2 py-2 transition" :class="mobileAgendaMode === 'week' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-500'">Week</button>
+                        <button type="button" @click="mobileAgendaMode = 'crops'" class="rounded-xl px-2 py-2 transition" :class="mobileAgendaMode === 'crops' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-500'">Crops</button>
+                        <button type="button" @click="mobileAgendaMode = 'month'" class="rounded-xl px-2 py-2 transition" :class="mobileAgendaMode === 'month' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-500'">Month</button>
                     </div>
                 </div>
 
                 <div class="grid gap-2" :class="canReportDamageOnSelectedDate ? 'grid-cols-3' : 'grid-cols-2'">
-                    <button type="button" @click="openAddModal('crop_plan')" class="rounded-xl bg-emerald-600 px-3 py-3 text-sm font-semibold text-white shadow-sm">Plan Crop</button>
-                    <button type="button" @click="openAddModal('reminder')" class="rounded-xl bg-orange-100 px-3 py-3 text-sm font-semibold text-orange-700 shadow-sm">Reminder</button>
-                    <button type="button" x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="rounded-xl bg-red-50 px-3 py-3 text-sm font-semibold text-red-700 shadow-sm">Damage</button>
+                    <button type="button" @click="openAddModal('crop_plan')" class="farmer-primary-action rounded-2xl px-3 py-3 text-sm font-bold text-white shadow-sm">Plan Crop</button>
+                    <button type="button" @click="openAddModal('reminder')" class="rounded-2xl border border-orange-100 bg-orange-50 px-3 py-3 text-sm font-bold text-orange-700 shadow-sm">Reminder</button>
+                    <button type="button" x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="rounded-2xl border border-red-100 bg-red-50 px-3 py-3 text-sm font-bold text-red-700 shadow-sm">Damage</button>
                 </div>
 
                 <div x-show="mobileAgendaMode === 'today' || mobileAgendaMode === 'week'" class="space-y-4">
@@ -98,10 +99,10 @@
                         </template>
                     </div>
 
-                    <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div class="farmer-card rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                         <div class="mb-3 flex items-center justify-between gap-3">
                             <div>
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500" x-text="mobileAgendaMode === 'today' ? 'Today' : 'This week'"></p>
+                                <p class="farmer-section-kicker" x-text="mobileAgendaMode === 'today' ? 'Today' : 'This week'"></p>
                                 <h2 class="text-base font-semibold text-gray-900" x-text="mobileAgendaTitle"></h2>
                             </div>
                             <button type="button" @click="goToToday(); mobileAgendaMode = 'today'" class="rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600">Today</button>
@@ -149,11 +150,11 @@
                     </div>
                 </div>
 
-                <div x-show="mobileAgendaMode === 'crops'" class="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                <div x-show="mobileAgendaMode === 'crops'" class="farmer-card rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
                     <div class="mb-3 flex items-center justify-between gap-3">
                         <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Crops in Progress</p>
-                            <h2 class="text-base font-semibold text-gray-900">Visible until harvest</h2>
+                            <p class="farmer-section-kicker">Crops in Progress</p>
+                            <h2 class="text-base font-semibold text-gray-900">You can watch these until harvest</h2>
                         </div>
                         <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                             <span x-text="activeCropTimelines.length"></span>
@@ -175,8 +176,8 @@
                                     </div>
                                     <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-700" x-text="timeline.daysLeftText"></span>
                                 </div>
-                                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white">
-                                    <div class="h-full rounded-full bg-emerald-500" :style="`width: ${timeline.progress}%`"></div>
+                                <div class="farmer-progress-bar mt-3 h-2 overflow-hidden rounded-full bg-white">
+                                    <div class="farmer-progress-fill h-full rounded-full bg-emerald-500" :style="`width: ${timeline.progress}%`"></div>
                                 </div>
                                 <div class="mt-2 flex flex-wrap gap-1.5">
                                                 <span x-show="timeline.plan.planted_area_sqm" class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatSquareMeters(timeline.plan.planted_area_sqm)"></span>
@@ -195,7 +196,7 @@
                     </div>
                 </div>
 
-                <div x-show="mobileAgendaMode === 'month'" class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div x-show="mobileAgendaMode === 'month'" class="farmer-card rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <div class="mb-4 flex items-center justify-between">
                         <button @click="prevMonth()" class="rounded-lg p-2 text-gray-600 hover:bg-gray-100">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +233,7 @@
             <div class="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                 
                 <!-- Calendar Section -->
-                <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
+                <div class="farmer-card lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
                     <!-- Month Navigation -->
                     <div class="flex items-center justify-between mb-6">
                         <button @click="prevMonth()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -248,16 +249,16 @@
                         </button>
                     </div>
 
-                    <div x-show="selectedDate" class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-3">
+                    <div x-show="selectedDate" class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-3">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Selected date</p>
+                            <p class="farmer-section-kicker">Selected date</p>
                             <p class="text-sm font-medium text-gray-900" x-text="selectedDateDisplay"></p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2">
-                            <button x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
+                            <button x-show="canReportDamageOnSelectedDate" @click="openAddModal('damage_report')" class="inline-flex items-center justify-center rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 transition-colors">
                                 Damage Report
                             </button>
-                            <button @click="openAddModal('crop_plan')" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors">
+                            <button @click="openAddModal('crop_plan')" class="farmer-primary-action inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 transition-colors">
                                 Plan a Crop
                             </button>
                         </div>
@@ -324,10 +325,10 @@
                 <div class="space-y-4 lg:space-y-6 min-w-0">
                     
                     <!-- Upcoming Reminders -->
-                    <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
+                    <div class="farmer-card calendar-sidebar-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="text-xl">🔔</span>
-                            <h3 class="font-semibold text-gray-900 min-w-0 break-words">Upcoming Reminders</h3>
+                            <h3 class="font-semibold text-gray-900 min-w-0 break-words">Your reminders</h3>
                         </div>
                         
                         <div x-show="upcomingReminders.length === 0" class="text-sm text-gray-400 text-center py-4">
@@ -352,7 +353,7 @@
                     </div>
 
                     <!-- Selected Day Details -->
-                    <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
+                    <div class="farmer-card calendar-sidebar-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
                         <div x-show="!selectedDate && calendarEventGroups.length === 0 && activeCropTimelines.length === 0" class="text-center py-8 text-gray-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -716,21 +717,21 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                            <div class="farmer-card mt-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3">
                                 <div class="flex items-center justify-between gap-3">
                                     <p class="text-xs font-semibold uppercase text-emerald-700" x-text="hasActualHarvest(activeCropPlan) ? 'Harvest Status' : 'Harvest Progress'"></p>
                                     <p class="text-xs font-medium" :class="harvestStatusTextClasses(activeCropPlan)" x-text="hasActualHarvest(activeCropPlan) ? harvestStatusLabel(activeCropPlan) : (activeCropTimeline ? activeCropTimeline.daysLeftText : '')"></p>
                                 </div>
-                                <div x-show="!hasActualHarvest(activeCropPlan)" class="mt-2 h-2 overflow-hidden rounded-full bg-white">
-                                    <div class="h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${activeCropTimeline ? activeCropTimeline.progress : 0}%`"></div>
+                                <div x-show="!hasActualHarvest(activeCropPlan)" class="farmer-progress-bar mt-2 h-2 overflow-hidden rounded-full bg-white">
+                                    <div class="farmer-progress-fill h-full rounded-full bg-emerald-500 transition-all" :style="`width: ${activeCropTimeline ? activeCropTimeline.progress : 0}%`"></div>
                                 </div>
-                                <button type="button" x-show="activeCropPlan" @click="openHarvestModal(activeCropPlan)" class="mt-3 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
+                                <button type="button" x-show="activeCropPlan" @click="openHarvestModal(activeCropPlan)" class="farmer-primary-action mt-3 w-full rounded-2xl bg-emerald-600 px-3 py-2 text-sm font-bold text-white hover:bg-emerald-700">
                                     <span x-text="harvestActionLabel(activeCropPlan)"></span>
                                 </button>
                             </div>
 
                             <div x-show="!hasActualHarvest(activeCropPlan)" class="mt-4">
-                                <p class="text-xs font-semibold uppercase text-gray-500 mb-2">Schedule Until Harvest</p>
+                                <p class="farmer-section-kicker mb-2">Schedule Until Harvest</p>
                                 <div class="space-y-2">
                                     <template x-for="item in getCropPlanSchedule(activeCropPlan || {})" :key="'crop-timeline-' + item.label + '-' + item.date">
                                         <div class="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
@@ -745,7 +746,7 @@
                             </div>
 
                             <div x-show="hasActualHarvest(activeCropPlan)" class="mt-4">
-                                <p class="text-xs font-semibold uppercase text-gray-500 mb-2">Harvest History</p>
+                                <p class="farmer-section-kicker mb-2">Harvest History</p>
                                 <div class="space-y-2">
                                     <template x-for="item in harvestHistoryItems(activeCropPlan)" :key="'crop-history-' + item.label">
                                         <div class="flex items-start justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2">
@@ -771,12 +772,12 @@
                 <div class="flex min-h-screen items-end justify-center px-0 pt-10 sm:items-center sm:px-4 sm:py-6">
                     <div x-show="showHarvestModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900 bg-opacity-60 transition-opacity" @click="closeHarvestModal()"></div>
 
-                    <div x-show="showHarvestModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="relative w-full max-w-lg overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-lg">
+                    <div x-show="showHarvestModal" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-6 sm:translate-y-3 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="farmer-card relative w-full max-w-lg overflow-hidden rounded-t-2xl bg-white text-left shadow-xl sm:rounded-2xl">
                         <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-4 py-4 sm:px-5">
                             <div class="min-w-0">
-                                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Actual Harvest</p>
+                                <p class="farmer-section-kicker">Actual Harvest</p>
                                 <h3 id="harvest-record-title" class="calendar-event-title mt-1 text-lg font-semibold text-gray-900" x-text="harvestTargetLabel"></h3>
-                                <p class="mt-0.5 text-xs text-gray-500">Enter actual harvest.</p>
+                                <p class="mt-0.5 text-xs text-gray-500">Save your harvest. LGU staff will validate it.</p>
                             </div>
                             <button @click="closeHarvestModal()" class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors" aria-label="Close harvest form">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -818,8 +819,8 @@
                         </div>
 
                         <div class="flex items-center justify-end gap-2 border-t border-gray-100 bg-gray-50 px-4 py-3 sm:px-5">
-                            <button type="button" @click="closeHarvestModal()" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
-                            <button type="button" @click="saveHarvestRecord()" :disabled="!canSaveHarvest || savingHarvest" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
+                            <button type="button" @click="closeHarvestModal()" class="rounded-xl px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
+                            <button type="button" @click="saveHarvestRecord()" :disabled="!canSaveHarvest || savingHarvest" class="farmer-primary-action rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50">
                                 <span x-show="!savingHarvest">Save Harvest</span>
                                 <span x-show="savingHarvest">Saving...</span>
                             </button>
@@ -833,9 +834,11 @@
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
 
-                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="calendar-form-modal inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-[opacity,transform] sm:my-4 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="farmer-card calendar-form-modal inline-block align-bottom bg-white rounded-t-2xl text-left overflow-hidden shadow-xl transform transition-[opacity,transform] sm:my-4 sm:align-middle sm:max-w-lg sm:w-full sm:rounded-2xl">
                         <div class="calendar-form-modal-body bg-white px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
-                            <h3 class="text-base font-semibold text-gray-900 mb-3" x-text="modalTitle"></h3>
+                            <p class="farmer-section-kicker mb-1" x-text="modalType === 'crop_plan' ? 'Plan Crop' : (modalType === 'damage_report' ? 'Report Damage' : 'Reminder')"></p>
+                            <h3 class="text-base font-semibold text-gray-900 mb-1" x-text="modalTitle"></h3>
+                            <p class="mb-3 text-xs text-gray-500" x-text="modalType === 'crop_plan' ? 'Harviana will estimate the harvest date for you.' : (modalType === 'damage_report' ? 'Send this to LGU staff for checking.' : 'Add a simple note for yourself.')"></p>
 
                             <div class="space-y-3">
                                 <!-- Title -->
@@ -881,7 +884,7 @@
                                     class="rounded-md border border-sky-200 bg-sky-50 px-3 py-2">
                                     <div class="flex items-start justify-between gap-2">
                                         <div class="min-w-0">
-                                            <p class="text-[11px] font-semibold uppercase text-sky-700">Planting Around Your Area</p>
+                                    <p class="farmer-section-kicker">Planting Around You</p>
                                             <p x-show="communityCropSignal.loading" class="mt-1 text-xs text-sky-700">Checking live crop plans...</p>
                                             <template x-if="!communityCropSignal.loading && communityCropSignal.data">
                                                 <div class="mt-1">
@@ -985,14 +988,14 @@
                                 <div x-show="modalType === 'crop_plan' && (estimatedHarvestDate || productionPrediction.loading || productionPrediction.data || productionPrediction.error)" class="grid grid-cols-1 items-stretch sm:grid-cols-2 gap-2">
                                     <!-- Estimated Harvest Date (only for crop plans) -->
                                     <div x-show="estimatedHarvestDate" class="min-h-[6.5rem] rounded-md border border-green-200 bg-green-50 px-3 py-2">
-                                        <p class="text-[11px] font-semibold uppercase text-green-700">Harvest Date</p>
+                                    <p class="farmer-section-kicker">Harvest Date</p>
                                         <p class="text-sm font-semibold text-gray-900 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.display : ''"></p>
                                         <p class="text-[11px] text-green-700 leading-tight mt-0.5" x-text="estimatedHarvestDate ? estimatedHarvestDate.days + ' days from planning' : ''"></p>
                                     </div>
 
                                     <!-- Production Prediction (only for crop plans) -->
                                     <div x-show="productionPrediction.loading || productionPrediction.data || productionPrediction.error" class="min-h-[6.5rem] rounded-md border border-orange-200 bg-orange-50 px-3 py-2">
-                                        <p class="text-[11px] font-semibold uppercase text-orange-700">Estimated Production</p>
+                                        <p class="farmer-section-kicker">Estimated Production</p>
                                         <div x-show="productionPrediction.loading" class="mt-1 flex min-h-16 items-center text-xs text-orange-700">Calculating...</div>
                                         <div x-show="!productionPrediction.loading && productionPrediction.data" class="mt-0.5">
                                             <p class="text-base font-semibold text-gray-900 leading-tight" x-text="productionPrediction.data ? formatEstimatedProduction(productionPrediction.data) : ''"></p>
@@ -1038,12 +1041,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-2.5 sm:flex sm:flex-row-reverse sm:px-5 gap-2">
-                            <button @click="saveEvent()" :disabled="!canSaveEvent || saving" class="w-full sm:w-auto inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-600 text-sm font-medium text-white hover:bg-orange-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        <div class="bg-green-50 px-4 py-2.5 sm:flex sm:flex-row-reverse sm:px-5 gap-2">
+                            <button @click="saveEvent()" :disabled="!canSaveEvent || saving" class="farmer-primary-action w-full sm:w-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                                 <span x-show="!saving" x-text="modalSubmitText"></span>
                                 <span x-show="saving">Saving...</span>
                             </button>
-                            <button @click="closeModal()" class="mt-2 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors">
+                            <button @click="closeModal()" class="mt-2 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors">
                                 Cancel
                             </button>
                         </div>
