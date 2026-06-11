@@ -54,22 +54,6 @@
 
     <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto" x-data="farmerCalendar()">
-            
-            <!-- Header -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">📅 My Farm Calendar</h1>
-                        <p class="text-sm lg:text-base text-gray-600">Farm plans and reminders.</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button @click="goToToday()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
-                            Today
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Mobile agenda-first calendar -->
             <div class="lg:hidden space-y-4">
                 <div class="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
