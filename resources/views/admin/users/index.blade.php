@@ -78,7 +78,7 @@
             </div>
 
             <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                <form method="GET" action="{{ route('admin.users.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.6fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(110px,0.6fr)_auto] lg:items-end">
+                <form method="GET" action="{{ route('admin.users.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.6fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(110px,0.6fr)_auto] lg:items-end" data-admin-user-filter-form>
                     <div>
                         <label for="search" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Search</label>
                         <input
@@ -87,12 +87,14 @@
                             name="search"
                             value="{{ $filters['search'] ?? '' }}"
                             placeholder="Name, email, role, or LGU area"
+                            autocomplete="off"
+                            data-admin-user-filter-search
                             class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                     </div>
 
                     <div>
                         <label for="role" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Role</label>
-                        <select id="role" name="role" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <select id="role" name="role" data-admin-user-filter-select class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                             <option value="">All roles</option>
                             <option value="admin" @selected(($filters['role'] ?? '') === 'admin')>Admin</option>
                             <option value="farmer" @selected(($filters['role'] ?? '') === 'farmer')>Farmer</option>
@@ -102,7 +104,7 @@
 
                     <div>
                         <label for="status" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Status</label>
-                        <select id="status" name="status" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <select id="status" name="status" data-admin-user-filter-select class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                             <option value="">All status</option>
                             <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
                             <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
@@ -111,7 +113,7 @@
 
                     <div>
                         <label for="sort_by" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Sort</label>
-                        <select id="sort_by" name="sort_by" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <select id="sort_by" name="sort_by" data-admin-user-filter-select class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                             <option value="created_at" @selected(($filters['sort_by'] ?? 'created_at') === 'created_at')>Created date</option>
                             <option value="name" @selected(($filters['sort_by'] ?? '') === 'name')>Name</option>
                             <option value="email" @selected(($filters['sort_by'] ?? '') === 'email')>Email</option>
@@ -121,16 +123,13 @@
 
                     <div>
                         <label for="sort_order" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Order</label>
-                        <select id="sort_order" name="sort_order" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <select id="sort_order" name="sort_order" data-admin-user-filter-select class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                             <option value="desc" @selected(($filters['sort_order'] ?? 'desc') === 'desc')>Newest</option>
                             <option value="asc" @selected(($filters['sort_order'] ?? '') === 'asc')>Oldest</option>
                         </select>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button type="submit" class="inline-flex flex-1 items-center justify-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 lg:flex-none">
-                            Filter
-                        </button>
+                    <div class="flex">
                         <a href="{{ route('admin.users.index') }}" class="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 lg:flex-none">
                             Reset
                         </a>
@@ -599,11 +598,41 @@
             const resetPasswordModal = document.getElementById('resetPasswordModal');
             const editUserForm = document.getElementById('editUserForm');
             const resetPasswordForm = document.getElementById('resetPasswordForm');
+            const filterForm = document.querySelector('[data-admin-user-filter-form]');
+            const filterSearchInput = filterForm?.querySelector('[data-admin-user-filter-search]');
+            const filterSelects = filterForm?.querySelectorAll('[data-admin-user-filter-select]');
 
             const showModal = (modal) => modal?.classList.remove('hidden');
             const hideModal = (modal) => modal?.classList.add('hidden');
 
             const buildRoute = (template, id) => template.replace('__USER__', id);
+
+            if (filterForm && filterForm.dataset.bound !== 'true') {
+                filterForm.dataset.bound = 'true';
+                let filterSubmitTimer;
+
+                const submitFilters = (delay = 0) => {
+                    window.clearTimeout(filterSubmitTimer);
+
+                    filterSubmitTimer = window.setTimeout(() => {
+                        filterForm.requestSubmit ? filterForm.requestSubmit() : filterForm.submit();
+                    }, delay);
+                };
+
+                filterSearchInput?.addEventListener('input', () => {
+                    submitFilters(450);
+                });
+
+                filterSearchInput?.addEventListener('search', () => {
+                    submitFilters();
+                });
+
+                filterSelects?.forEach((select) => {
+                    select.addEventListener('change', () => {
+                        submitFilters();
+                    });
+                });
+            }
 
             const openEditModal = (id, name, email, role, lguMunicipality = '', lguBarangay = '', isActive = '1') => {
                 document.getElementById('edit_user_id').value = id;
