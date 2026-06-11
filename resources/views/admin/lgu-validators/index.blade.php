@@ -60,7 +60,7 @@
                 <form method="GET" action="{{ route('admin.lgu-validators.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.4fr)_minmax(130px,0.9fr)_minmax(130px,0.9fr)_minmax(130px,0.7fr)_auto] lg:items-end" data-lgu-validator-filter-form>
                     <div>
                         <label for="search" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Search</label>
-                        <input id="search" name="search" value="{{ $filters['search'] ?? '' }}" type="search" placeholder="Name, email, barangay" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <input id="search" name="search" value="{{ $filters['search'] ?? '' }}" type="search" placeholder="Name, email, barangay" autocomplete="off" data-lgu-filter-search class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                     </div>
                     <div>
                         <label for="municipality" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Municipality</label>
@@ -82,14 +82,13 @@
                     </div>
                     <div>
                         <label for="status" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Status</label>
-                        <select id="status" name="status" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
+                        <select id="status" name="status" data-lgu-filter-status class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-teal-500 focus:ring-teal-500">
                             <option value="">All status</option>
                             <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
                             <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
                         </select>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="inline-flex flex-1 items-center justify-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800 lg:flex-none">Filter</button>
+                    <div class="flex">
                         <a href="{{ route('admin.lgu-validators.index') }}" class="inline-flex flex-1 items-center justify-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 lg:flex-none">Reset</a>
                     </div>
                 </form>
@@ -221,8 +220,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.querySelector('[data-lgu-validator-filter-form]');
+            const searchInput = form?.querySelector('[data-lgu-filter-search]');
             const municipalitySelect = form?.querySelector('[data-lgu-filter-municipality]');
             const barangaySelect = form?.querySelector('[data-lgu-filter-barangay]');
+            const statusSelect = form?.querySelector('[data-lgu-filter-status]');
             const barangaysByMunicipality = @json($barangaysByMunicipality);
 
             if (!form || !municipalitySelect || !barangaySelect || barangaySelect.dataset.bound === 'true') {
@@ -230,6 +231,15 @@
             }
 
             barangaySelect.dataset.bound = 'true';
+            let filterSubmitTimer;
+
+            const submitFilters = (delay = 0) => {
+                window.clearTimeout(filterSubmitTimer);
+
+                filterSubmitTimer = window.setTimeout(() => {
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                }, delay);
+            };
 
             const formatName = (name) => name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -260,10 +270,24 @@
             municipalitySelect.addEventListener('change', () => {
                 barangaySelect.dataset.selectedBarangay = '';
                 renderBarangays();
+                submitFilters();
             });
 
             barangaySelect.addEventListener('change', () => {
                 barangaySelect.dataset.selectedBarangay = barangaySelect.value;
+                submitFilters();
+            });
+
+            statusSelect?.addEventListener('change', () => {
+                submitFilters();
+            });
+
+            searchInput?.addEventListener('input', () => {
+                submitFilters(450);
+            });
+
+            searchInput?.addEventListener('search', () => {
+                submitFilters();
             });
 
             renderBarangays();
