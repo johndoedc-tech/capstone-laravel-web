@@ -8,25 +8,24 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-    <div class="farmer-pwa py-3 lg:py-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Forecast Widget -->
             <div class="max-w-5xl mx-auto">
-                <div class="farmer-card bg-white overflow-hidden shadow-sm rounded-2xl mb-8 border border-gray-200">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8 border border-gray-200">
                     
                     <!-- Clean Header Banner -->
-                    <div class="farmer-hero border-b border-green-200 px-5 py-5 text-white">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-5">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-white/15 rounded-2xl p-2 mr-4 ring-1 ring-white/15">
-                                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="flex-shrink-0 bg-green-100 rounded-lg p-2 mr-4">
+                                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 13v-1m4 1v-3m4 3V8M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-xs font-bold uppercase tracking-[0.18em] text-green-50/90">Harvest Estimate</p>
-                                <h3 class="text-lg leading-6 font-bold">Check your crop outlook</h3>
-                                <p class="mt-1 text-sm text-green-50">Choose your town and crop.</p>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Check Harvest</h3>
+                                <p class="mt-1 text-sm text-gray-500">Choose area and crop.</p>
                             </div>
                         </div>
                     </div>
@@ -75,7 +74,7 @@
 
                             <div class="mt-6 flex justify-end">
                                 <button type="submit" id="forecastBtn"
-                                    class="farmer-primary-action inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-2xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
+                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
                                     <span id="forecastBtnText">Check Forecast</span>
                                     <svg id="forecastSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -87,17 +86,16 @@
 
                         <!-- Forecast Results Section -->
                         <div id="forecastResults" class="mt-8 hidden">
-                            <p class="farmer-section-kicker mb-1">Result</p>
-                            <h3 class="text-lg font-semibold mb-4 text-gray-900">Here is your crop outlook</h3>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900">Forecast Results</h3>
                             
                             <!-- Improved Comparison Chart - Farmer Friendly -->
-                            <div class="farmer-card bg-white border border-gray-200 rounded-2xl p-4 md:p-6 mb-6">
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-6 mb-6">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                                     <h4 class="text-md font-semibold text-gray-800 flex items-center">
                                         <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                                         </svg>
-                                        Harvest over the years
+                                        Harvest over the Years
                                     </h4>
                                     <!-- Chart Type Toggle -->
                                     <div class="flex items-center mt-2 sm:mt-0 space-x-2">
@@ -112,14 +110,14 @@
                                 </div>
                                 
                                 <!-- Clear Legend for Farmers -->
-                                <div class="flex flex-wrap gap-4 mb-4 p-3 bg-green-50 rounded-2xl">
+                                <div class="flex flex-wrap gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 rounded bg-blue-500 mr-2"></div>
-                                        <span class="text-sm font-medium text-gray-700">Past records</span>
+                                        <span class="text-sm font-medium text-gray-700">📊 Actual Production (Nakaraan)</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 rounded bg-green-500 mr-2" style="background: repeating-linear-gradient(45deg, #22c55e, #22c55e 2px, #86efac 2px, #86efac 4px);"></div>
-                                        <span class="text-sm font-medium text-gray-700">Future estimate</span>
+                                        <span class="text-sm font-medium text-gray-700">🔮 Predicted Production (Hinaharap)</span>
                                     </div>
                                 </div>
                                 
@@ -129,9 +127,9 @@
                                 </div>
                                 
                                 <!-- Chart Help Text - Simple Version -->
-                                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-2xl">
+                                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                                     <div class="flex items-center justify-center space-x-6">
-                                        <span class="text-sm"><strong>How to read:</strong></span>
+                                        <span class="text-sm">💡 <strong>How to read:</strong></span>
                                         <div class="flex items-center">
                                             <div class="w-4 h-4 rounded bg-blue-500 mr-2"></div>
                                             <span class="text-sm font-medium text-gray-700">Past Records</span>
@@ -647,7 +645,7 @@
                     labels: allYears.map(y => isMobile ? "'" + String(y).slice(-2) : y),
                     datasets: [
                         {
-                            label: 'Past records',
+                            label: 'Actual (Nakaraan)',
                             data: historicalDataset,
                             borderColor: 'rgb(59, 130, 246)',
                             backgroundColor: currentChartType === 'bar' ? 'rgba(59, 130, 246, 0.8)' : 'rgba(59, 130, 246, 0.1)',
@@ -662,7 +660,7 @@
                             categoryPercentage: 0.9
                         },
                         {
-                            label: 'Future estimate',
+                            label: 'Predicted (Hinaharap)',
                             data: forecastDataset,
                             borderColor: 'rgb(34, 197, 94)',
                             backgroundColor: currentChartType === 'bar' 

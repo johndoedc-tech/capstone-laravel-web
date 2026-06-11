@@ -96,14 +96,14 @@
         </h2>
     </x-slot>
 
-    <div class="farmer-pwa py-3 lg:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-4 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-full mx-auto">
 
             <!-- Personalized Welcome Banner (if user has preferences) -->
             @if(isset($preferredMunicipality) && $preferredMunicipality)
                 <div
-                    class="farmer-card bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-4 mb-4 lg:mb-6">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 mb-4 lg:mb-6">
+                    <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="bg-green-100 p-2 rounded-full">
                                 <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,13 +115,13 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm font-medium text-green-800">Your farm is set to <span
+                                <p class="text-sm font-medium text-green-800">Your Farm Location: <span
                                         class="font-bold">{{ ucwords(strtolower($preferredMunicipality)) }}</span></p>
-                                <p class="text-xs text-green-600">Check nearby crops and local supply.</p>
+                                <p class="text-xs text-green-600">Map is on your town.</p>
                             </div>
                         </div>
                         <button onclick="focusOnMyMunicipality()"
-                            class="farmer-primary-action bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-2xl text-sm font-bold transition-colors">
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                             Show My Area
                         </button>
                     </div>
@@ -130,18 +130,16 @@
 
             <div class="flex flex-col-reverse lg:flex-col gap-4 lg:gap-6 mb-4 lg:mb-6">
                 <!-- Control Panel -->
-                <div class="farmer-card bg-white overflow-hidden shadow-sm rounded-2xl">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 lg:p-6">
-                    <p class="farmer-section-kicker mb-1">Explore Benguet</p>
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-1">Choose what you want to see</h3>
-                    <p class="mb-3 text-xs text-gray-500">Tap a town to see farmers, supply, weather, and crops.</p>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Choose What to View</h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                         <!-- Crop Filter -->
                         <div>
                             <label for="crop-filter"
                                 class="block text-xs lg:text-sm font-medium text-gray-700 mb-1 lg:mb-2">
-                                Crop
+                                Crop Type
                             </label>
                             <select id="crop-filter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm lg:text-base">
@@ -165,7 +163,7 @@
                         <div>
                             <label for="view-filter"
                                 class="block text-xs lg:text-sm font-medium text-gray-700 mb-1 lg:mb-2">
-                                View
+                                Show
                             </label>
                             <select id="view-filter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm lg:text-base">
@@ -216,10 +214,10 @@
             </div>
 
             <!-- Map Container -->
-            <div class="farmer-card bg-white overflow-hidden shadow-sm rounded-2xl">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 lg:p-6 relative">
                     <div id="map"
-                        class="pwa-map-viewport relative z-0 rounded-2xl shadow-inner"></div>
+                        class="pwa-map-viewport relative z-0 rounded-lg shadow-inner"></div>
 
                     <!-- Municipality Details Panel - Slides from right -->
                     <div id="details-panel"
@@ -239,7 +237,7 @@
                             <div class="mb-4 lg:mb-6 pr-8">
                                 <h2 id="panel-municipality-name"
                                     class="text-xl lg:text-2xl font-bold text-gray-800 mb-2">Municipality Name</h2>
-                                <p class="text-xs lg:text-sm text-gray-600">Here is what farmers are planting nearby.</p>
+                                <p class="text-xs lg:text-sm text-gray-600">Tap a town.</p>
                             </div>
 
                             <!-- Loading Indicator -->
@@ -261,10 +259,10 @@
                             <!-- Panel Content -->
                             <div id="panel-content" class="space-y-6">
                                 <!-- Farmer Count -->
-                                <div class="farmer-card rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4">
+                                <div class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
                                     <div class="flex items-center justify-between gap-4">
                                         <div>
-                                            <p class="farmer-section-kicker">Farmers Here</p>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Farmers Here</p>
                                             <p class="mt-1 text-xs text-emerald-700">Based on saved town.</p>
                                         </div>
                                         <div class="text-right">
@@ -275,11 +273,11 @@
                                 </div>
 
                                 <!-- Real-time Production Outlook -->
-                                <div class="farmer-card rounded-2xl border border-orange-200 bg-orange-50/50 p-4">
+                                <div class="rounded-lg border border-orange-200 bg-orange-50/50 p-4">
                                     <div class="mb-3 flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 class="text-sm font-semibold text-gray-700">Crop supply</h3>
-                                            <p class="mt-1 text-xs text-orange-700">See what is expected and what is already harvested.</p>
+                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Supply</h3>
+                                            <p class="mt-1 text-xs text-orange-700">Expected, harvested, damaged, remaining.</p>
                                         </div>
                                         <span id="production-outlook-count" class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-orange-700">-</span>
                                     </div>
@@ -289,9 +287,9 @@
                                 </div>
 
                                 <!-- Weather Cards -->
-                                <div id="weather-section" class="farmer-card rounded-2xl border border-sky-200 bg-sky-50/50 p-4">
+                                <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700">Weather check</h3>
+                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Check</h3>
                                         <span id="weather-source-badge"
                                             class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
                                             Cache</span>
@@ -350,7 +348,7 @@
 
                                 <!-- Crop Distribution Chart -->
                                 <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Crops here
+                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crops Here
                                     </h3>
                                     <canvas id="crop-chart" height="250"></canvas>
                                 </div>
@@ -362,10 +360,9 @@
             </div> <!-- End of flex wrappers -->
 
             <!-- Statistics Panel -->
-            <div class="farmer-card bg-white overflow-hidden shadow-sm rounded-2xl mt-4 lg:mt-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4 lg:mt-6">
                 <div class="p-4 lg:p-6">
-                    <p class="farmer-section-kicker mb-1">Quick Summary</p>
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">What this map shows</h3>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Quick Summary</h3>
                     <div id="stats-content" class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
                         <div class="text-center">
                             <p class="text-xs lg:text-sm text-gray-600">Total Production</p>

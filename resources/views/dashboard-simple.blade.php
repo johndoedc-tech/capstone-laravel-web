@@ -242,20 +242,20 @@
             </button>
         </div>
 
-    <div class="farmer-pwa py-3 lg:py-5 px-4 sm:px-6 lg:px-8">
+    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             
             <!-- ============================================ -->
             <!-- SIMPLE GREETING HEADER -->
             <!-- ============================================ -->
-            <div class="farmer-hero rounded-xl sm:rounded-2xl px-3 py-3 sm:p-4 lg:p-5 mb-4 lg:mb-6 text-white">
+            <div class="rounded-xl sm:rounded-2xl shadow-sm px-3 py-3 sm:p-4 lg:p-6 mb-3 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
                     <div class="min-w-0">
                         <p class="text-white/80 text-[11px] sm:text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
                         <h1 class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
                             {{ Auth::user()->name }}! 👋
                         </h1>
-                        <p class="mt-1 text-green-50 text-xs sm:text-sm leading-snug">Here are your next farm steps.</p>
+                        <p class="mt-1 text-primary-100 text-xs sm:text-sm leading-snug" x-text="t('dashboard_subtitle')"></p>
                         <div class="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
                             @if($preferredMunicipality)
                                 <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
@@ -274,35 +274,22 @@
                             </a>
                         </div>
                     </div>
-                    <div class="w-fit text-left sm:text-right bg-white/15 rounded-full sm:rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 ring-1 ring-white/15">
-                        <p class="hidden sm:block text-green-50 text-xs">{{ now()->format('l') }}</p>
+                    <div class="w-fit text-left sm:text-right bg-white/10 rounded-full sm:rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+                        <p class="hidden sm:block text-primary-100 text-xs">{{ now()->format('l') }}</p>
                         <p class="text-xs sm:text-lg font-semibold whitespace-nowrap"><span class="sm:hidden">{{ now()->format('D') }} - </span>{{ now()->format('M d, Y') }}</p>
                     </div>
                 </div>
-            </div>
-
-            <div class="mb-4 lg:mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <a href="{{ route('farmer.calendar.page') }}" class="farmer-primary-action rounded-2xl px-4 py-3 text-center text-sm font-bold">
-                    Check calendar
-                </a>
-                <a href="{{ route('farmer.calendar.page') }}" class="rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-center text-sm font-bold text-emerald-700 shadow-sm">
-                    Plan a crop
-                </a>
-                <a href="{{ route('map.index') }}" class="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-center text-sm font-bold text-sky-700 shadow-sm">
-                    View nearby crops
-                </a>
             </div>
 
             @if(($harvestProgress['items'] ?? collect())->isNotEmpty())
                 <!-- ============================================ -->
                 <!-- HARVEST PROGRESS -->
                 <!-- ============================================ -->
-                <div class="farmer-card mb-4 lg:mb-6 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                <div class="mb-4 lg:mb-6 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
                     <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p class="farmer-section-kicker">Harvest Journey</p>
-                            <h2 class="text-base font-semibold text-gray-900">Your crops to watch</h2>
-                            <p class="mt-1 text-xs text-gray-500">Record harvest when a crop is done.</p>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Harvest Progress</p>
+                            <h2 class="text-base font-semibold text-gray-900">Nearest crops to monitor</h2>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 text-xs">
                             @if(($harvestProgress['due_soon_count'] ?? 0) > 0)
@@ -315,7 +302,7 @@
                                     {{ number_format($harvestProgress['expected_production_mt'], 2) }} mt expected
                                 </span>
                             @endif
-                            <a href="{{ route('farmer.calendar.page') }}" class="rounded-full border border-gray-200 px-2.5 py-1 font-medium text-gray-600 hover:border-emerald-300 hover:text-emerald-700">
+                            <a href="{{ route('farmer.calendar.page') }}" class="rounded-full border border-gray-200 px-2.5 py-1 font-medium text-gray-600 hover:border-primary hover:text-primary-dark">
                                 Open calendar
                             </a>
                         </div>
@@ -341,8 +328,8 @@
                                         <span>{{ $item['planning_date'] }}</span>
                                         <span>{{ $item['progress_percent'] }}%</span>
                                     </div>
-                                    <div class="farmer-progress-bar h-2 overflow-hidden rounded-full bg-gray-200">
-                                        <div class="farmer-progress-fill h-full rounded-full bg-emerald-500" style="width: {{ $item['progress_percent'] }}%"></div>
+                                    <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $item['progress_percent'] }}%"></div>
                                     </div>
                                 </div>
 
@@ -378,10 +365,10 @@
             <!-- ============================================ -->
             <!-- COMMUNITY CROP BALANCE -->
             <!-- ============================================ -->
-            <div class="farmer-card mb-4 lg:mb-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+            <div class="mb-4 lg:mb-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div class="min-w-0">
-                        <p class="farmer-section-kicker">Planting Around You</p>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-700">Planting Around Your Area</p>
                         <h2 class="mt-1 text-base font-semibold text-gray-900">
                             @if($cropBalancePulse['has_location'])
                                 Crop balance in {{ $cropBalancePulse['municipality'] }}
@@ -436,7 +423,7 @@
                     @endif
                 @elseif($cropBalancePulse['has_location'])
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        You will see nearby crop plans here.
+                        You will see crowded crops here when nearby plans come in.
                     </div>
                 @else
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
@@ -666,9 +653,8 @@
             <!-- ============================================ -->
             <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
                 <div class="mb-4">
-                    <p class="farmer-section-kicker">Next Best Actions</p>
-                    <h2 class="mt-1 text-lg font-semibold text-gray-900">What do you want to do?</h2>
-                    <p class="text-sm text-gray-500">Pick one action and keep moving.</p>
+                    <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
+                    <p class="text-sm text-gray-500">Plan, compare, and check records.</p>
                 </div>
 
                 <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
@@ -680,7 +666,7 @@
                                     <h3 class="mt-4 text-2xl font-bold" x-text="t('action_calendar')"></h3>
                                     <p class="mt-2 max-w-sm text-sm leading-6 text-white/85" x-text="t('action_calendar_desc')"></p>
                                 </div>
-                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-2xl font-black">C</div>
+                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
                             </div>
                             <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
                                 <span>Notes and reminders by date</span>
@@ -710,7 +696,7 @@
                                 <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_map')"></h3>
                                 <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_map_desc')"></p>
                             </div>
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-xl font-black text-sky-700 shadow-sm">M</div>
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">ðŸ—ºï¸</div>
                         </div>
                     </a>
 
@@ -720,7 +706,7 @@
                                 <h3 class="text-base font-semibold text-gray-900" x-text="t('action_history')"></h3>
                                 <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_history_desc')"></p>
                             </div>
-                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-lg font-black text-green-700">H</div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-2xl">ðŸ“Š</div>
                         </div>
                     </a>
 
@@ -730,7 +716,7 @@
                                 <h3 class="text-base font-semibold text-gray-900" x-text="t('action_forum')"></h3>
                                 <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_forum_desc')"></p>
                             </div>
-                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-lg font-black text-amber-700">F</div>
+                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-2xl">ðŸ’¬</div>
                         </div>
                     </a>
                 </div>
