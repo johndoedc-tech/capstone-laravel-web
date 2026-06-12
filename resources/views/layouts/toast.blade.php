@@ -23,6 +23,7 @@
     x-data="{
         toasts: [],
         nextId: 1,
+        recentKeys: new Map(),
         init() {
             window.harvianaToast = (title, message = '', type = 'success') => {
                 if (typeof title === 'object' && title !== null) {
@@ -39,6 +40,16 @@
         },
         add(toast) {
             const type = toast.type || 'success';
+            const key = [type, toast.title || '', toast.message || ''].join('|');
+            const now = Date.now();
+            const lastShownAt = this.recentKeys.get(key) || 0;
+
+            if (now - lastShownAt < 1000) {
+                return;
+            }
+
+            this.recentKeys.set(key, now);
+
             const item = {
                 id: this.nextId++,
                 title: toast.title || (type === 'error' ? 'Could not complete action' : 'Success'),
@@ -51,6 +62,10 @@
             setTimeout(() => {
                 this.remove(item.id);
             }, toast.duration || 4500);
+
+            setTimeout(() => {
+                this.recentKeys.delete(key);
+            }, 1000);
         },
         remove(id) {
             this.toasts = this.toasts.filter((toast) => toast.id !== id);
