@@ -227,10 +227,13 @@
                                 'border-orange-400 bg-orange-50 text-orange-700': day.isSelected,
                                 'font-bold text-orange-600': day.isToday && !day.isSelected
                             }">
+                                <span x-show="day.isCurrentMonth && damageReportCountForDate(day.date) > 0"
+                                    class="absolute left-0.5 top-0.5 inline-flex min-w-5 items-center justify-center rounded-full border border-red-200 bg-red-50 px-1 text-[10px] font-bold leading-4 text-red-700 shadow-sm"
+                                    x-text="'! ' + damageReportCountForDate(day.date)"></span>
                                 <span x-show="day.isCurrentMonth && approvedHarvestCountForDate(day.date) > 0"
                                     class="absolute right-0.5 top-0.5 inline-flex min-w-5 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-1 text-[10px] font-bold leading-4 text-emerald-700 shadow-sm"
                                     x-text="'✓ ' + approvedHarvestCountForDate(day.date)"></span>
-                                <span x-text="day.day"></span>
+                                <span class="block" :class="(approvedHarvestCountForDate(day.date) > 0 || damageReportCountForDate(day.date) > 0) ? 'pt-4' : ''" x-text="day.day"></span>
                                 <span x-show="(eventsByDay[day.date] || []).length > 0" class="mx-auto mt-1 block h-1.5 w-1.5 rounded-full bg-primary"></span>
                             </button>
                         </template>
@@ -290,6 +293,9 @@
                                     'bg-orange-100': day.isToday && !day.isSelected
                                 }"
                                 class="min-h-[80px] lg:min-h-[100px] p-2 border border-gray-100 rounded-lg text-center relative transition-all">
+                                <span x-show="day.isCurrentMonth && damageReportCountForDate(day.date) > 0"
+                                    class="absolute left-1.5 top-1.5 inline-flex min-w-7 items-center justify-center rounded-full border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-red-700 shadow-sm"
+                                    x-text="'! ' + damageReportCountForDate(day.date)"></span>
                                 <span x-show="day.isCurrentMonth && approvedHarvestCountForDate(day.date) > 0"
                                     class="absolute right-1.5 top-1.5 inline-flex min-w-7 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-emerald-700 shadow-sm"
                                     x-text="'✓ ' + approvedHarvestCountForDate(day.date)"></span>
@@ -1790,6 +1796,14 @@
 
                 approvedHarvestCountForDate(date) {
                     return this.approvedHarvestPlansForDate(date).length;
+                },
+
+                damageReportCountForDate(date) {
+                    if (!date) return 0;
+
+                    return (this.eventsByDay[date] || [])
+                        .filter((event) => event.category === 'damage_report')
+                        .length;
                 },
 
                 cropPlanProductionLabel(plan) {
