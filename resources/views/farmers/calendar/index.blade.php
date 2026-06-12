@@ -221,12 +221,15 @@
                             <div class="py-1 text-center text-[11px] font-semibold text-gray-400" x-text="day"></div>
                         </template>
                         <template x-for="day in calendarDays" :key="'mobile-month-' + day.date">
-                            <button type="button" @click="day.isCurrentMonth && selectDay(day)" class="min-h-12 rounded-lg border p-1 text-center text-xs transition" :class="{
+                            <button type="button" @click="day.isCurrentMonth && selectDay(day)" class="relative min-h-12 rounded-lg border p-1 text-center text-xs transition" :class="{
                                 'border-gray-100 bg-gray-50 text-gray-300': !day.isCurrentMonth,
                                 'border-gray-100 bg-white text-gray-700': day.isCurrentMonth,
                                 'border-orange-400 bg-orange-50 text-orange-700': day.isSelected,
                                 'font-bold text-orange-600': day.isToday && !day.isSelected
                             }">
+                                <span x-show="day.isCurrentMonth && approvedHarvestCountForDate(day.date) > 0"
+                                    class="absolute right-0.5 top-0.5 inline-flex min-w-5 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-1 text-[10px] font-bold leading-4 text-emerald-700 shadow-sm"
+                                    x-text="'✓ ' + approvedHarvestCountForDate(day.date)"></span>
                                 <span x-text="day.day"></span>
                                 <span x-show="(eventsByDay[day.date] || []).length > 0" class="mx-auto mt-1 block h-1.5 w-1.5 rounded-full bg-primary"></span>
                             </button>
@@ -287,6 +290,9 @@
                                     'bg-orange-100': day.isToday && !day.isSelected
                                 }"
                                 class="min-h-[80px] lg:min-h-[100px] p-2 border border-gray-100 rounded-lg text-center relative transition-all">
+                                <span x-show="day.isCurrentMonth && approvedHarvestCountForDate(day.date) > 0"
+                                    class="absolute right-1.5 top-1.5 inline-flex min-w-7 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[11px] font-bold leading-none text-emerald-700 shadow-sm"
+                                    x-text="'✓ ' + approvedHarvestCountForDate(day.date)"></span>
                                 <span class="text-sm lg:text-base font-medium" :class="day.isToday ? 'text-orange-600 font-bold' : ''" x-text="day.day"></span>
                                 
                                 <!-- Event Indicators -->
@@ -1437,10 +1443,7 @@
                 get selectedApprovedHarvestPlans() {
                     if (!this.selectedDate) return [];
 
-                    return this.cropPlans
-                        .filter((plan) => this.activeCropPlanStartDate(plan) === this.selectedDate)
-                        .filter((plan) => this.isApprovedHarvest(plan))
-                        .sort((a, b) => (a.actual_harvest_date || '').localeCompare(b.actual_harvest_date || ''));
+                    return this.approvedHarvestPlansForDate(this.selectedDate);
                 },
 
                 get activeCropTimelines() {
@@ -1774,6 +1777,19 @@
                 isApprovedHarvest(record) {
                     return this.hasActualHarvest(record)
                         && this.harvestValidationStatus(record) === 'approved';
+                },
+
+                approvedHarvestPlansForDate(date) {
+                    if (!date) return [];
+
+                    return this.cropPlans
+                        .filter((plan) => this.activeCropPlanStartDate(plan) === date)
+                        .filter((plan) => this.isApprovedHarvest(plan))
+                        .sort((a, b) => (a.actual_harvest_date || '').localeCompare(b.actual_harvest_date || ''));
+                },
+
+                approvedHarvestCountForDate(date) {
+                    return this.approvedHarvestPlansForDate(date).length;
                 },
 
                 cropPlanProductionLabel(plan) {
