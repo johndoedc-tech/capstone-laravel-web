@@ -130,7 +130,7 @@ class UserController extends Controller
         if ($this->supportsLguValidatorColumns()) {
             $userData['lgu_municipality'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? BenguetLocations::normalize($validated['lgu_municipality']) : null;
             $userData['lgu_barangay'] = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? BenguetLocations::normalize($validated['lgu_barangay']) : null;
-            $userData['is_active'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active', true) : true;
+            $userData['is_active'] = $request->boolean('is_active', true);
         }
 
         $user = User::create($userData);
@@ -164,7 +164,7 @@ class UserController extends Controller
         if ($this->supportsLguValidatorColumns()) {
             $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? BenguetLocations::normalize($validated['lgu_municipality']) : null;
             $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? BenguetLocations::normalize($validated['lgu_barangay']) : null;
-            $user->is_active = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active') : true;
+            $user->is_active = $request->boolean('is_active');
         }
 
         $user->save();

@@ -42,7 +42,7 @@ class AdminUserManagementTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.users.index'));
 
         $response->assertOk();
-        $response->assertSee('User Management');
+        $response->assertSee('Accounts');
         $response->assertSee('LGU Validators');
         $response->assertSee('Sample Farmer');
         $response->assertSee('Sample Validator');
@@ -141,6 +141,33 @@ class AdminUserManagementTest extends TestCase
         $this->assertSame('ATOK', $validator->lgu_municipality);
         $this->assertSame('CALIKING', $validator->lgu_barangay);
         $this->assertFalse($validator->is_active);
+    }
+
+    public function test_admin_can_update_farmer_status_through_users_page(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $farmer = User::factory()->create([
+            'name' => 'Existing Farmer',
+            'email' => 'existing.farmer@example.test',
+            'role' => User::ROLE_FARMER,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->put(route('admin.users.update', $farmer), [
+            'name' => 'Updated Farmer',
+            'email' => 'updated.farmer@example.test',
+            'role' => User::ROLE_FARMER,
+        ]);
+
+        $response->assertRedirect(route('admin.users.index'));
+
+        $farmer->refresh();
+        $this->assertSame('Updated Farmer', $farmer->name);
+        $this->assertSame(User::ROLE_FARMER, $farmer->role);
+        $this->assertFalse($farmer->is_active);
     }
 
     public function test_lgu_validator_barangay_must_match_municipality(): void

@@ -404,7 +404,7 @@
                             </div>
                             <label class="inline-flex items-center gap-2 text-sm text-gray-700">
                                 <input type="checkbox" name="is_active" value="1" checked class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                Active validator account
+                                Active account
                             </label>
                         </div>
                     </div>
@@ -504,7 +504,7 @@
                             </div>
                             <label class="inline-flex items-center gap-2 text-sm text-gray-700">
                                 <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                Active validator account
+                                Active account
                             </label>
                         </div>
                     </div>
@@ -726,9 +726,12 @@
                 @elseif(old('edit_user_id'))
                     openEditModal(
                         {{ old('edit_user_id') }},
-                        @js(old('edit_user_name', 'User')),
-                        @js(old('edit_user_email', '')),
-                        @js(old('edit_user_role', 'farmer'))
+                        @js(old('name', old('edit_user_name', 'User'))),
+                        @js(old('email', old('edit_user_email', ''))),
+                        @js(old('role', old('edit_user_role', 'farmer'))),
+                        @js(old('lgu_municipality', '')),
+                        @js(old('lgu_barangay', '')),
+                        @js(old('is_active') ? '1' : '0')
                     );
                 @endif
             @endif
