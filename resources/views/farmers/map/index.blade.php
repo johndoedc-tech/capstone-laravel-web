@@ -210,6 +210,8 @@
             <!-- Map Container -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 lg:p-6 relative">
+                    <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+                    <div class="relative min-w-0">
                     <div id="map"
                         class="pwa-map-viewport relative z-0 rounded-lg shadow-inner"></div>
 
@@ -295,59 +297,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Weather Cards -->
-                                <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Check</h3>
-                                        <span id="weather-source-badge"
-                                            class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
-                                            Cache</span>
-                                    </div>
-
-                                    <div id="weather-loading" class="hidden text-xs text-sky-700 mb-3">Loading weather data...</div>
-                                    <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
-
-                                    <div id="weather-content" class="hidden space-y-3">
-                                        <div class="rounded-md border border-sky-100 bg-white p-3">
-                                            <p class="text-xs uppercase tracking-wide text-sky-700">Weather Advice</p>
-                                            <p id="weather-action-title" class="mt-1 text-sm font-semibold text-gray-900">Checking weather</p>
-                                            <p id="weather-action-message" class="mt-1 text-xs leading-relaxed text-gray-600">Use this before planting, spraying, or harvesting.</p>
-                                        </div>
-
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-start justify-between gap-2">
-                                                <div>
-                                                    <p class="text-xs uppercase tracking-wide text-gray-500">Current</p>
-                                                    <p id="weather-current-condition" class="text-sm font-semibold text-gray-800">-</p>
-                                                </div>
-                                                <p id="weather-current-temp" class="text-base font-bold text-sky-700">-</p>
-                                            </div>
-                                            <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
-                                                <p>Humidity: <span id="weather-current-humidity" class="font-medium text-gray-700">-</span></p>
-                                                <p>Wind: <span id="weather-current-wind" class="font-medium text-gray-700">-</span></p>
-                                                <p>Rain Chance: <span id="weather-current-rain" class="font-medium text-gray-700">-</span></p>
-                                                <p>Updated: <span id="weather-current-time" class="font-medium text-gray-700">-</span></p>
-                                            </div>
-                                        </div>
-
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly</p>
-                                                <span id="weather-hourly-count" class="text-[11px] text-gray-500"></span>
-                                            </div>
-                                            <div id="weather-hourly-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
-                                        </div>
-
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily</p>
-                                                <span id="weather-daily-count" class="text-[11px] text-gray-500"></span>
-                                            </div>
-                                            <div id="weather-daily-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- Contribution Per Municipality Chart -->
                                 <div id="contribution-section" class="hidden">
                                     <div class="flex items-center justify-between mb-3">
@@ -377,6 +326,75 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    </div>
+
+                    <aside id="weather-section"
+                        class="rounded-lg border border-sky-100 bg-gradient-to-br from-sky-700 via-sky-600 to-slate-700 p-4 text-white shadow-sm xl:sticky xl:top-24 xl:self-start">
+                        <div class="mb-4 flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-100">Weather Check</p>
+                                <h3 id="weather-town-name" class="mt-1 text-xl font-semibold">Choose a town</h3>
+                            </div>
+                            <span id="weather-source-badge"
+                                class="hidden shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800">Stale Cache</span>
+                        </div>
+
+                        <div id="weather-empty" class="rounded-lg bg-white/10 p-4 text-sm text-sky-50 ring-1 ring-white/15">
+                            Tap a municipality on the map to see weather advice for field work.
+                        </div>
+
+                        <div id="weather-loading" class="hidden rounded-lg bg-white/10 p-4 text-sm text-sky-50 ring-1 ring-white/15">Loading weather data...</div>
+                        <div id="weather-error" class="hidden rounded-lg bg-red-50/95 p-3 text-sm text-red-700"></div>
+
+                        <div id="weather-content" class="hidden space-y-4">
+                            <div class="rounded-lg bg-white/10 p-4 ring-1 ring-white/15">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="min-w-0">
+                                        <p id="weather-current-condition" class="text-base font-medium text-sky-50">-</p>
+                                        <p class="mt-1 text-xs text-sky-100">Updated <span id="weather-current-time">-</span></p>
+                                    </div>
+                                    <p id="weather-current-temp" class="shrink-0 text-5xl font-light leading-none tracking-normal">-</p>
+                                </div>
+                                <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-sky-50">
+                                    <div class="rounded-md bg-white/10 px-2 py-2">
+                                        <p class="text-[10px] uppercase text-sky-100">Rain</p>
+                                        <p id="weather-current-rain" class="mt-1 font-semibold">-</p>
+                                    </div>
+                                    <div class="rounded-md bg-white/10 px-2 py-2">
+                                        <p class="text-[10px] uppercase text-sky-100">Wind</p>
+                                        <p id="weather-current-wind" class="mt-1 font-semibold">-</p>
+                                    </div>
+                                    <div class="rounded-md bg-white/10 px-2 py-2">
+                                        <p class="text-[10px] uppercase text-sky-100">Humidity</p>
+                                        <p id="weather-current-humidity" class="mt-1 font-semibold">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="rounded-lg bg-white/95 p-3 text-gray-900 shadow-sm">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Farm Advice</p>
+                                <p id="weather-action-title" class="mt-1 text-sm font-semibold text-gray-900">Checking weather</p>
+                                <p id="weather-action-message" class="mt-1 text-xs leading-relaxed text-gray-600">Use this before planting, spraying, or harvesting.</p>
+                            </div>
+
+                            <div class="rounded-lg bg-white/10 p-3 ring-1 ring-white/15">
+                                <div class="mb-2 flex items-center justify-between">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-sky-100">Next Hours</p>
+                                    <span id="weather-hourly-count" class="text-[11px] text-sky-100"></span>
+                                </div>
+                                <div id="weather-hourly-list" class="flex snap-x gap-2 overflow-x-auto pb-2" style="scrollbar-width: thin;"></div>
+                            </div>
+
+                            <div class="rounded-lg bg-white/10 p-3 ring-1 ring-white/15">
+                                <div class="mb-2 flex items-center justify-between">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-sky-100">Daily Forecast</p>
+                                    <span id="weather-daily-count" class="text-[11px] text-sky-100"></span>
+                                </div>
+                                <div id="weather-daily-list" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </aside>
                     </div>
                 </div>
             </div>
@@ -862,8 +880,6 @@
         function closeDetailsPanel() {
             document.getElementById('details-panel').classList.add('translate-x-full');
             currentMunicipality = null;
-            detailsRequestToken += 1;
-            resetWeatherPanel();
         }
 
         function openDetailsPanel() {
@@ -871,12 +887,14 @@
         }
 
         function resetWeatherPanel() {
+            document.getElementById('weather-empty').classList.remove('hidden');
             document.getElementById('weather-loading').classList.add('hidden');
             document.getElementById('weather-error').classList.add('hidden');
             document.getElementById('weather-error').textContent = '';
             document.getElementById('weather-content').classList.add('hidden');
             document.getElementById('weather-source-badge').classList.add('hidden');
 
+            document.getElementById('weather-town-name').textContent = 'Choose a town';
             document.getElementById('weather-action-title').textContent = 'Checking weather';
             document.getElementById('weather-action-message').textContent = 'Use this before planting, spraying, or harvesting.';
             document.getElementById('weather-current-condition').textContent = '-';
@@ -1232,6 +1250,7 @@
             const contentEl = document.getElementById('weather-content');
             const sourceBadgeEl = document.getElementById('weather-source-badge');
 
+            document.getElementById('weather-empty').classList.add('hidden');
             loadingEl.classList.add('hidden');
             errorEl.classList.add('hidden');
             errorEl.textContent = '';
@@ -1272,16 +1291,17 @@
             document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
             const dailyListEl = document.getElementById('weather-daily-list');
             dailyListEl.innerHTML = dailyItems.length === 0
-                ? '<p class="text-xs text-gray-500">No daily weather yet.</p>'
+                ? '<p class="text-xs text-sky-50">No daily weather yet.</p>'
                 : dailyItems.map(item => `
-                    <div class="flex min-w-[104px] flex-shrink-0 snap-start flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 text-center">
-                        <p class="text-[11px] font-bold text-gray-800">${escapeHtml(formatDay(item.date))}</p>
-                        <p class="mb-1 w-full truncate text-[10px] text-gray-500" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <div class="mb-1 w-full rounded border border-sky-100 bg-white px-2 py-1 shadow-sm">
-                            <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
-                            <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
+                    <div class="flex items-center justify-between gap-3 rounded-md bg-white/95 px-3 py-2 text-gray-900">
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold">${escapeHtml(formatDay(item.date))}</p>
+                            <p class="truncate text-[11px] text-gray-500" title="${escapeHtml(item.condition_text || 'N/A')}">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                         </div>
-                        <p class="text-[10px] text-sky-600">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                        <div class="shrink-0 text-right text-xs">
+                            <p class="font-semibold text-gray-900">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
+                        </div>
                     </div>
                 `).join('');
 
@@ -1293,6 +1313,9 @@
             const weatherErrorEl = document.getElementById('weather-error');
 
             resetWeatherPanel();
+            document.getElementById('weather-town-name').textContent = municipalityName;
+            document.getElementById('weather-empty').classList.add('hidden');
+            weatherLoadingEl.textContent = `Loading weather for ${municipalityName}...`;
             weatherLoadingEl.classList.remove('hidden');
 
             try {
@@ -1315,6 +1338,7 @@
                 }
 
                 weatherLoadingEl.classList.add('hidden');
+                document.getElementById('weather-empty').classList.add('hidden');
                 weatherErrorEl.textContent = `Weather unavailable: ${error.message}`;
                 weatherErrorEl.classList.remove('hidden');
             }
@@ -1331,6 +1355,7 @@
 
             // Update header
             document.getElementById('panel-municipality-name').textContent = municipalityName;
+            document.getElementById('weather-town-name').textContent = municipalityName;
             updateFarmerCountCard(municipalityName, getFarmerCountForMunicipality(currentData, municipalityName));
             renderPlantingSignal([]);
             renderProductionOutlook([]);
