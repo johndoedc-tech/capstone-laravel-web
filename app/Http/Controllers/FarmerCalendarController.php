@@ -106,6 +106,8 @@ class FarmerCalendarController extends Controller
             ->orderBy('event_date')
             ->orderBy('reminder_time')
             ->get()
+            ->reject(fn (FarmerCalendarEvent $event) => $this->shouldHideAfterApprovedHarvest($event))
+            ->values()
             ->map(fn ($event) => $this->formatEvent($event));
 
         // Group by full date to avoid leaking events into adjacent-month cells
@@ -679,6 +681,47 @@ class FarmerCalendarController extends Controller
         }
 
         return $plan;
+    }
+
+    private function shouldHideAfterApprovedHarvest(FarmerCalendarEvent $event): bool
+    {
+        if (! in_array($event->category, ['crop_plan', 'harvest', 'fertilizer'], true)) {
+            return false;
+        }
+
+        if ($event->category === 'harvest') {
+            return $this->isApprovedActualHarvest($event);
+        }
+
+        if ($event->category === 'crop_plan') {
+            return $this->isApprovedActualHarvest($this->getHarvestRecordForPlan($event));
+        }
+
+        if ($event->crop_plan_event_id) {
+            $cropPlan = FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('category', 'crop_plan')
+                ->where('id', $event->crop_plan_event_id)
+                ->first();
+
+            return $cropPlan
+                ? $this->isApprovedActualHarvest($this->getHarvestRecordForPlan($cropPlan))
+                : false;
+        }
+
+        return false;
+    }
+
+    private function isApprovedActualHarvest(?FarmerCalendarEvent $event): bool
+    {
+        if (! $event) {
+            return false;
+        }
+
+        $hasActualHarvest = $event->actual_harvest_recorded_at !== null
+            || $event->actual_harvest_production_mt !== null;
+
+        return $hasActualHarvest
+            && $event->lgu_validation_status === FarmerCalendarEvent::VALIDATION_APPROVED;
     }
 
     private function validateDamageReport(array $validated): FarmerCalendarEvent|\Illuminate\Http\JsonResponse

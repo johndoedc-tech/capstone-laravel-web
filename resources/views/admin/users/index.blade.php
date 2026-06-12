@@ -362,7 +362,7 @@
                 </button>
             </div>
 
-            <form method="POST" action="{{ route('admin.users.store') }}">
+            <form method="POST" action="{{ route('admin.users.store') }}" id="addUserForm">
                 @csrf
                 <div class="space-y-4">
                     <div>
@@ -379,35 +379,42 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-                        <select name="role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="farmer">Farmer</option>
-                            <option value="admin">Administrator</option>
-                            <option value="lgu_validator">LGU Validator</option>
+                        <select name="role" id="add_role" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="farmer" @selected(old('role', 'farmer') === 'farmer')>Farmer</option>
+                            <option value="admin" @selected(old('role') === 'admin')>Administrator</option>
+                            <option value="lgu_validator" @selected(old('role') === 'lgu_validator')>LGU Validator</option>
                         </select>
                     </div>
 
-                    <div class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
+                    <div id="add_lgu_assignment" class="{{ old('role') === 'lgu_validator' ? '' : 'hidden' }} rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
                         <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">LGU assignment</p>
                         <div class="mt-3 space-y-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Municipality</label>
-                                <select name="lgu_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-                                    <option value="">Only required for LGU Validator</option>
+                                <select name="lgu_municipality" id="add_lgu_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="">Choose municipality</option>
                                     @foreach($municipalities as $municipality)
-                                        <option value="{{ $municipality }}">{{ ucwords(strtolower($municipality)) }}</option>
+                                        <option value="{{ $municipality }}" @selected(old('lgu_municipality') === $municipality)>{{ ucwords(strtolower($municipality)) }}</option>
                                     @endforeach
                                 </select>
+                                @if($errors->has('lgu_municipality') && !old('edit_user_id'))
+                                    <p class="text-xs text-red-600 mt-1">{{ $errors->first('lgu_municipality') }}</p>
+                                @endif
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Barangay</label>
-                                <input type="text" name="lgu_barangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Optional">
+                                <input type="text" name="lgu_barangay" id="add_lgu_barangay" value="{{ old('lgu_barangay') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Optional">
+                                @if($errors->has('lgu_barangay') && !old('edit_user_id'))
+                                    <p class="text-xs text-red-600 mt-1">{{ $errors->first('lgu_barangay') }}</p>
+                                @endif
                             </div>
-                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="is_active" value="1" checked class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                Active account
-                            </label>
                         </div>
                     </div>
+
+                    <label class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700">
+                        <input type="checkbox" name="is_active" value="1" @checked(old('is_active', '1') === '1') class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                        Active account
+                    </label>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
@@ -486,28 +493,35 @@
                         @endif
                     </div>
 
-                    <div class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
+                    <div id="edit_lgu_assignment" class="hidden rounded-lg border border-teal-100 bg-teal-50 px-3 py-3">
                         <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">LGU assignment</p>
                         <div class="mt-3 space-y-3">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Municipality</label>
                                 <select name="lgu_municipality" id="edit_lgu_municipality" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-                                    <option value="">Only required for LGU Validator</option>
+                                    <option value="">Choose municipality</option>
                                     @foreach($municipalities as $municipality)
                                         <option value="{{ $municipality }}">{{ ucwords(strtolower($municipality)) }}</option>
                                     @endforeach
                                 </select>
+                                @if($errors->has('lgu_municipality') && old('edit_user_id'))
+                                    <p class="text-xs text-red-600 mt-1">{{ $errors->first('lgu_municipality') }}</p>
+                                @endif
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Barangay</label>
                                 <input type="text" name="lgu_barangay" id="edit_lgu_barangay" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" placeholder="Optional">
+                                @if($errors->has('lgu_barangay') && old('edit_user_id'))
+                                    <p class="text-xs text-red-600 mt-1">{{ $errors->first('lgu_barangay') }}</p>
+                                @endif
                             </div>
-                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
-                                <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
-                                Active account
-                            </label>
                         </div>
                     </div>
+
+                    <label class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700">
+                        <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                        Active account
+                    </label>
 
                     <div>
                         <p class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-xs text-gray-600">
@@ -643,6 +657,83 @@
                 });
             }
 
+            const addUserForm = document.getElementById('addUserForm');
+            const addRoleSelect = document.getElementById('add_role');
+            const addLguAssignment = document.getElementById('add_lgu_assignment');
+            const addLguMunicipalitySelect = document.getElementById('add_lgu_municipality');
+            const editRoleSelect = document.getElementById('edit_role');
+            const editLguAssignment = document.getElementById('edit_lgu_assignment');
+            const editLguMunicipalitySelect = document.getElementById('edit_lgu_municipality');
+
+            const normalizeLocationValue = (value) => (value || '').toString().trim().replace(/\s+/g, ' ').toUpperCase();
+
+            const setSelectValue = (select, value) => {
+                if (!select) {
+                    return;
+                }
+
+                const normalizedValue = normalizeLocationValue(value);
+                select.value = normalizedValue;
+
+                if (select.value === normalizedValue) {
+                    return;
+                }
+
+                const matchingOption = Array.from(select.options).find((option) => {
+                    return normalizeLocationValue(option.value) === normalizedValue
+                        || normalizeLocationValue(option.textContent) === normalizedValue;
+                });
+
+                select.value = matchingOption ? matchingOption.value : '';
+            };
+
+            const updateLguAssignmentVisibility = (roleSelect, panel, clearWhenHidden = true) => {
+                if (!roleSelect || !panel) {
+                    return;
+                }
+
+                const shouldShow = roleSelect.value === 'lgu_validator';
+                panel.classList.toggle('hidden', !shouldShow);
+
+                panel.querySelectorAll('select, input').forEach((field) => {
+                    field.disabled = !shouldShow;
+
+                    if (!shouldShow && clearWhenHidden) {
+                        field.value = '';
+                    }
+                });
+            };
+
+            const requireLguMunicipality = (event, roleSelect, municipalitySelect) => {
+                if (roleSelect?.value !== 'lgu_validator' || municipalitySelect?.value) {
+                    return;
+                }
+
+                event.preventDefault();
+                updateLguAssignmentVisibility(roleSelect, roleSelect === addRoleSelect ? addLguAssignment : editLguAssignment, false);
+                municipalitySelect.focus();
+            };
+
+            addRoleSelect?.addEventListener('change', () => {
+                updateLguAssignmentVisibility(addRoleSelect, addLguAssignment);
+            });
+
+            editRoleSelect?.addEventListener('change', () => {
+                updateLguAssignmentVisibility(editRoleSelect, editLguAssignment);
+            });
+
+            addUserForm?.addEventListener('submit', (event) => {
+                requireLguMunicipality(event, addRoleSelect, addLguMunicipalitySelect);
+            });
+
+            editUserForm?.addEventListener('submit', (event) => {
+                requireLguMunicipality(event, editRoleSelect, editLguMunicipalitySelect);
+            });
+
+            updateLguAssignmentVisibility(addRoleSelect, addLguAssignment, false);
+            updateLguAssignmentVisibility(editRoleSelect, editLguAssignment, false);
+            setSelectValue(addLguMunicipalitySelect, @js(old('lgu_municipality', '')));
+
             const openEditModal = (id, name, email, role, lguMunicipality = '', lguBarangay = '', isActive = '1') => {
                 document.getElementById('edit_user_id').value = id;
                 document.getElementById('edit_user_name').value = name;
@@ -651,7 +742,8 @@
                 document.getElementById('edit_name').value = name;
                 document.getElementById('edit_email').value = email;
                 document.getElementById('edit_role').value = role;
-                document.getElementById('edit_lgu_municipality').value = lguMunicipality || '';
+                updateLguAssignmentVisibility(editRoleSelect, editLguAssignment, false);
+                setSelectValue(document.getElementById('edit_lgu_municipality'), lguMunicipality || '');
                 document.getElementById('edit_lgu_barangay').value = lguBarangay || '';
                 document.getElementById('edit_is_active').checked = isActive !== '0';
                 editUserForm.action = buildRoute(editUserRouteTemplate, id);
@@ -672,6 +764,7 @@
                 const addRoleSelect = addUserModal.querySelector('select[name="role"]');
                 if (addRoleSelect) {
                     addRoleSelect.value = pendingCreateRole;
+                    updateLguAssignmentVisibility(addRoleSelect, addLguAssignment, false);
                 }
                 showModal(addUserModal);
             }

@@ -120,7 +120,25 @@
                             </template>
                         </div>
 
-                        <div x-show="mobileAgendaGroups.length === 0" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center">
+                        <div x-show="selectedApprovedHarvestPlans.length > 0" class="mt-3 space-y-2">
+                            <template x-for="plan in selectedApprovedHarvestPlans" :key="'mobile-approved-harvest-' + plan.id">
+                                <button type="button" @click="openCropTimelineModal(plan.id)" class="calendar-event-card w-full rounded-xl border border-emerald-100 bg-emerald-50/70 p-3 text-left">
+                                    <div class="flex min-w-0 items-start justify-between gap-3">
+                                        <div class="min-w-0">
+                                            <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="plan.crop || plan.title"></p>
+                                            <p class="mt-0.5 text-xs text-emerald-700">Harvested and LGU approved.</p>
+                                        </div>
+                                        <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-emerald-700">Approved</span>
+                                    </div>
+                                    <div class="mt-2 flex flex-wrap gap-1.5">
+                                        <span class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-emerald-700" x-text="formatHarvestAmount(plan)"></span>
+                                        <span class="calendar-chip rounded bg-white px-1.5 py-0.5 text-xs text-gray-700" x-text="plan.actual_harvest_date ? formatDisplayDate(plan.actual_harvest_date) : 'Harvest date saved'"></span>
+                                    </div>
+                                </button>
+                            </template>
+                        </div>
+
+                        <div x-show="mobileAgendaGroups.length === 0 && selectedApprovedHarvestPlans.length === 0" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center">
                             <p class="text-sm font-medium text-gray-700">No plans yet.</p>
                             <p class="mt-1 text-xs text-gray-500">Plan a crop or add a reminder.</p>
                         </div>
@@ -341,14 +359,14 @@
 
                     <!-- Selected Day Details -->
                     <div class="calendar-sidebar-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 overflow-hidden">
-                        <div x-show="!selectedDate && calendarEventGroups.length === 0 && activeCropTimelines.length === 0" class="text-center py-8 text-gray-400">
+                        <div x-show="!selectedDate && calendarEventGroups.length === 0 && activeCropTimelines.length === 0 && selectedApprovedHarvestPlans.length === 0" class="text-center py-8 text-gray-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             <p class="text-sm">Pick a day.</p>
                         </div>
 
-                        <div x-show="selectedDate || calendarEventGroups.length > 0 || activeCropTimelines.length > 0">
+                        <div x-show="selectedDate || calendarEventGroups.length > 0 || activeCropTimelines.length > 0 || selectedApprovedHarvestPlans.length > 0">
                             <div class="mb-5">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Your Farm Schedule</p>
                                 <h3 class="mt-1 text-lg font-semibold text-gray-900 leading-tight" x-text="selectedDate ? selectedDateDisplay : 'Calendar Events'"></h3>
@@ -429,6 +447,49 @@
                                                     View details
                                                 </button>
                                             </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Approved Harvest History -->
+                            <div x-show="selectedApprovedHarvestPlans.length > 0" class="mb-6">
+                                <div class="mb-2 flex items-end justify-between gap-3">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">Harvested Crops</p>
+                                        <p class="text-xs text-gray-400">LGU already approved these records.</p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                                        <span x-text="selectedApprovedHarvestPlans.length"></span>
+                                        <span x-text="selectedApprovedHarvestPlans.length === 1 ? ' approved' : ' approved'"></span>
+                                    </span>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <template x-for="plan in selectedApprovedHarvestPlans" :key="'approved-harvest-' + plan.id">
+                                        <div class="calendar-event-card rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                                            <div class="flex min-w-0 items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="calendar-event-title text-sm font-semibold text-gray-900" x-text="plan.crop || plan.title"></p>
+                                                    <p class="mt-0.5 text-xs text-emerald-700">Harvested and LGU approved.</p>
+                                                </div>
+                                                <span class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-emerald-700">Approved</span>
+                                            </div>
+
+                                            <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                                <div class="rounded-md bg-white/80 px-2 py-1.5">
+                                                    <p class="text-[10px] font-semibold uppercase text-gray-400">Actual harvest</p>
+                                                    <p class="mt-0.5 font-medium text-gray-700" x-text="formatHarvestAmount(plan)"></p>
+                                                </div>
+                                                <div class="rounded-md bg-white/80 px-2 py-1.5">
+                                                    <p class="text-[10px] font-semibold uppercase text-gray-400">Harvest date</p>
+                                                    <p class="mt-0.5 font-medium text-gray-700" x-text="plan.actual_harvest_date ? formatDisplayDate(plan.actual_harvest_date) : '-'"></p>
+                                                </div>
+                                            </div>
+
+                                            <button type="button" @click.stop="openCropTimelineModal(plan.id)" class="mt-3 inline-flex w-full items-center justify-center rounded-lg border border-emerald-200 bg-white px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
+                                                View harvest history
+                                            </button>
                                         </div>
                                     </template>
                                 </div>
@@ -1373,6 +1434,15 @@
                     return this.selectedDayEvents.filter((event) => event.category === 'crop_plan');
                 },
 
+                get selectedApprovedHarvestPlans() {
+                    if (!this.selectedDate) return [];
+
+                    return this.cropPlans
+                        .filter((plan) => this.activeCropPlanStartDate(plan) === this.selectedDate)
+                        .filter((plan) => this.isApprovedHarvest(plan))
+                        .sort((a, b) => (a.actual_harvest_date || '').localeCompare(b.actual_harvest_date || ''));
+                },
+
                 get activeCropTimelines() {
                     const monthStart = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
                     const monthEnd = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
@@ -1699,6 +1769,11 @@
                         || (record?.actual_harvest_production_mt !== null
                         && record?.actual_harvest_production_mt !== undefined
                         && record?.actual_harvest_production_mt !== '');
+                },
+
+                isApprovedHarvest(record) {
+                    return this.hasActualHarvest(record)
+                        && this.harvestValidationStatus(record) === 'approved';
                 },
 
                 cropPlanProductionLabel(plan) {
