@@ -90,7 +90,7 @@
                                 : array_merge($baseFilterQuery, ['role' => $roleValue]);
                             $isCurrentRole = ($filters['role'] ?? '') === $roleValue;
                         @endphp
-                        <a href="{{ route('admin.users.index', $roleQuery) }}" class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition {{ $isCurrentRole ? 'border-teal-600 bg-teal-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800' }}">
+                        <a href="{{ route('admin.users.index', $roleQuery) }}" data-no-page-loader class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition {{ $isCurrentRole ? 'border-teal-600 bg-teal-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800' }}">
                             <span>{{ $roleFilter['label'] }}</span>
                             <span class="rounded-full px-1.5 py-0.5 text-[11px] {{ $isCurrentRole ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500' }}">{{ number_format($roleFilter['count']) }}</span>
                         </a>
