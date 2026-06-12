@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminActivityLog;
 use App\Models\CropProduction;
 use App\Models\User;
+use App\Support\BenguetLocations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -84,11 +85,15 @@ class UserController extends Controller
         $municipalities = Schema::hasTable((new CropProduction)->getTable())
             ? CropProduction::query()
                 ->distinct()
-                ->orderBy('municipality')
                 ->pluck('municipality')
+                ->map(fn ($municipality) => BenguetLocations::normalize((string) $municipality))
                 ->filter()
-                ->values()
             : collect();
+        $municipalities = $municipalities
+            ->merge(BenguetLocations::MUNICIPALITIES)
+            ->unique()
+            ->sort()
+            ->values();
 
         return view('admin.users.index', compact('users', 'totalUsers', 'adminCount', 'farmerCount', 'lguValidatorCount', 'recentUsers', 'municipalities', 'stats', 'filters'));
     }
@@ -103,8 +108,8 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:admin,farmer,lgu_validator'],
-            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255'],
-            'lgu_barangay' => ['nullable', 'string', 'max:255'],
+            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255', $this->validLguMunicipalityRule($request)],
+            'lgu_barangay' => ['nullable', 'string', 'max:255', $this->validLguBarangayRule($request)],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -123,8 +128,8 @@ class UserController extends Controller
         ];
 
         if ($this->supportsLguValidatorColumns()) {
-            $userData['lgu_municipality'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
-            $userData['lgu_barangay'] = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
+            $userData['lgu_municipality'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? BenguetLocations::normalize($validated['lgu_municipality']) : null;
+            $userData['lgu_barangay'] = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? BenguetLocations::normalize($validated['lgu_barangay']) : null;
             $userData['is_active'] = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active', true) : true;
         }
 
@@ -142,8 +147,8 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'role' => ['required', 'in:admin,farmer,lgu_validator'],
-            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255'],
-            'lgu_barangay' => ['nullable', 'string', 'max:255'],
+            'lgu_municipality' => ['nullable', 'required_if:role,lgu_validator', 'string', 'max:255', $this->validLguMunicipalityRule($request)],
+            'lgu_barangay' => ['nullable', 'string', 'max:255', $this->validLguBarangayRule($request)],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -157,8 +162,8 @@ class UserController extends Controller
         $user->email = $validated['email'];
         $user->role = $validated['role'];
         if ($this->supportsLguValidatorColumns()) {
-            $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? strtoupper(trim($validated['lgu_municipality'])) : null;
-            $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? strtoupper(trim($validated['lgu_barangay'])) : null;
+            $user->lgu_municipality = $validated['role'] === User::ROLE_LGU_VALIDATOR ? BenguetLocations::normalize($validated['lgu_municipality']) : null;
+            $user->lgu_barangay = $validated['role'] === User::ROLE_LGU_VALIDATOR && ! empty($validated['lgu_barangay']) ? BenguetLocations::normalize($validated['lgu_barangay']) : null;
             $user->is_active = $validated['role'] === User::ROLE_LGU_VALIDATOR ? $request->boolean('is_active') : true;
         }
 
@@ -243,5 +248,31 @@ class UserController extends Controller
         return Schema::hasColumn('users', 'lgu_municipality')
             && Schema::hasColumn('users', 'lgu_barangay')
             && Schema::hasColumn('users', 'is_active');
+    }
+
+    private function validLguMunicipalityRule(Request $request): \Closure
+    {
+        return function ($attribute, $value, $fail) use ($request) {
+            if ($request->input('role') !== User::ROLE_LGU_VALIDATOR || blank($value)) {
+                return;
+            }
+
+            if (! in_array(BenguetLocations::normalize($value), BenguetLocations::MUNICIPALITIES, true)) {
+                $fail('The selected municipality is not supported.');
+            }
+        };
+    }
+
+    private function validLguBarangayRule(Request $request): \Closure
+    {
+        return function ($attribute, $value, $fail) use ($request) {
+            if ($request->input('role') !== User::ROLE_LGU_VALIDATOR || blank($value)) {
+                return;
+            }
+
+            if (! BenguetLocations::isBarangayInMunicipality($value, $request->input('lgu_municipality'))) {
+                $fail('The selected barangay is not part of the assigned municipality.');
+            }
+        };
     }
 }

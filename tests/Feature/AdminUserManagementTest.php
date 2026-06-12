@@ -100,34 +100,47 @@ class AdminUserManagementTest extends TestCase
         $this->assertTrue($validator->is_active);
     }
 
-    public function test_admin_can_use_dedicated_lgu_validator_management_flow(): void
+    public function test_old_lgu_validator_pages_redirect_to_unified_users_page(): void
     {
         $admin = User::factory()->create([
             'role' => User::ROLE_ADMIN,
         ]);
 
-        $response = $this->actingAs($admin)->post(route('admin.lgu-validators.store'), [
-            'name' => 'Dedicated LGU Validator',
-            'email' => 'dedicated.lgu@example.test',
-            'password' => 'Password123!',
-            'password_confirmation' => 'Password123!',
-            'lgu_municipality' => 'BUGUIAS',
-            'lgu_barangay' => 'ABATAN',
-            'is_active' => '1',
+        $response = $this->actingAs($admin)->get(route('admin.lgu-validators.index'));
+
+        $response->assertRedirect('/admin/users?role=lgu_validator');
+    }
+
+    public function test_admin_can_update_lgu_validator_through_users_page(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
         ]);
 
-        $response->assertRedirect(route('admin.lgu-validators.index'));
+        $validator = User::factory()->create([
+            'name' => 'Existing LGU Validator',
+            'email' => 'existing.lgu@example.test',
+            'role' => User::ROLE_LGU_VALIDATOR,
+            'lgu_municipality' => 'BUGUIAS',
+            'lgu_barangay' => 'ABATAN',
+            'is_active' => true,
+        ]);
 
-        $validator = User::where('email', 'dedicated.lgu@example.test')->firstOrFail();
+        $response = $this->actingAs($admin)->put(route('admin.users.update', $validator), [
+            'name' => 'Updated LGU Validator',
+            'email' => 'updated.lgu@example.test',
+            'role' => User::ROLE_LGU_VALIDATOR,
+            'lgu_municipality' => 'ATOK',
+            'lgu_barangay' => 'CALIKING',
+        ]);
 
-        $this->assertSame(User::ROLE_LGU_VALIDATOR, $validator->role);
-        $this->assertSame('BUGUIAS', $validator->lgu_municipality);
-        $this->assertSame('ABATAN', $validator->lgu_barangay);
+        $response->assertRedirect(route('admin.users.index'));
 
-        $toggleResponse = $this->actingAs($admin)->patch(route('admin.lgu-validators.active', $validator));
-
-        $toggleResponse->assertRedirect();
-        $this->assertFalse($validator->fresh()->is_active);
+        $validator->refresh();
+        $this->assertSame('Updated LGU Validator', $validator->name);
+        $this->assertSame('ATOK', $validator->lgu_municipality);
+        $this->assertSame('CALIKING', $validator->lgu_barangay);
+        $this->assertFalse($validator->is_active);
     }
 
     public function test_lgu_validator_barangay_must_match_municipality(): void
@@ -136,11 +149,12 @@ class AdminUserManagementTest extends TestCase
             'role' => User::ROLE_ADMIN,
         ]);
 
-        $response = $this->actingAs($admin)->post(route('admin.lgu-validators.store'), [
+        $response = $this->actingAs($admin)->post(route('admin.users.store'), [
             'name' => 'Invalid LGU Validator',
             'email' => 'invalid.lgu@example.test',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
+            'role' => User::ROLE_LGU_VALIDATOR,
             'lgu_municipality' => 'ATOK',
             'lgu_barangay' => 'ABATAN',
             'is_active' => '1',

@@ -21,18 +21,26 @@
             'farmer' => 'Farmer',
             'lgu_validator' => 'LGU Validator',
         ];
+        $roleFilterLinks = [
+            '' => ['label' => 'All users', 'count' => $stats['total']],
+            'farmer' => ['label' => 'Farmers', 'count' => $stats['farmers']],
+            'lgu_validator' => ['label' => 'LGU Validators', 'count' => $stats['lgu_validators']],
+            'admin' => ['label' => 'Admins', 'count' => $stats['admins']],
+        ];
+        $baseFilterQuery = request()->except(['page', 'role', 'create_role']);
     @endphp
 
     <div class="min-h-full bg-gray-50">
         <div class="p-3 sm:p-6 space-y-5">
             <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">User Management</p>
+                        <h1 class="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">Users</h1>
+                        <p class="mt-1 text-sm text-gray-500">Manage farmers, LGU validators, and admin accounts in one place.</p>
+                    </div>
 
-
-                    <div class="flex flex-col gap-2 sm:flex-row">
-                        <a href="{{ route('admin.lgu-validators.index') }}" class="inline-flex items-center justify-center rounded-lg border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-100">
-                            LGU Validators
-                        </a>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
                         <button
                             type="button"
                             data-open-modal="addUserModal"
@@ -74,6 +82,21 @@
             </div>
 
             <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="mb-4 flex flex-wrap gap-2">
+                    @foreach($roleFilterLinks as $roleValue => $roleFilter)
+                        @php
+                            $roleQuery = $roleValue === ''
+                                ? $baseFilterQuery
+                                : array_merge($baseFilterQuery, ['role' => $roleValue]);
+                            $isCurrentRole = ($filters['role'] ?? '') === $roleValue;
+                        @endphp
+                        <a href="{{ route('admin.users.index', $roleQuery) }}" class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition {{ $isCurrentRole ? 'border-teal-600 bg-teal-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800' }}">
+                            <span>{{ $roleFilter['label'] }}</span>
+                            <span class="rounded-full px-1.5 py-0.5 text-[11px] {{ $isCurrentRole ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500' }}">{{ number_format($roleFilter['count']) }}</span>
+                        </a>
+                    @endforeach
+                </div>
+
                 <form method="GET" action="{{ route('admin.users.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.6fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(110px,0.6fr)_auto] lg:items-end" data-admin-user-filter-form>
                     <div>
                         <label for="search" class="block text-xs font-semibold uppercase tracking-wide text-gray-500">Search</label>
@@ -588,6 +611,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const editUserRouteTemplate = @js(route('admin.users.update', ['user' => '__USER__']));
             const resetPasswordRouteTemplate = @js(route('admin.users.password.reset', ['user' => '__USER__']));
+            const pendingCreateRole = @js(request('create_role'));
 
             const addUserModal = document.getElementById('addUserModal');
             const editUserModal = document.getElementById('editUserModal');
@@ -654,6 +678,14 @@
                 resetPasswordForm.action = buildRoute(resetPasswordRouteTemplate, id);
                 showModal(resetPasswordModal);
             };
+
+            if (pendingCreateRole && addUserModal) {
+                const addRoleSelect = addUserModal.querySelector('select[name="role"]');
+                if (addRoleSelect) {
+                    addRoleSelect.value = pendingCreateRole;
+                }
+                showModal(addUserModal);
+            }
 
             document.querySelectorAll('[data-open-edit-user]').forEach((button) => {
                 button.addEventListener('click', () => {
