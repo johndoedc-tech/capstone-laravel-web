@@ -231,7 +231,7 @@
                             <div class="mb-4 lg:mb-6 pr-8">
                                 <h2 id="panel-municipality-name"
                                     class="text-xl lg:text-2xl font-bold text-gray-800 mb-2">Municipality Name</h2>
-                                <p class="text-xs lg:text-sm text-gray-600">Tap a town.</p>
+                                <p class="text-xs lg:text-sm text-gray-600">See what farmers are planting here.</p>
                             </div>
 
                             <!-- Loading Indicator -->
@@ -251,13 +251,13 @@
                             <div id="panel-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
 
                             <!-- Panel Content -->
-                            <div id="panel-content" class="space-y-6">
-                                <!-- Farmer Count -->
+                            <div id="panel-content" class="space-y-4">
+                                <!-- Town Summary -->
                                 <div class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
                                     <div class="flex items-center justify-between gap-4">
                                         <div>
-                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Farmers Here</p>
-                                            <p class="mt-1 text-xs text-emerald-700">Based on saved town.</p>
+                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Town Summary</p>
+                                            <p class="mt-1 text-xs text-emerald-700">Farmers with saved town here.</p>
                                         </div>
                                         <div class="text-right">
                                             <p id="panel-farmer-count" class="text-2xl font-bold text-emerald-700">-</p>
@@ -266,12 +266,27 @@
                                     </div>
                                 </div>
 
+                                <!-- Planting Signal -->
+                                <div id="planting-signal-card" class="rounded-lg border border-green-200 bg-white p-4 shadow-sm">
+                                    <div class="mb-3 flex items-start justify-between gap-3">
+                                        <div>
+                                            <h3 class="text-sm font-semibold uppercase text-gray-700">Planting Signal</h3>
+                                            <p class="mt-1 text-xs text-gray-500">Quick guide before you plant.</p>
+                                        </div>
+                                        <span id="planting-signal-badge"
+                                            class="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700">Checking</span>
+                                    </div>
+                                    <p id="planting-signal-title" class="text-base font-semibold text-gray-900">Choose a town</p>
+                                    <p id="planting-signal-message" class="mt-1 text-sm leading-relaxed text-gray-600">You will see a simple planting guide here.</p>
+                                    <div id="planting-signal-alternatives" class="mt-3 flex flex-wrap gap-1.5"></div>
+                                </div>
+
                                 <!-- Real-time Production Outlook -->
                                 <div class="rounded-lg border border-orange-200 bg-orange-50/50 p-4">
                                     <div class="mb-3 flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Supply</h3>
-                                            <p class="mt-1 text-xs text-orange-700">Expected, harvested, damaged, remaining.</p>
+                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Top Crops Here</h3>
+                                            <p class="mt-1 text-xs text-orange-700">See what may be crowded.</p>
                                         </div>
                                         <span id="production-outlook-count" class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-orange-700">-</span>
                                     </div>
@@ -293,6 +308,12 @@
                                     <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
 
                                     <div id="weather-content" class="hidden space-y-3">
+                                        <div class="rounded-md border border-sky-100 bg-white p-3">
+                                            <p class="text-xs uppercase tracking-wide text-sky-700">Weather Advice</p>
+                                            <p id="weather-action-title" class="mt-1 text-sm font-semibold text-gray-900">Checking weather</p>
+                                            <p id="weather-action-message" class="mt-1 text-xs leading-relaxed text-gray-600">Use this before planting, spraying, or harvesting.</p>
+                                        </div>
+
                                         <div class="bg-white rounded-md border border-sky-100 p-3">
                                             <div class="flex items-start justify-between gap-2">
                                                 <div>
@@ -342,9 +363,17 @@
 
                                 <!-- Crop Distribution Chart -->
                                 <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crops Here
-                                    </h3>
-                                    <canvas id="crop-chart" height="250"></canvas>
+                                    <div class="mb-3 flex items-center justify-between gap-3">
+                                        <div>
+                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Crops Here</h3>
+                                            <p class="mt-1 text-xs text-gray-500">Simple list first, chart after.</p>
+                                        </div>
+                                        <span id="crop-summary-count" class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">-</span>
+                                    </div>
+                                    <div id="crop-list-summary" class="space-y-2"></div>
+                                    <div class="mt-3 hidden sm:block">
+                                        <canvas id="crop-chart" height="250"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -848,6 +877,8 @@
             document.getElementById('weather-content').classList.add('hidden');
             document.getElementById('weather-source-badge').classList.add('hidden');
 
+            document.getElementById('weather-action-title').textContent = 'Checking weather';
+            document.getElementById('weather-action-message').textContent = 'Use this before planting, spraying, or harvesting.';
             document.getElementById('weather-current-condition').textContent = '-';
             document.getElementById('weather-current-temp').textContent = '-';
             document.getElementById('weather-current-humidity').textContent = '-';
@@ -894,7 +925,7 @@
             return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
         }
 
-        function renderProductionOutlook(outlook) {
+        function renderProductionOutlookLegacy(outlook) {
             const listEl = document.getElementById('production-outlook-list');
             const countEl = document.getElementById('production-outlook-count');
             const rows = Array.isArray(outlook) ? outlook : [];
@@ -937,6 +968,144 @@
             `).join('');
         }
 
+        function toSafeNumber(value) {
+            const amount = Number(value);
+            return Number.isFinite(amount) ? amount : 0;
+        }
+
+        function getOutlookSupplyValue(row) {
+            return toSafeNumber(row?.supply_forecast_mt ?? row?.net_expected_production_mt ?? row?.predicted_production_mt);
+        }
+
+        function getSortedOutlookRows(outlook) {
+            return (Array.isArray(outlook) ? outlook : [])
+                .slice()
+                .sort((a, b) => {
+                    const planDiff = toSafeNumber(b.plan_count) - toSafeNumber(a.plan_count);
+                    if (planDiff !== 0) return planDiff;
+                    return getOutlookSupplyValue(b) - getOutlookSupplyValue(a);
+                });
+        }
+
+        function getSelectedCropName() {
+            return document.getElementById('crop-filter')?.value || '';
+        }
+
+        function renderPlantingSignal(outlook) {
+            const cardEl = document.getElementById('planting-signal-card');
+            const badgeEl = document.getElementById('planting-signal-badge');
+            const titleEl = document.getElementById('planting-signal-title');
+            const messageEl = document.getElementById('planting-signal-message');
+            const alternativesEl = document.getElementById('planting-signal-alternatives');
+            const rows = getSortedOutlookRows(outlook);
+            const selectedCrop = getSelectedCropName();
+
+            cardEl.className = 'rounded-lg border bg-white p-4 shadow-sm';
+            alternativesEl.innerHTML = '';
+
+            if (rows.length === 0) {
+                cardEl.classList.add('border-green-200');
+                badgeEl.className = 'shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700';
+                badgeEl.textContent = 'Open';
+                titleEl.textContent = 'No crop crowding yet';
+                messageEl.textContent = 'You can plan based on your field and weather.';
+                return;
+            }
+
+            const selectedRow = selectedCrop
+                ? rows.find(row => String(row.crop || '').toLowerCase() === selectedCrop.toLowerCase())
+                : null;
+            const mainRow = selectedRow || rows[0];
+            const cropName = mainRow?.crop || 'this crop';
+            const planCount = toSafeNumber(mainRow?.plan_count);
+            const maxPlanCount = Math.max(...rows.map(row => toSafeNumber(row.plan_count)));
+            const isCrowded = planCount > 1 && planCount >= maxPlanCount;
+            const hasDamage = rows.some(row => toSafeNumber(row.damaged_production_mt) > 0);
+
+            if (selectedRow) {
+                if (isCrowded) {
+                    cardEl.classList.add('border-amber-200');
+                    badgeEl.className = 'shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700';
+                    badgeEl.textContent = 'Compare';
+                    titleEl.textContent = `${cropName} is popular here`;
+                    messageEl.textContent = 'Check another crop before you plant the same one.';
+                } else {
+                    cardEl.classList.add('border-green-200');
+                    badgeEl.className = 'shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700';
+                    badgeEl.textContent = 'Looks okay';
+                    titleEl.textContent = `${cropName} still looks okay`;
+                    messageEl.textContent = 'Keep checking the supply before planting.';
+                }
+            } else {
+                cardEl.classList.add(isCrowded ? 'border-amber-200' : 'border-green-200');
+                badgeEl.className = isCrowded
+                    ? 'shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700'
+                    : 'shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700';
+                badgeEl.textContent = isCrowded ? 'Watch' : 'Guide';
+                titleEl.textContent = `Most farmers here plant ${cropName}`;
+                messageEl.textContent = isCrowded
+                    ? 'If you plant the same crop, check the supply first.'
+                    : 'Use this as a guide before choosing your crop.';
+            }
+
+            const alternatives = rows
+                .filter(row => String(row.crop || '') !== String(cropName))
+                .slice(0, 3);
+
+            if (alternatives.length > 0) {
+                alternativesEl.innerHTML = alternatives.map(row => `
+                    <span class="rounded-full bg-gray-50 px-2.5 py-1 text-[11px] font-medium text-gray-700 ring-1 ring-gray-200">
+                        Try ${escapeHtml(row.crop || 'crop')}
+                    </span>
+                `).join('');
+            } else if (hasDamage) {
+                alternativesEl.innerHTML = '<span class="rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-medium text-red-700 ring-1 ring-red-100">Damage reported here</span>';
+            }
+        }
+
+        function renderProductionOutlook(outlook) {
+            const listEl = document.getElementById('production-outlook-list');
+            const countEl = document.getElementById('production-outlook-count');
+            const rows = getSortedOutlookRows(outlook);
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No crop plans here yet.</p>';
+                return;
+            }
+
+            const visibleRows = rows.slice(0, 3);
+            const hiddenCount = Math.max(rows.length - visibleRows.length, 0);
+
+            listEl.innerHTML = visibleRows.map(row => {
+                const planCount = toSafeNumber(row.plan_count);
+                const harvestedCount = toSafeNumber(row.harvested_count);
+                const damaged = toSafeNumber(row.damaged_production_mt);
+                const remaining = toSafeNumber(row.net_expected_production_mt);
+
+                return `
+                    <div class="rounded-lg border border-orange-100 bg-white p-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-900 break-words">${escapeHtml(row.crop || 'Crop')}</p>
+                                <p class="mt-0.5 text-[11px] text-gray-500">${planCount.toLocaleString()} ${planCount === 1 ? 'plan' : 'plans'} recorded here</p>
+                            </div>
+                            <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(getOutlookSupplyValue(row))}</span>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-1.5 text-[11px]">
+                            <span class="rounded-full bg-orange-50 px-2 py-1 font-medium text-orange-700">Expected ${formatMetricTons(row.predicted_production_mt)}</span>
+                            <span class="rounded-full bg-green-50 px-2 py-1 font-medium text-green-700">Harvested ${harvestedCount.toLocaleString()}</span>
+                            <span class="rounded-full bg-emerald-50 px-2 py-1 font-medium text-emerald-700">Still coming ${formatMetricTons(remaining)}</span>
+                            ${damaged > 0 ? `<span class="rounded-full bg-red-50 px-2 py-1 font-medium text-red-700">Damaged ${formatMetricTons(damaged)}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('') + (hiddenCount > 0
+                ? `<p class="pt-1 text-xs text-gray-500">+${hiddenCount} more ${hiddenCount === 1 ? 'crop' : 'crops'}. Use the crop filter to check one crop.</p>`
+                : '');
+        }
+
         function formatDay(value) {
             if (!value) return '--';
             const parsed = new Date(value);
@@ -954,7 +1123,36 @@
             })[char]);
         }
 
-        function renderWeatherData(weatherPayload, hasErrors) {
+        function renderWeatherAdvice(current) {
+            const rainChance = toSafeNumber(current?.precipitation_probability_percent);
+            const windSpeed = toSafeNumber(current?.wind_speed_kph);
+            const condition = String(current?.condition_text || '').toLowerCase();
+            const titleEl = document.getElementById('weather-action-title');
+            const messageEl = document.getElementById('weather-action-message');
+
+            if (rainChance >= 60 || condition.includes('rain')) {
+                titleEl.textContent = 'Rain is likely';
+                messageEl.textContent = 'Avoid spraying today. Check drainage if you just planted.';
+                return;
+            }
+
+            if (windSpeed >= 25) {
+                titleEl.textContent = 'It may be windy';
+                messageEl.textContent = 'Be careful with spraying and field work.';
+                return;
+            }
+
+            if (!current || Object.keys(current).length === 0) {
+                titleEl.textContent = 'Weather is unavailable';
+                messageEl.textContent = 'Check the weather before field work.';
+                return;
+            }
+
+            titleEl.textContent = 'Weather looks workable';
+            messageEl.textContent = 'You can plan field work, but still check your area.';
+        }
+
+        function renderWeatherDataLegacy(weatherPayload, hasErrors) {
             const loadingEl = document.getElementById('weather-loading');
             const errorEl = document.getElementById('weather-error');
             const contentEl = document.getElementById('weather-content');
@@ -982,6 +1180,7 @@
             }
 
             const current = weatherPayload?.current || {};
+            renderWeatherAdvice(current);
             document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
             document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
             document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
@@ -1023,6 +1222,68 @@
                     </div>
                 `).join('');
             }
+
+            contentEl.classList.remove('hidden');
+        }
+
+        function renderWeatherData(weatherPayload, hasErrors) {
+            const loadingEl = document.getElementById('weather-loading');
+            const errorEl = document.getElementById('weather-error');
+            const contentEl = document.getElementById('weather-content');
+            const sourceBadgeEl = document.getElementById('weather-source-badge');
+
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+
+            const staleMap = weatherPayload?.metadata?.stale || {};
+            sourceBadgeEl.classList.toggle('hidden', !Object.values(staleMap).some(Boolean));
+
+            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
+            if (segmentErrors.length > 0 || hasErrors) {
+                errorEl.textContent = segmentErrors[0] || 'Some weather data is missing.';
+                errorEl.classList.remove('hidden');
+            }
+
+            const current = weatherPayload?.current || {};
+            renderWeatherAdvice(current);
+            document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
+            document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
+            document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
+            document.getElementById('weather-current-wind').textContent = formatWind(current.wind_speed_kph);
+            document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
+            document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
+
+            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 8);
+            document.getElementById('weather-hourly-count').textContent = `${hourlyItems.length} checks`;
+            const hourlyListEl = document.getElementById('weather-hourly-list');
+            hourlyListEl.innerHTML = hourlyItems.length === 0
+                ? '<p class="text-xs text-gray-500">No hourly weather yet.</p>'
+                : hourlyItems.map(item => `
+                    <div class="flex min-w-[92px] flex-shrink-0 snap-start flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 text-center">
+                        <p class="text-[11px] font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
+                        <p class="my-1 text-xs font-bold text-sky-700">${escapeHtml(formatTemperature(item.temperature_c))}</p>
+                        <p class="w-full truncate text-[10px] text-gray-600" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <p class="mt-1 text-[10px] text-sky-600">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    </div>
+                `).join('');
+
+            const dailyItems = (weatherPayload?.daily?.items || []).slice(0, 5);
+            document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
+            const dailyListEl = document.getElementById('weather-daily-list');
+            dailyListEl.innerHTML = dailyItems.length === 0
+                ? '<p class="text-xs text-gray-500">No daily weather yet.</p>'
+                : dailyItems.map(item => `
+                    <div class="flex min-w-[104px] flex-shrink-0 snap-start flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 text-center">
+                        <p class="text-[11px] font-bold text-gray-800">${escapeHtml(formatDay(item.date))}</p>
+                        <p class="mb-1 w-full truncate text-[10px] text-gray-500" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <div class="mb-1 w-full rounded border border-sky-100 bg-white px-2 py-1 shadow-sm">
+                            <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
+                        </div>
+                        <p class="text-[10px] text-sky-600">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    </div>
+                `).join('');
 
             contentEl.classList.remove('hidden');
         }
@@ -1071,6 +1332,7 @@
             // Update header
             document.getElementById('panel-municipality-name').textContent = municipalityName;
             updateFarmerCountCard(municipalityName, getFarmerCountForMunicipality(currentData, municipalityName));
+            renderPlantingSignal([]);
             renderProductionOutlook([]);
 
             // Show loading
@@ -1107,6 +1369,7 @@
                     municipalityName,
                     data.summary?.farmer_count ?? getFarmerCountForMunicipality(currentData, municipalityName)
                 );
+                renderPlantingSignal(data.production_outlook);
                 renderProductionOutlook(data.production_outlook);
 
                 // Update charts
@@ -1131,10 +1394,47 @@
             }
         }
 
+        function renderCropListSummary(cropData) {
+            const listEl = document.getElementById('crop-list-summary');
+            const countEl = document.getElementById('crop-summary-count');
+            const rows = (Array.isArray(cropData) ? cropData : [])
+                .slice()
+                .sort((a, b) => toSafeNumber(b.total_production) - toSafeNumber(a.total_production));
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="rounded-lg bg-gray-50 p-3 text-sm text-gray-500">No crop records here yet.</p>';
+                return;
+            }
+
+            const totalProduction = rows.reduce((sum, row) => sum + toSafeNumber(row.total_production), 0);
+            const visibleRows = rows.slice(0, 5);
+
+            listEl.innerHTML = visibleRows.map(row => {
+                const value = toSafeNumber(row.total_production);
+                const percent = totalProduction > 0 ? Math.round((value / totalProduction) * 100) : 0;
+
+                return `
+                    <div class="rounded-lg border border-gray-100 bg-white p-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="min-w-0 truncate text-sm font-semibold text-gray-900">${escapeHtml(row.crop || 'Crop')}</p>
+                            <span class="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700">${percent}%</span>
+                        </div>
+                        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-100">
+                            <div class="h-full rounded-full bg-green-500" style="width: ${Math.max(percent, 4)}%"></div>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">${formatMetricTons(value)} recorded</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function updateCropChart(cropData) {
             const ctx = document.getElementById('crop-chart');
             if (!ctx) return;
 
+            renderCropListSummary(cropData);
             const container = ctx.parentElement;
             const emptyState = container.querySelector('[data-crop-chart-empty]');
 
