@@ -6,11 +6,10 @@
     <div class="pt-20 pb-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto" x-data="forumIndexVotes()">
             
-            <!-- Header -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-6">
+            <div class="hidden">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">🌾 Community Forum</h1>
+                        <p class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">Community Forum</p>
                         <p class="text-sm lg:text-base text-gray-600">Share knowledge, ask questions, and connect with fellow Benguet farmers</p>
                     </div>
                     <a href="{{ route('forum.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
@@ -20,6 +19,15 @@
                         New Post
                     </a>
                 </div>
+            </div>
+
+            <div class="mb-4 flex justify-end">
+                <a href="{{ route('forum.create') }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    New Post
+                </a>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">

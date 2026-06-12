@@ -3,12 +3,6 @@
 @endphp
 
 <x-dynamic-component :component="$forumLayout">
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ $post->title }}
-        </h2>
-    </x-slot>
-
     <div class="pt-20 pb-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl mx-auto" x-data="forumPost()">
             
@@ -64,7 +58,7 @@
                             @endif
                         </div>
 
-                        <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ $post->title }}</h1>
+                        <p class="mb-4 text-2xl font-bold text-gray-900">{{ $post->title }}</p>
 
                         <div class="prose prose-green max-w-none text-gray-700 mb-4">
                             {!! nl2br(e($post->content)) !!}

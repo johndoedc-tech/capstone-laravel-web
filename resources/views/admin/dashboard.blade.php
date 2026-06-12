@@ -1,35 +1,6 @@
 <x-admin-layout>
     <div class="py-3 lg:py-4 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-
-            <!-- Header Section -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3 lg:mb-4">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-xl lg:text-2xl font-bold text-gray-900 mb-0.5">
-                            Admin Dashboard
-                        </h1>
-                        <p class="text-sm text-gray-500">
-                            Welcome back, <span class="font-semibold text-gray-900">{{ Auth::user()->name }}</span>
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3 text-left sm:text-right">
-                        <div class="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg bg-primary-50">
-                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-400">{{ now()->format('l') }}</p>
-                            <p class="text-sm lg:text-base font-semibold text-gray-900">{{ now()->format('F d, Y') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Statistics Grid -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
                 <!-- Total Users -->

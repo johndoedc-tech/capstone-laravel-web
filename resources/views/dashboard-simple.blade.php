@@ -246,15 +246,14 @@
         <div class="max-w-7xl mx-auto">
             
             <!-- ============================================ -->
-            <!-- SIMPLE GREETING HEADER -->
             <!-- ============================================ -->
-            <div class="rounded-xl sm:rounded-2xl shadow-sm px-3 py-3 sm:p-4 lg:p-6 mb-3 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
+            <div class="hidden">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
                     <div class="min-w-0">
                         <p class="text-white/80 text-[11px] sm:text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
-                        <h1 class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
+                        <p class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
                             {{ Auth::user()->name }}! 👋
-                        </h1>
+                        </p>
                         <p class="mt-1 text-primary-100 text-xs sm:text-sm leading-snug" x-text="t('dashboard_subtitle')"></p>
                         <div class="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
                             @if($preferredMunicipality)

@@ -25,14 +25,13 @@
     <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             
-            <!-- Header Section -->
-            <div class="rounded-lg shadow-sm p-4 lg:p-6 mb-4 lg:mb-6" style="background: linear-gradient(135deg, #355872 0%, #4A7399 50%, #5B8FB7 100%);">
+            <div class="hidden">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <p class="text-sm text-primary-200">Good {{ now()->format('H') < 12 ? 'morning' : (now()->format('H') < 18 ? 'afternoon' : 'evening') }},</p>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-white mb-1">
+                        <p class="text-2xl lg:text-3xl font-bold text-white mb-1">
                             {{ Auth::user()->name }}! 👋
-                        </h1>
+                        </p>
                         <p class="text-sm lg:text-base text-primary-200">
                             What shall we do on the farm today?
                         </p>

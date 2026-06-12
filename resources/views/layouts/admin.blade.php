@@ -46,15 +46,6 @@
 
             <!-- Page Content -->
             <main class="app-main flex-1 lg:ml-64 overflow-y-auto pt-16 lg:pt-0">
-                <!-- Page Heading -->
-                @isset($header)
-                    <header class="bg-cream shadow-sm border-b border-primary-300/30">
-                        <div class="max-w-7xl mx-auto py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
-                        </div>
-                    </header>
-                @endisset
-
                 {{ $slot }}
             </main>
         </div>

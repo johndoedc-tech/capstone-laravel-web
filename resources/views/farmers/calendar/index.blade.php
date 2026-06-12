@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('My Farm Calendar') }}
-        </h2>
-    </x-slot>
-
     <style>
         .calendar-sidebar-card,
         .calendar-event-card,

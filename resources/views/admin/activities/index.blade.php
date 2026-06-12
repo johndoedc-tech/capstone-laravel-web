@@ -1,20 +1,4 @@
 <x-admin-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between gap-4">
-            <div>
-                <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-                    {{ __('User Activity') }}
-                </h2>
-                <p class="text-xs lg:text-sm text-gray-600 mt-1">
-                    Complete feed of tracked user actions across the platform
-                </p>
-            </div>
-            <a href="{{ route('admin.dashboard', ['activity_type' => $activityFilter]) }}" class="text-sm text-blue-600 hover:text-blue-800">
-                Back to Dashboard
-            </a>
-        </div>
-    </x-slot>
-
     <div class="py-4 lg:py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto space-y-4 lg:space-y-6">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">

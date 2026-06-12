@@ -39,24 +39,6 @@
         </header>
 
         <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:py-8">
-            <section class="mb-5 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 px-4 py-5 text-white shadow-sm sm:px-6">
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">LGU Validator</p>
-                        <h1 class="mt-1 text-2xl font-bold">Review farmer submissions</h1>
-                        <p class="mt-1 text-sm text-white/80">
-                            Assigned area: {{ ucwords(strtolower($validator->lgu_municipality ?? 'No municipality assigned')) }}
-                            @if($validator->lgu_barangay)
-                                / {{ ucwords(strtolower($validator->lgu_barangay)) }}
-                            @endif
-                        </p>
-                    </div>
-                    <a href="{{ route('lgu.dashboard', ['status' => 'pending']) }}" class="inline-flex w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-semibold text-white ring-1 ring-white/20 hover:bg-white/20">
-                        Pending queue
-                    </a>
-                </div>
-            </section>
-
             <section class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div class="rounded-2xl border border-amber-100 bg-white p-4 shadow-sm">
                     <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Pending</p>
@@ -73,6 +55,11 @@
             </section>
 
             <section class="mb-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div class="mb-3 flex justify-end">
+                    <a href="{{ route('lgu.dashboard', ['status' => 'pending']) }}" class="inline-flex w-fit rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-100">
+                        Pending queue
+                    </a>
+                </div>
                 <form method="GET" action="{{ route('lgu.dashboard') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_auto]">
                     <input type="search" name="search" value="{{ $search }}" placeholder="Search farmer, crop, title..." class="rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">
                     <select name="type" class="rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">

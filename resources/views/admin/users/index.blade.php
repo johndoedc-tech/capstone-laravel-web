@@ -32,28 +32,6 @@
 
     <div class="min-h-full bg-gray-50">
         <div class="p-3 sm:p-6 space-y-5">
-            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wide text-teal-700">User Management</p>
-                        <h1 class="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">Users</h1>
-                        <p class="mt-1 text-sm text-gray-500">Manage farmers, LGU validators, and admin accounts in one place.</p>
-                    </div>
-
-                    <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <button
-                            type="button"
-                            data-open-modal="addUserModal"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Add User
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <div class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
                 <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                     <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total</p>
@@ -82,19 +60,30 @@
             </div>
 
             <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-                <div class="mb-4 flex flex-wrap gap-2">
-                    @foreach($roleFilterLinks as $roleValue => $roleFilter)
-                        @php
-                            $roleQuery = $roleValue === ''
-                                ? $baseFilterQuery
-                                : array_merge($baseFilterQuery, ['role' => $roleValue]);
-                            $isCurrentRole = ($filters['role'] ?? '') === $roleValue;
-                        @endphp
-                        <a href="{{ route('admin.users.index', $roleQuery) }}" data-no-page-loader class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition {{ $isCurrentRole ? 'border-teal-600 bg-teal-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800' }}">
-                            <span>{{ $roleFilter['label'] }}</span>
-                            <span class="rounded-full px-1.5 py-0.5 text-[11px] {{ $isCurrentRole ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500' }}">{{ number_format($roleFilter['count']) }}</span>
-                        </a>
-                    @endforeach
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($roleFilterLinks as $roleValue => $roleFilter)
+                            @php
+                                $roleQuery = $roleValue === ''
+                                    ? $baseFilterQuery
+                                    : array_merge($baseFilterQuery, ['role' => $roleValue]);
+                                $isCurrentRole = ($filters['role'] ?? '') === $roleValue;
+                            @endphp
+                            <a href="{{ route('admin.users.index', $roleQuery) }}" data-no-page-loader class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition {{ $isCurrentRole ? 'border-teal-600 bg-teal-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800' }}">
+                                <span>{{ $roleFilter['label'] }}</span>
+                                <span class="rounded-full px-1.5 py-0.5 text-[11px] {{ $isCurrentRole ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500' }}">{{ number_format($roleFilter['count']) }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                    <button
+                        type="button"
+                        data-open-modal="addUserModal"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add User
+                    </button>
                 </div>
 
                 <form method="GET" action="{{ route('admin.users.index') }}" class="grid gap-3 lg:grid-cols-[minmax(180px,1.6fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(130px,0.8fr)_minmax(110px,0.6fr)_auto] lg:items-end" data-admin-user-filter-form>
