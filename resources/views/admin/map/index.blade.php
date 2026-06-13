@@ -1,6 +1,6 @@
 <x-admin-layout>
     <style>
-        /* Premium Leaflet Popup Overrides */
+        /* Leaflet popup polish */
         .leaflet-popup-content-wrapper {
             border-radius: 1rem !important;
             box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
@@ -67,13 +67,197 @@
             min-height: 24rem;
         }
         .pwa-map-details-panel {
-            top: calc(4.5rem + var(--harviana-safe-top));
-            height: calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top));
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-height: min(82vh, calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top)));
+            border-radius: 1.25rem 1.25rem 0 0;
+            background: #f8fafc;
+            box-shadow: 0 -18px 45px rgb(15 23 42 / 0.18);
             padding-bottom: var(--harviana-safe-bottom);
+            overscroll-behavior: contain;
+        }
+        .pwa-map-details-panel.translate-x-full {
+            transform: translateY(100%) !important;
+        }
+        .pwa-map-details-panel:not(.translate-x-full) {
+            transform: translateY(0) !important;
+        }
+        .pwa-panel-handle {
+            width: 2.75rem;
+            height: 0.25rem;
+            border-radius: 9999px;
+            background: #cbd5e1;
+        }
+        .pwa-panel-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            margin: -1rem -1rem 1rem;
+            padding: 0.75rem 1rem 1rem;
+            background: rgb(248 250 252 / 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .pwa-panel-count {
+            border: 1px solid #bbf7d0;
+            background: #ecfdf5;
+            color: #166534;
+            border-radius: 9999px;
+            padding: 0.35rem 0.65rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .pwa-panel-section {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            border-radius: 0.875rem;
+            padding: 1rem;
+        }
+        .pwa-section-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            color: #475569;
+        }
+        .pwa-section-help {
+            margin-top: 0.15rem;
+            font-size: 0.76rem;
+            color: #64748b;
+        }
+        .pwa-status-pill,
+        .pwa-soft-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .pwa-status-pill {
+            background: #ecfdf5;
+            color: #166534;
+            padding: 0.35rem 0.55rem;
+        }
+        .pwa-status-pill.is-warning {
+            background: #fffbeb;
+            color: #92400e;
+        }
+        .pwa-soft-pill {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.6rem;
+        }
+        .pwa-status-pill.hidden,
+        .pwa-soft-pill.hidden {
+            display: none !important;
+        }
+        .pwa-metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+        .pwa-metric-cell,
+        .pwa-crop-row,
+        .pwa-forecast-card {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+        }
+        .pwa-metric-cell {
+            background: #f8fafc;
+        }
+        .pwa-crop-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.65rem;
+        }
+        .pwa-crop-meta span {
+            border-radius: 9999px;
+            background: #f8fafc;
+            color: #475569;
+            padding: 0.35rem 0.55rem;
+            font-size: 0.68rem;
+            font-weight: 650;
+        }
+        .pwa-crop-meta span.is-danger {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+        .pwa-weather-summary {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.75rem;
+            align-items: start;
+        }
+        .pwa-weather-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.45rem 0.75rem;
+            margin-top: 0.75rem;
+            font-size: 0.74rem;
+            color: #64748b;
+        }
+        .pwa-forecast-strip {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.35rem;
+            scroll-snap-type: x proximity;
+            scrollbar-width: thin;
+        }
+        .pwa-forecast-card {
+            min-width: 5.75rem;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            background: #f8fafc;
+            padding: 0.6rem;
+            text-align: center;
+        }
+        .pwa-progress-track {
+            height: 0.4rem;
+            overflow: hidden;
+            border-radius: 9999px;
+            background: #e5e7eb;
+        }
+        .pwa-progress-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: #16a34a;
+        }
+        .pwa-secondary-block {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
         }
         @media (min-width: 640px) {
             .pwa-map-viewport {
                 height: 650px;
+            }
+            .pwa-map-details-panel {
+                left: auto;
+                top: calc(4.5rem + var(--harviana-safe-top));
+                bottom: auto;
+                height: calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top));
+                max-height: none;
+                border-radius: 1rem 0 0 1rem;
+                box-shadow: -16px 0 40px rgb(15 23 42 / 0.16);
+            }
+            .pwa-map-details-panel.translate-x-full {
+                transform: translateX(100%) !important;
+            }
+            .pwa-map-details-panel:not(.translate-x-full) {
+                transform: translateX(0) !important;
+            }
+            .pwa-panel-header {
+                margin: -1.25rem -1.25rem 1rem;
+                padding: 1rem 1.25rem;
+            }
+            .pwa-panel-handle {
+                display: none;
             }
         }
         @media (min-width: 1024px) {
@@ -83,6 +267,10 @@
             .pwa-map-details-panel {
                 top: 0;
                 height: var(--harviana-viewport-height);
+            }
+            .pwa-panel-header {
+                margin: -1.5rem -1.5rem 1rem;
+                padding: 1rem 1.5rem;
             }
         }
     </style>
@@ -179,25 +367,37 @@
                     <div id="map"
                         class="pwa-map-viewport relative z-0 rounded-lg shadow-inner"></div>
 
-                    <!-- Municipality Details Panel - Slides from right -->
+                    <!-- Municipality Details Panel -->
                     <div id="details-panel"
-                        class="pwa-map-details-panel fixed right-0 bg-white shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
-                        <div class="p-4 lg:p-6">
-                            <!-- Close Button -->
-                            <button onclick="closeDetailsPanel()"
-                                class="absolute top-3 right-3 lg:top-4 lg:right-4 text-gray-500 hover:text-gray-700">
-                                <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
+                        class="pwa-map-details-panel fixed right-0 z-30 transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto w-full sm:w-[400px] lg:w-[440px]">
+                        <div class="p-4 sm:p-5 lg:p-6">
+                            <div class="pwa-panel-header">
+                                <div class="mb-3 flex justify-center sm:hidden">
+                                    <span class="pwa-panel-handle" aria-hidden="true"></span>
+                                </div>
 
-                            <!-- Panel Header -->
-                            <div class="mb-4 lg:mb-6 pr-8">
-                                <h2 id="panel-municipality-name"
-                                    class="text-xl lg:text-2xl font-bold text-gray-800 mb-2">Municipality Name</h2>
-                                <p class="text-xs lg:text-sm text-gray-600">Click on municipality data below</p>
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <h2 id="panel-municipality-name"
+                                            class="truncate text-xl font-bold leading-tight text-slate-900 lg:text-2xl">Municipality Name</h2>
+                                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Municipality production and farmer signals.</p>
+                                    </div>
+
+                                    <div class="flex shrink-0 items-center gap-2">
+                                        <div class="pwa-panel-count text-right">
+                                            <p id="panel-farmer-count" class="text-sm font-bold">-</p>
+                                            <p id="panel-farmer-count-label" class="mt-0.5 text-[10px] font-semibold uppercase text-green-700">farmers</p>
+                                        </div>
+                                        <button type="button" onclick="closeDetailsPanel()"
+                                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-700"
+                                            aria-label="Close municipality details">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Loading Indicator -->
@@ -217,128 +417,117 @@
                             <div id="panel-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
 
                             <!-- Panel Content -->
-                            <div id="panel-content" class="space-y-6">
-                                <!-- Farmer Count -->
-                                <div class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
-                                    <div class="flex items-center justify-between gap-4">
-                                        <div>
-                                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Registered Farmers</p>
-                                            <p class="mt-1 text-xs text-emerald-700">Based on saved farmer municipality</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <p id="panel-farmer-count" class="text-2xl font-bold text-emerald-700">-</p>
-                                            <p id="panel-farmer-count-label" class="text-xs text-emerald-700">farmers</p>
-                                        </div>
-                                    </div>
-                                </div>
-
+                            <div id="panel-content" class="space-y-3">
                                 <!-- Real-time Production Outlook -->
-                                <div class="rounded-lg border border-orange-200 bg-orange-50/50 p-4">
+                                <div class="pwa-panel-section">
                                     <div class="mb-3 flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 class="text-sm font-semibold text-gray-700 uppercase">Current Season Crop Outlook</h3>
-                                            <p class="mt-1 text-xs text-orange-700">Predicted, harvested, damaged, and remaining supply from farmer crop plans</p>
+                                            <h3 class="pwa-section-label">Current Season Crop Outlook</h3>
+                                            <p class="pwa-section-help">Predicted, harvested, damaged, and remaining supply.</p>
                                         </div>
-                                        <span id="production-outlook-count" class="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-orange-700">-</span>
+                                        <span id="production-outlook-count" class="pwa-soft-pill">-</span>
                                     </div>
                                     <div id="production-outlook-list" class="space-y-2">
-                                        <p class="text-sm text-gray-500">Select a municipality to view current crop outlook.</p>
+                                        <p class="text-sm text-slate-500">Select a municipality to view current crop outlook.</p>
                                     </div>
                                 </div>
 
                                 <!-- Overview Stats -->
-                                <div
-                                    class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Overview</h3>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <p class="text-xs text-gray-600">Total Production</p>
-                                            <p id="detail-production" class="text-lg font-bold text-green-700">-</p>
+                                <div class="pwa-panel-section">
+                                    <div class="mb-3">
+                                        <h3 class="pwa-section-label">Overview</h3>
+                                        <p class="pwa-section-help">Historical records for this municipality.</p>
+                                    </div>
+                                    <div class="pwa-metric-grid">
+                                        <div class="pwa-metric-cell">
+                                            <p class="text-xs text-slate-500">Total Production</p>
+                                            <p id="detail-production" class="mt-1 text-lg font-bold text-green-700">-</p>
                                         </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Area Harvested</p>
-                                            <p id="detail-area" class="text-lg font-bold text-green-700">-</p>
+                                        <div class="pwa-metric-cell">
+                                            <p class="text-xs text-slate-500">Area Harvested</p>
+                                            <p id="detail-area" class="mt-1 text-lg font-bold text-green-700">-</p>
                                         </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Productivity</p>
-                                            <p id="detail-productivity" class="text-lg font-bold text-green-700">-</p>
+                                        <div class="pwa-metric-cell">
+                                            <p class="text-xs text-slate-500">Productivity</p>
+                                            <p id="detail-productivity" class="mt-1 text-lg font-bold text-green-700">-</p>
                                         </div>
-                                        <div>
-                                            <p class="text-xs text-gray-600">Records</p>
-                                            <p id="detail-records" class="text-lg font-bold text-green-700">-</p>
+                                        <div class="pwa-metric-cell">
+                                            <p class="text-xs text-slate-500">Records</p>
+                                            <p id="detail-records" class="mt-1 text-lg font-bold text-green-700">-</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Weather Cards -->
-                                <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
+                                <div id="weather-section" class="pwa-panel-section">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Outlook</h3>
+                                        <h3 class="pwa-section-label">Weather Outlook</h3>
                                         <span id="weather-source-badge"
-                                            class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
+                                            class="pwa-status-pill is-warning hidden">Stale
                                             Cache</span>
                                     </div>
 
-                                    <div id="weather-loading" class="hidden text-xs text-sky-700 mb-3">Loading weather data...</div>
+                                    <div id="weather-loading" class="hidden text-xs text-slate-500 mb-3">Loading weather data...</div>
                                     <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
 
-                                    <div id="weather-content" class="hidden space-y-3">
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-start justify-between gap-2">
-                                                <div>
-                                                    <p class="text-xs uppercase tracking-wide text-gray-500">Current</p>
-                                                    <p id="weather-current-condition" class="text-sm font-semibold text-gray-800">-</p>
+                                    <div id="weather-content" class="hidden">
+                                        <div class="pwa-weather-summary">
+                                            <div>
+                                                <p class="text-sm font-semibold text-slate-950">Current field condition</p>
+                                                <p id="weather-current-condition" class="mt-1 text-xs text-slate-600">-</p>
+                                            </div>
+                                            <p id="weather-current-temp" class="text-lg font-bold text-green-700">-</p>
+                                        </div>
+
+                                        <div class="pwa-weather-meta">
+                                            <p>Humidity: <span id="weather-current-humidity" class="font-medium text-slate-800">-</span></p>
+                                            <p>Wind: <span id="weather-current-wind" class="font-medium text-slate-800">-</span></p>
+                                            <p>Rain: <span id="weather-current-rain" class="font-medium text-slate-800">-</span></p>
+                                            <p>Updated: <span id="weather-current-time" class="font-medium text-slate-800">-</span></p>
+                                        </div>
+
+                                        <div class="mt-4 space-y-3 border-t border-slate-200 pt-3">
+                                            <div>
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <p class="text-xs font-semibold uppercase text-slate-500">Hourly</p>
+                                                    <span id="weather-hourly-count" class="text-[11px] text-slate-500"></span>
                                                 </div>
-                                                <p id="weather-current-temp" class="text-base font-bold text-sky-700">-</p>
+                                                <div id="weather-hourly-list" class="pwa-forecast-strip"></div>
                                             </div>
-                                            <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
-                                                <p>Humidity: <span id="weather-current-humidity" class="font-medium text-gray-700">-</span></p>
-                                                <p>Wind: <span id="weather-current-wind" class="font-medium text-gray-700">-</span></p>
-                                                <p>Rain Chance: <span id="weather-current-rain" class="font-medium text-gray-700">-</span></p>
-                                                <p>Updated: <span id="weather-current-time" class="font-medium text-gray-700">-</span></p>
-                                            </div>
-                                        </div>
 
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly</p>
-                                                <span id="weather-hourly-count" class="text-[11px] text-gray-500"></span>
+                                            <div>
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <p class="text-xs font-semibold uppercase text-slate-500">Daily</p>
+                                                    <span id="weather-daily-count" class="text-[11px] text-slate-500"></span>
+                                                </div>
+                                                <div id="weather-daily-list" class="pwa-forecast-strip"></div>
                                             </div>
-                                            <div id="weather-hourly-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
-                                        </div>
-
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily</p>
-                                                <span id="weather-daily-count" class="text-[11px] text-gray-500"></span>
-                                            </div>
-                                            <div id="weather-daily-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Farm Type Breakdown -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Farm Type
-                                        Distribution</h3>
+                                <div class="pwa-panel-section pwa-secondary-block">
+                                    <div class="mb-3">
+                                        <h3 class="pwa-section-label">Farm Type Distribution</h3>
+                                        <p class="pwa-section-help">Production split by farm type.</p>
+                                    </div>
                                     <div id="farm-type-container" class="space-y-2">
                                         <!-- Will be populated dynamically -->
                                     </div>
                                 </div>
 
                                 <!-- Monthly Production Chart -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Monthly Production
-                                    </h3>
+                                <div class="pwa-panel-section pwa-secondary-block">
+                                    <h3 class="pwa-section-label mb-3">Monthly Production</h3>
                                     <canvas id="monthly-chart" height="200"></canvas>
                                 </div>
 
                                 <!-- Contribution Per Municipality Chart -->
-                                <div id="contribution-section" class="hidden">
+                                <div id="contribution-section" class="pwa-panel-section pwa-secondary-block hidden">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Contribution</h3>
-                                        <span id="contribution-crop-badge"
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"></span>
+                                        <h3 class="pwa-section-label">Crop Contribution</h3>
+                                        <span id="contribution-crop-badge" class="pwa-soft-pill"></span>
                                     </div>
                                     <canvas id="contribution-chart" height="250"></canvas>
                                     <div id="contribution-details" class="mt-3 space-y-1">
@@ -347,9 +536,8 @@
                                 </div>
 
                                 <!-- Crop Distribution Chart -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crop Distribution
-                                    </h3>
+                                <div class="pwa-panel-section pwa-secondary-block">
+                                    <h3 class="pwa-section-label mb-3">Crop Distribution</h3>
                                     <canvas id="crop-chart" height="250"></canvas>
                                 </div>
                             </div>
@@ -735,24 +923,24 @@
             // Update details text
             const detailsContainer = document.getElementById('contribution-details');
             detailsContainer.innerHTML = `
-                <div class="flex items-center justify-between bg-green-50 p-2 rounded border border-green-200">
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-2">
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #22c55e"></div>
-                        <span class="text-sm font-medium text-gray-700">${municipalityName}</span>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #16a34a"></div>
+                        <span class="text-sm font-medium text-slate-700">${municipalityName}</span>
                     </div>
                     <div class="text-right">
                         <span class="text-sm font-bold text-green-700">${selectedPercentage}%</span>
-                        <span class="text-xs text-gray-500 ml-1">(${Number(selectedValue).toLocaleString()} ${unit})</span>
+                        <span class="text-xs text-slate-500 ml-1">(${Number(selectedValue).toLocaleString()} ${unit})</span>
                     </div>
                 </div>
-                <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200">
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-2">
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #d1d5db"></div>
-                        <span class="text-sm font-medium text-gray-700">Other Municipalities</span>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #cbd5e1"></div>
+                        <span class="text-sm font-medium text-slate-700">Other Municipalities</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-sm font-bold text-gray-800">${othersPercentage}%</span>
-                        <span class="text-xs text-gray-500 ml-1">(${Number(othersValue).toLocaleString()} ${unit})</span>
+                        <span class="text-sm font-bold text-slate-800">${othersPercentage}%</span>
+                        <span class="text-xs text-slate-500 ml-1">(${Number(othersValue).toLocaleString()} ${unit})</span>
                     </div>
                 </div>
             `;
@@ -770,7 +958,7 @@
                     labels: [municipalityName, 'Other Municipalities'],
                     datasets: [{
                         data: [selectedValue, othersValue],
-                        backgroundColor: ['#22c55e', '#d1d5db'],
+                        backgroundColor: ['#16a34a', '#cbd5e1'],
                         borderWidth: 2,
                         borderColor: '#fff'
                     }]
