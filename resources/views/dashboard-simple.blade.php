@@ -8,6 +8,11 @@
         $cropBalanceItems = collect($cropBalancePulse['items'] ?? []);
         $cropBalanceAlternatives = collect($cropBalancePulse['alternatives'] ?? []);
         $topCropsUrl = rtrim((string) config('services.ml_api.url'), '/') . '/api/top-crops';
+        $dashboardConfig = [
+            'municipality' => $preferredMunicipality ?? '',
+            'predictionUrl' => route('predictions.predict.form'),
+            'topCropsUrl' => $topCropsUrl,
+        ];
     @endphp
 
     <style>
@@ -60,11 +65,7 @@
     </style>
 
     <div
-        x-data='farmerDashboard(@json([
-            'municipality' => $preferredMunicipality ?? '',
-            'predictionUrl' => route('predictions.predict.form'),
-            'topCropsUrl' => $topCropsUrl,
-        ]))'
+        x-data="farmerDashboard({{ Illuminate\Support\Js::from($dashboardConfig) }})"
         x-init="init()"
         class="px-4 py-4 sm:px-6 lg:px-8 lg:py-6"
     >

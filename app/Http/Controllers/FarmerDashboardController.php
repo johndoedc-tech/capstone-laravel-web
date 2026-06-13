@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class FarmerDashboardController extends Controller
 {
@@ -54,8 +55,8 @@ class FarmerDashboardController extends Controller
         // User preferences
         $preferredMunicipality = $user->preferred_municipality;
         $favoriteCrops = $user->favorite_crops ?? [];
-        $harvestProgress = $this->getHarvestProgress($user->id);
-        $cropBalancePulse = app(CommunityCropSignalService::class)->dashboardPulse($user);
+        $harvestProgress = $this->getSafeHarvestProgress($user->id);
+        $cropBalancePulse = $this->getSafeCropBalancePulse($user, $preferredMunicipality);
         $todayActionQueue = $this->buildTodayActionQueue(
             $preferredMunicipality,
             $harvestProgress,
@@ -123,9 +124,11 @@ class FarmerDashboardController extends Controller
         $crowdedCrop = $cropSignals->firstWhere('pressure_key', 'high');
 
         if ($crowdedCrop) {
+            $cropName = data_get($crowdedCrop, 'crop', 'A nearby crop');
+
             $items[] = [
                 'label' => 'Check crowded crops',
-                'description' => "{$crowdedCrop['crop']} has high nearby supply expected.",
+                'description' => "{$cropName} has high nearby supply expected.",
                 'meta' => 'Community',
                 'href' => route('farmer.calendar.page'),
                 'tone' => 'amber',
@@ -159,6 +162,84 @@ class FarmerDashboardController extends Controller
         ];
 
         return array_slice($items, 0, 3);
+    }
+
+    private function getSafeHarvestProgress(int $userId): array
+    {
+        if (! $this->supportsCalendarColumns([
+            'estimated_harvest_date',
+            'desired_area_sqm',
+            'damage_area_sqm',
+            'crop_plan_event_id',
+            'harvest_event_id',
+            'predicted_production_mt',
+        ])) {
+            return $this->emptyHarvestProgress();
+        }
+
+        try {
+            return $this->getHarvestProgress($userId);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return $this->emptyHarvestProgress();
+        }
+    }
+
+    private function getSafeCropBalancePulse($user, ?string $preferredMunicipality): array
+    {
+        try {
+            return app(CommunityCropSignalService::class)->dashboardPulse($user);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return $this->emptyCropBalancePulse($preferredMunicipality);
+        }
+    }
+
+    private function emptyHarvestProgress(): array
+    {
+        return [
+            'items' => collect(),
+            'active_count' => 0,
+            'hidden_count' => 0,
+            'due_soon_count' => 0,
+            'expected_production_mt' => 0,
+        ];
+    }
+
+    private function emptyCropBalancePulse(?string $preferredMunicipality): array
+    {
+        $hasLocation = filled($preferredMunicipality);
+
+        return [
+            'has_location' => $hasLocation,
+            'has_data' => false,
+            'municipality' => $hasLocation ? ucwords(strtolower($preferredMunicipality)) : null,
+            'window_label' => 'Next 180 days',
+            'items' => collect(),
+            'alternatives' => collect(),
+            'message' => $hasLocation
+                ? 'Local crop balance is temporarily unavailable.'
+                : 'Set your farm location to see crops near you.',
+        ];
+    }
+
+    private function supportsCalendarColumns(array $columns): bool
+    {
+        try {
+            foreach ($columns as $column) {
+                if (! Schema::hasColumn('farmer_calendar_events', $column)) {
+                    return false;
+                }
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return false;
+        }
+
+        return true;
     }
 
     private function getHarvestProgress(int $userId): array
