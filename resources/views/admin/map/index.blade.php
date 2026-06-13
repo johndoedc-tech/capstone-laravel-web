@@ -1053,6 +1053,11 @@
             return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
         }
 
+        function toSafeNumber(value) {
+            const amount = Number(value);
+            return Number.isFinite(amount) ? amount : 0;
+        }
+
         function renderProductionOutlook(outlook) {
             const listEl = document.getElementById('production-outlook-list');
             const countEl = document.getElementById('production-outlook-count');
@@ -1061,36 +1066,24 @@
             countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
 
             if (rows.length === 0) {
-                listEl.innerHTML = '<p class="text-sm text-gray-500">No current-season crop plans reported for this municipality yet.</p>';
+                listEl.innerHTML = '<p class="text-sm text-slate-500">No current-season crop plans reported for this municipality yet.</p>';
                 return;
             }
 
             listEl.innerHTML = rows.map(row => `
-                <div class="rounded-lg border border-orange-100 bg-white p-3">
+                <div class="pwa-crop-row">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="text-sm font-semibold text-gray-900 break-words">${escapeHtml(row.crop || 'Crop')}</p>
-                            <p class="mt-0.5 text-[11px] text-gray-500">${Number(row.plan_count || 0).toLocaleString()} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} · ${Number(row.harvested_count || 0).toLocaleString()} harvested</p>
+                            <p class="text-sm font-semibold text-slate-950 break-words">${escapeHtml(row.crop || 'Crop')}</p>
+                            <p class="mt-0.5 text-[11px] text-slate-500">${Number(row.plan_count || 0).toLocaleString()} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} recorded, ${Number(row.harvested_count || 0).toLocaleString()} harvested</p>
                         </div>
-                        <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(row.supply_forecast_mt ?? row.net_expected_production_mt)}</span>
+                        <span class="pwa-status-pill">${formatMetricTons(row.supply_forecast_mt ?? row.net_expected_production_mt)}</span>
                     </div>
-                    <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
-                        <div class="rounded bg-orange-50 px-2 py-1.5">
-                            <p class="font-semibold text-orange-700">Predicted</p>
-                            <p class="text-gray-900">${formatMetricTons(row.predicted_production_mt)}</p>
-                        </div>
-                        <div class="rounded bg-green-50 px-2 py-1.5">
-                            <p class="font-semibold text-green-700">Harvested</p>
-                            <p class="text-gray-900">${formatMetricTons(row.harvested_production_mt)}</p>
-                        </div>
-                        <div class="rounded bg-red-50 px-2 py-1.5">
-                            <p class="font-semibold text-red-700">Damaged</p>
-                            <p class="text-gray-900">${formatMetricTons(row.damaged_production_mt)}</p>
-                        </div>
-                        <div class="rounded bg-emerald-50 px-2 py-1.5">
-                            <p class="font-semibold text-emerald-700">Remaining</p>
-                            <p class="text-gray-900">${formatMetricTons(row.net_expected_production_mt)}</p>
-                        </div>
+                    <div class="pwa-crop-meta">
+                        <span>Predicted ${formatMetricTons(row.predicted_production_mt)}</span>
+                        <span>Harvested ${formatMetricTons(row.harvested_production_mt)}</span>
+                        <span>Remaining ${formatMetricTons(row.net_expected_production_mt)}</span>
+                        ${toSafeNumber(row.damaged_production_mt) > 0 ? `<span class="is-danger">Damaged ${formatMetricTons(row.damaged_production_mt)}</span>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1152,14 +1145,14 @@
             document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
             const hourlyListEl = document.getElementById('weather-hourly-list');
             if (hourlyItems.length === 0) {
-                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly data available.</p>';
+                hourlyListEl.innerHTML = '<p class="text-xs text-slate-500">No hourly data available.</p>';
             } else {
                 hourlyListEl.innerHTML = hourlyItems.map(item => `
-                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[90px] flex-shrink-0 snap-start text-center">
-                        <p class="text-[11px] font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
-                        <p class="text-xs font-bold text-sky-700 my-1">${escapeHtml(formatTemperature(item.temperature_c))}</p>
-                        <p class="text-[10px] text-gray-600 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <p class="text-[10px] text-sky-600 mt-1">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    <div class="pwa-forecast-card">
+                        <p class="text-[11px] font-semibold text-slate-700">${escapeHtml(formatClock(item.timestamp))}</p>
+                        <p class="text-xs font-bold text-green-700 my-1">${escapeHtml(formatTemperature(item.temperature_c))}</p>
+                        <p class="text-[10px] text-slate-600 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
@@ -1168,17 +1161,17 @@
             document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
             const dailyListEl = document.getElementById('weather-daily-list');
             if (dailyItems.length === 0) {
-                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily data available.</p>';
+                dailyListEl.innerHTML = '<p class="text-xs text-slate-500">No daily data available.</p>';
             } else {
                 dailyListEl.innerHTML = dailyItems.map(item => `
-                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[100px] flex-shrink-0 snap-start text-center">
-                        <p class="text-[11px] font-bold text-gray-800">${escapeHtml(formatDay(item.date))}</p>
-                        <p class="text-[10px] text-gray-500 mb-1 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <div class="bg-white rounded px-2 py-1 shadow-sm border border-sky-100 mb-1 w-full">
-                            <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
-                            <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
+                    <div class="pwa-forecast-card">
+                        <p class="text-[11px] font-bold text-slate-800">${escapeHtml(formatDay(item.date))}</p>
+                        <p class="text-[10px] text-slate-500 mb-1 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <div class="bg-white rounded-md px-2 py-1 border border-slate-200 mb-1 w-full">
+                            <p class="text-[11px] font-semibold text-slate-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-[9px] text-slate-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
                         </div>
-                        <p class="text-[10px] text-sky-600">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                        <p class="text-[10px] text-slate-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
@@ -1305,7 +1298,7 @@
             const container = document.getElementById('farm-type-container');
 
             if (!farmTypes || farmTypes.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-500">No farm type data available</p>';
+                container.innerHTML = '<p class="text-sm text-slate-500">No farm type data available.</p>';
                 return;
             }
 
@@ -1315,15 +1308,15 @@
                 const production = parseFloat(ft.total_production);
                 const percentage = ((production / total) * 100).toFixed(1);
                 return `
-                    <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                    <div class="pwa-crop-row">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700">${ft.farm_type}</span>
-                            <span class="text-sm font-bold text-green-600">${percentage}%</span>
+                            <span class="text-sm font-medium text-slate-800">${ft.farm_type}</span>
+                            <span class="pwa-status-pill">${percentage}%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-green-600 h-2 rounded-full" style="width: ${percentage}%"></div>
+                        <div class="pwa-progress-track">
+                            <div class="pwa-progress-fill" style="width: ${percentage}%"></div>
                         </div>
-                        <p class="text-xs text-gray-600 mt-1">${Number(production).toLocaleString()} mt</p>
+                        <p class="text-xs text-slate-500 mt-1">${Number(production).toLocaleString()} mt</p>
                     </div>
                 `;
             }).join('');
@@ -1352,8 +1345,8 @@
                     datasets: [{
                         label: 'Production (mt)',
                         data: data,
-                        backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(22, 163, 74, 0.75)',
+                        borderColor: 'rgb(22, 163, 74)',
                         borderWidth: 1
                     }]
                 },
@@ -1396,7 +1389,7 @@
                 ctx.classList.add('hidden');
                 if (container && !emptyState) {
                     container.insertAdjacentHTML('beforeend',
-                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop data available</p>');
+                        '<p data-crop-chart-empty class="text-sm text-slate-500 text-center py-8">No crop data available</p>');
                 }
                 return;
             }
@@ -1405,8 +1398,8 @@
             emptyState?.remove();
 
             const colors = [
-                '#ef4444', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
-                '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1'
+                '#16a34a', '#65a30d', '#0f766e', '#64748b', '#d97706',
+                '#15803d', '#475569', '#84cc16', '#0d9488', '#94a3b8'
             ];
 
             cropChart = new Chart(ctx, {

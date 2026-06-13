@@ -39,7 +39,7 @@ class FarmerDashboardController extends Controller
     ];
 
     /**
-     * Display the farmer dashboard with enhanced widgets
+     * Display the farmer dashboard.
      */
     public function index()
     {
@@ -56,6 +56,12 @@ class FarmerDashboardController extends Controller
         $favoriteCrops = $user->favorite_crops ?? [];
         $harvestProgress = $this->getHarvestProgress($user->id);
         $cropBalancePulse = app(CommunityCropSignalService::class)->dashboardPulse($user);
+        $todayActionQueue = $this->buildTodayActionQueue(
+            $preferredMunicipality,
+            $harvestProgress,
+            $cropBalancePulse,
+            $predictionsCount
+        );
 
         return view('dashboard-simple', compact(
             'totalRecords',
@@ -65,8 +71,94 @@ class FarmerDashboardController extends Controller
             'preferredMunicipality',
             'favoriteCrops',
             'harvestProgress',
-            'cropBalancePulse'
+            'cropBalancePulse',
+            'todayActionQueue'
         ));
+    }
+
+    private function buildTodayActionQueue(?string $preferredMunicipality, array $harvestProgress, array $cropBalancePulse, int $predictionsCount): array
+    {
+        $items = [];
+
+        if (! $preferredMunicipality) {
+            $items[] = [
+                'label' => 'Set your farm location',
+                'description' => 'This unlocks local crop outlooks and community signals.',
+                'meta' => 'Required setup',
+                'href' => route('profile.edit'),
+                'tone' => 'amber',
+            ];
+        }
+
+        if (($harvestProgress['due_soon_count'] ?? 0) > 0) {
+            $count = (int) $harvestProgress['due_soon_count'];
+            $items[] = [
+                'label' => 'Review harvest tasks',
+                'description' => $count === 1
+                    ? 'One crop needs attention this week.'
+                    : "{$count} crops need attention this week.",
+                'meta' => 'This week',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'amber',
+            ];
+        } elseif (($harvestProgress['active_count'] ?? 0) > 0) {
+            $items[] = [
+                'label' => 'Check crop progress',
+                'description' => 'Your active plans are moving toward harvest.',
+                'meta' => 'Calendar',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'green',
+            ];
+        } else {
+            $items[] = [
+                'label' => 'Create a crop plan',
+                'description' => 'Start a plan so Harviana can track reminders and harvest timing.',
+                'meta' => 'Calendar',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'primary',
+            ];
+        }
+
+        $cropSignals = collect($cropBalancePulse['items'] ?? []);
+        $crowdedCrop = $cropSignals->firstWhere('pressure_key', 'high');
+
+        if ($crowdedCrop) {
+            $items[] = [
+                'label' => 'Check crowded crops',
+                'description' => "{$crowdedCrop['crop']} has high nearby supply expected.",
+                'meta' => 'Community',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'amber',
+            ];
+        } elseif (collect($cropBalancePulse['alternatives'] ?? [])->isNotEmpty()) {
+            $items[] = [
+                'label' => 'Compare quieter options',
+                'description' => 'Some crops near you look less crowded.',
+                'meta' => 'Community',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'green',
+            ];
+        } elseif ($preferredMunicipality) {
+            $items[] = [
+                'label' => 'Check local crop balance',
+                'description' => 'See what farmers near your town are planning.',
+                'meta' => 'Community',
+                'href' => route('farmer.calendar.page'),
+                'tone' => 'primary',
+            ];
+        }
+
+        $items[] = [
+            'label' => $predictionsCount > 0 ? 'Review prediction history' : 'Run a production prediction',
+            'description' => $predictionsCount > 0
+                ? 'Use your saved predictions before planning the next crop.'
+                : 'Estimate production before committing to a crop plan.',
+            'meta' => 'Prediction',
+            'href' => $predictionsCount > 0 ? route('predictions.history') : route('predictions.predict.form'),
+            'tone' => 'primary',
+        ];
+
+        return array_slice($items, 0, 3);
     }
 
     private function getHarvestProgress(int $userId): array
@@ -218,14 +310,14 @@ class FarmerDashboardController extends Controller
             return [
                 'key' => 'due_soon',
                 'label' => 'Due soon',
-                'classes' => 'bg-orange-50 text-orange-700 border-orange-200',
+                'classes' => 'bg-amber-50 text-amber-700 border-amber-200',
             ];
         }
 
         return [
             'key' => 'growing',
             'label' => 'Growing',
-            'classes' => 'bg-sky-50 text-sky-700 border-sky-200',
+            'classes' => 'bg-primary-50 text-primary-dark border-primary-100',
         ];
     }
 

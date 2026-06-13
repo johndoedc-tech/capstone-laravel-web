@@ -1,350 +1,264 @@
 <x-app-layout>
+    @php
+        $dashboardDate = now();
+        $hour = (int) $dashboardDate->format('H');
+        $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
+        $locationLabel = $preferredMunicipality ? ucwords(strtolower($preferredMunicipality)) : null;
+        $harvestItems = collect($harvestProgress['items'] ?? []);
+        $cropBalanceItems = collect($cropBalancePulse['items'] ?? []);
+        $cropBalanceAlternatives = collect($cropBalancePulse['alternatives'] ?? []);
+        $topCropsUrl = rtrim((string) config('services.ml_api.url'), '/') . '/api/top-crops';
+    @endphp
+
     <style>
-        .stat-card:hover {
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        .farmer-dashboard-card {
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: border-color 160ms ease, box-shadow 160ms ease;
         }
-        .recommendation-card {
-            transition: all 0.2s ease;
-        }
-        .recommendation-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .crop-tag {
-            transition: all 0.2s ease;
-        }
-        .crop-tag:hover {
-            transform: scale(1.05);
-        }
-        .quick-action-btn {
-            transition: all 0.2s ease;
-        }
-        .quick-action-btn:hover {
-            transform: translateY(-1px);
-        }
-        .insight-card {
-            transition: all 0.2s ease;
-        }
-        .insight-card:hover {
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-        }
-        .quiet-stat-card {
-            transition: all 0.2s ease;
-        }
-        .quiet-stat-card:hover {
+
+        .farmer-dashboard-card:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
         }
-        .insight-heading > .text-xl {
-            display: none;
+
+        .farmer-action-row {
+            transition: background-color 160ms ease, border-color 160ms ease;
         }
-        .insight-heading::before {
-            content: '#';
+
+        .farmer-action-row:hover {
+            background: #f8fafc;
+        }
+
+        .farmer-icon-box {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 2.25rem;
-            height: 2.25rem;
-            border-radius: 0.75rem;
-            background: #f1f5f9;
-            color: #355872;
-            font-weight: 700;
-        }
-        .farmer-action-grid > a:nth-child(1) .text-3xl,
-        .farmer-action-grid > a:nth-child(2) .text-2xl,
-        .farmer-action-grid > a:nth-child(3) .text-2xl,
-        .farmer-action-grid > a:nth-child(4) .text-2xl,
-        .farmer-action-grid > a:nth-child(5) .text-2xl {
-            color: transparent;
-            position: relative;
-        }
-        .farmer-action-grid > a:nth-child(1) .text-3xl::before,
-        .farmer-action-grid > a:nth-child(2) .text-2xl::before,
-        .farmer-action-grid > a:nth-child(3) .text-2xl::before,
-        .farmer-action-grid > a:nth-child(4) .text-2xl::before,
-        .farmer-action-grid > a:nth-child(5) .text-2xl::before {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: currentColor;
-            font-weight: 700;
-        }
-        .farmer-action-grid > a:nth-child(1) .text-3xl::before {
-            content: 'C';
-            color: #ffffff;
-        }
-        .farmer-action-grid > a:nth-child(2) .text-2xl::before {
-            content: 'P';
-            color: #355872;
-        }
-        .farmer-action-grid > a:nth-child(3) .text-2xl::before {
-            content: 'M';
-            color: #2563eb;
-        }
-        .farmer-action-grid > a:nth-child(4) .text-2xl::before {
-            content: 'H';
-            color: #15803d;
-        }
-        .farmer-action-grid > a:nth-child(5) .text-2xl::before {
-            content: 'F';
-            color: #b45309;
+            flex-shrink: 0;
         }
 
-        /* Translation is disabled globally. Keep controls hidden and default language in English. */
-        .lang-toggle,
-        .lang-popup-overlay {
-            display: none !important;
+        .farmer-crop-thumb {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            background: #f1f5f9;
         }
-        
-        /* Language Toggle Styles */
-        .lang-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 50;
-            transition: all 0.3s ease;
-        }
-        .lang-toggle:hover .lang-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .lang-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: white;
-            border: 2px solid #e5e7eb;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .lang-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .lang-menu {
-            position: absolute;
-            bottom: 56px;
-            right: 0;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            padding: 8px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.2s ease;
-        }
-        .lang-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .lang-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-        .lang-option:hover {
-            background: #f3f4f6;
-        }
-        .lang-option.active {
-            background: #dcfce7;
-        }
-        
-        /* Popup Styles */
-        .lang-popup-overlay {
-            animation: fadeIn 0.3s ease;
-        }
-        .lang-popup-content {
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .farmer-dashboard-card,
+            .farmer-action-row {
+                transition: none;
+            }
         }
     </style>
 
-    <!-- Language System Wrapper -->
-    <div x-data="languageSystem()" x-init="init()">
-        
-        <!-- Language Popup (shows on every login/session) -->
-        <div x-show="showPopup" 
-             x-cloak
-             class="lang-popup-overlay fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-            <div class="lang-popup-content bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
-                <div class="text-4xl mb-3">🌐</div>
-                <h2 class="text-xl font-bold text-gray-900 mb-2" x-text="t('language_popup_title')"></h2>
-                <p class="text-sm text-gray-600 mb-5" x-text="t('language_popup_desc')"></p>
-                
-                <div class="grid grid-cols-2 gap-3 mb-5">
-                    <!-- English Option -->
-                    <button @click="lang = 'en'" 
-                        :class="lang === 'en' ? 'ring-2 ring-primary-dark bg-primary-50 border-primary-300' : 'border-gray-200 hover:bg-gray-50'"
-                        class="p-4 rounded-xl border-2 transition-all">
-                        <div class="text-3xl mb-1">🇺🇸</div>
-                        <div class="font-semibold text-gray-900 text-sm">English</div>
-                    </button>
-                    
-                    <!-- Tagalog Option -->
-                    <button @click="lang = 'tl'" 
-                        :class="lang === 'tl' ? 'ring-2 ring-primary-dark bg-primary-50 border-primary-300' : 'border-gray-200 hover:bg-gray-50'"
-                        class="p-4 rounded-xl border-2 transition-all">
-                        <div class="text-3xl mb-1">🇵🇭</div>
-                        <div class="font-semibold text-gray-900 text-sm">Tagalog</div>
-                    </button>
-                </div>
-                
-                <button @click="confirmLanguage()" 
-                    class="w-full bg-primary-dark hover:bg-primary-900 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
-                    <span x-text="t('continue')"></span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Floating Language Toggle -->
-        <div class="lang-toggle">
-            <!-- Language Menu (appears on click) -->
-            <div class="lang-menu" :class="showMenu ? 'show' : ''" @click.away="showMenu = false">
-                <div class="lang-option" :class="lang === 'en' ? 'active' : ''" @click="setLanguage('en')">
-                    <span class="text-xl">🇺🇸</span>
-                    <span class="text-sm font-medium text-gray-700">English</span>
-                    <span x-show="lang === 'en'" class="text-primary-dark ml-auto">✓</span>
-                </div>
-                <div class="lang-option" :class="lang === 'tl' ? 'active' : ''" @click="setLanguage('tl')">
-                    <span class="text-xl">🇵🇭</span>
-                    <span class="text-sm font-medium text-gray-700">Tagalog</span>
-                    <span x-show="lang === 'tl'" class="text-primary-dark ml-auto">✓</span>
-                </div>
-            </div>
-            
-            <!-- Toggle Button -->
-            <button class="lang-btn" @click="showMenu = !showMenu" :title="t('change_language')">
-                <span class="text-2xl" x-text="lang === 'en' ? '🇺🇸' : '🇵🇭'"></span>
-            </button>
-        </div>
-
-    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            
-            <!-- ============================================ -->
-            <!-- ============================================ -->
-            <div class="hidden">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+    <div
+        x-data='farmerDashboard(@json([
+            'municipality' => $preferredMunicipality ?? '',
+            'predictionUrl' => route('predictions.predict.form'),
+            'topCropsUrl' => $topCropsUrl,
+        ]))'
+        x-init="init()"
+        class="px-4 py-4 sm:px-6 lg:px-8 lg:py-6"
+    >
+        <div class="mx-auto max-w-6xl space-y-4 lg:space-y-5">
+            <header class="farmer-dashboard-card px-4 py-4 sm:px-5">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div class="min-w-0">
-                        <p class="text-white/80 text-[11px] sm:text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
-                        <p class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
-                            {{ Auth::user()->name }}! 👋
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-dark">Farmer dashboard</p>
+                        <h1 class="mt-1 text-xl font-semibold leading-tight text-slate-950 sm:text-2xl">
+                            {{ $greeting }}, {{ Auth::user()->name }}
+                        </h1>
+                        <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+                            A quick view of what needs attention before you plan, predict, or check nearby crop activity.
                         </p>
-                        <p class="mt-1 text-primary-100 text-xs sm:text-sm leading-snug" x-text="t('dashboard_subtitle')"></p>
-                        <div class="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                            @if($preferredMunicipality)
-                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
-                                    <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    <span class="truncate">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
-                                </span>
-                            @else
-                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
-                                    <span>No farm location set</span>
-                                </span>
-                            @endif
-                            <a href="{{ route('profile.edit') }}" class="text-[11px] sm:text-xs font-medium text-white/90 underline underline-offset-2 hover:text-white">
-                                {{ $preferredMunicipality ? 'Edit location' : 'Set location' }}
-                            </a>
-                        </div>
                     </div>
-                    <div class="w-fit text-left sm:text-right bg-white/10 rounded-full sm:rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
-                        <p class="hidden sm:block text-primary-100 text-xs">{{ now()->format('l') }}</p>
-                        <p class="text-xs sm:text-lg font-semibold whitespace-nowrap"><span class="sm:hidden">{{ now()->format('D') }} - </span>{{ now()->format('M d, Y') }}</p>
+
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-700">
+                            {{ $dashboardDate->format('M d, Y') }}
+                        </span>
+                        @if($locationLabel)
+                            <span class="inline-flex items-center rounded-full border border-primary-100 bg-primary-50 px-3 py-1.5 font-medium text-primary-dark">
+                                {{ $locationLabel }}
+                            </span>
+                        @else
+                            <a href="{{ route('profile.edit') }}" class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 font-medium text-amber-700">
+                                Set farm location
+                            </a>
+                        @endif
                     </div>
                 </div>
-            </div>
+            </header>
 
-            @if(($harvestProgress['items'] ?? collect())->isNotEmpty())
-                <!-- ============================================ -->
-                <!-- HARVEST PROGRESS -->
-                <!-- ============================================ -->
-                <div class="mb-4 lg:mb-6 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-                    <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <section class="farmer-dashboard-card overflow-hidden">
+                <div class="border-b border-slate-100 px-4 py-3 sm:px-5">
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Harvest Progress</p>
-                            <h2 class="text-base font-semibold text-gray-900">Nearest crops to monitor</h2>
+                            <h2 class="text-base font-semibold text-slate-950">Today / This week</h2>
+                            <p class="text-sm text-slate-500">The most useful next actions, kept short.</p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2 text-xs">
-                            @if(($harvestProgress['due_soon_count'] ?? 0) > 0)
-                                <span class="rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 font-medium text-orange-700">
-                                    {{ $harvestProgress['due_soon_count'] }} {{ $harvestProgress['due_soon_count'] === 1 ? 'needs' : 'need' }} attention
-                                </span>
-                            @endif
-                            @if(($harvestProgress['expected_production_mt'] ?? 0) > 0)
-                                <span class="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
-                                    {{ number_format($harvestProgress['expected_production_mt'], 2) }} mt expected
-                                </span>
-                            @endif
-                            <a href="{{ route('farmer.calendar.page') }}" class="rounded-full border border-gray-200 px-2.5 py-1 font-medium text-gray-600 hover:border-primary hover:text-primary-dark">
+                        @if(($harvestProgress['expected_production_mt'] ?? 0) > 0)
+                            <span class="inline-flex w-fit items-center rounded-full border border-green-100 bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+                                {{ number_format($harvestProgress['expected_production_mt'], 2) }} MT expected
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($todayActionQueue ?? [] as $item)
+                        @php
+                            $dotClass = match ($item['tone'] ?? 'primary') {
+                                'amber' => 'bg-amber-500',
+                                'green' => 'bg-green-600',
+                                default => 'bg-primary-dark',
+                            };
+                        @endphp
+                        <a href="{{ $item['href'] }}" class="farmer-action-row flex items-center gap-3 px-4 py-3 sm:px-5">
+                            <span class="h-2.5 w-2.5 shrink-0 rounded-full {{ $dotClass }}"></span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-sm font-semibold text-slate-950">{{ $item['label'] }}</span>
+                                <span class="block truncate text-xs text-slate-500">{{ $item['description'] }}</span>
+                            </span>
+                            <span class="hidden shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600 sm:inline-flex">
+                                {{ $item['meta'] }}
+                            </span>
+                            <svg class="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    @empty
+                        <a href="{{ route('farmer.calendar.page') }}" class="farmer-action-row flex items-center gap-3 px-4 py-3 sm:px-5">
+                            <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-primary-dark"></span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-sm font-semibold text-slate-950">Open your calendar</span>
+                                <span class="block truncate text-xs text-slate-500">Start with a crop plan or reminder.</span>
+                            </span>
+                            <svg class="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    @endforelse
+                </div>
+            </section>
+
+            <section>
+                <div class="mb-3 flex items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-semibold text-slate-950">Tools</h2>
+                        <p class="text-sm text-slate-500">Main farmer workflows, one tap away.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <a href="{{ route('farmer.calendar.page') }}" class="farmer-dashboard-card flex items-start gap-3 p-4">
+                        <span class="farmer-icon-box bg-primary-50 text-primary-dark">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M5 11h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold text-slate-950">My Calendar</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-500">Plans, reminders, harvests</span>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('predictions.predict.form') }}" class="farmer-dashboard-card flex items-start gap-3 p-4">
+                        <span class="farmer-icon-box bg-primary-50 text-primary-dark">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.75h4.5m-7.5 3h10.5M6 10.5h12M7.5 21h9a1.5 1.5 0 001.5-1.5v-6A1.5 1.5 0 0016.5 12h-9A1.5 1.5 0 006 13.5v6A1.5 1.5 0 007.5 21z" />
+                            </svg>
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold text-slate-950">Predict</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-500">Estimate crop production</span>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('map.index') }}" class="farmer-dashboard-card flex items-start gap-3 p-4">
+                        <span class="farmer-icon-box bg-slate-100 text-slate-700">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l-6 3V6l6-3m0 15l6 3m-6-3V3m6 18l6-3V3l-6 3m0 15V6" />
+                            </svg>
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold text-slate-950">Map</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-500">Check municipal signals</span>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('forum.index') }}" class="farmer-dashboard-card flex items-start gap-3 p-4">
+                        <span class="farmer-icon-box bg-slate-100 text-slate-700">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8m-8 4h5m8-2a8 8 0 11-3.293-6.475L21 4.5V12z" />
+                            </svg>
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold text-slate-950">Forum</span>
+                            <span class="mt-1 block text-xs leading-5 text-slate-500">Ask and share updates</span>
+                        </span>
+                    </a>
+                </div>
+            </section>
+
+            @if($harvestItems->isNotEmpty())
+                <section class="farmer-dashboard-card overflow-hidden">
+                    <div class="border-b border-slate-100 px-4 py-3 sm:px-5">
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-950">Harvest progress</h2>
+                                <p class="text-sm text-slate-500">Nearest crops to monitor.</p>
+                            </div>
+                            <a href="{{ route('farmer.calendar.page') }}" class="inline-flex w-fit items-center rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:border-primary-200 hover:text-primary-dark">
                                 Open calendar
                             </a>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
-                        @foreach($harvestProgress['items'] as $item)
-                            <a href="{{ route('farmer.calendar.page') }}" class="block rounded-xl border border-gray-100 bg-gray-50 p-3 transition hover:border-emerald-200 hover:bg-emerald-50/70">
+                    <div class="divide-y divide-slate-100">
+                        @foreach($harvestItems as $item)
+                            <a href="{{ route('farmer.calendar.page') }}" class="farmer-action-row block px-4 py-3 sm:px-5">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="min-w-0">
-                                        <h3 class="truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
-                                        <p class="mt-0.5 text-xs text-gray-500">
-                                            Harvest: {{ $item['harvest_date'] }}
-                                        </p>
+                                        <h3 class="truncate text-sm font-semibold text-slate-950">{{ $item['crop'] }}</h3>
+                                        <p class="mt-0.5 text-xs text-slate-500">Harvest: {{ $item['harvest_date'] }}</p>
                                     </div>
-                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium {{ $item['status']['classes'] }}">
+                                    <span class="shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium {{ $item['status']['classes'] }}">
                                         {{ $item['status']['label'] }}
                                     </span>
                                 </div>
 
                                 <div class="mt-3">
-                                    <div class="mb-1 flex items-center justify-between text-[11px] text-gray-500">
+                                    <div class="mb-1 flex items-center justify-between text-[11px] text-slate-500">
                                         <span>{{ $item['planning_date'] }}</span>
                                         <span>{{ $item['progress_percent'] }}%</span>
                                     </div>
-                                    <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
-                                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $item['progress_percent'] }}%"></div>
+                                    <div class="h-1.5 overflow-hidden rounded-full bg-slate-200">
+                                        <div class="h-full rounded-full bg-green-600" style="width: {{ $item['progress_percent'] }}%"></div>
                                     </div>
                                 </div>
 
                                 <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
                                     @if($item['adjusted_production_mt'] !== null)
-                                        <span class="rounded bg-white px-1.5 py-0.5 text-emerald-700">
-                                            {{ number_format($item['adjusted_production_mt'], 2) }} mt est.
+                                        <span class="rounded-full bg-green-50 px-2 py-1 font-medium text-green-700">
+                                            {{ number_format($item['adjusted_production_mt'], 2) }} MT est.
                                         </span>
                                     @endif
                                     @if($item['damage_area_sqm'] > 0)
-                                        <span class="rounded bg-red-50 px-1.5 py-0.5 text-red-700">
+                                        <span class="rounded-full bg-red-50 px-2 py-1 font-medium text-red-700">
                                             {{ number_format($item['damage_area_sqm']) }} sqm damaged
                                         </span>
                                     @endif
                                     @if($item['next_task'])
-                                        <span class="rounded bg-sky-50 px-1.5 py-0.5 text-sky-700">
+                                        <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600">
                                             Next: {{ $item['next_task']['date'] }}
                                         </span>
                                     @endif
@@ -354,964 +268,199 @@
                     </div>
 
                     @if(($harvestProgress['hidden_count'] ?? 0) > 0)
-                        <p class="mt-3 text-xs text-gray-500">
+                        <p class="border-t border-slate-100 px-4 py-3 text-xs text-slate-500 sm:px-5">
                             {{ $harvestProgress['hidden_count'] }} more crop {{ $harvestProgress['hidden_count'] === 1 ? 'plan is' : 'plans are' }} available in the calendar.
                         </p>
                     @endif
-                </div>
+                </section>
+            @else
+                <section class="farmer-dashboard-card px-4 py-4 sm:px-5">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-950">No active crop plan yet</h2>
+                            <p class="mt-1 text-sm text-slate-500">Create a plan to track reminders, harvest timing, and expected production.</p>
+                        </div>
+                        <a href="{{ route('farmer.calendar.page') }}" class="inline-flex w-fit items-center justify-center rounded-lg bg-primary-dark px-4 py-2 text-sm font-semibold text-white hover:bg-primary-900">
+                            Create plan
+                        </a>
+                    </div>
+                </section>
             @endif
 
-            <!-- ============================================ -->
-            <!-- COMMUNITY CROP BALANCE -->
-            <!-- ============================================ -->
-            <div class="mb-4 lg:mb-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-700">Planting Around Your Area</p>
-                        <h2 class="mt-1 text-base font-semibold text-gray-900">
-                            @if($cropBalancePulse['has_location'])
-                                Crop balance in {{ $cropBalancePulse['municipality'] }}
-                            @else
-                                Set your farm location
-                            @endif
-                        </h2>
-                        <p class="mt-1 text-xs text-gray-600">{{ $cropBalancePulse['message'] }}</p>
+            <section class="farmer-dashboard-card overflow-hidden">
+                <div class="border-b border-slate-100 px-4 py-3 sm:px-5">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                            <h2 class="text-base font-semibold text-slate-950">Planting around your area</h2>
+                            <p class="mt-1 text-sm text-slate-500">{{ $cropBalancePulse['message'] }}</p>
+                        </div>
+                        <span class="inline-flex w-fit items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">
+                            {{ $cropBalancePulse['window_label'] }}
+                        </span>
                     </div>
-                    <span class="inline-flex w-fit items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
-                        {{ $cropBalancePulse['window_label'] }}
-                    </span>
                 </div>
 
                 @if($cropBalancePulse['has_data'])
-                    <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-4">
-                        @foreach($cropBalancePulse['items'] as $item)
-                            <div class="rounded-xl border border-gray-100 bg-gray-50 p-3">
-                                <div class="flex items-start justify-between gap-2">
-                                    <h3 class="min-w-0 truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
-                                    @if($item['tone'] === 'amber')
-                                        <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{{ $item['label'] }}</span>
-                                    @elseif($item['tone'] === 'sky')
-                                        <span class="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">{{ $item['label'] }}</span>
-                                    @else
-                                        <span class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{{ $item['label'] }}</span>
-                                    @endif
+                    <div class="divide-y divide-slate-100">
+                        @foreach($cropBalanceItems->take(4) as $item)
+                            @php
+                                $pressureClass = match ($item['pressure_key'] ?? 'low') {
+                                    'high' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                    'balanced' => 'bg-primary-50 text-primary-dark border-primary-100',
+                                    default => 'bg-green-50 text-green-700 border-green-100',
+                                };
+                            @endphp
+                            <div class="px-4 py-3 sm:px-5">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <h3 class="truncate text-sm font-semibold text-slate-950">{{ $item['crop'] }}</h3>
+                                        <p class="mt-1 text-xs leading-5 text-slate-500">{{ $item['short_message'] }}</p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium {{ $pressureClass }}">
+                                        {{ $item['label'] }}
+                                    </span>
                                 </div>
-                                <p class="mt-2 text-xs text-gray-600">{{ $item['short_message'] }}</p>
-                                <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
-                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['plan_count'] }} plans</span>
-                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ number_format($item['expected_production_mt'], 2) }} mt expected</span>
+
+                                <div class="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+                                    <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600">{{ $item['plan_count'] }} plans</span>
+                                    <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600">{{ number_format($item['expected_production_mt'], 2) }} MT expected</span>
                                     @if($item['harvest_window'])
-                                        <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['harvest_window'] }}</span>
+                                        <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600">{{ $item['harvest_window'] }}</span>
                                     @endif
                                 </div>
                             </div>
                         @endforeach
                     </div>
 
-                    @if(($cropBalancePulse['alternatives'] ?? collect())->isNotEmpty())
-                        <div class="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
-                            <p class="text-xs font-semibold text-emerald-800">You can compare these</p>
+                    @if($cropBalanceAlternatives->isNotEmpty())
+                        <div class="border-t border-slate-100 px-4 py-3 sm:px-5">
+                            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Less crowded options</p>
                             <div class="mt-2 flex flex-wrap gap-1.5">
-                                @foreach($cropBalancePulse['alternatives'] as $alternative)
-                                    <span class="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-emerald-700">
-                                        {{ $alternative['crop'] }} · {{ $alternative['label'] }}
+                                @foreach($cropBalanceAlternatives as $alternative)
+                                    <span class="rounded-full border border-green-100 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+                                        {{ $alternative['crop'] }} - {{ $alternative['label'] }}
                                     </span>
                                 @endforeach
                             </div>
                         </div>
                     @endif
                 @elseif($cropBalancePulse['has_location'])
-                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        You will see crowded crops here when nearby plans come in.
+                    <div class="px-4 py-5 text-sm text-slate-500 sm:px-5">
+                        Nearby crop plans will appear here when farmers in {{ $cropBalancePulse['municipality'] }} add them.
                     </div>
                 @else
-                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        Add your town first.
+                    <div class="px-4 py-5 text-sm text-slate-500 sm:px-5">
+                        Add your town in your profile to see local crop balance.
                     </div>
                 @endif
-            </div>
+            </section>
 
-            <!-- ============================================ -->
-            <!-- CROP OUTLOOK INSIGHT -->
-            <!-- ============================================ -->
-            <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-                    <div class="space-y-3">
-                        <div class="insight-heading flex items-center gap-2">
-                            <span class="text-xl">📊</span>
-                            <div>
-                                <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">Quick crop outlook from past data.</p>
-                            </div>
+            <section class="farmer-dashboard-card overflow-hidden">
+                <div class="border-b border-slate-100 px-4 py-3 sm:px-5">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-950">Crop outlook</h2>
+                            <p class="mt-1 text-sm text-slate-500">Top crops from historical data and current-year forecasts.</p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                                <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
-                                <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
-                            </div>
-                            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">
-                                Check nearby plans first
+                        @if($locationLabel)
+                            <span class="inline-flex w-fit items-center rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-dark">
+                                {{ $locationLabel }}
                             </span>
-                        </div>
-                    </div>
-
-                    <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
-                        <div class="flex items-center relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
-                                <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
-                                </div>
-                            </div>
-                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
-                                {{-- Thought Bubble Tails --}}
-                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                
-                                {{-- Main Cloud Box --}}
-                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
-                                    <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
-                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
-                                </div>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
-                <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location first.</p>
-                    <p class="mt-1 text-xs text-gray-500">So the list fits your town.</p>
+                <div x-show="!municipality" class="px-4 py-6 text-center sm:px-5" x-cloak>
+                    <p class="text-sm font-semibold text-slate-900">Set your farm location first.</p>
+                    <p class="mt-1 text-sm text-slate-500">The outlook works best when it uses your town.</p>
+                    <a href="{{ route('profile.edit') }}" class="mt-4 inline-flex items-center justify-center rounded-lg bg-primary-dark px-4 py-2 text-sm font-semibold text-white hover:bg-primary-900">
+                        Set location
+                    </a>
                 </div>
 
-                <div x-show="loading" class="text-center py-8">
-                    <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <div x-show="loading && municipality" class="px-4 py-8 text-center sm:px-5" x-cloak>
+                    <svg class="mx-auto h-7 w-7 animate-spin text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
-                    <p class="mt-1 text-xs text-gray-400">Slow connection may take longer.</p>
+                    <p class="mt-2 text-sm text-slate-500">Loading crop outlook...</p>
                 </div>
 
-                <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm font-medium" x-text="timedOut ? 'This is taking long.' : t('load_error')"></p>
-                    <p class="mt-1 text-xs text-red-500">Check nearby plans above.</p>
+                <div x-show="error && municipality" class="px-4 py-6 text-center sm:px-5" x-cloak>
+                    <p class="text-sm font-semibold text-red-700" x-text="timedOut ? 'The crop outlook is taking too long.' : 'Crop outlook is unavailable right now.'"></p>
+                    <p class="mt-1 text-sm text-slate-500">You can still use the calendar and community signals above.</p>
                 </div>
 
-                <div x-show="!loading && !error && municipality" class="space-y-3">
-                    <template x-for="row in visibleCropRows" :key="row.rank + '-' + row.crop">
-                        <div
-                            class="rounded-2xl border p-3.5 sm:p-4 transition-all duration-200"
-                            :class="row.rank === 1
-                                ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-sky-50 shadow-sm'
-                                : 'border-gray-200 bg-white shadow-sm'"
-                        >
-                            <div class="flex items-start gap-3">
-                                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
-                                    <template x-if="row.image && !isCropImageMissing(row.crop)">
-                                        <img
-                                            :src="row.image"
-                                            :alt="row.crop"
-                                            class="h-full w-full object-cover"
-                                            x-on:error="markCropImageMissing(row.crop)"
-                                        >
-                                    </template>
-                                    <template x-if="!row.image || isCropImageMissing(row.crop)">
-                                        <div
-                                            class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
-                                        >
-                                            Crop
-                                        </div>
-                                    </template>
-                                </div>
-
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
-                                        <span
-                                            class="rounded-full px-2.5 py-1 text-[11px] font-medium ring-1"
-                                            :class="cropOutlookClass(row)"
-                                            x-text="cropOutlookLabel(row)"
-                                        ></span>
-                                    </div>
-                                    <p class="mt-1 text-xs leading-relaxed text-gray-500" x-text="cropOutlookDescription(row)"></p>
-                                    <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
-                                        <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium" x-text="'Rank ' + row.rank"></span>
-                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="cropOutlookSource(row)"></span>
-                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Compare nearby plans</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-
-                    <div x-show="hasExtraCropRows" class="pt-1 text-center">
-                        <button
-                            type="button"
-                            class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
-                            x-on:click="showAllRows = !showAllRows"
-                            x-text="showAllRows ? 'Show top 3 only' : 'See all'"
-                        ></button>
+                <div x-show="!loading && !error && municipality && rows.length > 0" x-cloak>
+                    <div x-show="insightText" class="border-b border-slate-100 bg-slate-50 px-4 py-3 sm:px-5">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Quick insight</p>
+                        <p class="mt-1 text-sm leading-6 text-slate-700" x-text="insightText"></p>
                     </div>
-                </div>
-            </div>
 
-            @if(false)
-            <!-- ============================================ -->
-            <!-- TODAY'S RECOMMENDATION (The Main Focus) -->
-            <!-- ============================================ -->
-            <div x-data="cropRecommendations()" class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-sm border border-amber-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-2xl">💡</span>
-                    <div class="flex-1">
-                        <h2 class="text-lg font-semibold text-gray-900" x-text="t('recommendations')"></h2>
-                        <p class="text-xs text-gray-600" x-text="t('recommendations_desc', { month: '{{ now()->format('F') }}' })"></p>
-                    </div>
-                </div>
-
-                <div x-show="selectedMunicipality" class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs text-gray-600 shadow-sm">
-                    <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
-                    <span class="font-semibold text-gray-900" x-text="formatMunicipality(selectedMunicipality)"></span>
-                </div>
-
-                <!-- Loading State -->
-                <div x-show="loading" class="text-center py-8">
-                    <svg class="inline-block animate-spin h-8 w-8 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p class="text-gray-600 mt-2" x-text="t('finding_best_crops')"></p>
-                </div>
-
-                <!-- Empty State - Friendly message -->
-                <div x-show="!loading && !selectedMunicipality" class="text-center py-8">
-                    <div class="text-4xl mb-3">👆</div>
-                    <p class="text-gray-600" x-text="t('select_location_first')"></p>
-                </div>
-
-                <!-- Top 3 Recommendations - Simple Cards -->
-                <div x-show="!loading && recommendations.length > 0" class="space-y-3">
-                    <!-- Featured Top Pick -->
-                    <template x-if="recommendations[0]">
-                        <div class="bg-white rounded-lg p-4 border-2 border-primary-400 shadow-sm">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="bg-primary-100 p-3 rounded-full">
-                                        <span class="text-2xl" x-text="getCropEmoji(recommendations[0].crop)"></span>
+                    <div class="divide-y divide-slate-100">
+                        <template x-for="row in visibleRows" :key="row.rank + '-' + row.crop">
+                            <div class="px-4 py-3 sm:px-5">
+                                <div class="flex items-start gap-3">
+                                    <div class="farmer-crop-thumb shrink-0">
+                                        <template x-if="row.image && !isCropImageMissing(row.crop)">
+                                            <img :src="row.image" :alt="row.crop" class="h-full w-full object-cover" x-on:error="markCropImageMissing(row.crop)">
+                                        </template>
+                                        <template x-if="!row.image || isCropImageMissing(row.crop)">
+                                            <div class="flex h-full w-full items-center justify-center text-xs font-semibold text-slate-500" x-text="row.initials"></div>
+                                        </template>
                                     </div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="bg-primary-dark text-white text-xs font-bold px-2 py-0.5 rounded">🏆 #1 <span x-text="t('best')"></span></span>
+
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="truncate text-sm font-semibold text-slate-950" x-text="row.crop"></h3>
+                                            <span class="rounded-full border px-2.5 py-1 text-[11px] font-medium" :class="outlookClass(row)" x-text="outlookLabel(row)"></span>
                                         </div>
-                                        <h3 class="text-xl font-bold text-gray-900 mt-1" x-text="recommendations[0].crop"></h3>
-                                        <p class="text-sm text-gray-600">
-                                            <span x-text="t('avg_harvest')"></span>: <span class="font-semibold" x-text="recommendations[0].avg_production + ' mt (metric tons)'"></span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <a :href="'{{ route('predictions.predict.form') }}?tab=forecast&crop=' + encodeURIComponent(recommendations[0].crop) + '&municipality=' + encodeURIComponent(selectedMunicipality)"
-                                   class="bg-primary-dark hover:bg-primary-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-                                    <span x-text="t('predict')"></span> →
-                                </a>
-                            </div>
-                        </div>
-                    </template>
-
-                    <!-- Other good options -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <template x-for="(rec, index) in recommendations.slice(1, 3)" :key="rec.crop">
-                            <div class="bg-white rounded-lg p-3 border border-gray-200">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xl" x-text="getCropEmoji(rec.crop)"></span>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs text-gray-500">#<span x-text="index + 2"></span></span>
-                                            <h4 class="font-semibold text-gray-900 truncate" x-text="rec.crop"></h4>
+                                        <p class="mt-1 text-xs leading-5 text-slate-500" x-text="outlookDescription(row)"></p>
+                                        <div class="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+                                            <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600" x-text="'Rank ' + row.rank"></span>
+                                            <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600" x-text="'Forecast ' + formatMetric(row.predicted) + ' MT'"></span>
+                                            <span class="rounded-full bg-slate-100 px-2 py-1 font-medium text-slate-600" x-text="'Past avg ' + formatMetric(row.historical) + ' MT'"></span>
                                         </div>
-                                        <p class="text-xs text-gray-500">
-                                            ~<span x-text="rec.avg_production"></span> mt (metric tons) average
-                                        </p>
                                     </div>
-                                    <a :href="'{{ route('predictions.predict.form') }}?tab=forecast&crop=' + encodeURIComponent(rec.crop) + '&municipality=' + encodeURIComponent(selectedMunicipality)"
-                                       class="text-primary-dark hover:text-primary-900 text-sm font-medium">
-                                        <span x-text="t('predict')"></span> →
+
+                                    <a :href="predictionLink(row.crop)" class="hidden shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-primary-200 hover:text-primary-dark sm:inline-flex">
+                                        Predict
                                     </a>
                                 </div>
                             </div>
                         </template>
                     </div>
 
-                    <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
-                        <p class="text-sm text-gray-600">Chart shows the full-year view.</p>
+                    <div x-show="hasExtraRows" class="border-t border-slate-100 px-4 py-3 text-center sm:px-5">
+                        <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:border-primary-200 hover:text-primary-dark"
+                            x-on:click="showAllRows = !showAllRows"
+                            x-text="showAllRows ? 'Show top 3 only' : 'Show all crops'"
+                        ></button>
                     </div>
                 </div>
-            </div>
 
-            @endif
-
-            <!-- ============================================ -->
-            <!-- NEXT STEP ACTIONS -->
-            <!-- ============================================ -->
-            <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
-                <div class="mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
-                    <p class="text-sm text-gray-500">Plan, compare, and check records.</p>
+                <div x-show="!loading && !error && municipality && rows.length === 0" class="px-4 py-6 text-center sm:px-5" x-cloak>
+                    <p class="text-sm font-semibold text-slate-900">No crop outlook data yet.</p>
+                    <p class="mt-1 text-sm text-slate-500">Try again later or check the interactive map.</p>
                 </div>
-
-                <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
-                    <a href="{{ route('farmer.calendar.page') }}" class="quick-action-btn sm:col-span-2 lg:col-span-6 lg:row-span-2 rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-900 p-6 text-white shadow-sm">
-                        <div class="flex h-full flex-col justify-between gap-6">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white/90">Main feature</span>
-                                    <h3 class="mt-4 text-2xl font-bold" x-text="t('action_calendar')"></h3>
-                                    <p class="mt-2 max-w-sm text-sm leading-6 text-white/85" x-text="t('action_calendar_desc')"></p>
-                                </div>
-                                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
-                            </div>
-                            <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
-                                <span>Notes and reminders by date</span>
-                                <span class="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-primary-dark shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg">
-                                    Open
-                                    <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                    </svg>
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a :href="predictionHref" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-primary-100 bg-white p-5 shadow-sm">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_predict')"></h3>
-                                <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_predict_desc')"></p>
-                            </div>
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-2xl shadow-sm">P</div>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('map.index') }}" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-blue-100 bg-blue-50 p-5 shadow-sm">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_map')"></h3>
-                                <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_map_desc')"></p>
-                            </div>
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">ðŸ—ºï¸</div>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('predictions.history') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-base font-semibold text-gray-900" x-text="t('action_history')"></h3>
-                                <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_history_desc')"></p>
-                            </div>
-                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-2xl">ðŸ“Š</div>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('forum.index') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-base font-semibold text-gray-900" x-text="t('action_forum')"></h3>
-                                <p class="mt-2 text-sm leading-6 text-gray-500" x-text="t('action_forum_desc')"></p>
-                            </div>
-                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-2xl">ðŸ’¬</div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            @if (false)
-            <!-- ============================================ -->
-            <!-- QUICK ACTIONS - Big Friendly Buttons -->
-            <!-- ============================================ -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 lg:mb-6">
-                <!-- Predict Production -->
-                <a href="{{ route('predictions.predict.form') }}?tab=forecast" class="quick-action-btn bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-all text-center">
-                    <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">🔮</span>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 text-sm" x-text="t('action_predict')"></h3>
-                    <p class="text-xs text-gray-500 mt-1" x-text="t('action_predict_desc')"></p>
-                </a>
-
-                <!-- View Map -->
-                <a href="{{ route('map.index') }}" class="quick-action-btn bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-all text-center">
-                    <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">🗺️</span>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 text-sm" x-text="t('action_map')"></h3>
-                    <p class="text-xs text-gray-500 mt-1" x-text="t('action_map_desc')"></p>
-                </a>
-
-                <!-- My Predictions History -->
-                <a href="{{ route('predictions.history') }}" class="quick-action-btn bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-all text-center">
-                    <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">📊</span>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 text-sm" x-text="t('action_history')"></h3>
-                    <p class="text-xs text-gray-500 mt-1" x-text="t('action_history_desc')"></p>
-                </a>
-
-                <!-- Forum -->
-                <a href="{{ route('forum.index') }}" class="quick-action-btn bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-all text-center">
-                    <div class="bg-amber-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span class="text-2xl">💬</span>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 text-sm" x-text="t('action_forum')"></h3>
-                    <p class="text-xs text-gray-500 mt-1" x-text="t('action_forum_desc')"></p>
-                </a>
-            </div>
-
-            <!-- ============================================ -->
-            <!-- SIMPLE STATS - What farmers care about -->
-            <!-- ============================================ -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4 lg:mb-6">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p class="text-xs text-gray-500 mb-1" x-text="t('your_predictions')"></p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $predictionsCount }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p class="text-xs text-gray-500 mb-1" x-text="t('crop_types')"></p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $cropTypesCount }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p class="text-xs text-gray-500 mb-1" x-text="t('municipalities')"></p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $municipalitiesCount }}</p>
-                </div>
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p class="text-xs text-gray-500 mb-1" x-text="t('data_records')"></p>
-                    <p class="text-2xl font-bold text-gray-900">{{ number_format($totalRecords) }}</p>
-                </div>
-            </div>
-
-            <!-- ============================================ -->
-            <!-- TOP 5 CROPS CHART -->
-            <!-- ============================================ -->
-            <!-- Top 5 Crops Chart -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <div class="flex flex-col gap-3 mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">📊</span>
-                            <h3 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h3>
-                        </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                            <label for="municipalitySelect" class="text-sm text-gray-600" x-text="t('location') + ':'"></label>
-                            <select id="municipalitySelect" class="w-full sm:w-auto border-gray-300 rounded-lg shadow-sm focus:border-primary-dark focus:ring focus:ring-primary-200">
-                                <option value="LATRINIDAD">La Trinidad</option>
-                                <option value="ATOK">Atok</option>
-                                <option value="BAKUN">Bakun</option>
-                                <option value="BOKOD">Bokod</option>
-                                <option value="BUGUIAS">Buguias</option>
-                                <option value="ITOGON">Itogon</option>
-                                <option value="KABAYAN">Kabayan</option>
-                                <option value="KAPANGAN">Kapangan</option>
-                                <option value="KIBUNGAN">Kibungan</option>
-                                <option value="MANKAYAN">Mankayan</option>
-                                <option value="SABLAN">Sablan</option>
-                                <option value="TUBA">Tuba</option>
-                                <option value="TUBLAY">Tublay</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="chartLoading" class="text-center py-8">
-                        <svg class="inline-block animate-spin h-8 w-8 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
-                    </div>
-                    <div id="chartContainer" class="hidden">
-                        <div class="w-full overflow-hidden">
-                            <canvas id="topCropsChart"></canvas>
-                        </div>
-                    </div>
-                    <div id="chartError" class="hidden text-center py-8 text-red-600">
-                        <p class="text-sm" x-text="t('load_error')"></p>
-                    </div>
-                </div>
-            @endif
-
+            </section>
         </div>
     </div>
 
-    </div> <!-- End of languageSystem wrapper -->
-
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
-    
     <script>
-        // ============================================
-        // Language System with Translations
-        // ============================================
-        const translations = {
-            en: {
-                // Popup
-                language_popup_title: 'Choose Your Language',
-                language_popup_desc: 'Select your preferred language for the dashboard',
-                continue: 'Continue',
-                change_language: 'Change Language',
-                
-                // Greetings
-                good_morning: 'Good morning,',
-                good_afternoon: 'Good afternoon,',
-                good_evening: 'Good evening,',
-                dashboard_subtitle: 'What shall we do on the farm today?',
-                
-                saved: 'Saved! ✓',
-                select_location: 'Select location...',
-                what_crops: 'What do you grow?',
-                
-                // Recommendations
-                recommendations: 'Crops to Check',
-                recommendations_desc: 'Good crops for {month}',
-                finding_best_crops: 'Checking crops...',
-                select_location_first: 'Set location first',
-                best: 'BEST',
-                avg_harvest: 'Average harvest',
-                predict: 'Predict',
-                
-                // Quick Actions
-                action_calendar: 'My Calendar',
-                action_calendar_desc: 'Plan farm tasks, notes, and reminders',
-                action_predict: 'Check Estimate',
-                action_predict_desc: 'Estimate your harvest',
-                action_map: 'View Map',
-                action_map_desc: 'See nearby crops',
-                action_history: 'My History',
-                action_history_desc: 'See saved estimates',
-                action_forum: 'Ask Community',
-                action_forum_desc: 'Get help and tips from other farmers',
-                
-                // Stats
-                your_predictions: 'My Saved Estimates',
-                crop_types: 'Available Crops',
-                municipalities: 'Covered Areas',
-                data_records: 'Past Crop Records',
-                
-                // Advanced Tools
-                advanced_tools: 'Advanced Tools',
-                advanced_tools_desc: 'More farm tools',
-                
-                // Harvest Calendar
-                harvest_calendar: 'Harvest Calendar',
-                harvest_calendar_desc: 'See harvest timing',
-                all_areas: 'All areas',
-                crop: 'Crop',
-                legend: 'Legend',
-                legend_best: 'Best',
-                legend_good: 'Good',
-                legend_medium: 'Medium',
-                legend_low: 'Low',
-                legend_nodata: 'No data',
-                
-                // Comparison
-                compare_crops: 'Compare Crops',
-                compare_crops_desc: 'Compare 2 or 3 crops',
-                compare: 'Compare',
-                yearly_harvest: 'Yearly harvest',
-                avg_productivity: 'Average productivity',
-                best_months: 'Best months',
-                select_2_crops: 'Select at least 2 crops to compare',
-                
-                // What-If
-                what_if: 'What If...?',
-                what_if_desc: 'Try choices. See harvest.',
-                where: 'Where?',
-                what_to_plant: 'What to plant?',
-                select_crop: 'Select crop...',
-                when: 'When?',
-                how_big: 'How big? (hectares)',
-                complete_details: 'Fill details first',
-                expected_harvest: 'Expected Harvest',
-                based_on_records: 'Based on {count} records',
-                highest: 'Highest',
-                lowest: 'Lowest',
-                get_detailed_prediction: 'Detailed Estimate',
-                
-                // Months
-                month_jan: 'January',
-                month_feb: 'February',
-                month_mar: 'March',
-                month_apr: 'April',
-                month_may: 'May',
-                month_jun: 'June',
-                month_jul: 'July',
-                month_aug: 'August',
-                month_sep: 'September',
-                month_oct: 'October',
-                month_nov: 'November',
-                month_dec: 'December',
-                
-                // Chart
-                top_5_crops: 'Crop Outlook',
-                location: 'Location',
-                loading: 'Loading...',
-                load_error: 'Could not load. Try again.',
-                chart_historical: 'Past Records',
-                chart_historical_full: 'Past Average',
-                chart_predicted: 'This Year',
-                chart_predicted_year: 'This Year Forecast',
-                
-                // Calendar tooltips
-                no_data_for: 'No data for {crop} in {month}',
-                best_month_tip: '⭐ BEST MONTH! Highest harvest expected.',
-                good_month_tip: '✅ GOOD month to harvest. High yields recorded.',
-                ok_month_tip: '👍 OK to plant. Medium harvest expected.',
-                low_month_tip: '⚠️ LOW harvest usually. Consider other months.',
-            },
-            tl: {
-                // Popup
-                language_popup_title: 'Piliin ang Wika',
-                language_popup_desc: 'Piliin ang wika.',
-                continue: 'Magpatuloy',
-                change_language: 'Palitan ang Wika',
-                
-                // Greetings
-                good_morning: 'Magandang umaga,',
-                good_afternoon: 'Magandang hapon,',
-                good_evening: 'Magandang gabi,',
-                dashboard_subtitle: 'Ano ang gagawin natin sa bukid ngayon?',
-                
-                saved: 'Saved',
-                select_location: 'Pumili ng lugar...',
-                what_crops: 'Ano ang mga tinataniman mo?',
-                
-                // Recommendations
-                recommendations: 'Pananim na Tingnan',
-                recommendations_desc: 'Maganda para sa {month}',
-                finding_best_crops: 'Tinitingnan ang pananim...',
-                select_location_first: 'Pumili muna ng lugar',
-                best: 'PINAKAMAHUSAY',
-                avg_harvest: 'Karaniwang ani',
-                predict: 'I-predict',
-                
-                // Quick Actions
-                action_calendar: 'Aking Calendar',
-                action_calendar_desc: 'Plano at paalala',
-                action_predict: 'Tingnan ang Ani',
-                action_predict_desc: 'Tantiyahin ang ani',
-                action_map: 'Tingnan ang Mapa',
-                action_map_desc: 'Tingnan ang kalapit na tanim',
-                action_history: 'Aking History',
-                action_history_desc: 'Tingnan ang saved estimate',
-                action_forum: 'Magtanong sa Komunidad',
-                action_forum_desc: 'Humingi ng payo',
-                
-                // Stats
-                your_predictions: 'Saved Estimates',
-                crop_types: 'Mga Pananim',
-                municipalities: 'Sakop na Lugar',
-                data_records: 'Dating Records',
-                
-                // Advanced Tools
-                advanced_tools: 'Advanced Tools',
-                advanced_tools_desc: 'Dagdag na tools',
-                
-                // Harvest Calendar
-                harvest_calendar: 'Harvest Calendar',
-                harvest_calendar_desc: 'Tingnan ang panahon ng ani',
-                all_areas: 'Lahat ng lugar',
-                crop: 'Pananim',
-                legend: 'Ibig sabihin',
-                legend_best: 'Pinakamahusay',
-                legend_good: 'Maganda',
-                legend_medium: 'Katamtaman',
-                legend_low: 'Mababa',
-                legend_nodata: 'Walang data',
-                
-                // Comparison
-                compare_crops: 'I-compare ang mga Pananim',
-                compare_crops_desc: 'Pumili ng 2 o 3 pananim',
-                compare: 'I-compare',
-                yearly_harvest: 'Taunang ani',
-                avg_productivity: 'Average productivity',
-                best_months: 'Pinakamahusay na buwan',
-                select_2_crops: 'Pumili ng kahit 2 pananim para ihambing',
-                
-                // What-If
-                what_if: 'Paano Kung...?',
-                what_if_desc: 'Subukan. Tingnan ang ani.',
-                where: 'Saan?',
-                what_to_plant: 'Anong itatanim?',
-                select_crop: 'Pumili ng pananim...',
-                when: 'Kailan?',
-                how_big: 'Gaano kalaki? (hectares)',
-                complete_details: 'Kumpletuhin muna',
-                expected_harvest: 'Inaasahang Ani',
-                based_on_records: 'Base sa {count} records',
-                highest: 'Pinakamataas',
-                lowest: 'Pinakamababa',
-                get_detailed_prediction: 'Detalyadong Estimate',
-                
-                // Months
-                month_jan: 'Enero',
-                month_feb: 'Pebrero',
-                month_mar: 'Marso',
-                month_apr: 'Abril',
-                month_may: 'Mayo',
-                month_jun: 'Hunyo',
-                month_jul: 'Hulyo',
-                month_aug: 'Agosto',
-                month_sep: 'Setyembre',
-                month_oct: 'Oktubre',
-                month_nov: 'Nobyembre',
-                month_dec: 'Disyembre',
-                
-                // Chart
-                top_5_crops: 'Crop Outlook',
-                location: 'Lugar',
-                loading: 'Nag-loload...',
-                load_error: 'Hindi ma-load. Ulitin.',
-                chart_historical: 'Dati',
-                chart_historical_full: 'Dating Average',
-                chart_predicted: 'Ngayong Taon',
-                chart_predicted_year: 'Forecast',
-                
-                // Calendar tooltips
-                no_data_for: 'Walang data para sa {crop} sa {month}',
-                best_month_tip: '⭐ PINAKAMAHUSAY na buwan! Pinakamataas na ani.',
-                good_month_tip: '✅ MAGANDA ang ani sa buwang ito.',
-                ok_month_tip: '👍 OK lang magtanim. Katamtamang ani.',
-                low_month_tip: '⚠️ MABABA ang ani karaniwang. Subukan ibang buwan.',
-            }
-        };
-
-        // Language System Alpine Component
-        function languageSystem() {
+        function farmerDashboard(config) {
             return {
-                lang: 'en',
-                showMenu: false,
-                showPopup: false,
-                
-                init() {
-                    this.lang = 'en';
-                    this.showMenu = false;
-                    this.showPopup = false;
-                    localStorage.setItem('dashboard_language', 'en');
-                    localStorage.setItem('preferred_language', 'en');
-                    sessionStorage.setItem('lang_popup_shown', 'true');
-                    
-                    // Keep helper functions available while forcing English text.
-                    window.currentLang = 'en';
-                    window.t = this.t.bind(this);
-                    window.getGreeting = this.getGreeting.bind(this);
-                },
-                
-                t(key, params = {}) {
-                    let text = translations['en']?.[key] || key;
-                    
-                    // Replace parameters like {month}, {count}
-                    Object.keys(params).forEach(param => {
-                        text = text.replace(`{${param}}`, params[param]);
-                    });
-                    
-                    return text;
-                },
-                
-                getGreeting() {
-                    const hour = new Date().getHours();
-                    if (hour < 12) return this.t('good_morning');
-                    if (hour < 18) return this.t('good_afternoon');
-                    return this.t('good_evening');
-                },
-                
-                setLanguage(newLang) {
-                    this.lang = 'en';
-                    window.currentLang = 'en';
-                    localStorage.setItem('dashboard_language', 'en');
-                    localStorage.setItem('preferred_language', 'en');
-
-                    this.showMenu = false;
-                },
-                
-                confirmLanguage() {
-                    this.lang = 'en';
-                    localStorage.setItem('dashboard_language', 'en');
-                    localStorage.setItem('preferred_language', 'en');
-                    window.currentLang = 'en';
-                    sessionStorage.setItem('lang_popup_shown', 'true');
-                    this.showPopup = false;
-                }
-            }
-        }
-
-        // ============================================
-        // Alpine.js Components
-        // ============================================
-
-        function normalizeMunicipalityForApi(municipality) {
-            const normalized = String(municipality || '').trim().toUpperCase();
-            return normalized === 'LA TRINIDAD' ? 'LATRINIDAD' : normalized;
-        }
-
-        function formatMunicipalityName(municipality) {
-            const normalized = normalizeMunicipalityForApi(municipality);
-
-            if (!normalized) {
-                return '';
-            }
-
-            if (normalized === 'LATRINIDAD') {
-                return 'La Trinidad';
-            }
-
-            return normalized
-                .toLowerCase()
-                .split(' ')
-                .filter(Boolean)
-                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-                .join(' ');
-        }
-
-        // Crop Recommendations Component
-        function cropRecommendations() {
-            const currentMonth = new Date().toLocaleString('en-US', { month: 'short' }).toUpperCase();
-            return {
-                selectedMunicipality: '{{ $preferredMunicipality ?? '' }}',
-                selectedMonth: currentMonth,
-                recommendations: [],
-                loading: false,
-
-                init() {
-                    if (this.selectedMunicipality) {
-                        this.loadRecommendations();
-                    }
-                    
-                    // Listen for farm preferences updates
-                    window.addEventListener('farm-preferences-updated', (e) => {
-                        this.selectedMunicipality = e.detail.municipality;
-                        this.loadRecommendations();
-                    });
-                },
-
-                getCropEmoji(crop) {
-                    const emojis = {
-                        'Cabbage': '🥬',
-                        'Broccoli': '🥦',
-                        'Lettuce': '🥗',
-                        'Cauliflower': '🌸',
-                        'Chinese Cabbage': '🥬',
-                        'Carrots': '🥕',
-                        'Garden Peas': '🫛',
-                        'White Potato': '🥔',
-                        'Snap Beans': '🫘',
-                        'Sweet Pepper': '🫑'
-                    };
-                    return emojis[crop] || '🌱';
-                },
-
-                formatMunicipality(municipality) {
-                    return formatMunicipalityName(municipality);
-                },
-
-                monthLabel() {
-                    const monthNames = {
-                        JAN: 'January',
-                        FEB: 'February',
-                        MAR: 'March',
-                        APR: 'April',
-                        MAY: 'May',
-                        JUN: 'June',
-                        JUL: 'July',
-                        AUG: 'August',
-                        SEP: 'September',
-                        OCT: 'October',
-                        NOV: 'November',
-                        DEC: 'December',
-                    };
-
-                    return monthNames[this.selectedMonth] || this.selectedMonth;
-                },
-
-                emitRecommendationContext() {
-                    window.dispatchEvent(new CustomEvent('farmer-recommendations-updated', {
-                        detail: {
-                            municipality: this.selectedMunicipality || '',
-                            monthLabel: this.monthLabel(),
-                            topCrop: this.recommendations[0]?.crop || '',
-                        }
-                    }));
-                },
-
-                async loadRecommendations() {
-                    if (!this.selectedMunicipality) {
-                        this.recommendations = [];
-                        this.emitRecommendationContext();
-                        return;
-                    }
-
-                    this.loading = true;
-
-                    try {
-                        const response = await fetch(`{{ route('farmer.recommendations') }}?municipality=${encodeURIComponent(this.selectedMunicipality)}&month=${this.selectedMonth}`, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.recommendations = data.recommendations || [];
-                        }
-                    } catch (error) {
-                        console.error('Failed to load recommendations:', error);
-                        this.recommendations = [];
-                    } finally {
-                        this.emitRecommendationContext();
-                        this.loading = false;
-                    }
-                }
-            }
-        }
-
-        function dashboardActions() {
-            return {
-                municipality: '{{ $preferredMunicipality ?? '' }}',
-
-                init() {
-                    window.addEventListener('farm-preferences-updated', (event) => {
-                        this.municipality = event.detail.municipality || '';
-                    });
-                },
-
-                get predictionHref() {
-                    const params = new URLSearchParams({ tab: 'forecast' });
-
-                    if (this.municipality) {
-                        params.append('municipality', this.municipality);
-                    }
-
-                    return `{{ route('predictions.predict.form') }}?${params.toString()}`;
-                }
-            }
-        }
-
-        function applySimpleInsightAvatarTrim(instance) {
-            const svg = instance?.renderer?.svgElement;
-            if (!svg) return;
-
-            svg.style.overflow = 'visible';
-            svg.style.transformOrigin = '50% 62%';
-            svg.style.transform = `translate(0px, 12%) scale(1.48)`;
-        }
-
-        function topCropsInsight() {
-            return {
-                municipality: '{{ $preferredMunicipality ?? '' }}',
+                municipality: config.municipality || '',
+                predictionUrl: config.predictionUrl,
+                topCropsUrl: config.topCropsUrl,
                 loading: false,
                 error: false,
                 timedOut: false,
                 showAllRows: false,
+                rows: [],
                 insightText: '',
-                insightDisplayText: '',
-                recommendedCrop: '',
-                recommendationMonth: '',
-                chartCrops: [],
-                chartHistoricalData: [],
-                chartPredictedData: [],
                 cropImageErrors: {},
                 cropImageMap: {
                     'CABBAGE': @json(asset('images/crops/cabbage.png')),
@@ -1325,354 +474,117 @@
                     'SNAP BEANS': @json(asset('images/crops/snapbean.png')),
                     'SWEET PEPPER': @json(asset('images/crops/sweetpepper.png')),
                 },
-                insightTypingTimer: null,
-                isTypingInsight: false,
-                insightToken: 0,
-                animationInstance: null,
-                insightObserver: null,
+
+                get visibleRows() {
+                    return this.showAllRows ? this.rows : this.rows.slice(0, 3);
+                },
+
+                get hasExtraRows() {
+                    return this.rows.length > 3;
+                },
 
                 init() {
-                    this.$nextTick(() => {
-                        this.initInsightAnimation();
-                    });
-
-                    if (this.municipality) {
-                        this.loadChart();
-                    }
-
-                    window.addEventListener('farm-preferences-updated', (event) => {
-                        this.municipality = event.detail.municipality || '';
-                        this.loadChart();
-                    });
-
-                    window.addEventListener('farmer-recommendations-updated', (event) => {
-                        this.recommendedCrop = event.detail.topCrop || '';
-                        this.recommendationMonth = event.detail.monthLabel || '';
-                        this.refreshInsightText();
-                    });
+                    this.loadCropOutlook();
                 },
 
-                get municipalityLabel() {
-                    return formatMunicipalityName(this.municipality);
+                normalizeMunicipality(value) {
+                    const normalized = String(value || '').trim().toUpperCase();
+                    return normalized === 'LA TRINIDAD' ? 'LATRINIDAD' : normalized;
                 },
 
-                get rankedCropRows() {
-                    return this.chartCrops.map((crop, index) => ({
-                        rank: index + 1,
-                        crop,
-                        historical: Number(this.chartHistoricalData[index] || 0),
-                        predicted: Number(this.chartPredictedData[index] || 0),
-                        image: this.getCropImage(crop),
-                    }));
+                cropKey(crop) {
+                    return String(crop || '').trim().toUpperCase();
                 },
 
-                get visibleCropRows() {
-                    return this.showAllRows ? this.rankedCropRows : this.rankedCropRows.slice(0, 3);
-                },
-
-                get hasExtraCropRows() {
-                    return this.rankedCropRows.length > 3;
+                cropInitials(crop) {
+                    return String(crop || '')
+                        .split(/\s+/)
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((part) => part.charAt(0).toUpperCase())
+                        .join('');
                 },
 
                 getCropImage(crop) {
-                    const key = String(crop || '').trim().toUpperCase();
-                    return this.cropImageMap[key] || '';
+                    return this.cropImageMap[this.cropKey(crop)] || '';
                 },
 
                 isCropImageMissing(crop) {
-                    const key = String(crop || '').trim().toUpperCase();
-                    return Boolean(this.cropImageErrors[key]);
+                    return Boolean(this.cropImageErrors[this.cropKey(crop)]);
                 },
 
                 markCropImageMissing(crop) {
-                    const key = String(crop || '').trim().toUpperCase();
                     this.cropImageErrors = {
                         ...this.cropImageErrors,
-                        [key]: true,
+                        [this.cropKey(crop)]: true,
                     };
                 },
 
-                formatCropValue(value) {
+                formatMetric(value) {
                     const number = Number(value || 0);
-
-                    return new Intl.NumberFormat(undefined, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 2,
-                    }).format(number);
+                    return number.toLocaleString(undefined, {
+                        maximumFractionDigits: number >= 100 ? 0 : 2,
+                    });
                 },
 
-                cropOutlookLabel(row) {
-                    if (row.rank === 1) {
-                        return 'Good option';
+                predictionLink(crop) {
+                    const params = new URLSearchParams({
+                        tab: 'forecast',
+                        crop: crop || '',
+                    });
+
+                    if (this.municipality) {
+                        params.set('municipality', this.municipality);
                     }
 
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'Looks better';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'Usually performs well';
-                    }
-
-                    return 'Check this';
+                    return `${this.predictionUrl}?${params.toString()}`;
                 },
 
-                cropOutlookClass(row) {
-                    if (row.rank === 1) {
-                        return 'bg-emerald-50 text-emerald-700 ring-emerald-100';
-                    }
-
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'bg-sky-50 text-sky-700 ring-sky-100';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'bg-amber-50 text-amber-700 ring-amber-100';
-                    }
-
-                    return 'bg-slate-50 text-slate-700 ring-slate-100';
+                outlookLabel(row) {
+                    if (row.rank === 1) return 'Strongest';
+                    if (row.predicted > row.historical && row.predicted > 0) return 'Rising';
+                    if (row.predicted === 0) return 'Historical';
+                    return 'Stable';
                 },
 
-                cropOutlookDescription(row) {
-                    if (row.rank === 1) {
-                        return 'Good option here. Check nearby plans first.';
-                    }
-
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'Looks good. Compare nearby plans.';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'Past records look okay. Check live supply.';
-                    }
-
-                    return 'Worth checking. Look at nearby planting first.';
+                outlookClass(row) {
+                    if (row.rank === 1) return 'border-green-100 bg-green-50 text-green-700';
+                    if (row.predicted > row.historical && row.predicted > 0) return 'border-primary-100 bg-primary-50 text-primary-dark';
+                    return 'border-slate-200 bg-slate-50 text-slate-600';
                 },
 
-                cropOutlookSource(row) {
-                    if (Number(row.predicted || 0) > 0) {
-                        return 'Forecast plus past records';
+                outlookDescription(row) {
+                    if (row.predicted > 0) {
+                        return `${row.crop} is forecast at ${this.formatMetric(row.predicted)} MT, compared with a past average of ${this.formatMetric(row.historical)} MT.`;
                     }
 
-                    return 'Past records baseline';
+                    return `${row.crop} ranks from historical records, with a past average of ${this.formatMetric(row.historical)} MT.`;
                 },
 
-                prefersReducedMotion() {
-                    return typeof window.matchMedia === 'function'
-                        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                buildInsight(rows) {
+                    if (!rows.length) return '';
+
+                    const leader = rows[0];
+                    const area = this.municipality ? this.municipality.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase()) : 'your area';
+
+                    if (leader.predicted > 0) {
+                        return `${leader.crop} has the strongest current outlook for ${area}. Check nearby planting activity before making a final plan.`;
+                    }
+
+                    return `${leader.crop} leads the historical records for ${area}. Use it as a starting point, then compare timing and nearby supply.`;
                 },
 
-                initInsightAnimation() {
-                    if (this.prefersReducedMotion()) {
-                        this.destroyInsightAnimation();
-                        return;
-                    }
-
-                    if (typeof lottie === 'undefined') {
-                        return;
-                    }
-
-                    const lottieOpts = {
-                        renderer: 'svg',
-                        loop: true,
-                        autoplay: false,
-                        path: '{{ asset('animations/talking-character.json') }}',
-                        rendererSettings: {
-                            preserveAspectRatio: 'xMidYMid slice'
-                        }
-                    };
-
-                    if (!this.animationInstance && this.$refs.insightAvatar) {
-                        const desktopInstance = lottie.loadAnimation({
-                            container: this.$refs.insightAvatar,
-                            ...lottieOpts
-                        });
-                        desktopInstance.addEventListener('DOMLoaded', function() {
-                            applySimpleInsightAvatarTrim(desktopInstance);
-                        });
-                        this.animationInstance = desktopInstance;
-                    }
-                },
-
-                playInsightAnimation() {
-                    if (this.prefersReducedMotion()) {
-                        return;
-                    }
-
-                    this.initInsightAnimation();
-
-                    if (this.animationInstance) {
-                        this.animationInstance.goToAndPlay(0, true);
-                    }
-                },
-
-                stopInsightAnimation() {
-                    const instance = this.animationInstance;
-                    if (!instance) return;
-                    
-                    const totalFrames = Number(instance.totalFrames || 0);
-                    if (totalFrames > 1) {
-                        instance.goToAndStop(totalFrames - 1, true);
-                    } else {
-                        instance.stop();
-                    }
-                },
-
-                destroyInsightAnimation() {
-                    if (this.animationInstance) {
-                        this.animationInstance.destroy();
-                        this.animationInstance = null;
-                    }
-                },
-
-                cancelInsightNarration() {
-                    this.insightToken += 1;
-
-                    if (this.insightTypingTimer) {
-                        clearInterval(this.insightTypingTimer);
-                        this.insightTypingTimer = null;
-                    }
-
-                    this.isTypingInsight = false;
-                },
-
-                narrateInsightText(nextText) {
-                    const safeText = String(nextText || '');
-
-                    this.cancelInsightNarration();
-
-                    if (!safeText) {
-                        this.insightText = '';
-                        this.insightDisplayText = '';
-                        this.stopInsightAnimation();
-                        return;
-                    }
-
-                    this.insightText = safeText;
-
-                    if (this.prefersReducedMotion()) {
-                        this.insightDisplayText = safeText;
-                        this.stopInsightAnimation();
-                        return;
-                    }
-
-                    const cardEl = this.$refs.insightAvatar ? this.$refs.insightAvatar.closest('.flex.items-center') : null;
-
-                    const startTyping = () => {
-                        this.cancelInsightNarration();
-                        this.insightDisplayText = '';
-                        this.isTypingInsight = true;
-                        this.playInsightAnimation();
-
-                        const token = this.insightToken;
-                        const typingDelay = 24;
-                        let charIndex = 0;
-
-                        const timerId = window.setInterval(() => {
-                            if (token !== this.insightToken) {
-                                clearInterval(timerId);
-
-                                if (this.insightTypingTimer === timerId) {
-                                    this.insightTypingTimer = null;
-                                }
-
-                                return;
-                            }
-
-                            charIndex += 1;
-                            this.insightDisplayText = safeText.slice(0, charIndex);
-
-                            if (charIndex < safeText.length) {
-                                return;
-                            }
-
-                            clearInterval(timerId);
-
-                            if (this.insightTypingTimer === timerId) {
-                                this.insightTypingTimer = null;
-                            }
-
-                            this.isTypingInsight = false;
-
-                            window.setTimeout(() => {
-                                if (token === this.insightToken) {
-                                    this.stopInsightAnimation();
-                                }
-                            }, 200);
-                        }, typingDelay);
-
-                        this.insightTypingTimer = timerId;
-                    };
-
-                    if (this.insightObserver) {
-                        this.insightObserver.disconnect();
-                    }
-
-                    if (cardEl && typeof IntersectionObserver !== 'undefined') {
-                        this.insightObserver = new IntersectionObserver((entries) => {
-                            if (entries[0].isIntersecting) {
-                                this.insightObserver.disconnect();
-                                startTyping();
-                            }
-                        }, { threshold: 0.3 });
-                        this.insightObserver.observe(cardEl);
-                    } else {
-                        startTyping();
-                    }
-                },
-
-                refreshInsightText() {
-                    this.narrateInsightText(
-                        this.buildTakeaway(this.chartCrops, this.chartPredictedData, this.chartHistoricalData)
-                    );
-                },
-
-                buildTakeaway(crops, predictedData, historicalData) {
-                    if (!crops.length) {
-                        return '';
-                    }
-
-                    const highestPredicted = Math.max(...predictedData);
-                    const highestHistorical = Math.max(...historicalData);
-                    const predictedIndex = highestPredicted > 0 ? predictedData.indexOf(highestPredicted) : -1;
-                    const historicalIndex = historicalData.indexOf(highestHistorical);
-                    const bestIndex = predictedIndex >= 0 ? predictedIndex : historicalIndex;
-                    const bestCrop = crops[bestIndex] || crops[0];
-                    const municipalityLabel = this.municipalityLabel || 'your area';
-                    const normalizedBestCrop = String(bestCrop || '').trim().toUpperCase();
-                    const normalizedRecommendedCrop = String(this.recommendedCrop || '').trim().toUpperCase();
-
-                    if (normalizedRecommendedCrop && this.recommendationMonth) {
-                        if (normalizedBestCrop === normalizedRecommendedCrop) {
-                            return `${bestCrop} looks good for ${this.recommendationMonth}. It may also do well this year.`;
-                        }
-
-                        return `${this.recommendedCrop} looks good for ${this.recommendationMonth}. ${bestCrop} may do well this year.`;
-                    }
-
-                    return `${bestCrop} looks strongest this year. Based on past records.`;
-                },
-
-                async loadChart() {
-                    this.cancelInsightNarration();
+                async loadCropOutlook() {
                     this.error = false;
                     this.timedOut = false;
                     this.showAllRows = false;
+                    this.rows = [];
                     this.insightText = '';
-                    this.insightDisplayText = '';
-                    this.stopInsightAnimation();
-                    this.chartCrops = [];
-                    this.chartHistoricalData = [];
-                    this.chartPredictedData = [];
                     this.cropImageErrors = {};
 
-                    if (!this.municipality) {
-                        this.loading = false;
-                        return;
-                    }
+                    if (!this.municipality) return;
 
                     this.loading = true;
-
                     const controller = new AbortController();
                     const timeoutId = window.setTimeout(() => {
                         this.timedOut = true;
@@ -1680,29 +592,28 @@
                     }, 9000);
 
                     try {
-                        const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
+                        const response = await fetch(this.topCropsUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) }),
+                            body: JSON.stringify({ MUNICIPALITY: this.normalizeMunicipality(this.municipality) }),
                             signal: controller.signal,
                         });
 
                         if (!response.ok) {
-                            throw new Error('Failed to fetch data');
+                            throw new Error('Failed to fetch crop outlook');
                         }
 
                         const data = await response.json();
 
                         if (!data.success) {
-                            throw new Error('API returned error');
+                            throw new Error('Crop outlook returned an error');
                         }
 
                         const currentYear = new Date().getFullYear();
                         const merged = new Map();
 
                         (data.historical_top5?.crops || []).forEach((crop) => {
-                            const key = String(crop.crop || '').toUpperCase();
-
+                            const key = this.cropKey(crop.crop);
                             if (!merged.has(key)) {
                                 merged.set(key, {
                                     crop: crop.crop,
@@ -1713,306 +624,56 @@
                         });
 
                         (data.predicted_top5?.crops || []).forEach((crop) => {
-                            const key = String(crop.crop || '').toUpperCase();
-                            const currentYearForecast = (crop.forecasts || []).find((forecast) => Number(forecast.year) === currentYear);
-                            const predictedValue = Number(currentYearForecast?.production || 0);
+                            const key = this.cropKey(crop.crop);
+                            const currentForecast = (crop.forecasts || []).find((forecast) => Number(forecast.year) === currentYear);
+                            const predicted = Number(currentForecast?.production || 0);
 
                             if (!merged.has(key)) {
                                 merged.set(key, {
                                     crop: crop.crop,
                                     historical: 0,
-                                    predicted: predictedValue,
+                                    predicted,
                                 });
                                 return;
                             }
 
-                            merged.get(key).predicted = predictedValue;
+                            merged.get(key).predicted = predicted;
                         });
 
-                        const rows = Array.from(merged.values())
+                        this.rows = Array.from(merged.values())
                             .map((row) => ({
                                 crop: row.crop,
                                 historical: Number(row.historical || 0),
                                 predicted: Number(row.predicted || 0),
+                                image: this.getCropImage(row.crop),
+                                initials: this.cropInitials(row.crop),
                             }))
                             .sort((a, b) => {
-                                const aRankValue = a.predicted > 0 ? a.predicted : a.historical;
-                                const bRankValue = b.predicted > 0 ? b.predicted : b.historical;
+                                const aScore = a.predicted > 0 ? a.predicted : a.historical;
+                                const bScore = b.predicted > 0 ? b.predicted : b.historical;
 
-                                if (bRankValue !== aRankValue) {
-                                    return bRankValue - aRankValue;
-                                }
-
-                                if (b.predicted !== a.predicted) {
-                                    return b.predicted - a.predicted;
-                                }
-
-                                if (b.historical !== a.historical) {
-                                    return b.historical - a.historical;
-                                }
-
+                                if (bScore !== aScore) return bScore - aScore;
+                                if (b.predicted !== a.predicted) return b.predicted - a.predicted;
+                                if (b.historical !== a.historical) return b.historical - a.historical;
                                 return String(a.crop || '').localeCompare(String(b.crop || ''));
                             })
-                            .slice(0, 5);
-                        const crops = rows.map((row) => row.crop);
-                        const historicalData = rows.map((row) => row.historical);
-                        const predictedData = rows.map((row) => row.predicted);
+                            .slice(0, 5)
+                            .map((row, index) => ({
+                                ...row,
+                                rank: index + 1,
+                            }));
 
-                        if (!rows.length) {
-                            throw new Error('No crop ranking data available');
-                        }
-
-                        this.chartCrops = crops;
-                        this.chartHistoricalData = historicalData;
-                        this.chartPredictedData = predictedData;
-                        this.refreshInsightText();
-                        this.loading = false;
+                        this.insightText = this.buildInsight(this.rows);
                     } catch (error) {
-                        console.error('Error loading crop ranking:', error);
-                        this.timedOut = error?.name === 'AbortError' || this.timedOut;
+                        console.error('Error loading crop outlook:', error);
                         this.error = true;
-                        this.chartCrops = [];
-                        this.chartHistoricalData = [];
-                        this.chartPredictedData = [];
-                        this.loading = false;
+                        this.timedOut = error?.name === 'AbortError' || this.timedOut;
                     } finally {
                         window.clearTimeout(timeoutId);
-                    }
-                }
-            }
-        }
-
-        // Crop Comparison Component
-        function cropComparison() {
-            return {
-                availableCrops: ['Cabbage', 'Broccoli', 'Lettuce', 'Cauliflower', 'Chinese Cabbage', 'Carrots', 'Garden Peas', 'White Potato', 'Snap Beans', 'Sweet Pepper'],
-                selectedCrops: [],
-                comparisonMunicipality: '{{ $preferredMunicipality ?? '' }}',
-                comparisonData: null,
-                loading: false,
-                comparisonChart: null,
-
-                toggleCropSelection(crop) {
-                    if (this.selectedCrops.includes(crop)) {
-                        this.selectedCrops = this.selectedCrops.filter(c => c !== crop);
-                    } else if (this.selectedCrops.length < 3) {
-                        this.selectedCrops.push(crop);
-                    }
-                    this.comparisonData = null;
-                    if (this.comparisonChart) {
-                        this.comparisonChart.destroy();
-                        this.comparisonChart = null;
-                    }
-                },
-
-                async compareCrops() {
-                    if (this.selectedCrops.length < 2) return;
-                    this.loading = true;
-
-                    try {
-                        const params = new URLSearchParams();
-                        this.selectedCrops.forEach(crop => params.append('crops[]', crop));
-                        if (this.comparisonMunicipality) {
-                            params.append('municipality', this.comparisonMunicipality);
-                        }
-
-                        const response = await fetch(`{{ route('farmer.compare') }}?${params.toString()}`, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.comparisonData = data.comparison;
-                            this.$nextTick(() => this.renderComparisonChart());
-                        }
-                    } catch (error) {
-                        console.error('Failed to compare crops:', error);
-                    } finally {
                         this.loading = false;
                     }
                 },
-
-                renderComparisonChart() {
-                    const canvas = document.getElementById('comparisonChart');
-                    if (!canvas || !this.comparisonData) return;
-
-                    if (this.comparisonChart) {
-                        this.comparisonChart.destroy();
-                    }
-
-                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-                    const colors = [
-                        { bg: 'rgba(34, 197, 94, 0.7)', border: 'rgba(34, 197, 94, 1)' },
-                        { bg: 'rgba(59, 130, 246, 0.7)', border: 'rgba(59, 130, 246, 1)' },
-                        { bg: 'rgba(249, 115, 22, 0.7)', border: 'rgba(249, 115, 22, 1)' }
-                    ];
-
-                    const datasets = this.selectedCrops.map((crop, index) => ({
-                        label: crop,
-                        data: months.map(month => this.comparisonData[crop]?.monthly_data?.[month] || 0),
-                        backgroundColor: colors[index].bg,
-                        borderColor: colors[index].border,
-                        borderWidth: 2,
-                        tension: 0.3
-                    }));
-
-                    this.comparisonChart = new Chart(canvas, {
-                        type: 'line',
-                        data: { labels: months, datasets: datasets },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: true,
-                            aspectRatio: window.innerWidth < 768 ? 1.5 : 2.5,
-                            plugins: {
-                                title: { display: true, text: 'Buwanang Ani (Average MT)', font: { size: 14, weight: 'bold' } },
-                                legend: { position: 'top' }
-                            },
-                            scales: {
-                                y: { beginAtZero: true, title: { display: true, text: 'Produksyon (MT)' } }
-                            }
-                        }
-                    });
-                }
-            }
+            };
         }
-
-        // Planting Calendar Component
-        function plantingCalendar() {
-            return {
-                selectedMunicipality: '{{ $preferredMunicipality ?? '' }}',
-                months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                crops: ['Cabbage', 'Broccoli', 'Lettuce', 'Cauliflower', 'Chinese Cabbage', 'Carrots', 'Garden Peas', 'White Potato', 'Snap Beans', 'Sweet Pepper'],
-                calendarData: {},
-                maxProduction: 1,
-                loading: false,
-
-                init() {
-                    this.loadCalendarData();
-                },
-
-                getCropEmoji(crop) {
-                    const emojis = {
-                        'Cabbage': '🥬', 'Broccoli': '🥦', 'Lettuce': '🥗', 'Cauliflower': '🌸',
-                        'Chinese Cabbage': '🥬', 'Carrots': '🥕', 'Garden Peas': '🫛',
-                        'White Potato': '🥔', 'Snap Beans': '🫘', 'Sweet Pepper': '🫑'
-                    };
-                    return emojis[crop] || '🌱';
-                },
-
-                async loadCalendarData() {
-                    this.loading = true;
-                    try {
-                        let url = '{{ route('farmer.calendar') }}';
-                        if (this.selectedMunicipality) {
-                            url += `?municipality=${encodeURIComponent(this.selectedMunicipality)}`;
-                        }
-
-                        const response = await fetch(url, {
-                            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.calendarData = data.calendar || {};
-                            this.maxProduction = data.max_production || 1;
-                        }
-                    } catch (error) {
-                        console.error('Failed to load calendar data:', error);
-                    } finally {
-                        this.loading = false;
-                    }
-                },
-
-                getTableCellColor(crop, month) {
-                    const production = this.calendarData[crop]?.monthly?.[month] || 0;
-                    if (production === 0) return 'bg-gray-200';
-                    
-                    const ratio = production / this.maxProduction;
-                    if (ratio >= 0.75) return 'bg-green-600';
-                    if (ratio >= 0.55) return 'bg-green-400';
-                    if (ratio >= 0.40) return 'bg-cyan-400';
-                    if (ratio >= 0.25) return 'bg-yellow-400';
-                    if (ratio >= 0.10) return 'bg-orange-400';
-                    return 'bg-red-500';
-                },
-
-                getSimpleTooltip(crop, month) {
-                    const production = this.calendarData[crop]?.monthly?.[month] || 0;
-                    const monthKey = 'month_' + month.toLowerCase();
-                    const monthName = window.t ? window.t(monthKey) : month;
-                    
-                    if (production === 0) {
-                        return window.t ? window.t('no_data_for', { crop: crop, month: monthName }) : `No data for ${crop} in ${month}`;
-                    }
-                    
-                    const ratio = production / this.maxProduction;
-                    const bestMonth = this.calendarData[crop]?.best_month;
-                    let advice = '';
-                    
-                    if (month === bestMonth) {
-                        advice = window.t ? window.t('best_month_tip') : '⭐ BEST MONTH!';
-                    } else if (ratio >= 0.7) {
-                        advice = window.t ? window.t('good_month_tip') : '✅ GOOD month';
-                    } else if (ratio >= 0.4) {
-                        advice = window.t ? window.t('ok_month_tip') : '👍 OK to plant';
-                    } else {
-                        advice = window.t ? window.t('low_month_tip') : '⚠️ LOW harvest';
-                    }
-                    
-                    return `${crop} - ${monthName}:\n${advice}\n(${production.toFixed(1)} MT)`;
-                }
-            }
-        }
-
-        // What-If Scenario Component
-        function whatIfScenario() {
-            const currentMonth = new Date().toLocaleString('en-US', { month: 'short' }).toUpperCase();
-            return {
-                scenario: {
-                    municipality: '{{ $preferredMunicipality ?? '' }}',
-                    crop: '',
-                    month: currentMonth,
-                    area: 1
-                },
-                result: null,
-                loading: false,
-
-                async calculateScenario() {
-                    if (!this.scenario.municipality || !this.scenario.crop || !this.scenario.area) {
-                        this.result = null;
-                        return;
-                    }
-
-                    this.loading = true;
-
-                    try {
-                        const params = new URLSearchParams({
-                            municipality: this.scenario.municipality,
-                            crop: this.scenario.crop,
-                            month: this.scenario.month,
-                            area: this.scenario.area
-                        });
-
-                        const response = await fetch(`{{ route('farmer.scenario') }}?${params.toString()}`, {
-                            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.result = data.success ? data : null;
-                        }
-                    } catch (error) {
-                        console.error('Failed to calculate scenario:', error);
-                        this.result = null;
-                    } finally {
-                        this.loading = false;
-                    }
-                }
-            }
-        }
-
     </script>
 </x-app-layout>
