@@ -53,6 +53,125 @@
                 </div>
             </div>
 
+            <!-- Actual Harvest Accuracy Snapshot -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 lg:mb-6">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div>
+                            <h3 class="text-base lg:text-lg font-semibold text-gray-900">Actual Harvest Accuracy</h3>
+                            <p class="mt-1 text-xs lg:text-sm text-gray-600">
+                                Compares adjusted crop-plan estimates against farmer-recorded actual harvest.
+                            </p>
+                        </div>
+                        <a href="{{ route('admin.reports.planting-report', ['status' => 'harvested']) }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
+                            View harvested records
+                        </a>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Weighted Accuracy</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">
+                                {{ $harvestAccuracySummary['accuracy_percent'] !== null ? number_format($harvestAccuracySummary['accuracy_percent'], 1) . '%' : '-' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">{{ number_format($harvestAccuracySummary['records']) }} actual harvest records</p>
+                        </div>
+                        <div class="rounded-xl border border-sky-100 bg-sky-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-sky-700">Mean Error</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">
+                                {{ $harvestAccuracySummary['mean_absolute_error_mt'] !== null ? number_format($harvestAccuracySummary['mean_absolute_error_mt'], 2) . ' mt' : '-' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">Average absolute difference</p>
+                        </div>
+                        <div class="rounded-xl border border-purple-100 bg-purple-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-purple-700">Predicted / Actual</p>
+                            <p class="mt-2 text-sm font-bold text-gray-900">
+                                {{ number_format($harvestAccuracySummary['predicted_total_mt'], 2) }} mt / {{ number_format($harvestAccuracySummary['actual_total_mt'], 2) }} mt
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">Totals from harvested crop plans</p>
+                        </div>
+                        <div class="rounded-xl border border-amber-100 bg-amber-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-amber-700">Current Bias</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">{{ $harvestAccuracySummary['bias_label'] }}</p>
+                            <p class="mt-1 text-xs text-gray-600">
+                                {{ $harvestAccuracySummary['bias_percent'] !== null ? number_format(abs($harvestAccuracySummary['bias_percent']), 1) . '%' : '-' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ML Correction Model Readiness -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 lg:mb-6">
+                <div class="p-4 lg:p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h3 class="text-base lg:text-lg font-semibold text-gray-900">Correction Model Readiness</h3>
+                                @if($correctionModelReadiness['status_tone'] === 'emerald')
+                                    <span class="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{{ $correctionModelReadiness['status'] }}</span>
+                                @elseif($correctionModelReadiness['status_tone'] === 'amber')
+                                    <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">{{ $correctionModelReadiness['status'] }}</span>
+                                @else
+                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">{{ $correctionModelReadiness['status'] }}</span>
+                                @endif
+                            </div>
+                            <p class="mt-1 text-xs lg:text-sm text-gray-600">
+                                {{ $correctionModelReadiness['message'] }}
+                            </p>
+                        </div>
+
+                        @if($correctionModelReadiness['export_ready'])
+                            <a href="{{ route('admin.reports.ml-correction-dataset') }}"
+                                data-no-page-loader
+                                class="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">
+                                Export training dataset
+                            </a>
+                        @else
+                            <span class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-400">
+                                Waiting for harvest data
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="flex items-center justify-between text-xs font-medium text-gray-600">
+                            <span>{{ number_format($correctionModelReadiness['sample_count']) }} real harvest samples</span>
+                            <span>{{ number_format($correctionModelReadiness['training_minimum']) }} target</span>
+                        </div>
+                        <div class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+                            <div class="h-full rounded-full bg-emerald-500" style="width: {{ $correctionModelReadiness['readiness_percent'] }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">Pilot Minimum</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($correctionModelReadiness['pilot_minimum']) }}</p>
+                            <p class="mt-1 text-xs text-gray-600">Records for testing</p>
+                        </div>
+                        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">Crop Coverage</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($correctionModelReadiness['crop_count']) }}</p>
+                            <p class="mt-1 text-xs text-gray-600">Crops with actual harvest</p>
+                        </div>
+                        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">Municipal Coverage</p>
+                            <p class="mt-2 text-2xl font-bold text-gray-900">{{ number_format($correctionModelReadiness['municipality_count']) }}</p>
+                            <p class="mt-1 text-xs text-gray-600">Municipalities represented</p>
+                        </div>
+                        <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">Latest Actual Harvest</p>
+                            <p class="mt-2 text-xl font-bold text-gray-900">
+                                {{ $correctionModelReadiness['latest_actual_harvest_date'] ? $correctionModelReadiness['latest_actual_harvest_date']->format('M d, Y') : '-' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-600">For correction dataset</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Report Types Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 mb-4 lg:mb-6">
                 

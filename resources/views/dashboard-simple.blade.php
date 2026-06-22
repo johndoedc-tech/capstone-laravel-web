@@ -97,7 +97,7 @@
         .lang-popup-overlay {
             display: none !important;
         }
-        
+
         /* Language Toggle Styles */
         .lang-toggle {
             position: fixed;
@@ -162,7 +162,7 @@
         .lang-option.active {
             background: #dcfce7;
         }
-        
+
         /* Popup Styles */
         .lang-popup-overlay {
             animation: fadeIn 0.3s ease;
@@ -182,35 +182,35 @@
 
     <!-- Language System Wrapper -->
     <div x-data="languageSystem()" x-init="init()">
-        
+
         <!-- Language Popup (shows on every login/session) -->
-        <div x-show="showPopup" 
+        <div x-show="showPopup"
              x-cloak
              class="lang-popup-overlay fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
             <div class="lang-popup-content bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
                 <div class="text-4xl mb-3">🌐</div>
                 <h2 class="text-xl font-bold text-gray-900 mb-2" x-text="t('language_popup_title')"></h2>
                 <p class="text-sm text-gray-600 mb-5" x-text="t('language_popup_desc')"></p>
-                
+
                 <div class="grid grid-cols-2 gap-3 mb-5">
                     <!-- English Option -->
-                    <button @click="lang = 'en'" 
+                    <button @click="lang = 'en'"
                         :class="lang === 'en' ? 'ring-2 ring-primary-dark bg-primary-50 border-primary-300' : 'border-gray-200 hover:bg-gray-50'"
                         class="p-4 rounded-xl border-2 transition-all">
                         <div class="text-3xl mb-1">🇺🇸</div>
                         <div class="font-semibold text-gray-900 text-sm">English</div>
                     </button>
-                    
+
                     <!-- Tagalog Option -->
-                    <button @click="lang = 'tl'" 
+                    <button @click="lang = 'tl'"
                         :class="lang === 'tl' ? 'ring-2 ring-primary-dark bg-primary-50 border-primary-300' : 'border-gray-200 hover:bg-gray-50'"
                         class="p-4 rounded-xl border-2 transition-all">
                         <div class="text-3xl mb-1">🇵🇭</div>
                         <div class="font-semibold text-gray-900 text-sm">Tagalog</div>
                     </button>
                 </div>
-                
-                <button @click="confirmLanguage()" 
+
+                <button @click="confirmLanguage()"
                     class="w-full bg-primary-dark hover:bg-primary-900 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
                     <span x-text="t('continue')"></span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +235,7 @@
                     <span x-show="lang === 'tl'" class="text-primary-dark ml-auto">✓</span>
                 </div>
             </div>
-            
+
             <!-- Toggle Button -->
             <button class="lang-btn" @click="showMenu = !showMenu" :title="t('change_language')">
                 <span class="text-2xl" x-text="lang === 'en' ? '🇺🇸' : '🇵🇭'"></span>
@@ -244,61 +244,195 @@
 
     <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-            
+
             <!-- ============================================ -->
-            <!-- SIMPLE GREETING HEADER -->
             <!-- ============================================ -->
-            <div class="rounded-2xl shadow-sm p-4 lg:p-6 mb-4 lg:mb-6 text-white bg-gradient-to-br from-primary-dark via-primary to-primary-900">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <p class="text-white/80 text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
-                        <h1 class="text-2xl lg:text-3xl font-bold mb-1">
+            <div class="hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+                    <div class="min-w-0">
+                        <p class="text-white/80 text-[11px] sm:text-sm font-medium tracking-wide uppercase" x-text="getGreeting()"></p>
+                        <p class="mt-0.5 text-xl leading-tight sm:text-2xl lg:text-3xl font-bold sm:mb-1 break-words">
                             {{ Auth::user()->name }}! 👋
-                        </h1>
-                        <p class="text-primary-100 text-sm" x-text="t('dashboard_subtitle')"></p>
+                        </p>
+                        <p class="mt-1 text-primary-100 text-xs sm:text-sm leading-snug" x-text="t('dashboard_subtitle')"></p>
+                        <div class="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            @if($preferredMunicipality)
+                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
+                                    <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="truncate">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
+                                </span>
+                            @else
+                                <span class="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full bg-white/15 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium text-white ring-1 ring-white/20">
+                                    <span>No farm location set</span>
+                                </span>
+                            @endif
+                            <a href="{{ route('profile.edit') }}" class="text-[11px] sm:text-xs font-medium text-white/90 underline underline-offset-2 hover:text-white">
+                                {{ $preferredMunicipality ? 'Edit location' : 'Set location' }}
+                            </a>
+                        </div>
                     </div>
-                    <div class="text-left sm:text-right bg-white/10 rounded-lg px-4 py-2">
-                        <p class="text-primary-100 text-xs">{{ now()->format('l') }}</p>
-                        <p class="text-lg font-semibold">{{ now()->format('F d, Y') }}</p>
+                    <div class="w-fit text-left sm:text-right bg-white/10 rounded-full sm:rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+                        <p class="hidden sm:block text-primary-100 text-xs">{{ now()->format('l') }}</p>
+                        <p class="text-xs sm:text-lg font-semibold whitespace-nowrap"><span class="sm:hidden">{{ now()->format('D') }} - </span>{{ now()->format('M d, Y') }}</p>
                     </div>
                 </div>
             </div>
 
-            <!-- ============================================ -->
-            <!-- MY FARM (Read-only, set from onboarding) -->
-            <!-- ============================================ -->
-            <div x-data="farmPreferences()" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-2xl flex-shrink-0">🏡</span>
-                        <div class="min-w-0">
-                            <h2 class="text-lg font-semibold text-gray-900" x-text="t('my_farm')"></h2>
-                            <p class="text-xs text-gray-500" x-text="t('my_farm_desc')"></p>
+            @if(($harvestProgress['items'] ?? collect())->isNotEmpty())
+                <!-- ============================================ -->
+                <!-- HARVEST PROGRESS -->
+                <!-- ============================================ -->
+                <div class="mb-4 lg:mb-6 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                    <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Harvest Progress</p>
+                            <h2 class="text-base font-semibold text-gray-900">Nearest crops to monitor</h2>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            @if(($harvestProgress['due_soon_count'] ?? 0) > 0)
+                                <span class="rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 font-medium text-orange-700">
+                                    {{ $harvestProgress['due_soon_count'] }} {{ $harvestProgress['due_soon_count'] === 1 ? 'needs' : 'need' }} attention
+                                </span>
+                            @endif
+                            @if(($harvestProgress['expected_production_mt'] ?? 0) > 0)
+                                <span class="rounded-full border border-emerald-100 bg-emerald-50 px-2.5 py-1 font-medium text-emerald-700">
+                                    {{ number_format($harvestProgress['expected_production_mt'], 2) }} mt expected
+                                </span>
+                            @endif
+                            <a href="{{ route('farmer.calendar.page') }}" class="rounded-full border border-gray-200 px-2.5 py-1 font-medium text-gray-600 hover:border-primary hover:text-primary-dark">
+                                Open calendar
+                            </a>
                         </div>
                     </div>
-                    <a href="{{ route('profile.edit') }}" class="flex-shrink-0 text-xs text-primary-dark hover:text-primary-900 font-medium underline underline-offset-2 mt-1">Edit</a>
-                </div>
 
-                <!-- Municipality Display (from onboarding) -->
-                <div class="mt-4">
-                    <p class="block text-sm font-medium text-gray-700 mb-2">📍 <span x-text="t('where_is_farm')"></span></p>
-                    @if($preferredMunicipality)
-                        <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-green-50 border border-green-200">
-                            <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-green-800">{{ ucwords(strtolower($preferredMunicipality)) }}</span>
-                        </div>
-                    @else
-                        <div class="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-sm text-gray-500 italic">
-                            No location set — <a href="{{ route('profile.edit') }}" class="text-primary-dark underline">update your profile</a>.
-                        </div>
+                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                        @foreach($harvestProgress['items'] as $item)
+                            <a href="{{ route('farmer.calendar.page') }}" class="block rounded-xl border border-gray-100 bg-gray-50 p-3 transition hover:border-emerald-200 hover:bg-emerald-50/70">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <h3 class="truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
+                                        <p class="mt-0.5 text-xs text-gray-500">
+                                            Harvest: {{ $item['harvest_date'] }}
+                                        </p>
+                                    </div>
+                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium {{ $item['status']['classes'] }}">
+                                        {{ $item['status']['label'] }}
+                                    </span>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="mb-1 flex items-center justify-between text-[11px] text-gray-500">
+                                        <span>{{ $item['planning_date'] }}</span>
+                                        <span>{{ $item['progress_percent'] }}%</span>
+                                    </div>
+                                    <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                                        <div class="h-full rounded-full bg-emerald-500" style="width: {{ $item['progress_percent'] }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
+                                    @if($item['adjusted_production_mt'] !== null)
+                                        <span class="rounded bg-white px-1.5 py-0.5 text-emerald-700">
+                                            {{ number_format($item['adjusted_production_mt'], 2) }} mt est.
+                                        </span>
+                                    @endif
+                                    @if($item['damage_area_sqm'] > 0)
+                                        <span class="rounded bg-red-50 px-1.5 py-0.5 text-red-700">
+                                            {{ number_format($item['damage_area_sqm']) }} sqm damaged
+                                        </span>
+                                    @endif
+                                    @if($item['next_task'])
+                                        <span class="rounded bg-sky-50 px-1.5 py-0.5 text-sky-700">
+                                            Next: {{ $item['next_task']['date'] }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+
+                    @if(($harvestProgress['hidden_count'] ?? 0) > 0)
+                        <p class="mt-3 text-xs text-gray-500">
+                            {{ $harvestProgress['hidden_count'] }} more crop {{ $harvestProgress['hidden_count'] === 1 ? 'plan is' : 'plans are' }} available in the calendar.
+                        </p>
                     @endif
                 </div>
+            @endif
+
+            <!-- ============================================ -->
+            <!-- COMMUNITY CROP BALANCE -->
+            <!-- ============================================ -->
+            <div class="mb-4 lg:mb-6 rounded-2xl border border-sky-100 bg-white p-4 shadow-sm">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-700">Planting Around Your Area</p>
+                        <h2 class="mt-1 text-base font-semibold text-gray-900">
+                            @if($cropBalancePulse['has_location'])
+                                Crop balance in {{ $cropBalancePulse['municipality'] }}
+                            @else
+                                Set your farm location
+                            @endif
+                        </h2>
+                        <p class="mt-1 text-xs text-gray-600">{{ $cropBalancePulse['message'] }}</p>
+                    </div>
+                    <span class="inline-flex w-fit items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
+                        {{ $cropBalancePulse['window_label'] }}
+                    </span>
+                </div>
+
+                @if($cropBalancePulse['has_data'])
+                    <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-4">
+                        @foreach($cropBalancePulse['items'] as $item)
+                            <div class="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="min-w-0 truncate text-sm font-semibold text-gray-900">{{ $item['crop'] }}</h3>
+                                    @if($item['tone'] === 'amber')
+                                        <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{{ $item['label'] }}</span>
+                                    @elseif($item['tone'] === 'sky')
+                                        <span class="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">{{ $item['label'] }}</span>
+                                    @else
+                                        <span class="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{{ $item['label'] }}</span>
+                                    @endif
+                                </div>
+                                <p class="mt-2 text-xs text-gray-600">{{ $item['short_message'] }}</p>
+                                <div class="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
+                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['plan_count'] }} plans</span>
+                                    <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ number_format($item['expected_production_mt'], 2) }} mt expected</span>
+                                    @if($item['harvest_window'])
+                                        <span class="rounded bg-white px-1.5 py-0.5 text-gray-600">{{ $item['harvest_window'] }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if(($cropBalancePulse['alternatives'] ?? collect())->isNotEmpty())
+                        <div class="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5">
+                            <p class="text-xs font-semibold text-emerald-800">You can compare these</p>
+                            <div class="mt-2 flex flex-wrap gap-1.5">
+                                @foreach($cropBalancePulse['alternatives'] as $alternative)
+                                    <span class="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                        {{ $alternative['crop'] }} · {{ $alternative['label'] }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                @elseif($cropBalancePulse['has_location'])
+                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
+                        You will see crowded crops here when nearby plans come in.
+                    </div>
+                @else
+                    <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
+                        Add your town first.
+                    </div>
+                @endif
             </div>
 
             <!-- ============================================ -->
-            <!-- TOP 5 CROPS INSIGHT -->
+            <!-- CROP OUTLOOK INSIGHT -->
             <!-- ============================================ -->
             <div x-data="topCropsInsight()" class="insight-card bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6 mb-4 lg:mb-6">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
@@ -307,12 +441,17 @@
                             <span class="text-xl">📊</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">This ranking shows the broader full-year crop outlook in your area.</p>
+                                <p class="text-sm text-gray-600">Quick crop outlook from past data.</p>
                             </div>
                         </div>
-                        <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                            <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
-                            <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                                <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
+                                <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
+                            </div>
+                            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">
+                                Check nearby plans first
+                            </span>
                         </div>
                     </div>
 
@@ -327,7 +466,7 @@
                                 {{-- Thought Bubble Tails --}}
                                 <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
                                 <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                
+
                                 {{-- Main Cloud Box --}}
                                 <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
                                     <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
@@ -339,8 +478,8 @@
                 </div>
 
                 <div x-show="!municipality" class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 text-center">
-                    <p class="text-sm font-medium text-gray-700">Set your farm location above to unlock the crop insight ranking.</p>
-                    <p class="mt-1 text-xs text-gray-500">This keeps recommendations and the ranking focused on the same municipality.</p>
+                    <p class="text-sm font-medium text-gray-700">Set your farm location first.</p>
+                    <p class="mt-1 text-xs text-gray-500">So the list fits your town.</p>
                 </div>
 
                 <div x-show="loading" class="text-center py-8">
@@ -349,74 +488,69 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     <p class="text-gray-600 mt-2" x-text="t('loading')"></p>
+                    <p class="mt-1 text-xs text-gray-400">Slow connection may take longer.</p>
                 </div>
 
                 <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm" x-text="t('load_error')"></p>
+                    <p class="text-sm font-medium" x-text="timedOut ? 'This is taking long.' : t('load_error')"></p>
+                    <p class="mt-1 text-xs text-red-500">Check nearby plans above.</p>
                 </div>
 
                 <div x-show="!loading && !error && municipality" class="space-y-3">
-                    <template x-for="row in rankedCropRows" :key="row.rank + '-' + row.crop">
+                    <template x-for="row in visibleCropRows" :key="row.rank + '-' + row.crop">
                         <div
-                            class="rounded-2xl border p-4 transition-all duration-200"
+                            class="rounded-2xl border p-3.5 sm:p-4 transition-all duration-200"
                             :class="row.rank === 1
-                                ? 'border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 shadow-md shadow-amber-100/70'
+                                ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-sky-50 shadow-sm'
                                 : 'border-gray-200 bg-white shadow-sm'"
                         >
-                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div
-                                        class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl text-center"
-                                        :class="row.rank === 1 ? 'bg-amber-500 text-white shadow-lg shadow-amber-200/80' : 'bg-slate-100 text-slate-700'"
-                                    >
-                                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Rank</span>
-                                        <span class="text-base font-bold leading-none" x-text="row.rank"></span>
-                                    </div>
-
-                                    <div class="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
-                                        <template x-if="row.image && !isCropImageMissing(row.crop)">
-                                            <img
-                                                :src="row.image"
-                                                :alt="row.crop"
-                                                class="h-full w-full object-cover"
-                                                x-on:error="markCropImageMissing(row.crop)"
-                                            >
-                                        </template>
-                                        <template x-if="!row.image || isCropImageMissing(row.crop)">
-                                            <div
-                                                class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
-                                            >
-                                                No Image
-                                            </div>
-                                        </template>
-                                    </div>
-
-                                    <div class="min-w-0">
-                                        <p
-                                            class="text-[11px] font-semibold uppercase tracking-[0.2em]"
-                                            :class="row.rank === 1 ? 'text-amber-600' : 'text-slate-500'"
-                                            x-text="row.rank === 1 ? 'Top Performer' : `Rank ${row.rank}`"
-                                        ></p>
-                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
-                                        <p class="text-xs text-gray-500">
-                                            Ranked by forecast, using historical average when this year's forecast is zero.
-                                        </p>
-                                    </div>
+                            <div class="flex items-start gap-3">
+                                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
+                                    <template x-if="row.image && !isCropImageMissing(row.crop)">
+                                        <img
+                                            :src="row.image"
+                                            :alt="row.crop"
+                                            class="h-full w-full object-cover"
+                                            x-on:error="markCropImageMissing(row.crop)"
+                                        >
+                                    </template>
+                                    <template x-if="!row.image || isCropImageMissing(row.crop)">
+                                        <div
+                                            class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
+                                        >
+                                            Crop
+                                        </div>
+                                    </template>
                                 </div>
 
-                                <div class="grid grid-cols-1 gap-3 sm:min-w-[280px] sm:grid-cols-2">
-                                    <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-4 py-3">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Historical Average</p>
-                                        <p class="mt-1 text-lg font-semibold text-emerald-900" x-text="formatCropValue(row.historical)"></p>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
+                                        <span
+                                            class="rounded-full px-2.5 py-1 text-[11px] font-medium ring-1"
+                                            :class="cropOutlookClass(row)"
+                                            x-text="cropOutlookLabel(row)"
+                                        ></span>
                                     </div>
-                                    <div class="rounded-xl border border-sky-100 bg-sky-50 px-4 py-3">
-                                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">This Year Forecast</p>
-                                        <p class="mt-1 text-lg font-semibold text-sky-900" x-text="formatCropValue(row.predicted)"></p>
+                                    <p class="mt-1 text-xs leading-relaxed text-gray-500" x-text="cropOutlookDescription(row)"></p>
+                                    <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                                        <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium" x-text="'Rank ' + row.rank"></span>
+                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="cropOutlookSource(row)"></span>
+                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Compare nearby plans</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
+
+                    <div x-show="hasExtraCropRows" class="pt-1 text-center">
+                        <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
+                            x-on:click="showAllRows = !showAllRows"
+                            x-text="showAllRows ? 'Show top 3 only' : 'See all'"
+                        ></button>
+                    </div>
                 </div>
             </div>
 
@@ -506,7 +640,7 @@
                     </div>
 
                     <div class="rounded-xl border border-amber-200 bg-white/70 px-4 py-3">
-                        <p class="text-sm text-gray-600">The chart above shows the broader full-year outlook in your area, so it may not always match this month's top pick exactly.</p>
+                        <p class="text-sm text-gray-600">Chart shows the full-year view.</p>
                     </div>
                 </div>
             </div>
@@ -519,7 +653,7 @@
             <div x-data="dashboardActions()" class="mb-4 lg:mb-6">
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold text-gray-900">Take the next step</h2>
-                    <p class="text-sm text-gray-500">Use these tools after reviewing your crop trends.</p>
+                    <p class="text-sm text-gray-500">Plan, compare, and check records.</p>
                 </div>
 
                 <div class="farmer-action-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 lg:gap-4">
@@ -534,7 +668,7 @@
                                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">ðŸ”®</div>
                             </div>
                             <div class="flex items-center justify-between gap-3 text-sm font-medium text-white/90 mt-2">
-                                <span>Plan notes, reminders, and field work by date</span>
+                                <span>Notes and reminders by date</span>
                                 <span class="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-primary-dark shadow-md transition-all duration-300 hover:scale-105 hover:bg-gray-50 hover:shadow-lg">
                                     Open
                                     <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -706,7 +840,7 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
-    
+
     <script>
         // ============================================
         // Language System with Translations
@@ -718,55 +852,51 @@
                 language_popup_desc: 'Select your preferred language for the dashboard',
                 continue: 'Continue',
                 change_language: 'Change Language',
-                
+
                 // Greetings
                 good_morning: 'Good morning,',
                 good_afternoon: 'Good afternoon,',
                 good_evening: 'Good evening,',
                 dashboard_subtitle: 'What shall we do on the farm today?',
-                
-                // My Farm
-                my_farm: 'My Farm',
-                my_farm_desc: 'Set your location so recommendations and crop trends stay focused on your area',
+
                 saved: 'Saved! ✓',
-                where_is_farm: 'Where is your farm?',
                 select_location: 'Select location...',
                 what_crops: 'What do you grow?',
-                
+
                 // Recommendations
-                recommendations: 'Recommendations for You',
-                recommendations_desc: 'Best crops to check for {month} in your area',
-                finding_best_crops: 'Finding best crops...',
-                select_location_first: 'Select a location above to see recommendations',
+                recommendations: 'Crops to Check',
+                recommendations_desc: 'Good crops for {month}',
+                finding_best_crops: 'Checking crops...',
+                select_location_first: 'Set location first',
                 best: 'BEST',
                 avg_harvest: 'Average harvest',
                 predict: 'Predict',
-                
+
                 // Quick Actions
                 action_calendar: 'My Calendar',
                 action_calendar_desc: 'Plan farm tasks, notes, and reminders',
-                action_predict: 'Make Prediction',
-                action_predict_desc: 'Start a harvest forecast for your farm',
+                action_predict: 'Check Estimate',
+                action_predict_desc: 'Estimate your harvest',
                 action_map: 'View Map',
-                action_map_desc: 'See crop patterns across municipalities',
+                action_map_desc: 'See nearby crops',
                 action_history: 'My History',
-                action_history_desc: 'Review your past predictions',
+                action_history_desc: 'See saved estimates',
                 action_forum: 'Ask Community',
                 action_forum_desc: 'Get help and tips from other farmers',
-                
+
                 // Stats
-                your_predictions: 'My Predictions',
+                your_predictions: 'My Saved Estimates',
                 crop_types: 'Available Crops',
                 municipalities: 'Covered Areas',
-                data_records: 'Historical Records',
-                
+                data_records: 'Past Crop Records',
+
                 // Advanced Tools
                 advanced_tools: 'Advanced Tools',
-                advanced_tools_desc: 'Additional features for detailed analysis',
-                
+                advanced_tools_desc: 'More farm tools',
+
                 // Harvest Calendar
                 harvest_calendar: 'Harvest Calendar',
-                harvest_calendar_desc: 'See when is the best time to harvest each crop',
+                harvest_calendar_desc: 'See harvest timing',
                 all_areas: 'All areas',
                 crop: 'Crop',
                 legend: 'Legend',
@@ -775,31 +905,31 @@
                 legend_medium: 'Medium',
                 legend_low: 'Low',
                 legend_nodata: 'No data',
-                
+
                 // Comparison
                 compare_crops: 'Compare Crops',
-                compare_crops_desc: 'Select 2-3 crops to compare',
+                compare_crops_desc: 'Compare 2 or 3 crops',
                 compare: 'Compare',
                 yearly_harvest: 'Yearly harvest',
                 avg_productivity: 'Average productivity',
                 best_months: 'Best months',
                 select_2_crops: 'Select at least 2 crops to compare',
-                
+
                 // What-If
                 what_if: 'What If...?',
-                what_if_desc: 'Try different scenarios and see possible yields',
+                what_if_desc: 'Try choices. See harvest.',
                 where: 'Where?',
                 what_to_plant: 'What to plant?',
                 select_crop: 'Select crop...',
                 when: 'When?',
                 how_big: 'How big? (hectares)',
-                complete_details: 'Complete the details to see possible harvest',
+                complete_details: 'Fill details first',
                 expected_harvest: 'Expected Harvest',
-                based_on_records: 'Based on {count} historical records',
+                based_on_records: 'Based on {count} records',
                 highest: 'Highest',
                 lowest: 'Lowest',
-                get_detailed_prediction: 'Get Detailed Prediction',
-                
+                get_detailed_prediction: 'Detailed Estimate',
+
                 // Months
                 month_jan: 'January',
                 month_feb: 'February',
@@ -813,17 +943,17 @@
                 month_oct: 'October',
                 month_nov: 'November',
                 month_dec: 'December',
-                
+
                 // Chart
-                top_5_crops: 'Top 5 Crops',
+                top_5_crops: 'Crop Outlook',
                 location: 'Location',
                 loading: 'Loading...',
-                load_error: 'Failed to load data. Please try again.',
-                chart_historical: 'Historical',
-                chart_historical_full: 'Historical Average',
+                load_error: 'Could not load. Try again.',
+                chart_historical: 'Past Records',
+                chart_historical_full: 'Past Average',
                 chart_predicted: 'This Year',
                 chart_predicted_year: 'This Year Forecast',
-                
+
                 // Calendar tooltips
                 no_data_for: 'No data for {crop} in {month}',
                 best_month_tip: '⭐ BEST MONTH! Highest harvest expected.',
@@ -834,58 +964,54 @@
             tl: {
                 // Popup
                 language_popup_title: 'Piliin ang Wika',
-                language_popup_desc: 'Piliin ang gusto mong wika para sa dashboard',
+                language_popup_desc: 'Piliin ang wika.',
                 continue: 'Magpatuloy',
                 change_language: 'Palitan ang Wika',
-                
+
                 // Greetings
                 good_morning: 'Magandang umaga,',
                 good_afternoon: 'Magandang hapon,',
                 good_evening: 'Magandang gabi,',
                 dashboard_subtitle: 'Ano ang gagawin natin sa bukid ngayon?',
-                
-                // My Farm
-                my_farm: 'Ang Aking Bukid',
-                my_farm_desc: 'I-set ang iyong lokasyon para manatiling naka-focus sa iyong lugar ang rekomendasyon at crop trends',
-                saved: 'Na-save! ✓',
-                where_is_farm: 'Nasaan ang bukid mo?',
+
+                saved: 'Saved',
                 select_location: 'Pumili ng lugar...',
                 what_crops: 'Ano ang mga tinataniman mo?',
-                
+
                 // Recommendations
-                recommendations: 'Rekomendasyon para sa Iyo',
-                recommendations_desc: 'Pinakamagandang pananim na tingnan para sa {month} sa iyong lugar',
-                finding_best_crops: 'Naghahanap ng pinakamahusay na pananim...',
-                select_location_first: 'Pumili muna ng lokasyon sa itaas para makita ang rekomendasyon',
+                recommendations: 'Pananim na Tingnan',
+                recommendations_desc: 'Maganda para sa {month}',
+                finding_best_crops: 'Tinitingnan ang pananim...',
+                select_location_first: 'Pumili muna ng lugar',
                 best: 'PINAKAMAHUSAY',
                 avg_harvest: 'Karaniwang ani',
                 predict: 'I-predict',
-                
+
                 // Quick Actions
                 action_calendar: 'Aking Calendar',
-                action_calendar_desc: 'Planuhin ang gawain, notes, at paalala sa bukid',
-                action_predict: 'Gumawa ng Prediction',
-                action_predict_desc: 'Simulan ang forecast ng ani',
+                action_calendar_desc: 'Plano at paalala',
+                action_predict: 'Tingnan ang Ani',
+                action_predict_desc: 'Tantiyahin ang ani',
                 action_map: 'Tingnan ang Mapa',
-                action_map_desc: 'Tingnan ang pattern ng pananim sa mga lugar',
+                action_map_desc: 'Tingnan ang kalapit na tanim',
                 action_history: 'Aking History',
-                action_history_desc: 'Balikan ang mga nakaraang prediction',
+                action_history_desc: 'Tingnan ang saved estimate',
                 action_forum: 'Magtanong sa Komunidad',
-                action_forum_desc: 'Humingi ng payo mula sa ibang magsasaka',
-                
+                action_forum_desc: 'Humingi ng payo',
+
                 // Stats
-                your_predictions: 'Aking Mga Prediction',
+                your_predictions: 'Saved Estimates',
                 crop_types: 'Mga Pananim',
                 municipalities: 'Sakop na Lugar',
-                data_records: 'Mga Historical Record',
-                
+                data_records: 'Dating Records',
+
                 // Advanced Tools
                 advanced_tools: 'Advanced Tools',
-                advanced_tools_desc: 'Mga karagdagang feature para sa detalyadong pagsusuri',
-                
+                advanced_tools_desc: 'Dagdag na tools',
+
                 // Harvest Calendar
                 harvest_calendar: 'Harvest Calendar',
-                harvest_calendar_desc: 'Tingnan kung kailan maganda mag-ani ng bawat pananim',
+                harvest_calendar_desc: 'Tingnan ang panahon ng ani',
                 all_areas: 'Lahat ng lugar',
                 crop: 'Pananim',
                 legend: 'Ibig sabihin',
@@ -894,31 +1020,31 @@
                 legend_medium: 'Katamtaman',
                 legend_low: 'Mababa',
                 legend_nodata: 'Walang data',
-                
+
                 // Comparison
                 compare_crops: 'I-compare ang mga Pananim',
-                compare_crops_desc: 'Piliin ng 2-3 pananim para ihambing',
+                compare_crops_desc: 'Pumili ng 2 o 3 pananim',
                 compare: 'I-compare',
                 yearly_harvest: 'Taunang ani',
                 avg_productivity: 'Average productivity',
                 best_months: 'Pinakamahusay na buwan',
                 select_2_crops: 'Pumili ng kahit 2 pananim para ihambing',
-                
+
                 // What-If
                 what_if: 'Paano Kung...?',
-                what_if_desc: 'Subukan ang iba\'t ibang scenario at makita ang posibleng ani',
+                what_if_desc: 'Subukan. Tingnan ang ani.',
                 where: 'Saan?',
                 what_to_plant: 'Anong itatanim?',
                 select_crop: 'Pumili ng pananim...',
                 when: 'Kailan?',
                 how_big: 'Gaano kalaki? (hectares)',
-                complete_details: 'Kumpletuhin ang mga detalye para makita ang posibleng ani',
+                complete_details: 'Kumpletuhin muna',
                 expected_harvest: 'Inaasahang Ani',
-                based_on_records: 'Base sa {count} historical records',
+                based_on_records: 'Base sa {count} records',
                 highest: 'Pinakamataas',
                 lowest: 'Pinakamababa',
-                get_detailed_prediction: 'Kumuha ng Detalyadong Prediction',
-                
+                get_detailed_prediction: 'Detalyadong Estimate',
+
                 // Months
                 month_jan: 'Enero',
                 month_feb: 'Pebrero',
@@ -932,17 +1058,17 @@
                 month_oct: 'Oktubre',
                 month_nov: 'Nobyembre',
                 month_dec: 'Disyembre',
-                
+
                 // Chart
-                top_5_crops: 'Top 5 Pananim',
+                top_5_crops: 'Crop Outlook',
                 location: 'Lugar',
                 loading: 'Nag-loload...',
-                load_error: 'Hindi ma-load ang data. Subukan ulit.',
+                load_error: 'Hindi ma-load. Ulitin.',
                 chart_historical: 'Dati',
-                chart_historical_full: 'Karaniwang Ani',
+                chart_historical_full: 'Dating Average',
                 chart_predicted: 'Ngayong Taon',
-                chart_predicted_year: 'Forecast Ngayong Taon',
-                
+                chart_predicted_year: 'Forecast',
+
                 // Calendar tooltips
                 no_data_for: 'Walang data para sa {crop} sa {month}',
                 best_month_tip: '⭐ PINAKAMAHUSAY na buwan! Pinakamataas na ani.',
@@ -958,7 +1084,7 @@
                 lang: 'en',
                 showMenu: false,
                 showPopup: false,
-                
+
                 init() {
                     this.lang = 'en';
                     this.showMenu = false;
@@ -966,31 +1092,31 @@
                     localStorage.setItem('dashboard_language', 'en');
                     localStorage.setItem('preferred_language', 'en');
                     sessionStorage.setItem('lang_popup_shown', 'true');
-                    
+
                     // Keep helper functions available while forcing English text.
                     window.currentLang = 'en';
                     window.t = this.t.bind(this);
                     window.getGreeting = this.getGreeting.bind(this);
                 },
-                
+
                 t(key, params = {}) {
                     let text = translations['en']?.[key] || key;
-                    
+
                     // Replace parameters like {month}, {count}
                     Object.keys(params).forEach(param => {
                         text = text.replace(`{${param}}`, params[param]);
                     });
-                    
+
                     return text;
                 },
-                
+
                 getGreeting() {
                     const hour = new Date().getHours();
                     if (hour < 12) return this.t('good_morning');
                     if (hour < 18) return this.t('good_afternoon');
                     return this.t('good_evening');
                 },
-                
+
                 setLanguage(newLang) {
                     this.lang = 'en';
                     window.currentLang = 'en';
@@ -999,7 +1125,7 @@
 
                     this.showMenu = false;
                 },
-                
+
                 confirmLanguage() {
                     this.lang = 'en';
                     localStorage.setItem('dashboard_language', 'en');
@@ -1039,23 +1165,6 @@
                 .join(' ');
         }
 
-        // Farm Preferences Component
-        // Municipality is read from onboarding; no dropdown save needed.
-        function farmPreferences() {
-            return {
-                municipality: '{{ $preferredMunicipality ?? '' }}',
-
-                init() {
-                    // Broadcast once on init so all widgets pick up the saved location.
-                    if (this.municipality) {
-                        window.dispatchEvent(new CustomEvent('farm-preferences-updated', {
-                            detail: { municipality: this.municipality }
-                        }));
-                    }
-                }
-            }
-        }
-
         // Crop Recommendations Component
         function cropRecommendations() {
             const currentMonth = new Date().toLocaleString('en-US', { month: 'short' }).toUpperCase();
@@ -1069,7 +1178,7 @@
                     if (this.selectedMunicipality) {
                         this.loadRecommendations();
                     }
-                    
+
                     // Listen for farm preferences updates
                     window.addEventListener('farm-preferences-updated', (e) => {
                         this.selectedMunicipality = e.detail.municipality;
@@ -1194,6 +1303,8 @@
                 municipality: '{{ $preferredMunicipality ?? '' }}',
                 loading: false,
                 error: false,
+                timedOut: false,
+                showAllRows: false,
                 insightText: '',
                 insightDisplayText: '',
                 recommendedCrop: '',
@@ -1255,6 +1366,14 @@
                     }));
                 },
 
+                get visibleCropRows() {
+                    return this.showAllRows ? this.rankedCropRows : this.rankedCropRows.slice(0, 3);
+                },
+
+                get hasExtraCropRows() {
+                    return this.rankedCropRows.length > 3;
+                },
+
                 getCropImage(crop) {
                     const key = String(crop || '').trim().toUpperCase();
                     return this.cropImageMap[key] || '';
@@ -1280,6 +1399,62 @@
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 2,
                     }).format(number);
+                },
+
+                cropOutlookLabel(row) {
+                    if (row.rank === 1) {
+                        return 'Good option';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'Looks better';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'Usually performs well';
+                    }
+
+                    return 'Check this';
+                },
+
+                cropOutlookClass(row) {
+                    if (row.rank === 1) {
+                        return 'bg-emerald-50 text-emerald-700 ring-emerald-100';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'bg-sky-50 text-sky-700 ring-sky-100';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'bg-amber-50 text-amber-700 ring-amber-100';
+                    }
+
+                    return 'bg-slate-50 text-slate-700 ring-slate-100';
+                },
+
+                cropOutlookDescription(row) {
+                    if (row.rank === 1) {
+                        return 'Good option here. Check nearby plans first.';
+                    }
+
+                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
+                        return 'Looks good. Compare nearby plans.';
+                    }
+
+                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
+                        return 'Past records look okay. Check live supply.';
+                    }
+
+                    return 'Worth checking. Look at nearby planting first.';
+                },
+
+                cropOutlookSource(row) {
+                    if (Number(row.predicted || 0) > 0) {
+                        return 'Forecast plus past records';
+                    }
+
+                    return 'Past records baseline';
                 },
 
                 prefersReducedMotion() {
@@ -1334,7 +1509,7 @@
                 stopInsightAnimation() {
                     const instance = this.animationInstance;
                     if (!instance) return;
-                    
+
                     const totalFrames = Number(instance.totalFrames || 0);
                     if (totalFrames > 1) {
                         instance.goToAndStop(totalFrames - 1, true);
@@ -1469,18 +1644,20 @@
 
                     if (normalizedRecommendedCrop && this.recommendationMonth) {
                         if (normalizedBestCrop === normalizedRecommendedCrop) {
-                            return `${bestCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, and it is also expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
+                            return `${bestCrop} looks good for ${this.recommendationMonth}. It may also do well this year.`;
                         }
 
-                        return `${this.recommendedCrop} stands out as the strongest crop choice for ${this.recommendationMonth}, while ${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year.`;
+                        return `${this.recommendedCrop} looks good for ${this.recommendationMonth}. ${bestCrop} may do well this year.`;
                     }
 
-                    return `${bestCrop} is expected to lead overall performance in ${municipalityLabel} for the rest of the year, based on historical averages and this year's forecast.`;
+                    return `${bestCrop} looks strongest this year. Based on past records.`;
                 },
 
                 async loadChart() {
                     this.cancelInsightNarration();
                     this.error = false;
+                    this.timedOut = false;
+                    this.showAllRows = false;
                     this.insightText = '';
                     this.insightDisplayText = '';
                     this.stopInsightAnimation();
@@ -1496,11 +1673,18 @@
 
                     this.loading = true;
 
+                    const controller = new AbortController();
+                    const timeoutId = window.setTimeout(() => {
+                        this.timedOut = true;
+                        controller.abort();
+                    }, 9000);
+
                     try {
                         const response = await fetch('{{ config("services.ml_api.url") }}/api/top-crops', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) })
+                            body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) }),
+                            signal: controller.signal,
                         });
 
                         if (!response.ok) {
@@ -1585,11 +1769,14 @@
                         this.loading = false;
                     } catch (error) {
                         console.error('Error loading crop ranking:', error);
+                        this.timedOut = error?.name === 'AbortError' || this.timedOut;
                         this.error = true;
                         this.chartCrops = [];
                         this.chartHistoricalData = [];
                         this.chartPredictedData = [];
                         this.loading = false;
+                    } finally {
+                        window.clearTimeout(timeoutId);
                     }
                 }
             }
@@ -1742,7 +1929,7 @@
                 getTableCellColor(crop, month) {
                     const production = this.calendarData[crop]?.monthly?.[month] || 0;
                     if (production === 0) return 'bg-gray-200';
-                    
+
                     const ratio = production / this.maxProduction;
                     if (ratio >= 0.75) return 'bg-green-600';
                     if (ratio >= 0.55) return 'bg-green-400';
@@ -1756,15 +1943,15 @@
                     const production = this.calendarData[crop]?.monthly?.[month] || 0;
                     const monthKey = 'month_' + month.toLowerCase();
                     const monthName = window.t ? window.t(monthKey) : month;
-                    
+
                     if (production === 0) {
                         return window.t ? window.t('no_data_for', { crop: crop, month: monthName }) : `No data for ${crop} in ${month}`;
                     }
-                    
+
                     const ratio = production / this.maxProduction;
                     const bestMonth = this.calendarData[crop]?.best_month;
                     let advice = '';
-                    
+
                     if (month === bestMonth) {
                         advice = window.t ? window.t('best_month_tip') : '⭐ BEST MONTH!';
                     } else if (ratio >= 0.7) {
@@ -1774,7 +1961,7 @@
                     } else {
                         advice = window.t ? window.t('low_month_tip') : '⚠️ LOW harvest';
                     }
-                    
+
                     return `${crop} - ${monthName}:\n${advice}\n(${production.toFixed(1)} MT)`;
                 }
             }

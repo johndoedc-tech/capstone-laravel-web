@@ -1,6 +1,6 @@
 <x-app-layout>
     <style>
-        /* Premium Leaflet Popup Overrides */
+        /* Leaflet popup polish */
         .leaflet-popup-content-wrapper {
             border-radius: 1rem !important;
             box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
@@ -63,8 +63,219 @@
             background: #94a3b8;
         }
         .map-pinpoint.preferred {
-            background: #7c3aed;
-            box-shadow: 0 8px 22px rgb(124 58 237 / 0.38);
+            background: #0f766e;
+            box-shadow: 0 8px 22px rgb(15 118 110 / 0.34);
+        }
+        .pwa-map-viewport {
+            height: min(64vh, 34rem);
+            min-height: 24rem;
+        }
+        .pwa-map-details-panel {
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-height: min(82vh, calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top)));
+            border-radius: 1.25rem 1.25rem 0 0;
+            background: #f8fafc;
+            box-shadow: 0 -18px 45px rgb(15 23 42 / 0.18);
+            padding-bottom: var(--harviana-safe-bottom);
+            overscroll-behavior: contain;
+        }
+        .pwa-map-details-panel.translate-x-full {
+            transform: translateY(100%) !important;
+        }
+        .pwa-map-details-panel:not(.translate-x-full) {
+            transform: translateY(0) !important;
+        }
+        .pwa-panel-handle {
+            width: 2.75rem;
+            height: 0.25rem;
+            border-radius: 9999px;
+            background: #cbd5e1;
+        }
+        .pwa-panel-header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            margin: -1rem -1rem 1rem;
+            padding: 0.75rem 1rem 1rem;
+            background: rgb(248 250 252 / 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .pwa-panel-count {
+            border: 1px solid #bbf7d0;
+            background: #ecfdf5;
+            color: #166534;
+            border-radius: 9999px;
+            padding: 0.35rem 0.65rem;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .pwa-panel-section {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            border-radius: 0.875rem;
+            padding: 1rem;
+        }
+        .pwa-panel-section-primary {
+            border-color: #bbf7d0;
+            box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+        }
+        .pwa-panel-section-primary.is-warning {
+            border-color: #fde68a;
+        }
+        .pwa-section-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            color: #475569;
+        }
+        .pwa-section-help {
+            margin-top: 0.15rem;
+            font-size: 0.76rem;
+            color: #64748b;
+        }
+        .pwa-status-pill,
+        .pwa-soft-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .pwa-status-pill {
+            background: #ecfdf5;
+            color: #166534;
+            padding: 0.35rem 0.55rem;
+        }
+        .pwa-status-pill.is-warning {
+            background: #fffbeb;
+            color: #92400e;
+        }
+        .pwa-soft-pill {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.6rem;
+        }
+        .pwa-status-pill.hidden,
+        .pwa-soft-pill.hidden {
+            display: none !important;
+        }
+        .pwa-crop-row,
+        .pwa-weather-card {
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+        }
+        .pwa-crop-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.65rem;
+        }
+        .pwa-crop-meta span {
+            border-radius: 9999px;
+            background: #f8fafc;
+            color: #475569;
+            padding: 0.35rem 0.55rem;
+            font-size: 0.68rem;
+            font-weight: 650;
+        }
+        .pwa-crop-meta span.is-danger {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+        .pwa-weather-summary {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.75rem;
+            align-items: start;
+        }
+        .pwa-weather-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.45rem 0.75rem;
+            margin-top: 0.75rem;
+            font-size: 0.74rem;
+            color: #64748b;
+        }
+        .pwa-forecast-strip {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.35rem;
+            scroll-snap-type: x proximity;
+            scrollbar-width: thin;
+        }
+        .pwa-forecast-card {
+            min-width: 5.75rem;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            border: 1px solid #e5e7eb;
+            background: #f8fafc;
+            border-radius: 0.7rem;
+            padding: 0.6rem;
+            text-align: center;
+        }
+        .pwa-progress-track {
+            height: 0.4rem;
+            overflow: hidden;
+            border-radius: 9999px;
+            background: #e5e7eb;
+        }
+        .pwa-progress-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: #16a34a;
+        }
+        .pwa-secondary-block {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+        }
+        @media (min-width: 640px) {
+            .pwa-map-viewport {
+                height: 650px;
+            }
+            .pwa-map-details-panel {
+                left: auto;
+                top: calc(4.5rem + var(--harviana-safe-top));
+                bottom: auto;
+                height: calc(var(--harviana-viewport-height) - 4.5rem - var(--harviana-safe-top));
+                max-height: none;
+                border-radius: 1rem 0 0 1rem;
+                box-shadow: -16px 0 40px rgb(15 23 42 / 0.16);
+            }
+            .pwa-map-details-panel.translate-x-full {
+                transform: translateX(100%) !important;
+            }
+            .pwa-map-details-panel:not(.translate-x-full) {
+                transform: translateX(0) !important;
+            }
+            .pwa-panel-header {
+                margin: -1.25rem -1.25rem 1rem;
+                padding: 1rem 1.25rem;
+            }
+            .pwa-panel-handle {
+                display: none;
+            }
+        }
+        @media (min-width: 1024px) {
+            .pwa-map-viewport {
+                height: 800px;
+            }
+            .pwa-map-details-panel {
+                top: 0;
+                height: var(--harviana-viewport-height);
+            }
+            .pwa-panel-header {
+                margin: -1.5rem -1.5rem 1rem;
+                padding: 1rem 1.5rem;
+            }
         }
         .map-weather-control {
             margin: 12px 12px 0 0 !important;
@@ -304,12 +515,6 @@
             }
         }
     </style>
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Interactive Crop Production Map') }}
-        </h2>
-    </x-slot>
-
     <div class="py-4 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-full mx-auto">
 
@@ -331,12 +536,12 @@
                             <div>
                                 <p class="text-sm font-medium text-green-800">Your Farm Location: <span
                                         class="font-bold">{{ ucwords(strtolower($preferredMunicipality)) }}</span></p>
-                                <p class="text-xs text-green-600">Map is focused on your municipality</p>
+                                <p class="text-xs text-green-600">Map is on your town.</p>
                             </div>
                         </div>
                         <button onclick="focusOnMyMunicipality()"
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            Focus on My Location
+                            Show My Area
                         </button>
                     </div>
                 </div>
@@ -346,7 +551,7 @@
                 <!-- Control Panel -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Map Controls</h3>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Choose What to View</h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                         <!-- Crop Filter -->
@@ -377,11 +582,12 @@
                         <div>
                             <label for="view-filter"
                                 class="block text-xs lg:text-sm font-medium text-gray-700 mb-1 lg:mb-2">
-                                View Type
+                                Show
                             </label>
                             <select id="view-filter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm lg:text-base">
-                                <option value="production">Total Production (mt)</option>
+                                <option value="supply_forecast">Expected Supply (mt)</option>
+                                <option value="production">Past Production (mt)</option>
                                 <option value="area_harvested">Area Harvested (ha)</option>
                                 <option value="productivity">Productivity (mt/ha)</option>
                             </select>
@@ -413,7 +619,14 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            <span>Loading map data...</span>
+                            <span>Loading map...</span>
+                        </div>
+                    </div>
+
+                    <div id="map-error" class="hidden mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <div class="flex items-start justify-between gap-3">
+                            <p class="min-w-0" data-map-error-message></p>
+                            <button type="button" onclick="clearMapError()" class="shrink-0 font-semibold text-red-700">Dismiss</button>
                         </div>
                     </div>
                 </div>
@@ -422,28 +635,40 @@
             <!-- Map Container -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 lg:p-6 relative">
-                    <div id="map" style="height: 500px; width: 100%;"
-                        class="relative z-0 rounded-lg shadow-inner sm:h-[650px] lg:h-[800px]"></div>
+                    <div id="map"
+                        class="pwa-map-viewport relative z-0 rounded-lg shadow-inner"></div>
 
-                    <!-- Municipality Details Panel - Slides from right -->
+                    <!-- Municipality Details Panel -->
                     <div id="details-panel"
-                        class="fixed top-0 right-0 h-full bg-white shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto w-full sm:w-[400px] lg:w-[450px]">
-                        <div class="p-4 lg:p-6">
-                            <!-- Close Button -->
-                            <button onclick="closeDetailsPanel()"
-                                class="absolute top-3 right-3 lg:top-4 lg:right-4 text-gray-500 hover:text-gray-700">
-                                <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
+                        class="pwa-map-details-panel fixed right-0 z-30 transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto w-full sm:w-[400px] lg:w-[440px]">
+                        <div class="p-4 sm:p-5 lg:p-6">
+                            <div class="pwa-panel-header">
+                                <div class="mb-3 flex justify-center sm:hidden">
+                                    <span class="pwa-panel-handle" aria-hidden="true"></span>
+                                </div>
 
-                            <!-- Panel Header -->
-                            <div class="mb-4 lg:mb-6 pr-8">
-                                <h2 id="panel-municipality-name"
-                                    class="text-xl lg:text-2xl font-bold text-gray-800 mb-2">Municipality Name</h2>
-                                <p class="text-xs lg:text-sm text-gray-600">Click on municipality data below</p>
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <h2 id="panel-municipality-name"
+                                            class="truncate text-xl font-bold leading-tight text-slate-900 lg:text-2xl">Municipality Name</h2>
+                                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Planting, supply, and weather for this town.</p>
+                                    </div>
+
+                                    <div class="flex shrink-0 items-center gap-2">
+                                        <div class="pwa-panel-count text-right">
+                                            <p id="panel-farmer-count" class="text-sm font-bold">-</p>
+                                            <p id="panel-farmer-count-label" class="mt-0.5 text-[10px] font-semibold uppercase text-green-700">farmers</p>
+                                        </div>
+                                        <button type="button" onclick="closeDetailsPanel()"
+                                            class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-700"
+                                            aria-label="Close town details">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Loading Indicator -->
@@ -460,61 +685,92 @@
                                 </div>
                             </div>
 
+                            <div id="panel-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+
                             <!-- Panel Content -->
-                            <div id="panel-content" class="space-y-6">
+                            <div id="panel-content" class="space-y-3">
+                                <!-- Planting Signal -->
+                                <div id="planting-signal-card" class="pwa-panel-section pwa-panel-section-primary">
+                                    <div class="mb-3 flex items-start justify-between gap-3">
+                                        <div>
+                                            <h3 class="pwa-section-label">Planting Signal</h3>
+                                            <p class="pwa-section-help">Quick guide before you plant.</p>
+                                        </div>
+                                        <span id="planting-signal-badge" class="pwa-status-pill">Checking</span>
+                                    </div>
+                                    <p id="planting-signal-title" class="text-base font-semibold text-slate-950">Choose a town</p>
+                                    <p id="planting-signal-message" class="mt-1 text-sm leading-relaxed text-slate-600">You will see a simple planting guide here.</p>
+                                    <div id="planting-signal-alternatives" class="mt-3 flex flex-wrap gap-1.5"></div>
+                                </div>
+
+                                <!-- Real-time Production Outlook -->
+                                <div class="pwa-panel-section">
+                                    <div class="mb-3 flex items-start justify-between gap-3">
+                                        <div>
+                                            <h3 class="pwa-section-label">Top Crops Here</h3>
+                                            <p class="pwa-section-help">A quick read on what may be crowded.</p>
+                                        </div>
+                                        <span id="production-outlook-count" class="pwa-soft-pill">-</span>
+                                    </div>
+                                    <div id="production-outlook-list" class="space-y-2">
+                                        <p class="text-sm text-slate-500">Choose a town.</p>
+                                    </div>
+                                </div>
+
                                 <!-- Weather Cards -->
-                                <div id="weather-section" class="rounded-lg border border-sky-200 bg-sky-50/50 p-4">
+                                <div id="weather-section" class="pwa-panel-section">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Weather Outlook</h3>
+                                        <h3 class="pwa-section-label">Weather Check</h3>
                                         <span id="weather-source-badge"
-                                            class="hidden inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800">Stale
+                                            class="pwa-status-pill is-warning hidden">Stale
                                             Cache</span>
                                     </div>
 
-                                    <div id="weather-loading" class="hidden text-xs text-sky-700 mb-3">Loading weather data...</div>
+                                    <div id="weather-loading" class="hidden text-xs text-slate-500 mb-3">Loading weather data...</div>
                                     <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
 
-                                    <div id="weather-content" class="hidden space-y-3">
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-start justify-between gap-2">
-                                                <div>
-                                                    <p class="text-xs uppercase tracking-wide text-gray-500">Current</p>
-                                                    <p id="weather-current-condition" class="text-sm font-semibold text-gray-800">-</p>
+                                    <div id="weather-content" class="hidden">
+                                        <div class="pwa-weather-summary">
+                                            <div>
+                                                <p id="weather-action-title" class="text-sm font-semibold text-slate-950">Checking weather</p>
+                                                <p id="weather-action-message" class="mt-1 text-xs leading-relaxed text-slate-600">Use this before planting, spraying, or harvesting.</p>
+                                            </div>
+                                            <p id="weather-current-temp" class="text-lg font-bold text-green-700">-</p>
+                                        </div>
+
+                                        <div class="pwa-weather-meta">
+                                            <p>Condition: <span id="weather-current-condition" class="font-medium text-slate-800">-</span></p>
+                                            <p>Rain: <span id="weather-current-rain" class="font-medium text-slate-800">-</span></p>
+                                            <p>Humidity: <span id="weather-current-humidity" class="font-medium text-slate-800">-</span></p>
+                                            <p>Wind: <span id="weather-current-wind" class="font-medium text-slate-800">-</span></p>
+                                            <p class="col-span-2">Updated: <span id="weather-current-time" class="font-medium text-slate-800">-</span></p>
+                                        </div>
+
+                                        <div class="mt-4 space-y-3 border-t border-slate-200 pt-3">
+                                            <div>
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <p class="text-xs font-semibold uppercase text-slate-500">Hourly</p>
+                                                    <span id="weather-hourly-count" class="text-[11px] text-slate-500"></span>
                                                 </div>
-                                                <p id="weather-current-temp" class="text-base font-bold text-sky-700">-</p>
+                                                <div id="weather-hourly-list" class="pwa-forecast-strip"></div>
                                             </div>
-                                            <div class="grid grid-cols-2 gap-2 mt-2 text-xs text-gray-600">
-                                                <p>Humidity: <span id="weather-current-humidity" class="font-medium text-gray-700">-</span></p>
-                                                <p>Wind: <span id="weather-current-wind" class="font-medium text-gray-700">-</span></p>
-                                                <p>Rain Chance: <span id="weather-current-rain" class="font-medium text-gray-700">-</span></p>
-                                                <p>Updated: <span id="weather-current-time" class="font-medium text-gray-700">-</span></p>
-                                            </div>
-                                        </div>
 
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Hourly</p>
-                                                <span id="weather-hourly-count" class="text-[11px] text-gray-500"></span>
+                                            <div>
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <p class="text-xs font-semibold uppercase text-slate-500">Daily</p>
+                                                    <span id="weather-daily-count" class="text-[11px] text-slate-500"></span>
+                                                </div>
+                                                <div id="weather-daily-list" class="pwa-forecast-strip"></div>
                                             </div>
-                                            <div id="weather-hourly-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
-                                        </div>
-
-                                        <div class="bg-white rounded-md border border-sky-100 p-3">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <p class="text-xs uppercase tracking-wide text-gray-500">Daily</p>
-                                                <span id="weather-daily-count" class="text-[11px] text-gray-500"></span>
-                                            </div>
-                                            <div id="weather-daily-list" class="flex overflow-x-auto gap-2 pb-2 snap-x" style="scrollbar-width: thin;"></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Contribution Per Municipality Chart -->
-                                <div id="contribution-section" class="hidden">
+                                <div id="contribution-section" class="pwa-panel-section pwa-secondary-block hidden">
                                     <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-sm font-semibold text-gray-700 uppercase">Crop Contribution</h3>
-                                        <span id="contribution-crop-badge"
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"></span>
+                                        <h3 class="pwa-section-label">Crop Share</h3>
+                                        <span id="contribution-crop-badge" class="pwa-soft-pill"></span>
                                     </div>
                                     <canvas id="contribution-chart" height="250"></canvas>
                                     <div id="contribution-details" class="mt-3 space-y-1">
@@ -523,10 +779,18 @@
                                 </div>
 
                                 <!-- Crop Distribution Chart -->
-                                <div>
-                                    <h3 class="text-sm font-semibold text-gray-700 uppercase mb-3">Crop Distribution
-                                    </h3>
-                                    <canvas id="crop-chart" height="250"></canvas>
+                                <div class="pwa-panel-section pwa-secondary-block">
+                                    <div class="mb-3 flex items-center justify-between gap-3">
+                                        <div>
+                                            <h3 class="pwa-section-label">Crops Here</h3>
+                                            <p class="pwa-section-help">Simple list first, chart after.</p>
+                                        </div>
+                                        <span id="crop-summary-count" class="pwa-soft-pill">-</span>
+                                    </div>
+                                    <div id="crop-list-summary" class="space-y-2"></div>
+                                    <div class="mt-3 hidden sm:block">
+                                        <canvas id="crop-chart" height="250"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -538,7 +802,7 @@
             <!-- Statistics Panel -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-4 lg:mt-6">
                 <div class="p-4 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Summary Statistics</h3>
+                    <h3 class="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">Quick Summary</h3>
                     <div id="stats-content" class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
                         <div class="text-center">
                             <p class="text-xs lg:text-sm text-gray-600">Total Production</p>
@@ -610,6 +874,53 @@
 
         function normalizeMunicipalityName(name) {
             return (name || '').toString().toUpperCase().replace(/\s+/g, '');
+        }
+
+        function showMapError(message) {
+            const errorEl = document.getElementById('map-error');
+            const messageEl = errorEl?.querySelector('[data-map-error-message]');
+
+            if (!errorEl || !messageEl) {
+                return;
+            }
+
+            messageEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function clearMapError() {
+            const errorEl = document.getElementById('map-error');
+            const messageEl = errorEl?.querySelector('[data-map-error-message]');
+
+            if (!errorEl || !messageEl) {
+                return;
+            }
+
+            messageEl.textContent = '';
+            errorEl.classList.add('hidden');
+        }
+
+        function showPanelError(message) {
+            const loadingEl = document.getElementById('panel-loading');
+            const contentEl = document.getElementById('panel-content');
+            const errorEl = document.getElementById('panel-error');
+
+            loadingEl?.classList.add('hidden');
+            contentEl?.classList.add('hidden');
+
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearPanelError() {
+            const errorEl = document.getElementById('panel-error');
+
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.classList.add('hidden');
+            }
         }
 
         // Initialize map
@@ -965,8 +1276,13 @@
         // Load filter options from API
         async function loadFilters() {
             try {
+                clearMapError();
                 console.log('Fetching filters from:', `${apiBase}/filters`);
                 const response = await fetch(`${apiBase}/filters`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 console.log('Filter response:', response);
                 filterOptions = await response.json();
                 console.log('Filter options loaded:', filterOptions);
@@ -994,16 +1310,18 @@
                     yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
                 });
 
-                // Set default year to latest
-                yearSelect.value = filterOptions.years[filterOptions.years.length - 1];
+                // Real-time supply uses the current season when year is left blank.
+                yearSelect.value = document.getElementById('view-filter').value === 'supply_forecast'
+                    ? ''
+                    : filterOptions.years[filterOptions.years.length - 1];
 
                 // Load initial map data
                 loadMapData();
             } catch (error) {
                 console.error('Error loading filters:', error);
-                alert('Error loading filters. Please check console for details.');
-                document.getElementById('crop-filter').innerHTML = '<option value="">Error loading crops</option>';
-                document.getElementById('year-filter').innerHTML = '<option value="">Error loading years</option>';
+                showMapError('Could not load choices.');
+                document.getElementById('crop-filter').innerHTML = '<option value="">Could not load crops</option>';
+                document.getElementById('year-filter').innerHTML = '<option value="">Could not load years</option>';
             }
         }
 
@@ -1015,6 +1333,7 @@
             const farmType = document.getElementById('farm-type-filter').value;
 
             // Show loading
+            clearMapError();
             document.getElementById('loading-indicator').classList.remove('hidden');
 
             try {
@@ -1025,6 +1344,10 @@
                 if (farmType) params.append('farm_type', farmType);
 
                 const response = await fetch(`${apiBase}/data?${params}`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 const data = await response.json();
 
                 currentData = data;
@@ -1032,7 +1355,7 @@
                 updateStats(data);
             } catch (error) {
                 console.error('Error loading map data:', error);
-                alert('Error loading map data: ' + error.message);
+                showMapError('Could not load map.');
             } finally {
                 document.getElementById('loading-indicator').classList.add('hidden');
             }
@@ -1070,6 +1393,20 @@
             );
         }
 
+        function getFarmerCountForMunicipality(data, municipalityName) {
+            const productionRow = findMunicipalityData(data, municipalityName);
+            if (productionRow && productionRow.farmer_count !== undefined) {
+                return Number(productionRow.farmer_count) || 0;
+            }
+
+            const countRow = (data.farmer_counts || []).find(row =>
+                normalizeMunicipalityName(row.municipality) === normalizeMunicipalityName(municipalityName)
+                || normalizeMunicipalityName(row.normalized_municipality) === normalizeMunicipalityName(municipalityName)
+            );
+
+            return Number(countRow?.farmer_count) || 0;
+        }
+
         function createPinpointIcon(municipalityName, municipalityData) {
             const isPreferred = userPreferredMunicipality &&
                 normalizeMunicipalityName(municipalityName) === normalizeMunicipalityName(userPreferredMunicipality);
@@ -1089,6 +1426,9 @@
         }
 
         function buildMarkerPopup(municipalityName, municipalityData) {
+            const farmerCount = getFarmerCountForMunicipality(currentData, municipalityName);
+            const farmerLabel = farmerCount === 1 ? 'farmer' : 'farmers';
+
             if (municipalityData) {
                 const viewType = document.getElementById('view-filter').value;
                 const unit = getUnit(viewType);
@@ -1098,6 +1438,7 @@
                     </div>
                     <p class="text-[9px] sm:text-[10px] text-gray-500 mb-0.5 uppercase tracking-wider font-semibold">${getViewLabel(viewType)}</p>
                     <p class="text-lg sm:text-xl font-bold text-green-600 m-0 leading-none">${Number(municipalityData.value).toLocaleString()} <span class="text-[10px] sm:text-xs font-medium text-gray-500 ml-0.5">${unit}</span></p>
+                    <p class="mt-2 text-[10px] sm:text-xs font-semibold text-emerald-700">${farmerCount.toLocaleString()} ${farmerLabel}</p>
                 `;
             }
 
@@ -1105,7 +1446,8 @@
                 <div class="border-b border-gray-100 pb-1.5 sm:pb-2 mb-1.5 sm:mb-2 pr-5 sm:pr-6">
                     <h4 class="font-bold text-gray-800 text-sm sm:text-base m-0">${municipalityName}</h4>
                 </div>
-                <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No data available</p>
+                <p class="text-xs sm:text-sm font-medium text-gray-500 m-0">No records here yet</p>
+                <p class="mt-2 text-[10px] sm:text-xs font-semibold text-emerald-700">${farmerCount.toLocaleString()} ${farmerLabel}</p>
             `;
         }
 
@@ -1135,6 +1477,7 @@
         // Get unit label
         function getUnit(viewType) {
             switch (viewType) {
+                case 'supply_forecast': return 'mt';
                 case 'production': return 'mt';
                 case 'area_harvested': return 'ha';
                 case 'productivity': return 'mt/ha';
@@ -1145,7 +1488,8 @@
         // Get view label
         function getViewLabel(viewType) {
             switch (viewType) {
-                case 'production': return 'Production';
+                case 'supply_forecast': return 'Expected Supply';
+                case 'production': return 'Past Production';
                 case 'area_harvested': return 'Area Harvested';
                 case 'productivity': return 'Productivity';
                 default: return 'Value';
@@ -1187,24 +1531,24 @@
             // Update details text
             const detailsContainer = document.getElementById('contribution-details');
             detailsContainer.innerHTML = `
-                <div class="flex items-center justify-between bg-green-50 p-2 rounded border border-green-200">
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-2">
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #22c55e"></div>
-                        <span class="text-sm font-medium text-gray-700">${municipalityName}</span>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #16a34a"></div>
+                        <span class="text-sm font-medium text-slate-700">${municipalityName}</span>
                     </div>
                     <div class="text-right">
                         <span class="text-sm font-bold text-green-700">${selectedPercentage}%</span>
-                        <span class="text-xs text-gray-500 ml-1">(${Number(selectedValue).toLocaleString()} ${unit})</span>
+                        <span class="text-xs text-slate-500 ml-1">(${Number(selectedValue).toLocaleString()} ${unit})</span>
                     </div>
                 </div>
-                <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200">
+                <div class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-2">
                     <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #d1d5db"></div>
-                        <span class="text-sm font-medium text-gray-700">Other Municipalities</span>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: #cbd5e1"></div>
+                        <span class="text-sm font-medium text-slate-700">Other Municipalities</span>
                     </div>
                     <div class="text-right">
-                        <span class="text-sm font-bold text-gray-800">${othersPercentage}%</span>
-                        <span class="text-xs text-gray-500 ml-1">(${Number(othersValue).toLocaleString()} ${unit})</span>
+                        <span class="text-sm font-bold text-slate-800">${othersPercentage}%</span>
+                        <span class="text-xs text-slate-500 ml-1">(${Number(othersValue).toLocaleString()} ${unit})</span>
                     </div>
                 </div>
             `;
@@ -1222,7 +1566,7 @@
                     labels: [municipalityName, 'Other Municipalities'],
                     datasets: [{
                         data: [selectedValue, othersValue],
-                        backgroundColor: ['#22c55e', '#d1d5db'],
+                        backgroundColor: ['#16a34a', '#cbd5e1'],
                         borderWidth: 2,
                         borderColor: '#fff'
                     }]
@@ -1270,6 +1614,8 @@
             document.getElementById('weather-content').classList.add('hidden');
             document.getElementById('weather-source-badge').classList.add('hidden');
 
+            document.getElementById('weather-action-title').textContent = 'Checking weather';
+            document.getElementById('weather-action-message').textContent = 'Use this before planting, spraying, or harvesting.';
             document.getElementById('weather-current-condition').textContent = '-';
             document.getElementById('weather-current-temp').textContent = '-';
             document.getElementById('weather-current-humidity').textContent = '-';
@@ -1305,6 +1651,195 @@
             return parsed.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         }
 
+        function updateFarmerCountCard(municipalityName, farmerCount) {
+            const count = Number(farmerCount) || 0;
+            document.getElementById('panel-farmer-count').textContent = count.toLocaleString();
+            document.getElementById('panel-farmer-count-label').textContent = count === 1 ? 'farmer' : 'farmers';
+        }
+
+        function formatMetricTons(value) {
+            const amount = Number(value) || 0;
+            return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+        }
+
+        function renderProductionOutlookLegacy(outlook) {
+            const listEl = document.getElementById('production-outlook-list');
+            const countEl = document.getElementById('production-outlook-count');
+            const rows = Array.isArray(outlook) ? outlook : [];
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No crop plans here yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = rows.map(row => `
+                <div class="rounded-lg border border-orange-100 bg-white p-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 break-words">${escapeHtml(row.crop || 'Crop')}</p>
+                            <p class="mt-0.5 text-[11px] text-gray-500">${Number(row.plan_count || 0).toLocaleString()} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} · ${Number(row.harvested_count || 0).toLocaleString()} harvested</p>
+                        </div>
+                        <span class="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">${formatMetricTons(row.supply_forecast_mt ?? row.net_expected_production_mt)}</span>
+                    </div>
+                    <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <div class="rounded bg-orange-50 px-2 py-1.5">
+                            <p class="font-semibold text-orange-700">Expected</p>
+                            <p class="text-gray-900">${formatMetricTons(row.predicted_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-green-50 px-2 py-1.5">
+                            <p class="font-semibold text-green-700">Harvested</p>
+                            <p class="text-gray-900">${formatMetricTons(row.harvested_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-red-50 px-2 py-1.5">
+                            <p class="font-semibold text-red-700">Damaged</p>
+                            <p class="text-gray-900">${formatMetricTons(row.damaged_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-emerald-50 px-2 py-1.5">
+                            <p class="font-semibold text-emerald-700">Remaining</p>
+                            <p class="text-gray-900">${formatMetricTons(row.net_expected_production_mt)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toSafeNumber(value) {
+            const amount = Number(value);
+            return Number.isFinite(amount) ? amount : 0;
+        }
+
+        function getOutlookSupplyValue(row) {
+            return toSafeNumber(row?.supply_forecast_mt ?? row?.net_expected_production_mt ?? row?.predicted_production_mt);
+        }
+
+        function getSortedOutlookRows(outlook) {
+            return (Array.isArray(outlook) ? outlook : [])
+                .slice()
+                .sort((a, b) => {
+                    const planDiff = toSafeNumber(b.plan_count) - toSafeNumber(a.plan_count);
+                    if (planDiff !== 0) return planDiff;
+                    return getOutlookSupplyValue(b) - getOutlookSupplyValue(a);
+                });
+        }
+
+        function getSelectedCropName() {
+            return document.getElementById('crop-filter')?.value || '';
+        }
+
+        function renderPlantingSignal(outlook) {
+            const cardEl = document.getElementById('planting-signal-card');
+            const badgeEl = document.getElementById('planting-signal-badge');
+            const titleEl = document.getElementById('planting-signal-title');
+            const messageEl = document.getElementById('planting-signal-message');
+            const alternativesEl = document.getElementById('planting-signal-alternatives');
+            const rows = getSortedOutlookRows(outlook);
+            const selectedCrop = getSelectedCropName();
+
+            cardEl.className = 'pwa-panel-section pwa-panel-section-primary';
+            badgeEl.className = 'pwa-status-pill';
+            alternativesEl.innerHTML = '';
+
+            if (rows.length === 0) {
+                badgeEl.textContent = 'Open';
+                titleEl.textContent = 'No crop crowding yet';
+                messageEl.textContent = 'You can plan based on your field and weather.';
+                return;
+            }
+
+            const selectedRow = selectedCrop
+                ? rows.find(row => String(row.crop || '').toLowerCase() === selectedCrop.toLowerCase())
+                : null;
+            const mainRow = selectedRow || rows[0];
+            const cropName = mainRow?.crop || 'this crop';
+            const planCount = toSafeNumber(mainRow?.plan_count);
+            const maxPlanCount = Math.max(...rows.map(row => toSafeNumber(row.plan_count)));
+            const isCrowded = planCount > 1 && planCount >= maxPlanCount;
+            const hasDamage = rows.some(row => toSafeNumber(row.damaged_production_mt) > 0);
+
+            if (selectedRow) {
+                if (isCrowded) {
+                    cardEl.classList.add('is-warning');
+                    badgeEl.classList.add('is-warning');
+                    badgeEl.textContent = 'Compare';
+                    titleEl.textContent = `${cropName} is popular here`;
+                    messageEl.textContent = 'Check another crop before you plant the same one.';
+                } else {
+                    badgeEl.textContent = 'Looks okay';
+                    titleEl.textContent = `${cropName} still looks okay`;
+                    messageEl.textContent = 'Keep checking the supply before planting.';
+                }
+            } else {
+                if (isCrowded) {
+                    cardEl.classList.add('is-warning');
+                    badgeEl.classList.add('is-warning');
+                }
+                badgeEl.textContent = isCrowded ? 'Watch' : 'Guide';
+                titleEl.textContent = `Most farmers here plant ${cropName}`;
+                messageEl.textContent = isCrowded
+                    ? 'If you plant the same crop, check the supply first.'
+                    : 'Use this as a guide before choosing your crop.';
+            }
+
+            const alternatives = rows
+                .filter(row => String(row.crop || '') !== String(cropName))
+                .slice(0, 3);
+
+            if (alternatives.length > 0) {
+                alternativesEl.innerHTML = alternatives.map(row => `
+                    <span class="pwa-soft-pill">
+                        Try ${escapeHtml(row.crop || 'crop')}
+                    </span>
+                `).join('');
+            } else if (hasDamage) {
+                alternativesEl.innerHTML = '<span class="pwa-status-pill is-warning">Damage reported here</span>';
+            }
+        }
+
+        function renderProductionOutlook(outlook) {
+            const listEl = document.getElementById('production-outlook-list');
+            const countEl = document.getElementById('production-outlook-count');
+            const rows = getSortedOutlookRows(outlook);
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="text-sm text-slate-500">No crop plans here yet.</p>';
+                return;
+            }
+
+            const visibleRows = rows.slice(0, 3);
+            const hiddenCount = Math.max(rows.length - visibleRows.length, 0);
+
+            listEl.innerHTML = visibleRows.map(row => {
+                const planCount = toSafeNumber(row.plan_count);
+                const harvestedCount = toSafeNumber(row.harvested_count);
+                const damaged = toSafeNumber(row.damaged_production_mt);
+                const remaining = toSafeNumber(row.net_expected_production_mt);
+
+                return `
+                    <div class="pwa-crop-row">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-slate-950 break-words">${escapeHtml(row.crop || 'Crop')}</p>
+                                <p class="mt-0.5 text-[11px] text-slate-500">${planCount.toLocaleString()} ${planCount === 1 ? 'plan' : 'plans'} recorded here</p>
+                            </div>
+                            <span class="pwa-status-pill">${formatMetricTons(getOutlookSupplyValue(row))}</span>
+                        </div>
+                        <div class="pwa-crop-meta">
+                            <span>Expected ${formatMetricTons(row.predicted_production_mt)}</span>
+                            <span>Harvested ${harvestedCount.toLocaleString()}</span>
+                            <span>Still coming ${formatMetricTons(remaining)}</span>
+                            ${damaged > 0 ? `<span class="is-danger">Damaged ${formatMetricTons(damaged)}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('') + (hiddenCount > 0
+                ? `<p class="pt-1 text-xs text-slate-500">+${hiddenCount} more ${hiddenCount === 1 ? 'crop' : 'crops'}. Use the crop filter to check one crop.</p>`
+                : '');
+        }
+
         function formatDay(value) {
             if (!value) return '--';
             const parsed = new Date(value);
@@ -1322,7 +1857,36 @@
             })[char]);
         }
 
-        function renderWeatherData(weatherPayload, hasErrors) {
+        function renderWeatherAdvice(current) {
+            const rainChance = toSafeNumber(current?.precipitation_probability_percent);
+            const windSpeed = toSafeNumber(current?.wind_speed_kph);
+            const condition = String(current?.condition_text || '').toLowerCase();
+            const titleEl = document.getElementById('weather-action-title');
+            const messageEl = document.getElementById('weather-action-message');
+
+            if (rainChance >= 60 || condition.includes('rain')) {
+                titleEl.textContent = 'Rain is likely';
+                messageEl.textContent = 'Avoid spraying today. Check drainage if you just planted.';
+                return;
+            }
+
+            if (windSpeed >= 25) {
+                titleEl.textContent = 'It may be windy';
+                messageEl.textContent = 'Be careful with spraying and field work.';
+                return;
+            }
+
+            if (!current || Object.keys(current).length === 0) {
+                titleEl.textContent = 'Weather is unavailable';
+                messageEl.textContent = 'Check the weather before field work.';
+                return;
+            }
+
+            titleEl.textContent = 'Weather looks workable';
+            messageEl.textContent = 'You can plan field work, but still check your area.';
+        }
+
+        function renderWeatherDataLegacy(weatherPayload, hasErrors) {
             const loadingEl = document.getElementById('weather-loading');
             const errorEl = document.getElementById('weather-error');
             const contentEl = document.getElementById('weather-content');
@@ -1345,11 +1909,12 @@
                 errorEl.textContent = segmentErrors[0];
                 errorEl.classList.remove('hidden');
             } else if (hasErrors) {
-                errorEl.textContent = 'Some weather segments are temporarily unavailable.';
+                errorEl.textContent = 'Some weather data is missing.';
                 errorEl.classList.remove('hidden');
             }
 
             const current = weatherPayload?.current || {};
+            renderWeatherAdvice(current);
             document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
             document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
             document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
@@ -1361,7 +1926,7 @@
             document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
             const hourlyListEl = document.getElementById('weather-hourly-list');
             if (hourlyItems.length === 0) {
-                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly data available.</p>';
+                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly weather yet.</p>';
             } else {
                 hourlyListEl.innerHTML = hourlyItems.map(item => `
                     <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[90px] flex-shrink-0 snap-start text-center">
@@ -1377,7 +1942,7 @@
             document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
             const dailyListEl = document.getElementById('weather-daily-list');
             if (dailyItems.length === 0) {
-                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily data available.</p>';
+                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily weather yet.</p>';
             } else {
                 dailyListEl.innerHTML = dailyItems.map(item => `
                     <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[100px] flex-shrink-0 snap-start text-center">
@@ -1391,6 +1956,68 @@
                     </div>
                 `).join('');
             }
+
+            contentEl.classList.remove('hidden');
+        }
+
+        function renderWeatherData(weatherPayload, hasErrors) {
+            const loadingEl = document.getElementById('weather-loading');
+            const errorEl = document.getElementById('weather-error');
+            const contentEl = document.getElementById('weather-content');
+            const sourceBadgeEl = document.getElementById('weather-source-badge');
+
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+
+            const staleMap = weatherPayload?.metadata?.stale || {};
+            sourceBadgeEl.classList.toggle('hidden', !Object.values(staleMap).some(Boolean));
+
+            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
+            if (segmentErrors.length > 0 || hasErrors) {
+                errorEl.textContent = segmentErrors[0] || 'Some weather data is missing.';
+                errorEl.classList.remove('hidden');
+            }
+
+            const current = weatherPayload?.current || {};
+            renderWeatherAdvice(current);
+            document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
+            document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
+            document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
+            document.getElementById('weather-current-wind').textContent = formatWind(current.wind_speed_kph);
+            document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
+            document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
+
+            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 8);
+            document.getElementById('weather-hourly-count').textContent = `${hourlyItems.length} checks`;
+            const hourlyListEl = document.getElementById('weather-hourly-list');
+            hourlyListEl.innerHTML = hourlyItems.length === 0
+                ? '<p class="text-xs text-slate-500">No hourly weather yet.</p>'
+                : hourlyItems.map(item => `
+                    <div class="pwa-forecast-card">
+                        <p class="text-[11px] font-semibold text-slate-700">${escapeHtml(formatClock(item.timestamp))}</p>
+                        <p class="my-1 text-xs font-bold text-green-700">${escapeHtml(formatTemperature(item.temperature_c))}</p>
+                        <p class="w-full truncate text-[10px] text-slate-600" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <p class="mt-1 text-[10px] text-slate-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    </div>
+                `).join('');
+
+            const dailyItems = (weatherPayload?.daily?.items || []).slice(0, 5);
+            document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
+            const dailyListEl = document.getElementById('weather-daily-list');
+            dailyListEl.innerHTML = dailyItems.length === 0
+                ? '<p class="text-xs text-slate-500">No daily weather yet.</p>'
+                : dailyItems.map(item => `
+                    <div class="pwa-forecast-card">
+                        <p class="text-[11px] font-bold text-slate-800">${escapeHtml(formatDay(item.date))}</p>
+                        <p class="mb-1 w-full truncate text-[10px] text-slate-500" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
+                        <div class="mb-1 w-full rounded-md border border-slate-200 bg-white px-2 py-1">
+                            <p class="text-[11px] font-semibold text-slate-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
+                            <p class="text-[9px] text-slate-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                    </div>
+                `).join('');
 
             contentEl.classList.remove('hidden');
         }
@@ -1426,7 +2053,7 @@
                 }
 
                 weatherLoadingEl.classList.add('hidden');
-                weatherErrorEl.textContent = `Weather data unavailable: ${error.message}`;
+                weatherErrorEl.textContent = `Weather unavailable: ${error.message}`;
                 weatherErrorEl.classList.remove('hidden');
             }
         }
@@ -1442,8 +2069,12 @@
 
             // Update header
             document.getElementById('panel-municipality-name').textContent = municipalityName;
+            updateFarmerCountCard(municipalityName, getFarmerCountForMunicipality(currentData, municipalityName));
+            renderPlantingSignal([]);
+            renderProductionOutlook([]);
 
             // Show loading
+            clearPanelError();
             document.getElementById('panel-loading').classList.remove('hidden');
             document.getElementById('panel-content').classList.add('hidden');
 
@@ -1460,6 +2091,10 @@
                 if (farmType) params.append('farm_type', farmType);
 
                 const response = await fetch(`${apiBase}/municipality/${encodeURIComponent(municipalityName)}?${params}`);
+                if (!response.ok) {
+                    throw new Error(`Request failed (${response.status})`);
+                }
+
                 const data = await response.json();
 
                 if (requestToken !== detailsRequestToken) {
@@ -1467,6 +2102,13 @@
                 }
 
                 console.log('Municipality data:', data);
+
+                updateFarmerCountCard(
+                    municipalityName,
+                    data.summary?.farmer_count ?? getFarmerCountForMunicipality(currentData, municipalityName)
+                );
+                renderPlantingSignal(data.production_outlook);
+                renderProductionOutlook(data.production_outlook);
 
                 // Update charts
                 updateContributionChart(municipalityName);
@@ -1486,15 +2128,51 @@
                 }
 
                 console.error('Error loading municipality details:', error);
-                alert('Error loading details: ' + error.message);
-                closeDetailsPanel();
+                showPanelError('Could not load this town.');
             }
+        }
+
+        function renderCropListSummary(cropData) {
+            const listEl = document.getElementById('crop-list-summary');
+            const countEl = document.getElementById('crop-summary-count');
+            const rows = (Array.isArray(cropData) ? cropData : [])
+                .slice()
+                .sort((a, b) => toSafeNumber(b.total_production) - toSafeNumber(a.total_production));
+
+            countEl.textContent = `${rows.length} ${rows.length === 1 ? 'crop' : 'crops'}`;
+
+            if (rows.length === 0) {
+                listEl.innerHTML = '<p class="rounded-lg bg-slate-50 p-3 text-sm text-slate-500">No crop records here yet.</p>';
+                return;
+            }
+
+            const totalProduction = rows.reduce((sum, row) => sum + toSafeNumber(row.total_production), 0);
+            const visibleRows = rows.slice(0, 5);
+
+            listEl.innerHTML = visibleRows.map(row => {
+                const value = toSafeNumber(row.total_production);
+                const percent = totalProduction > 0 ? Math.round((value / totalProduction) * 100) : 0;
+
+                return `
+                    <div class="pwa-crop-row">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="min-w-0 truncate text-sm font-semibold text-slate-950">${escapeHtml(row.crop || 'Crop')}</p>
+                            <span class="pwa-status-pill">${percent}%</span>
+                        </div>
+                        <div class="pwa-progress-track mt-2">
+                            <div class="pwa-progress-fill" style="width: ${Math.max(percent, 4)}%"></div>
+                        </div>
+                        <p class="mt-1 text-xs text-slate-500">${formatMetricTons(value)} recorded</p>
+                    </div>
+                `;
+            }).join('');
         }
 
         function updateCropChart(cropData) {
             const ctx = document.getElementById('crop-chart');
             if (!ctx) return;
 
+            renderCropListSummary(cropData);
             const container = ctx.parentElement;
             const emptyState = container.querySelector('[data-crop-chart-empty]');
 
@@ -1508,7 +2186,7 @@
                 ctx.classList.add('hidden');
                 if (!emptyState) {
                     container.insertAdjacentHTML('beforeend',
-                        '<p data-crop-chart-empty class="text-sm text-gray-500 text-center py-8">No crop data available</p>');
+                        '<p data-crop-chart-empty class="text-sm text-slate-500 text-center py-8">No crop records here yet.</p>');
                 }
                 return;
             }
@@ -1517,8 +2195,8 @@
             emptyState?.remove();
 
             const colors = [
-                '#ef4444', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
-                '#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1'
+                '#16a34a', '#65a30d', '#0f766e', '#64748b', '#d97706',
+                '#15803d', '#475569', '#84cc16', '#0d9488', '#94a3b8'
             ];
 
             cropChart = new Chart(ctx, {

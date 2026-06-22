@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\CropProduction;
+use App\Models\FarmerCalendarEvent;
 use App\Models\Prediction;
+use App\Services\CommunityCropSignalService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class FarmerDashboardController extends Controller
 {
@@ -36,7 +40,7 @@ class FarmerDashboardController extends Controller
     ];
 
     /**
-     * Display the farmer dashboard with enhanced widgets
+     * Display the farmer dashboard.
      */
     public function index()
     {
@@ -51,6 +55,8 @@ class FarmerDashboardController extends Controller
         // User preferences
         $preferredMunicipality = $user->preferred_municipality;
         $favoriteCrops = $user->favorite_crops ?? [];
+        $harvestProgress = $this->getSafeHarvestProgress($user->id);
+        $cropBalancePulse = $this->getSafeCropBalancePulse($user, $preferredMunicipality);
 
         return view('dashboard-simple', compact(
             'totalRecords',
@@ -58,8 +64,265 @@ class FarmerDashboardController extends Controller
             'cropTypesCount',
             'predictionsCount',
             'preferredMunicipality',
-            'favoriteCrops'
+            'favoriteCrops',
+            'harvestProgress',
+            'cropBalancePulse'
         ));
+    }
+
+    private function getSafeHarvestProgress(int $userId): array
+    {
+        if (! $this->supportsCalendarColumns([
+            'estimated_harvest_date',
+            'desired_area_sqm',
+            'damage_area_sqm',
+            'crop_plan_event_id',
+            'harvest_event_id',
+            'predicted_production_mt',
+        ])) {
+            return $this->emptyHarvestProgress();
+        }
+
+        try {
+            return $this->getHarvestProgress($userId);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return $this->emptyHarvestProgress();
+        }
+    }
+
+    private function getSafeCropBalancePulse($user, ?string $preferredMunicipality): array
+    {
+        try {
+            return app(CommunityCropSignalService::class)->dashboardPulse($user);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return $this->emptyCropBalancePulse($preferredMunicipality);
+        }
+    }
+
+    private function emptyHarvestProgress(): array
+    {
+        return [
+            'items' => collect(),
+            'active_count' => 0,
+            'hidden_count' => 0,
+            'due_soon_count' => 0,
+            'expected_production_mt' => 0,
+        ];
+    }
+
+    private function emptyCropBalancePulse(?string $preferredMunicipality): array
+    {
+        $hasLocation = filled($preferredMunicipality);
+
+        return [
+            'has_location' => $hasLocation,
+            'has_data' => false,
+            'municipality' => $hasLocation ? ucwords(strtolower($preferredMunicipality)) : null,
+            'window_label' => 'Next 180 days',
+            'items' => collect(),
+            'alternatives' => collect(),
+            'message' => $hasLocation
+                ? 'Local crop balance is temporarily unavailable.'
+                : 'Set your farm location to see crops near you.',
+        ];
+    }
+
+    private function supportsCalendarColumns(array $columns): bool
+    {
+        try {
+            foreach ($columns as $column) {
+                if (! Schema::hasColumn('farmer_calendar_events', $column)) {
+                    return false;
+                }
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getHarvestProgress(int $userId): array
+    {
+        $today = Carbon::today();
+
+        $plans = FarmerCalendarEvent::query()
+            ->where('user_id', $userId)
+            ->where('category', 'crop_plan')
+            ->whereNotNull('estimated_harvest_date')
+            ->whereNotNull('desired_area_sqm')
+            ->where(function ($query) use ($today) {
+                $query->where('is_completed', false)
+                    ->orWhereDate('estimated_harvest_date', '>=', $today->copy()->subDays(7)->toDateString());
+            })
+            ->orderBy('estimated_harvest_date')
+            ->limit(12)
+            ->get();
+
+        $items = $plans->map(function (FarmerCalendarEvent $plan) use ($today, $userId) {
+            $start = $plan->event_date ? $plan->event_date->copy()->startOfDay() : null;
+            $harvest = $plan->estimated_harvest_date?->copy()->startOfDay();
+
+            if (! $start || ! $harvest || $harvest->lt($start)) {
+                return null;
+            }
+
+            $totalDays = max(1, $start->diffInDays($harvest));
+            $elapsedDays = max(0, min($totalDays, $start->diffInDays($today, false)));
+            $progress = (int) round(($elapsedDays / $totalDays) * 100);
+            $daysUntilHarvest = (int) $today->diffInDays($harvest, false);
+            $damageArea = $this->getReportedDamageArea($plan->id, $userId);
+            $plannedArea = max(0.0, (float) $plan->desired_area_sqm);
+            $damageRatio = $plannedArea > 0 ? min(1, $damageArea / $plannedArea) : 0;
+            $predictedProduction = $plan->predicted_production_mt !== null
+                ? max(0.0, (float) $plan->predicted_production_mt)
+                : null;
+            $adjustedProduction = $predictedProduction !== null
+                ? round($predictedProduction * (1 - $damageRatio), 2)
+                : null;
+            $harvestEventCompleted = $plan->harvest_event_id
+                ? FarmerCalendarEvent::where('user_id', $userId)
+                    ->where('id', $plan->harvest_event_id)
+                    ->where('is_completed', true)
+                    ->exists()
+                : false;
+            $isHarvested = (bool) $plan->is_completed || $harvestEventCompleted;
+            $nextTask = $this->getNextHarvestTask($plan, $userId);
+            $status = $this->resolveHarvestProgressStatus($isHarvested, $daysUntilHarvest);
+
+            return [
+                'id' => $plan->id,
+                'crop' => $plan->crop ?: $plan->title,
+                'title' => $plan->title,
+                'planning_date' => $start->format('M d'),
+                'harvest_date' => $harvest->format('M d, Y'),
+                'days_until_harvest' => $daysUntilHarvest,
+                'progress_percent' => $isHarvested ? 100 : $progress,
+                'planned_area_sqm' => $plannedArea,
+                'damage_area_sqm' => round($damageArea, 2),
+                'predicted_production_mt' => $predictedProduction,
+                'adjusted_production_mt' => $adjustedProduction,
+                'status' => $status,
+                'next_task' => $nextTask,
+                'sort_weight' => $this->getHarvestProgressSortWeight($isHarvested, $daysUntilHarvest),
+            ];
+        })
+            ->filter()
+            ->sortBy([
+                ['sort_weight', 'asc'],
+                ['days_until_harvest', 'asc'],
+            ])
+            ->values();
+
+        $unharvestedItems = $items->filter(fn ($item) => $item['status']['key'] !== 'harvested');
+        $visibleItems = $unharvestedItems->take(3)->values();
+
+        return [
+            'items' => $visibleItems,
+            'active_count' => $unharvestedItems->count(),
+            'hidden_count' => max(0, $unharvestedItems->count() - $visibleItems->count()),
+            'due_soon_count' => $unharvestedItems->filter(fn ($item) => in_array($item['status']['key'], ['due_soon', 'ready', 'overdue'], true))->count(),
+            'expected_production_mt' => round($unharvestedItems->sum(fn ($item) => $item['adjusted_production_mt'] ?? 0), 2),
+        ];
+    }
+
+    private function getReportedDamageArea(int $cropPlanId, int $userId): float
+    {
+        return (float) FarmerCalendarEvent::where('user_id', $userId)
+            ->where('category', 'damage_report')
+            ->where('crop_plan_event_id', $cropPlanId)
+            ->sum('damage_area_sqm');
+    }
+
+    private function getNextHarvestTask(FarmerCalendarEvent $plan, int $userId): ?array
+    {
+        $task = FarmerCalendarEvent::where('user_id', $userId)
+            ->where('is_completed', false)
+            ->whereDate('event_date', '>=', now()->toDateString())
+            ->where(function ($query) use ($plan) {
+                $query->where('crop_plan_event_id', $plan->id);
+
+                if ($plan->harvest_event_id) {
+                    $query->orWhere('id', $plan->harvest_event_id);
+                }
+            })
+            ->orderBy('event_date')
+            ->orderBy('reminder_time')
+            ->first();
+
+        if (! $task) {
+            return null;
+        }
+
+        return [
+            'title' => $task->title,
+            'date' => $task->event_date?->format('M d'),
+            'category' => $task->category,
+        ];
+    }
+
+    private function resolveHarvestProgressStatus(bool $isHarvested, int $daysUntilHarvest): array
+    {
+        if ($isHarvested) {
+            return [
+                'key' => 'harvested',
+                'label' => 'Harvested',
+                'classes' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            ];
+        }
+
+        if ($daysUntilHarvest < 0) {
+            return [
+                'key' => 'overdue',
+                'label' => 'Overdue',
+                'classes' => 'bg-red-50 text-red-700 border-red-200',
+            ];
+        }
+
+        if ($daysUntilHarvest === 0) {
+            return [
+                'key' => 'ready',
+                'label' => 'Ready today',
+                'classes' => 'bg-amber-100 text-amber-800 border-amber-200',
+            ];
+        }
+
+        if ($daysUntilHarvest <= 7) {
+            return [
+                'key' => 'due_soon',
+                'label' => 'Due soon',
+                'classes' => 'bg-orange-50 text-orange-700 border-orange-200',
+            ];
+        }
+
+        return [
+            'key' => 'growing',
+            'label' => 'Growing',
+            'classes' => 'bg-sky-50 text-sky-700 border-sky-200',
+        ];
+    }
+
+    private function getHarvestProgressSortWeight(bool $isHarvested, int $daysUntilHarvest): int
+    {
+        if ($isHarvested) {
+            return 4;
+        }
+
+        if ($daysUntilHarvest < 0) {
+            return 0;
+        }
+
+        if ($daysUntilHarvest <= 7) {
+            return 1;
+        }
+
+        return 2;
     }
 
     /**

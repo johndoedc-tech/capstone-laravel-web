@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Crop Production Prediction & Forecasting') }}
-        </h2>
-    </x-slot>
-
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
@@ -24,8 +18,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Future Production Forecast</h3>
-                                <p class="mt-1 text-sm text-gray-500">Select parameters below to generate a year-over-year production trend analysis.</p>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Check Harvest</h3>
+                                <p class="mt-1 text-sm text-gray-500">Choose area and crop.</p>
                             </div>
                         </div>
                     </div>
@@ -68,14 +62,14 @@
                                         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md bg-gray-100 cursor-not-allowed">
                                         <option value="6" selected>6 Years (2025-2030)</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-gray-500">Shows year-over-year production trends</p>
+                                    <p class="mt-1 text-xs text-gray-500">Shows yearly change.</p>
                                 </div>
                             </div>
 
                             <div class="mt-6 flex justify-end">
                                 <button type="submit" id="forecastBtn"
                                     class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
-                                    <span id="forecastBtnText">Generate Forecast</span>
+                                    <span id="forecastBtnText">Check Forecast</span>
                                     <svg id="forecastSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -95,7 +89,7 @@
                                         <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                                         </svg>
-                                        Production Over the Years
+                                        Harvest over the Years
                                     </h4>
                                     <!-- Chart Type Toggle -->
                                     <div class="flex items-center mt-2 sm:mt-0 space-x-2">
@@ -132,7 +126,7 @@
                                         <span class="text-sm">💡 <strong>How to read:</strong></span>
                                         <div class="flex items-center">
                                             <div class="w-4 h-4 rounded bg-blue-500 mr-2"></div>
-                                            <span class="text-sm font-medium text-gray-700">Historical</span>
+                                            <span class="text-sm font-medium text-gray-700">Past Records</span>
                                         </div>
                                         <div class="flex items-center">
                                             <div class="w-4 h-4 rounded bg-green-500 mr-2"></div>
@@ -284,7 +278,7 @@
             
             // Show loading state
             forecastBtn.disabled = true;
-            forecastBtnText.textContent = 'Generating Forecast...';
+            forecastBtnText.textContent = 'Checking...';
             forecastSpinner.classList.remove('hidden');
             
             try {
@@ -348,7 +342,7 @@
                     // Display summary card
                     let html = `
                         <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border-2 border-green-200 mb-6">
-                            <h4 class="text-lg font-bold text-gray-800 mb-2">Forecast Summary</h4>
+                            <h4 class="text-lg font-bold text-gray-800 mb-2">Quick Summary</h4>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                                 <div>
                                     <p class="text-xs text-gray-600">Municipality</p>
@@ -359,7 +353,7 @@
                                     <p class="text-sm font-semibold text-gray-800">${result.crop || requestPayload.crop}</p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-600">Forecast Years</p>
+                                        <p class="text-xs text-gray-600">Years</p>
                                     <p class="text-sm font-semibold text-gray-800">${forecast.length} years</p>
                                 </div>
                                 <div>
@@ -382,7 +376,7 @@
                                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                                         </svg>
-                                        Yearly Forecast (Per Taon)
+                                        Year-by-Year Forecast
                                     </h5>
                                 </div>
                     `;
@@ -412,7 +406,7 @@
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-lg font-bold text-gray-800">${item.year}</span>
-                                        <p class="text-xs text-gray-500 mt-0.5">Predicted Production</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">Expected</p>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-lg font-bold text-green-700">${parseFloat(item.production).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
@@ -420,7 +414,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center pt-2 border-t border-gray-100">
-                                    <span class="text-xs text-gray-500">Growth vs Last Year:</span>
+                                    <span class="text-xs text-gray-500">Change:</span>
                                     <span class="text-sm font-semibold ${growthClass}">
                                         ${growthIcon} ${growthRate !== null ? growthSymbol + growthRate.toFixed(2) + '%' : 'Base Year'}
                                     </span>
@@ -504,11 +498,11 @@
                     // Add historical and trend statistics
                     html += `
                         <div class="mt-6">
-                            <h4 class="text-md font-semibold text-gray-800 mb-3">Historical Context & Trend Analysis</h4>
+                            <h4 class="text-md font-semibold text-gray-800 mb-3">Past Trend</h4>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 ${historical.average ? `
                                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                                        <p class="text-xs text-gray-600 mb-1">Historical Average</p>
+                                        <p class="text-xs text-gray-600 mb-1">Past Average</p>
                                         <p class="text-lg font-bold text-blue-700">${parseFloat(historical.average).toFixed(2)} mt</p>
                                         <p class="text-xs text-gray-500 mt-1">(${historical.years_available || 10} years)</p>
                                     </div>
@@ -521,14 +515,14 @@
                                 ` : ''}
                                 ${trend.growth_rate_percent ? `
                                     <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
-                                        <p class="text-xs text-gray-600 mb-1">Annual Growth Rate</p>
+                                        <p class="text-xs text-gray-600 mb-1">Yearly Change</p>
                                         <p class="text-lg font-bold text-green-700">${parseFloat(trend.growth_rate_percent).toFixed(2)}%</p>
                                         <p class="text-xs text-gray-500 mt-1">per year</p>
                                     </div>
                                 ` : ''}
                                 ${trend.slope ? `
                                     <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg">
-                                        <p class="text-xs text-gray-600 mb-1">Trend Slope</p>
+                                        <p class="text-xs text-gray-600 mb-1">Trend Change</p>
                                         <p class="text-lg font-bold text-amber-700">${parseFloat(trend.slope).toFixed(2)}</p>
                                         <p class="text-xs text-gray-500 mt-1">mt/year</p>
                                     </div>
@@ -546,9 +540,9 @@
                                         <svg class="w-5 h-5 text-indigo-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
-                                        <span class="text-sm font-medium text-indigo-900">
-                                            ${result.saved_count} forecast ${result.saved_count === 1 ? 'prediction' : 'predictions'} saved to your history
-                                        </span>
+                                            <span class="text-sm font-medium text-indigo-900">
+                                                Saved ${result.saved_count} ${result.saved_count === 1 ? 'result' : 'results'}
+                                            </span>
                                     </div>
                                     <a href="{{ route('predictions.history') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
                                         View History →
@@ -562,18 +556,18 @@
                     forecastResults.classList.remove('hidden');
                     forecastResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
-                    throw new Error(result.error || 'Forecast generation failed');
+                    throw new Error(result.error || 'Could not check forecast.');
                 }
                 
             } catch (error) {
                 console.error('Forecast Error:', error);
-                forecastErrorMessage.textContent = error.message || 'An unexpected error occurred. Please try again.';
+                forecastErrorMessage.textContent = error.message || 'Something went wrong.';
                 forecastError.classList.remove('hidden');
                 forecastError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } finally {
                 // Reset button state
                 forecastBtn.disabled = false;
-                forecastBtnText.textContent = 'Generate Forecast';
+                forecastBtnText.textContent = 'Check Forecast';
                 forecastSpinner.classList.add('hidden');
             }
         });

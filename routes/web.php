@@ -11,6 +11,8 @@ use App\Http\Controllers\FarmerDashboardController;
 use App\Http\Controllers\FarmerCalendarController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\FarmerChatbotController;
+use App\Http\Controllers\LguValidationController;
+use App\Http\Controllers\CalendarEvidenceController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
@@ -116,6 +118,10 @@ Route::get('/app', function () {
         return redirect()->route('admin.dashboard');
     }
 
+    if (auth()->user()->isLguValidator()) {
+        return redirect()->route('lgu.dashboard');
+    }
+
     return redirect()->route('dashboard');
 })->name('app.launch');
 
@@ -123,6 +129,10 @@ Route::get('/app', function () {
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return redirect()->route('admin.dashboard');
+    }
+
+    if (auth()->user()->isLguValidator()) {
+        return redirect()->route('lgu.dashboard');
     }
 
     return app(FarmerDashboardController::class)->index();
@@ -153,10 +163,12 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
             Route::get('/calendar-crop-plans', [FarmerCalendarController::class, 'getCropPlans'])->name('calendar.crop-plans');
             Route::post('/calendar-events', [FarmerCalendarController::class, 'store'])->name('calendar.store');
             Route::post('/calendar-events/production-prediction', [FarmerCalendarController::class, 'predictProduction'])->name('calendar.production-prediction');
+            Route::post('/calendar-events/crop-balance', [FarmerCalendarController::class, 'cropBalanceAdvice'])->name('calendar.crop-balance');
             Route::put('/calendar-events/{id}', [FarmerCalendarController::class, 'update'])->name('calendar.update');
             Route::delete('/calendar-events/{id}', [FarmerCalendarController::class, 'destroy'])->name('calendar.destroy');
             Route::post('/calendar-events/{id}/delete', [FarmerCalendarController::class, 'destroy'])->name('calendar.delete');
             Route::post('/calendar-events/{id}/toggle', [FarmerCalendarController::class, 'toggleComplete'])->name('calendar.toggle');
+            Route::post('/calendar-events/{id}/harvest', [FarmerCalendarController::class, 'recordHarvest'])->name('calendar.harvest');
             Route::get('/reminders/today', [FarmerCalendarController::class, 'getTodayReminders'])->name('reminders.today');
             Route::get('/reminders/upcoming', [FarmerCalendarController::class, 'getUpcomingReminders'])->name('reminders.upcoming');
 
@@ -202,6 +214,16 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
         Route::post('/vote', [ForumController::class, 'vote'])->name('vote');
         Route::post('/best-answer/{commentId}', [ForumController::class, 'markBestAnswer'])->name('best-answer');
     });
+});
+
+Route::middleware(['auth', 'force-password-change'])->group(function () {
+    Route::get('/calendar-events/{event}/damage-photo', [CalendarEvidenceController::class, 'show'])->name('calendar.damage-photo');
+});
+
+Route::middleware(['auth', 'force-password-change', 'lgu'])->prefix('lgu')->name('lgu.')->group(function () {
+    Route::get('/dashboard', [LguValidationController::class, 'index'])->name('dashboard');
+    Route::post('/validation/{event}/approve', [LguValidationController::class, 'approve'])->name('validation.approve');
+    Route::post('/validation/{event}/reject', [LguValidationController::class, 'reject'])->name('validation.reject');
 });
 
 // Admin Routes
@@ -254,11 +276,17 @@ Route::middleware(['auth', 'force-password-change', 'admin'])->prefix('admin')->
     Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.password.reset');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
+    // LGU validator accounts now live inside the unified Users page.
+    Route::redirect('/lgu-validators', '/admin/users?role=lgu_validator')->name('lgu-validators.index');
+    Route::redirect('/lgu-validators/create', '/admin/users?role=lgu_validator&create_role=lgu_validator')->name('lgu-validators.create');
+    Route::redirect('/lgu-validators/{validator}/edit', '/admin/users?role=lgu_validator')->name('lgu-validators.edit');
+
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
         Route::get('/production-summary', [ReportController::class, 'productionSummary'])->name('production-summary');
         Route::get('/planting-report', [ReportController::class, 'plantingReport'])->name('planting-report');
+        Route::get('/ml-correction-dataset', [ReportController::class, 'mlCorrectionDataset'])->name('ml-correction-dataset');
         Route::get('/prediction-analytics', [ReportController::class, 'predictionAnalytics'])->name('prediction-analytics');
         Route::get('/comparative-analysis', [ReportController::class, 'comparativeAnalysis'])->name('comparative-analysis');
         Route::get('/user-activity', [ReportController::class, 'userActivity'])->name('user-activity');

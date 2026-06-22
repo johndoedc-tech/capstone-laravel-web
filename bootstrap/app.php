@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'farmer' => \App\Http\Middleware\FarmerMiddleware::class,
+            'lgu' => \App\Http\Middleware\LguValidatorMiddleware::class,
             'force-password-change' => \App\Http\Middleware\ForcePasswordChangeMiddleware::class,
             'onboarding' => \App\Http\Middleware\EnsureProfileCompleteMiddleware::class,
         ]);

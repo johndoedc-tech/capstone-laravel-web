@@ -1,109 +1,73 @@
 <x-admin-layout>
-    <div class="py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="py-3 lg:py-4 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-
-            <!-- Header Section -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6 mb-5 lg:mb-6">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
-                            Admin Dashboard
-                        </h1>
-                        <p class="text-sm lg:text-base text-gray-500">
-                            Welcome back, <span class="font-semibold text-gray-900">{{ Auth::user()->name }}</span>
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3 text-left sm:text-right">
-                        <div class="hidden sm:flex items-center justify-center w-10 h-10 rounded-lg bg-primary-50">
-                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-xs lg:text-sm text-gray-400">{{ now()->format('l') }}</p>
-                            <p class="text-base lg:text-lg font-semibold text-gray-900">{{ now()->format('F d, Y') }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Statistics Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-5 lg:mb-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
                 <!-- Total Users -->
                 <div
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-5 hover:shadow-md transition-all duration-200 hover:border-blue-200">
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <div class="bg-blue-50 p-2.5 rounded-lg">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-50 p-2 rounded-lg">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                                     </path>
                                 </svg>
-                            </div>
                         </div>
-                        <div>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ \App\Models\User::count() }}</p>
-                            <p class="text-xs lg:text-sm text-gray-500 mt-0.5">Total Users</p>
+                        <div class="min-w-0">
+                            <p class="text-xl lg:text-2xl font-bold leading-tight text-gray-900">{{ \App\Models\User::count() }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Users</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Crop Records -->
                 <div
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-5 hover:shadow-md transition-all duration-200 hover:border-green-200">
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <div class="bg-green-50 p-2.5 rounded-lg">
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-green-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-green-50 p-2 rounded-lg">
+                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4">
                                     </path>
                                 </svg>
-                            </div>
                         </div>
-                        <div>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">
+                        <div class="min-w-0">
+                            <p class="text-xl lg:text-2xl font-bold leading-tight text-gray-900">
                                 {{ number_format(\App\Models\CropProduction::count()) }}</p>
-                            <p class="text-xs lg:text-sm text-gray-500 mt-0.5">Crop Records</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Crop Records</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Predictions -->
                 <div
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-5 hover:shadow-md transition-all duration-200 hover:border-purple-200">
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <div class="bg-purple-50 p-2.5 rounded-lg">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-purple-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-purple-50 p-2 rounded-lg">
+                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
                                     </path>
                                 </svg>
-                            </div>
                         </div>
-                        <div>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">
+                        <div class="min-w-0">
+                            <p class="text-xl lg:text-2xl font-bold leading-tight text-gray-900">
                                 {{ number_format(\App\Models\Prediction::count()) }}</p>
-                            <p class="text-xs lg:text-sm text-gray-500 mt-0.5">Predictions Made</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Predictions</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Municipalities -->
                 <div
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-5 hover:shadow-md transition-all duration-200 hover:border-amber-200">
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <div class="bg-amber-50 p-2.5 rounded-lg">
-                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-amber-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-amber-50 p-2 rounded-lg">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
@@ -111,25 +75,24 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
-                            </div>
                         </div>
-                        <div>
-                            <p class="text-2xl lg:text-3xl font-bold text-gray-900">13</p>
-                            <p class="text-xs lg:text-sm text-gray-500 mt-0.5">Municipalities</p>
+                        <div class="min-w-0">
+                            <p class="text-xl lg:text-2xl font-bold leading-tight text-gray-900">13</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Municipalities</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Actions Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 mb-5 lg:mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 lg:gap-3 mb-3 lg:mb-4">
                 <!-- Manage Crop Data -->
                 <a href="{{ route('admin.crop-data.index') }}"
-                    class="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6 hover:shadow-md hover:border-green-200 transition-all duration-200">
-                    <div class="flex items-start gap-4">
+                    class="group bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 hover:shadow-md hover:border-green-200 transition-all duration-200">
+                    <div class="flex items-center gap-3">
                         <div
-                            class="bg-green-50 group-hover:bg-green-100 p-3 rounded-xl flex-shrink-0 transition-colors">
-                            <svg class="w-6 h-6 lg:w-7 lg:h-7 text-green-600" fill="none" stroke="currentColor"
+                            class="bg-green-50 group-hover:bg-green-100 p-2 rounded-lg flex-shrink-0 transition-colors">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
@@ -137,11 +100,10 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-1">Crop Data Management</h3>
-                            <p class="text-xs lg:text-sm text-gray-500 mb-3">Import, view, and manage agricultural
-                                production records</p>
+                            <h3 class="text-sm font-semibold text-gray-900">Crop Data</h3>
+                            <p class="text-xs text-gray-500">Import and manage records</p>
                             <span
-                                class="inline-flex items-center gap-1 text-green-600 text-xs lg:text-sm font-medium group-hover:gap-2 transition-all">
+                                class="inline-flex items-center gap-1 text-green-600 text-xs font-medium group-hover:gap-2 transition-all">
                                 Manage data
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -154,10 +116,10 @@
 
                 <!-- Manage Users -->
                 <a href="{{ route('admin.users.index') }}"
-                    class="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6 hover:shadow-md hover:border-blue-200 transition-all duration-200">
-                    <div class="flex items-start gap-4">
-                        <div class="bg-blue-50 group-hover:bg-blue-100 p-3 rounded-xl flex-shrink-0 transition-colors">
-                            <svg class="w-6 h-6 lg:w-7 lg:h-7 text-blue-600" fill="none" stroke="currentColor"
+                    class="group bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 hover:shadow-md hover:border-blue-200 transition-all duration-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-50 group-hover:bg-blue-100 p-2 rounded-lg flex-shrink-0 transition-colors">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
@@ -165,11 +127,10 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-1">User Management</h3>
-                            <p class="text-xs lg:text-sm text-gray-500 mb-3">Manage farmers, admins, and user
-                                permissions</p>
+                            <h3 class="text-sm font-semibold text-gray-900">Users</h3>
+                            <p class="text-xs text-gray-500">Manage roles and access</p>
                             <span
-                                class="inline-flex items-center gap-1 text-blue-600 text-xs lg:text-sm font-medium group-hover:gap-2 transition-all">
+                                class="inline-flex items-center gap-1 text-blue-600 text-xs font-medium group-hover:gap-2 transition-all">
                                 Manage users
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -182,11 +143,11 @@
 
                 <!-- View Reports -->
                 <a href="{{ route('admin.reports.index') }}"
-                    class="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6 hover:shadow-md hover:border-purple-200 transition-all duration-200">
-                    <div class="flex items-start gap-4">
+                    class="group bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                    <div class="flex items-center gap-3">
                         <div
-                            class="bg-purple-50 group-hover:bg-purple-100 p-3 rounded-xl flex-shrink-0 transition-colors">
-                            <svg class="w-6 h-6 lg:w-7 lg:h-7 text-purple-600" fill="none" stroke="currentColor"
+                            class="bg-purple-50 group-hover:bg-purple-100 p-2 rounded-lg flex-shrink-0 transition-colors">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -194,11 +155,10 @@
                             </svg>
                         </div>
                         <div class="min-w-0">
-                            <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-1">Reports & Analytics</h3>
-                            <p class="text-xs lg:text-sm text-gray-500 mb-3">Generate and export system reports and
-                                statistics</p>
+                            <h3 class="text-sm font-semibold text-gray-900">Reports</h3>
+                            <p class="text-xs text-gray-500">Generate exports</p>
                             <span
-                                class="inline-flex items-center gap-1 text-purple-600 text-xs lg:text-sm font-medium group-hover:gap-2 transition-all">
+                                class="inline-flex items-center gap-1 text-purple-600 text-xs font-medium group-hover:gap-2 transition-all">
                                 View reports
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -210,22 +170,100 @@
                 </a>
             </div>
 
-            <!-- Top 5 Crops by Production Chart -->
-            <div class="mb-5 lg:mb-6">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 lg:p-6">
-                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
-                        <div class="space-y-3">
+            <!-- Real-time Municipal Supply Forecast -->
+            <div class="mb-3 lg:mb-4">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 mb-4">
+                        <div>
                             <div class="flex items-center gap-3">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100 text-base font-semibold text-gray-700">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 13.5l7.5-7.5L14 9.5l7-7m0 0v6m0-6h-6M4 20h16" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold text-gray-900">Real-time Supply Forecast</h3>
+                                    <p class="text-xs text-gray-600 mt-0.5">Live crop plans, damage, and actual harvest records.</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                                <span id="adminSupplyForecastYear"
+                                    class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-700">Current season</span>
+                                <span id="adminSupplyForecastStatus" class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1">Loading live supply...</span>
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.map.index') }}"
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700">
+                            Open map
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+                        <div class="rounded-lg border border-emerald-100 bg-emerald-50/70 p-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">Supply Forecast</p>
+                            <p id="adminSupplyForecastTotal" class="mt-1 text-lg lg:text-xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-lg border border-green-100 bg-green-50/70 p-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-green-700">Harvested</p>
+                            <p id="adminSupplyHarvestedTotal" class="mt-1 text-lg lg:text-xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-lg border border-sky-100 bg-sky-50/70 p-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-sky-700">Remaining</p>
+                            <p id="adminSupplyRemainingTotal" class="mt-1 text-lg lg:text-xl font-bold text-gray-900">-</p>
+                        </div>
+                        <div class="rounded-lg border border-red-100 bg-red-50/70 p-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wide text-red-700">Damaged</p>
+                            <p id="adminSupplyDamagedTotal" class="mt-1 text-lg lg:text-xl font-bold text-gray-900">-</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <div class="rounded-lg border border-gray-200 p-3">
+                            <div class="flex items-center justify-between gap-3 mb-2">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-900">Top Municipalities</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Ranked by live supply forecast</p>
+                                </div>
+                                <span id="adminSupplyPlanCount" class="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-600">- plans</span>
+                            </div>
+                            <div id="adminSupplyMunicipalityList" class="space-y-2">
+                                <p class="text-sm text-gray-500">Loading municipality supply...</p>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg border border-gray-200 p-3">
+                            <div class="flex items-center justify-between gap-3 mb-2">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-900">Selected Area Crop Supply</h4>
+                                    <p id="adminSupplySelectedArea" class="text-xs text-gray-500 mt-0.5">La Trinidad</p>
+                                </div>
+                                <span id="adminSupplySelectedCropCount" class="rounded-full bg-gray-100 px-2.5 py-1 text-[11px] font-medium text-gray-600">- crops</span>
+                            </div>
+                            <div id="adminSupplyCropList" class="space-y-2">
+                                <p class="text-sm text-gray-500">Loading crop supply...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 5 Crops by Production Chart -->
+            <div class="mb-3 lg:mb-4">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-3 mb-3">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-gray-700">
                                     #
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Top 5 Crops</h3>
-                                    <p class="text-sm text-gray-600 mt-1">This chart shows the broader full-year crop outlook for the selected municipality.</p>
+                                    <h3 class="text-base font-semibold text-gray-900">Top 5 Crops</h3>
+                                    <p class="text-xs text-gray-600 mt-0.5">Full-year crop outlook for the selected municipality.</p>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                                <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
+                            <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                                <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs text-gray-600">
                                     <span class="font-medium uppercase tracking-wide text-gray-500">Using</span>
                                     <span id="adminChartAreaLabel" class="font-semibold text-gray-900">La Trinidad</span>
                                 </div>
@@ -234,7 +272,7 @@
                                     <label for="adminMunicipalitySelect"
                                         class="text-xs font-medium uppercase tracking-wide text-gray-500 whitespace-nowrap">Switch area</label>
                                     <select id="adminMunicipalitySelect"
-                                        class="w-full sm:w-auto rounded-full border-gray-300 bg-white px-4 py-2 text-sm shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
+                                        class="w-full sm:w-auto rounded-full border-gray-300 bg-white px-3 py-1.5 text-xs shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
                                         <option value="LATRINIDAD">La Trinidad</option>
                                         <option value="ITOGON">Itogon</option>
                                         <option value="SABLAN">Sablan</option>
@@ -253,21 +291,21 @@
                             </div>
                         </div>
 
-                        <div id="adminChartInsightCard" class="flex items-center relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
+                        <div id="adminChartInsightCard" class="flex items-center relative w-full xl:max-w-md">
+                            <div class="hidden sm:block shrink-0 relative z-20 w-[88px]">
                                 <div class="overflow-hidden">
-                                    <div id="adminChartInsightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
+                                    <div id="adminChartInsightAvatar" class="w-[88px] h-[88px]" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
+                            <div class="min-w-0 flex-1 relative z-10 sm:ml-5">
                                 {{-- Thought Bubble Tails --}}
-                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="hidden sm:block absolute top-[60%] -left-5 w-2.5 h-2.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="hidden sm:block absolute top-[35%] -left-3 w-4 h-4 rounded-full bg-gray-800 border border-white/10 z-0"></div>
                                 
                                 {{-- Main Cloud Box --}}
-                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
+                                <div class="relative rounded-2xl bg-gray-800 px-4 py-3 shadow-xl border border-white/10 z-10">
                                     <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
-                                    <p id="adminChartInsightText" class="text-xs sm:text-sm leading-relaxed text-gray-200" aria-live="polite">
+                                    <p id="adminChartInsightText" class="text-xs leading-relaxed text-gray-200" aria-live="polite">
                                         Loading the strongest crop outlook for the selected municipality...
                                     </p>
                                 </div>
@@ -286,10 +324,10 @@
                         <p class="text-gray-600 mt-2 text-sm">Loading chart data...</p>
                     </div>
                     <div id="adminChartContainer" class="hidden">
-                        <div class="h-[340px] md:h-[300px] lg:h-[340px]">
+                        <div class="h-[260px] md:h-[250px] lg:h-[280px]">
                             <canvas id="adminTopCropsChart"></canvas>
                         </div>
-                        <div class="mt-4 text-xs lg:text-sm text-gray-500 border-t border-gray-200 pt-3 space-y-1">
+                        <div class="mt-3 text-xs text-gray-500 border-t border-gray-200 pt-2 space-y-0.5">
                             <p><strong>Historical Average:</strong> Average annual production from actual data between 2015 and 2024</p>
                             <p><strong>This Year Forecast:</strong> Current year forecast using the ML model</p>
                         </div>
@@ -305,18 +343,18 @@
             </div>
 
             <!-- Recent Activity Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
                 <!-- Recent Activity -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6"
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
                     x-data="{ showAllPredictions: false }">
                     @php
                         $selectedFilterLabel = $activityStats['filters'][$activityFilter]['label'] ?? 'All';
                         $selectedFilterText = $selectedFilterLabel === 'All' ? 'activity' : strtolower($selectedFilterLabel);
                     @endphp
 
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
                         <div>
-                            <h3 class="text-base lg:text-lg font-semibold text-gray-900">Recent Activity</h3>
+                            <h3 class="text-base font-semibold text-gray-900">Recent Activity</h3>
                             <p class="text-xs text-gray-500 mt-1">
                                 {{ $selectedFilterLabel === 'All' ? 'Compact mode groups rapid prediction activity' : 'Showing ' . $selectedFilterText }}
                             </p>
@@ -347,10 +385,10 @@
                         </div>
                     @endif
 
-                    <div class="mb-4 flex flex-wrap gap-2">
+                    <div class="mb-3 flex flex-wrap gap-1.5">
                         @foreach($activityStats['filters'] as $filterKey => $filter)
                             <a href="{{ route('admin.dashboard', ['activity_type' => $filterKey]) }}"
-                                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors {{ $activityFilter === $filterKey ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-800' }}">
+                                class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors {{ $activityFilter === $filterKey ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:text-gray-800' }}">
                                 <span>{{ $filter['label'] }}</span>
                                 <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] {{ $activityFilter === $filterKey ? 'bg-white text-blue-700' : 'bg-gray-100 text-gray-500' }}">
                                     {{ number_format($filter['count']) }}
@@ -360,7 +398,7 @@
                     </div>
 
                     <div x-show="!showAllPredictions" class="space-y-3">
-                        @forelse(($compactRecentActivities ?? collect()) as $activity)
+                        @forelse(($compactRecentActivities ?? collect())->take(3) as $activity)
                             <div
                                 class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                 <div class="flex-shrink-0 mt-0.5">
@@ -400,7 +438,7 @@
                     </div>
 
                     <div x-show="showAllPredictions" class="space-y-3">
-                        @forelse(($recentActivities ?? collect()) as $activity)
+                        @forelse(($recentActivities ?? collect())->take(5) as $activity)
                             <div
                                 class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                 <div class="flex-shrink-0 mt-0.5">
@@ -435,11 +473,11 @@
                 </div>
 
                 <!-- System Information -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:p-6">
-                    <h3 class="text-base lg:text-lg font-semibold text-gray-900 mb-4">System Overview</h3>
-                    <div class="space-y-3">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <h3 class="text-base font-semibold text-gray-900 mb-3">System Overview</h3>
+                    <div class="space-y-2.5">
                         <div
-                            class="flex items-center justify-between p-3.5 bg-blue-50 rounded-xl border border-blue-100">
+                            class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
                             <div class="flex items-center gap-3">
                                 <div class="bg-blue-100 p-2 rounded-lg">
                                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor"
@@ -454,12 +492,12 @@
                                     <p class="text-xs text-gray-500">Registered farmer accounts</p>
                                 </div>
                             </div>
-                            <p class="text-xl font-bold text-blue-600">
+                            <p class="text-lg font-bold text-blue-600">
                                 {{ \App\Models\User::where('role', 'farmer')->count() }}</p>
                         </div>
 
                         <div
-                            class="flex items-center justify-between p-3.5 bg-green-50 rounded-xl border border-green-100">
+                            class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
                             <div class="flex items-center gap-3">
                                 <div class="bg-green-100 p-2 rounded-lg">
                                     <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
@@ -474,11 +512,11 @@
                                     <p class="text-xs text-gray-500">Years of historical data</p>
                                 </div>
                             </div>
-                            <p class="text-xl font-bold text-green-600">2015-2024</p>
+                            <p class="text-lg font-bold text-green-600">2015-2024</p>
                         </div>
 
                         <div
-                            class="flex items-center justify-between p-3.5 bg-purple-50 rounded-xl border border-purple-100">
+                            class="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
                             <div class="flex items-center gap-3">
                                 <div class="bg-purple-100 p-2 rounded-lg">
                                     <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor"
@@ -500,7 +538,7 @@
                         </div>
 
                         <div
-                            class="flex items-center justify-between p-3.5 bg-amber-50 rounded-xl border border-amber-100">
+                            class="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
                             <div class="flex items-center gap-3">
                                 <div class="bg-amber-100 p-2 rounded-lg">
                                     <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor"
@@ -517,7 +555,7 @@
                                     <p class="text-xs text-gray-500">Benguet municipalities</p>
                                 </div>
                             </div>
-                            <p class="text-xl font-bold text-amber-600">13</p>
+                            <p class="text-lg font-bold text-amber-600">13</p>
                         </div>
                     </div>
                 </div>
@@ -563,7 +601,7 @@
                 return 'the selected municipality';
             }
 
-            if (municipality === 'LATRINIDAD') {
+            if (String(municipality).replace(/\s+/g, '').toUpperCase() === 'LATRINIDAD') {
                 return 'La Trinidad';
             }
 
@@ -591,6 +629,188 @@
             };
 
             return monthNames[monthCode] || monthCode;
+        }
+
+        function escapeAdminHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            })[char]);
+        }
+
+        function formatAdminMetricTons(value) {
+            const amount = Number(value) || 0;
+            return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mt`;
+        }
+
+        function formatAdminCompactNumber(value) {
+            return (Number(value) || 0).toLocaleString();
+        }
+
+        function getAdminSupplyApiUrl(params = {}) {
+            const url = new URL('{{ url('/api/map/supply-forecast') }}', window.location.origin);
+
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    url.searchParams.set(key, value);
+                }
+            });
+
+            return url.toString();
+        }
+
+        function summarizeAdminSupply(rows) {
+            return rows.reduce((summary, row) => {
+                summary.supply += Number(row.supply_forecast_mt || 0);
+                summary.harvested += Number(row.harvested_production_mt || 0);
+                summary.remaining += Number(row.net_expected_production_mt || 0);
+                summary.damaged += Number(row.damaged_production_mt || 0);
+                summary.plans += Number(row.plan_count || 0);
+                return summary;
+            }, {
+                supply: 0,
+                harvested: 0,
+                remaining: 0,
+                damaged: 0,
+                plans: 0
+            });
+        }
+
+        function setAdminSupplyStatus(text, tone = 'neutral') {
+            const statusEl = document.getElementById('adminSupplyForecastStatus');
+            if (!statusEl) return;
+
+            const toneClasses = {
+                neutral: 'bg-gray-100 text-gray-600',
+                ready: 'bg-emerald-50 text-emerald-700',
+                error: 'bg-red-50 text-red-700'
+            };
+
+            statusEl.className = `inline-flex items-center rounded-full px-3 py-1 ${toneClasses[tone] || toneClasses.neutral}`;
+            statusEl.textContent = text;
+        }
+
+        function renderAdminSupplyMunicipalities(rows) {
+            const listEl = document.getElementById('adminSupplyMunicipalityList');
+            if (!listEl) return;
+
+            const rankedRows = [...rows]
+                .filter((row) => Number(row.supply_forecast_mt || 0) > 0 || Number(row.plan_count || 0) > 0)
+                .sort((a, b) => Number(b.supply_forecast_mt || 0) - Number(a.supply_forecast_mt || 0))
+                .slice(0, 5);
+
+            if (!rankedRows.length) {
+                listEl.innerHTML = '<p class="text-sm text-gray-500">No live crop plans have been reported for this season yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = rankedRows.map((row, index) => `
+                <div class="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-gray-50/70 px-3 py-2">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">${index + 1}. ${escapeAdminHtml(formatAdminMunicipalityName(row.normalized_municipality || row.municipality))}</p>
+                        <p class="text-[11px] text-gray-500">${formatAdminCompactNumber(row.plan_count)} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} &middot; ${formatAdminCompactNumber(row.farmer_count)} ${Number(row.farmer_count || 0) === 1 ? 'farmer' : 'farmers'}</p>
+                    </div>
+                    <p class="shrink-0 text-sm font-bold text-emerald-700">${formatAdminMetricTons(row.supply_forecast_mt)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminSelectedSupply(rows, municipalityName) {
+            const listEl = document.getElementById('adminSupplyCropList');
+            const areaEl = document.getElementById('adminSupplySelectedArea');
+            const countEl = document.getElementById('adminSupplySelectedCropCount');
+
+            if (areaEl) {
+                areaEl.textContent = municipalityName;
+            }
+
+            const cropRows = [...rows]
+                .filter((row) => Number(row.supply_forecast_mt || 0) > 0 || Number(row.plan_count || 0) > 0)
+                .sort((a, b) => Number(b.supply_forecast_mt || 0) - Number(a.supply_forecast_mt || 0))
+                .slice(0, 4);
+
+            if (countEl) {
+                countEl.textContent = `${cropRows.length} ${cropRows.length === 1 ? 'crop' : 'crops'}`;
+            }
+
+            if (!listEl) return;
+
+            if (!cropRows.length) {
+                listEl.innerHTML = `<p class="text-sm text-gray-500">No live crop plans for ${escapeAdminHtml(municipalityName)} yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = cropRows.map((row) => `
+                <div class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 break-words">${escapeAdminHtml(row.crop || 'Crop')}</p>
+                            <p class="text-[11px] text-gray-500">${formatAdminCompactNumber(row.plan_count)} ${Number(row.plan_count || 0) === 1 ? 'plan' : 'plans'} &middot; ${formatAdminCompactNumber(row.harvested_count)} harvested</p>
+                        </div>
+                        <p class="shrink-0 text-sm font-bold text-emerald-700">${formatAdminMetricTons(row.supply_forecast_mt)}</p>
+                    </div>
+                    <div class="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+                        <div class="rounded bg-green-50 px-2 py-1">
+                            <p class="font-semibold text-green-700">Harvested</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.harvested_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-sky-50 px-2 py-1">
+                            <p class="font-semibold text-sky-700">Remaining</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.net_expected_production_mt)}</p>
+                        </div>
+                        <div class="rounded bg-red-50 px-2 py-1">
+                            <p class="font-semibold text-red-700">Damage</p>
+                            <p class="text-gray-900">${formatAdminMetricTons(row.damaged_production_mt)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadAdminSupplyForecast(municipality) {
+            const currentYear = new Date().getFullYear();
+            const municipalityName = formatAdminMunicipalityName(municipality);
+
+            document.getElementById('adminSupplyForecastYear').textContent = `${currentYear} season`;
+            setAdminSupplyStatus('Loading live supply...', 'neutral');
+
+            try {
+                const [allResponse, selectedResponse] = await Promise.all([
+                    fetch(getAdminSupplyApiUrl({ year: currentYear }), { headers: { 'Accept': 'application/json' } }),
+                    fetch(getAdminSupplyApiUrl({ year: currentYear, municipality }), { headers: { 'Accept': 'application/json' } })
+                ]);
+
+                if (!allResponse.ok || !selectedResponse.ok) {
+                    throw new Error('Supply forecast request failed');
+                }
+
+                const [allPayload, selectedPayload] = await Promise.all([
+                    allResponse.json(),
+                    selectedResponse.json()
+                ]);
+
+                const allRows = Array.isArray(allPayload.data) ? allPayload.data : [];
+                const selectedRows = Array.isArray(selectedPayload.data) ? selectedPayload.data : [];
+                const summary = summarizeAdminSupply(allRows);
+
+                document.getElementById('adminSupplyForecastTotal').textContent = formatAdminMetricTons(summary.supply);
+                document.getElementById('adminSupplyHarvestedTotal').textContent = formatAdminMetricTons(summary.harvested);
+                document.getElementById('adminSupplyRemainingTotal').textContent = formatAdminMetricTons(summary.remaining);
+                document.getElementById('adminSupplyDamagedTotal').textContent = formatAdminMetricTons(summary.damaged);
+                document.getElementById('adminSupplyPlanCount').textContent = `${formatAdminCompactNumber(summary.plans)} ${summary.plans === 1 ? 'plan' : 'plans'}`;
+
+                renderAdminSupplyMunicipalities(allRows);
+                renderAdminSelectedSupply(selectedRows, municipalityName);
+                setAdminSupplyStatus(allRows.length ? 'Live supply loaded' : 'No live crop plans yet', allRows.length ? 'ready' : 'neutral');
+            } catch (error) {
+                console.error('Unable to load live supply forecast:', error);
+                setAdminSupplyStatus('Live supply unavailable', 'error');
+                document.getElementById('adminSupplyMunicipalityList').innerHTML = '<p class="text-sm text-red-600">Unable to load municipality supply right now.</p>';
+                document.getElementById('adminSupplyCropList').innerHTML = '<p class="text-sm text-red-600">Unable to load selected-area crop supply.</p>';
+            }
         }
 
         async function fetchAdminRecommendationContext(municipality) {
@@ -1061,9 +1281,11 @@
             const adminMobileLayoutQuery = window.matchMedia('(max-width: 767px)');
 
             initAdminInsightAnimation();
+            loadAdminSupplyForecast(municipalitySelect.value);
             loadAdminTopCropsChart(municipalitySelect.value);
 
             municipalitySelect.addEventListener('change', function() {
+                loadAdminSupplyForecast(this.value);
                 loadAdminTopCropsChart(this.value);
             });
 

@@ -187,5 +187,6 @@
                 updateButton();
             });
         </script>
+        @include('layouts.page-loader')
     </body>
 </html>

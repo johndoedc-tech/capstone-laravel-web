@@ -3,12 +3,6 @@
 @endphp
 
 <x-dynamic-component :component="$forumLayout">
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
-            {{ __('Create New Post') }}
-        </h2>
-    </x-slot>
-
     <div class="pt-20 pb-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto">
             
@@ -21,8 +15,6 @@
             </a>
 
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h1 class="text-2xl font-bold text-gray-900 mb-6">✍️ Create New Post</h1>
-
                 @if($errors->any())
                     <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
                         <ul class="list-disc list-inside">

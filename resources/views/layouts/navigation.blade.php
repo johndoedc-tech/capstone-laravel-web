@@ -1,7 +1,9 @@
 <!-- Sidebar Navigation -->
 <div x-data="{ open: false }">
+@include('layouts.mobile-header', ['homeRoute' => route('dashboard'), 'sectionLabel' => 'Agricultural System'])
+
 <!-- Sidebar -->
-<aside class="mobile-sidebar w-64 flex flex-col fixed left-0 top-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0" style="background-color: #355872;" :class="{ '-translate-x-full': !open, 'translate-x-0': open }">
+<aside x-cloak class="mobile-sidebar w-64 flex flex-col fixed left-0 top-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0" style="background-color: #355872;" :class="{ '-translate-x-full': !open, 'translate-x-0': open }">
     <!-- Sidebar Header -->
     <div class="p-4 lg:p-6 border-b border-primary-700/30">
         <div class="flex items-start gap-3">
@@ -99,14 +101,6 @@
     </div>
 </aside>
 
-<!-- Mobile Menu Button -->
-<!-- Mobile hamburger button -->
-<button x-show="!open" @click="open = true; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: true } }))" class="mobile-safe-top lg:hidden fixed z-50 p-2.5 rounded-xl shadow-lg border border-primary-700/30 hover:bg-primary-600 active:scale-95 transition-transform" style="background-color: #355872;">
-    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
-</button>
-
 <!-- Mobile overlay -->
-<div x-show="open" @click="open = false; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: false } }))" class="mobile-overlay-safe lg:hidden fixed bg-black bg-opacity-50 z-30" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+<div x-show="open" x-cloak @click="open = false; window.dispatchEvent(new CustomEvent('harviana-sidebar-theme', { detail: { open: false } }))" class="mobile-overlay-safe lg:hidden fixed bg-black bg-opacity-50 z-30" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
 </div>

@@ -20,6 +20,9 @@ Route::prefix('map')->name('api.map.')->group(function () {
     // Municipality details
     Route::get('/municipality/{municipality}', [MapDataController::class, 'getMunicipalityDetails'])->name('municipality');
 
+    // Real-time municipal supply forecast from farmer crop plans
+    Route::get('/supply-forecast', [MapDataController::class, 'getSupplyForecast'])->name('supply-forecast');
+
     // Municipality weather (current + hourly + daily)
     Route::get('/weather/{municipality}', [MapWeatherController::class, 'show'])->name('weather');
     

@@ -9,6 +9,16 @@ class FarmerCalendarEvent extends Model
 {
     use HasFactory;
 
+    public const VALIDATION_PENDING = 'pending';
+    public const VALIDATION_APPROVED = 'approved';
+    public const VALIDATION_REJECTED = 'rejected';
+
+    public const VALIDATION_STATUS_LABELS = [
+        self::VALIDATION_PENDING => 'Pending LGU validation',
+        self::VALIDATION_APPROVED => 'LGU approved',
+        self::VALIDATION_REJECTED => 'Needs correction',
+    ];
+
     protected $fillable = [
         'user_id',
         'event_date',
@@ -29,9 +39,23 @@ class FarmerCalendarEvent extends Model
         'predicted_production_mt',
         'prediction_confidence',
         'prediction_source',
+        'actual_harvest_date',
+        'actual_harvest_amount',
+        'actual_harvest_unit',
+        'actual_harvest_production_mt',
+        'actual_harvest_notes',
+        'actual_harvest_recorded_at',
         'reminder_time',
         'reminder_sent',
         'is_completed',
+        'lgu_validation_status',
+        'lgu_validated_by',
+        'lgu_validated_at',
+        'lgu_validation_notes',
+        'lgu_validation_revision',
+        'submitted_to_lgu_at',
+        'damage_photo_path',
+        'damage_photo_original_name',
     ];
 
     protected $casts = [
@@ -42,9 +66,15 @@ class FarmerCalendarEvent extends Model
         'estimated_harvest_days' => 'integer',
         'predicted_production_mt' => 'decimal:2',
         'prediction_confidence' => 'decimal:4',
+        'actual_harvest_date' => 'date',
+        'actual_harvest_amount' => 'decimal:2',
+        'actual_harvest_production_mt' => 'decimal:4',
+        'actual_harvest_recorded_at' => 'datetime',
         'reminder_time' => 'datetime:H:i',
         'reminder_sent' => 'boolean',
         'is_completed' => 'boolean',
+        'lgu_validated_at' => 'datetime',
+        'submitted_to_lgu_at' => 'datetime',
     ];
 
     /**
@@ -53,6 +83,32 @@ class FarmerCalendarEvent extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function lguValidator()
+    {
+        return $this->belongsTo(User::class, 'lgu_validated_by');
+    }
+
+    public function getLguValidationStatusLabelAttribute(): string
+    {
+        return self::VALIDATION_STATUS_LABELS[$this->lgu_validation_status]
+            ?? str_replace('_', ' ', ucfirst((string) $this->lgu_validation_status));
+    }
+
+    public function isLguPending(): bool
+    {
+        return $this->lgu_validation_status === self::VALIDATION_PENDING;
+    }
+
+    public function isLguApproved(): bool
+    {
+        return $this->lgu_validation_status === self::VALIDATION_APPROVED;
+    }
+
+    public function isLguRejected(): bool
+    {
+        return $this->lgu_validation_status === self::VALIDATION_REJECTED;
     }
 
     /**

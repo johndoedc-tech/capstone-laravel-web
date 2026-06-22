@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CropProduction;
+use App\Services\MunicipalSupplyForecastService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MapDataController extends Controller
 {
+    public function __construct(private MunicipalSupplyForecastService $supplyForecastService)
+    {
+    }
+
     /**
      * Get aggregated production data for map
      * GET /api/map/data?crop=CABBAGE&year=2024&view=production&farm_type=IRRIGATED
@@ -19,6 +24,42 @@ class MapDataController extends Controller
         $year = $request->input('year');
         $view = $request->input('view', 'production'); // production, productivity, area_planted, area_harvested
         $farmType = $request->input('farm_type'); // optional: IRRIGATED or RAINFED
+        $farmerCounts = $this->supplyForecastService->getFarmerCountsByMunicipality();
+
+        if ($view === 'supply_forecast') {
+            $data = $this->supplyForecastService
+                ->getMunicipalitySummaries([
+                    'crop' => $crop,
+                    'farm_type' => $farmType,
+                    'year' => $year,
+                ])
+                ->map(function (array $item) {
+                    return array_merge($item, [
+                        'value' => $item['supply_forecast_mt'],
+                    ]);
+                });
+
+            $values = $data->pluck('value')->filter(fn ($v) => $v > 0);
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'metadata' => [
+                    'crop' => $crop,
+                    'year' => $year ?: now()->year,
+                    'view' => $view,
+                    'farm_type' => $farmType,
+                    'min' => $values->min() ?? 0,
+                    'max' => $values->max() ?? 0,
+                    'avg' => round($values->avg() ?? 0, 2),
+                    'total' => round($values->sum(), 2),
+                    'farmer_total' => $farmerCounts->sum('farmer_count'),
+                    'unit' => $this->getUnit($view),
+                    'source' => 'farmer_crop_plans',
+                ],
+                'farmer_counts' => $farmerCounts->values(),
+            ]);
+        }
 
         $query = CropProduction::query();
 
@@ -46,10 +87,13 @@ class MapDataController extends Controller
             ->select('municipality', DB::raw($selectField))
             ->groupBy('municipality')
             ->get()
-            ->map(function ($item) {
+            ->map(function ($item) use ($farmerCounts) {
+                $farmerCount = $farmerCounts->get($this->normalizeMunicipalityKey($item->municipality))['farmer_count'] ?? 0;
+
                 return [
                     'municipality' => $item->municipality,
-                    'value' => round($item->value, 2)
+                    'value' => round($item->value, 2),
+                    'farmer_count' => $farmerCount,
                 ];
             });
 
@@ -68,8 +112,10 @@ class MapDataController extends Controller
                 'max' => $values->max() ?? 0,
                 'avg' => round($values->avg() ?? 0, 2),
                 'total' => round($values->sum(), 2),
+                'farmer_total' => $farmerCounts->sum('farmer_count'),
                 'unit' => $this->getUnit($view)
-            ]
+            ],
+            'farmer_counts' => $farmerCounts->values(),
         ]);
     }
 
@@ -82,6 +128,7 @@ class MapDataController extends Controller
         $crop = $request->input('crop');
         $year = $request->input('year');
         $farmType = $request->input('farm_type');
+        $farmerCount = $this->getFarmerCountForMunicipality($municipality);
 
         // Monthly production data
         $monthlyQuery = CropProduction::query();
@@ -168,10 +215,47 @@ class MapDataController extends Controller
                 'avg_productivity' => round($summary->avg_productivity ?? 0, 2),
                 'total_area_planted' => round($summary->total_area_planted ?? 0, 2),
                 'total_area_harvested' => round($summary->total_area_harvested ?? 0, 2),
+                'farmer_count' => $farmerCount,
             ],
             'monthly_data' => $monthlyData,
             'crop_distribution' => $cropDistribution,
-            'farm_type_breakdown' => $farmTypeBreakdown
+            'farm_type_breakdown' => $farmTypeBreakdown,
+            'production_outlook' => $this->supplyForecastService->getMunicipalityOutlook($municipality, [
+                'crop' => $crop,
+                'farm_type' => $farmType,
+                'year' => $year,
+            ]),
+        ]);
+    }
+
+    /**
+     * Get real-time municipal supply forecast from farmer crop plans.
+     * GET /api/map/supply-forecast?crop=CABBAGE&year=2026&farm_type=IRRIGATED
+     */
+    public function getSupplyForecast(Request $request)
+    {
+        $municipality = $request->input('municipality');
+        $filters = [
+            'crop' => $request->input('crop'),
+            'year' => $request->input('year'),
+            'farm_type' => $request->input('farm_type'),
+        ];
+
+        $forecast = $municipality
+            ? $this->supplyForecastService->getMunicipalityOutlook($municipality, $filters)
+            : $this->supplyForecastService->getMunicipalitySummaries($filters);
+
+        return response()->json([
+            'success' => true,
+            'data' => $forecast,
+            'metadata' => [
+                'municipality' => $municipality,
+                'crop' => $filters['crop'],
+                'year' => $filters['year'] ?: now()->year,
+                'farm_type' => $filters['farm_type'],
+                'source' => 'farmer_crop_plans',
+                'formula' => 'actual harvest when recorded, otherwise predicted production less damage-adjusted loss',
+            ],
         ]);
     }
 
@@ -193,6 +277,8 @@ class MapDataController extends Controller
 
         $years = CropProduction::distinct()
             ->pluck('year')
+            ->push(now()->year)
+            ->unique()
             ->sort()
             ->values();
 
@@ -211,6 +297,7 @@ class MapDataController extends Controller
             'months' => $months,
             'farm_types' => $farmTypes,
             'view_types' => [
+                ['value' => 'supply_forecast', 'label' => 'Real-time Supply Forecast (mt)'],
                 ['value' => 'production', 'label' => 'Production (mt)'],
                 ['value' => 'productivity', 'label' => 'Productivity (mt/ha)'],
                 ['value' => 'area_planted', 'label' => 'Area Planted (ha)'],
@@ -401,6 +488,16 @@ class MapDataController extends Controller
         });
     }
 
+    private function getFarmerCountForMunicipality(string $municipality): int
+    {
+        return $this->supplyForecastService->getFarmerCountForMunicipality($municipality);
+    }
+
+    private function normalizeMunicipalityKey(?string $municipality): string
+    {
+        return str_replace(' ', '', strtoupper(trim((string) $municipality)));
+    }
+
     /**
      * Helper function to get unit based on view type
      */
@@ -410,6 +507,7 @@ class MapDataController extends Controller
             'productivity' => 'mt/ha',
             'area_planted' => 'ha',
             'area_harvested' => 'ha',
+            'supply_forecast' => 'mt',
             default => 'mt'
         };
     }

@@ -47,6 +47,34 @@
             @endif
         </div>
 
+        @if($user->isFarmer())
+            <div>
+                <x-input-label for="preferred_municipality" :value="__('Farm Municipality')" />
+                <select id="preferred_municipality" name="preferred_municipality" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-dark focus:ring-primary-dark">
+                    <option value="">Select your municipality</option>
+                    @foreach (($municipalities ?? []) as $municipality)
+                        <option value="{{ $municipality }}" @selected(old('preferred_municipality', $user->preferred_municipality) === $municipality)>
+                            {{ ucwords(strtolower($municipality)) }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-input-error class="mt-2" :messages="$errors->get('preferred_municipality')" />
+            </div>
+
+            <div>
+                <x-input-label for="cooperative" :value="__('Cooperative')" />
+                <select id="cooperative" name="cooperative" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-dark focus:ring-primary-dark">
+                    <option value="">Select your cooperative</option>
+                    @foreach (($cooperatives ?? []) as $cooperative)
+                        <option value="{{ $cooperative }}" @selected(old('cooperative', $user->cooperative) === $cooperative)>
+                            {{ $cooperative }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-input-error class="mt-2" :messages="$errors->get('cooperative')" />
+            </div>
+        @endif
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

@@ -80,5 +80,6 @@
                 </form>
             </div>
         </div>
+        @include('layouts.page-loader')
     </body>
 </html>

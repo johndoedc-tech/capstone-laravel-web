@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FarmerCalendarEvent;
+use App\Services\CommunityCropSignalService;
 use App\Services\CropPredictionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -105,6 +106,8 @@ class FarmerCalendarController extends Controller
             ->orderBy('event_date')
             ->orderBy('reminder_time')
             ->get()
+            ->reject(fn (FarmerCalendarEvent $event) => $this->shouldHideAfterApprovedHarvest($event))
+            ->values()
             ->map(fn ($event) => $this->formatEvent($event));
 
         // Group by full date to avoid leaking events into adjacent-month cells
@@ -134,6 +137,7 @@ class FarmerCalendarController extends Controller
             'crop' => 'nullable|required_if:category,crop_plan|string|max:100',
             'desired_area_sqm' => 'nullable|required_if:category,crop_plan|numeric|min:0.01|max:999999999.99',
             'damage_area_sqm' => 'nullable|required_if:category,damage_report|numeric|min:0.01|max:999999999.99',
+            'damage_photo' => 'nullable|image|max:5120',
             'crop_plan_event_id' => 'nullable|required_if:category,damage_report|integer',
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
@@ -185,7 +189,16 @@ class FarmerCalendarController extends Controller
             ? $this->predictProductionForCropPlan($validated, $harvestEstimate)
             : null;
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $isDamageReport, $damageCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction) {
+        $damagePhotoPath = null;
+        $damagePhotoOriginalName = null;
+
+        if ($isDamageReport && $request->hasFile('damage_photo')) {
+            $photo = $request->file('damage_photo');
+            $damagePhotoPath = $photo->store('damage-reports', 'public');
+            $damagePhotoOriginalName = $photo->getClientOriginalName();
+        }
+
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $isDamageReport, $damageCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction, $damagePhotoPath, $damagePhotoOriginalName) {
             $eventData = [
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
@@ -211,6 +224,18 @@ class FarmerCalendarController extends Controller
                     : null,
                 'reminder_time' => $validated['reminder_time'] ?? null,
             ];
+
+            if ($this->supportsCalendarColumns(['lgu_validation_status', 'submitted_to_lgu_at'])) {
+                $eventData['lgu_validation_status'] = $isDamageReport
+                    ? FarmerCalendarEvent::VALIDATION_PENDING
+                    : FarmerCalendarEvent::VALIDATION_APPROVED;
+                $eventData['submitted_to_lgu_at'] = $isDamageReport ? now() : null;
+            }
+
+            if ($isDamageReport && $this->supportsCalendarColumns(['damage_photo_path', 'damage_photo_original_name'])) {
+                $eventData['damage_photo_path'] = $damagePhotoPath;
+                $eventData['damage_photo_original_name'] = $damagePhotoOriginalName;
+            }
 
             if ($supportsHarvestEstimate) {
                 $eventData['estimated_harvest_date'] = $harvestEstimate['date'] ?? null;
@@ -279,7 +304,7 @@ class FarmerCalendarController extends Controller
             'message' => $isCropPlan
                 ? 'Crop plan added successfully!'
                 : ($isDamageReport
-                    ? 'Damage report added successfully!'
+                    ? 'Damage report submitted for LGU validation!'
                     : ($validated['event_type'] === 'reminder' ? 'Reminder set successfully!' : 'Note added successfully!')),
             'event' => $this->formatEvent($event),
         ]);
@@ -295,6 +320,7 @@ class FarmerCalendarController extends Controller
             ->map(function (FarmerCalendarEvent $plan) {
                 $reportedDamage = $this->getReportedDamageArea($plan->id);
                 $plantedArea = (float) $plan->desired_area_sqm;
+                $harvestRecord = $this->getHarvestRecordForPlan($plan);
 
                 return [
                     'id' => $plan->id,
@@ -306,6 +332,26 @@ class FarmerCalendarController extends Controller
                     'remaining_damage_sqm' => round(max(0, $plantedArea - $reportedDamage), 2),
                     'water_source' => $plan->water_source,
                     'planting_material' => $plan->planting_material,
+                    'estimated_harvest_date' => $plan->estimated_harvest_date?->format('Y-m-d'),
+                    'estimated_harvest_days' => $plan->estimated_harvest_days,
+                    'predicted_production_mt' => $plan->predicted_production_mt !== null ? (float) $plan->predicted_production_mt : null,
+                    'prediction_confidence' => $plan->prediction_confidence !== null ? (float) $plan->prediction_confidence : null,
+                    'harvest_event_id' => $plan->harvest_event_id,
+                    'is_completed' => (bool) $plan->is_completed,
+                    'actual_harvest_date' => $harvestRecord?->actual_harvest_date?->format('Y-m-d'),
+                    'actual_harvest_amount' => $harvestRecord?->actual_harvest_amount !== null ? (float) $harvestRecord->actual_harvest_amount : null,
+                    'actual_harvest_unit' => $harvestRecord?->actual_harvest_unit,
+                    'actual_harvest_production_mt' => $harvestRecord?->actual_harvest_production_mt !== null ? (float) $harvestRecord->actual_harvest_production_mt : null,
+                    'actual_harvest_notes' => $harvestRecord?->actual_harvest_notes,
+                    'actual_harvest_recorded_at' => $harvestRecord?->actual_harvest_recorded_at?->toIso8601String(),
+                    'actual_harvest_validation_status' => $harvestRecord?->lgu_validation_status,
+                    'actual_harvest_validation_status_label' => $harvestRecord?->lgu_validation_status_label,
+                    'actual_harvest_validation_notes' => $harvestRecord?->lgu_validation_notes,
+                    'lgu_validation_status' => $harvestRecord?->lgu_validation_status,
+                    'lgu_validation_status_label' => $harvestRecord?->lgu_validation_status_label,
+                    'lgu_validation_notes' => $harvestRecord?->lgu_validation_notes,
+                    'lgu_validated_at' => $harvestRecord?->lgu_validated_at?->toIso8601String(),
+                    'description' => $plan->description,
                 ];
             });
 
@@ -418,6 +464,78 @@ class FarmerCalendarController extends Controller
         ]);
     }
 
+    public function recordHarvest(Request $request, $id)
+    {
+        if (! $this->supportsCalendarColumns([
+            'actual_harvest_date',
+            'actual_harvest_amount',
+            'actual_harvest_unit',
+            'actual_harvest_production_mt',
+            'actual_harvest_notes',
+                'actual_harvest_recorded_at',
+        ])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Harvest recording is not available until the latest calendar migration is applied.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'actual_harvest_date' => 'required|date|before_or_equal:today',
+            'actual_harvest_amount' => 'required|numeric|min:0.01|max:999999999.99',
+            'actual_harvest_unit' => 'required|string|in:kg,mt',
+            'actual_harvest_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $event = FarmerCalendarEvent::where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        [$cropPlan, $harvestRecord] = $this->resolveHarvestRecordTarget($event);
+
+        if (! $harvestRecord || ! in_array($event->category, ['crop_plan', 'harvest'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only crop plans and harvest events can record actual harvest.',
+            ], 422);
+        }
+
+        $actualAmount = (float) $validated['actual_harvest_amount'];
+        $actualProductionMt = $validated['actual_harvest_unit'] === 'kg'
+            ? $actualAmount / 1000
+            : $actualAmount;
+
+        DB::transaction(function () use ($validated, $actualAmount, $actualProductionMt, $harvestRecord, $cropPlan) {
+            $harvestRecord->update([
+                'actual_harvest_date' => $validated['actual_harvest_date'],
+                'actual_harvest_amount' => $actualAmount,
+                'actual_harvest_unit' => $validated['actual_harvest_unit'],
+                'actual_harvest_production_mt' => round($actualProductionMt, 4),
+                'actual_harvest_notes' => $validated['actual_harvest_notes'] ?? null,
+                'actual_harvest_recorded_at' => now(),
+                'is_completed' => true,
+            ]);
+
+            if ($this->supportsCalendarColumns(['lgu_validation_status', 'submitted_to_lgu_at'])) {
+                $harvestRecord->update([
+                    'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_PENDING,
+                    'submitted_to_lgu_at' => now(),
+                    'lgu_validation_notes' => null,
+                ]);
+            }
+
+            if ($cropPlan && $cropPlan->id !== $harvestRecord->id) {
+                $cropPlan->update(['is_completed' => true]);
+            }
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your harvest has been saved and is waiting for LGU staff validation.',
+            'harvest_event' => $this->formatEvent($harvestRecord->fresh()),
+            'crop_plan' => $cropPlan ? $this->formatEvent($cropPlan->fresh()) : null,
+        ]);
+    }
+
     /**
      * Get today's reminders for the user
      */
@@ -485,6 +603,11 @@ class FarmerCalendarController extends Controller
 
     private function formatEvent(FarmerCalendarEvent $event): array
     {
+        $harvestRecord = $event->category === 'crop_plan'
+            ? $this->getHarvestRecordForPlan($event)
+            : null;
+        $actualHarvestSource = $harvestRecord ?: $event;
+
         return [
             'id' => $event->id,
             'date' => $event->event_date->format('Y-m-d'),
@@ -508,9 +631,97 @@ class FarmerCalendarController extends Controller
             'predicted_production_mt' => $event->predicted_production_mt !== null ? (float) $event->predicted_production_mt : null,
             'prediction_confidence' => $event->prediction_confidence !== null ? (float) $event->prediction_confidence : null,
             'prediction_source' => $event->prediction_source,
+            'actual_harvest_date' => $actualHarvestSource->actual_harvest_date?->format('Y-m-d'),
+            'actual_harvest_amount' => $actualHarvestSource->actual_harvest_amount !== null ? (float) $actualHarvestSource->actual_harvest_amount : null,
+            'actual_harvest_unit' => $actualHarvestSource->actual_harvest_unit,
+            'actual_harvest_production_mt' => $actualHarvestSource->actual_harvest_production_mt !== null ? (float) $actualHarvestSource->actual_harvest_production_mt : null,
+            'actual_harvest_notes' => $actualHarvestSource->actual_harvest_notes,
+            'actual_harvest_recorded_at' => $actualHarvestSource->actual_harvest_recorded_at?->toIso8601String(),
+            'actual_harvest_validation_status' => $actualHarvestSource->lgu_validation_status,
+            'actual_harvest_validation_status_label' => $actualHarvestSource->lgu_validation_status_label,
+            'actual_harvest_validation_notes' => $actualHarvestSource->lgu_validation_notes,
+            'lgu_validation_status' => $actualHarvestSource->lgu_validation_status,
+            'lgu_validation_status_label' => $actualHarvestSource->lgu_validation_status_label,
+            'lgu_validation_notes' => $actualHarvestSource->lgu_validation_notes,
+            'lgu_validated_at' => $actualHarvestSource->lgu_validated_at?->toIso8601String(),
+            'damage_photo_url' => $event->damage_photo_path ? route('calendar.damage-photo', $event) : null,
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
+    }
+
+    private function resolveHarvestRecordTarget(FarmerCalendarEvent $event): array
+    {
+        if ($event->category === 'crop_plan') {
+            $harvestRecord = $event->harvest_event_id
+                ? FarmerCalendarEvent::where('user_id', Auth::id())->where('id', $event->harvest_event_id)->first()
+                : null;
+
+            return [$event, $harvestRecord ?: $event];
+        }
+
+        if ($event->category === 'harvest') {
+            $cropPlan = FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('category', 'crop_plan')
+                ->where('harvest_event_id', $event->id)
+                ->first();
+
+            return [$cropPlan, $event];
+        }
+
+        return [null, null];
+    }
+
+    private function getHarvestRecordForPlan(FarmerCalendarEvent $plan): ?FarmerCalendarEvent
+    {
+        if ($plan->harvest_event_id) {
+            return FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('id', $plan->harvest_event_id)
+                ->first();
+        }
+
+        return $plan;
+    }
+
+    private function shouldHideAfterApprovedHarvest(FarmerCalendarEvent $event): bool
+    {
+        if (! in_array($event->category, ['crop_plan', 'harvest', 'fertilizer'], true)) {
+            return false;
+        }
+
+        if ($event->category === 'harvest') {
+            return $this->isApprovedActualHarvest($event);
+        }
+
+        if ($event->category === 'crop_plan') {
+            return $this->isApprovedActualHarvest($this->getHarvestRecordForPlan($event));
+        }
+
+        if ($event->crop_plan_event_id) {
+            $cropPlan = FarmerCalendarEvent::where('user_id', Auth::id())
+                ->where('category', 'crop_plan')
+                ->where('id', $event->crop_plan_event_id)
+                ->first();
+
+            return $cropPlan
+                ? $this->isApprovedActualHarvest($this->getHarvestRecordForPlan($cropPlan))
+                : false;
+        }
+
+        return false;
+    }
+
+    private function isApprovedActualHarvest(?FarmerCalendarEvent $event): bool
+    {
+        if (! $event) {
+            return false;
+        }
+
+        $hasActualHarvest = $event->actual_harvest_recorded_at !== null
+            || $event->actual_harvest_production_mt !== null;
+
+        return $hasActualHarvest
+            && $event->lgu_validation_status === FarmerCalendarEvent::VALIDATION_APPROVED;
     }
 
     private function validateDamageReport(array $validated): FarmerCalendarEvent|\Illuminate\Http\JsonResponse
@@ -613,6 +824,41 @@ class FarmerCalendarController extends Controller
         return response()->json([
             'success' => true,
             'prediction' => $prediction,
+        ]);
+    }
+
+    public function cropBalanceAdvice(Request $request, CommunityCropSignalService $cropSignalService)
+    {
+        $validated = $request->validate([
+            'crop' => 'required|string|max:100',
+            'water_source' => 'required|string|in:rainfed,irrigated',
+            'planting_material' => 'required|string|in:seed,seedling',
+            'planning_date' => 'required|date',
+        ]);
+
+        $user = Auth::user();
+
+        if (! $user?->preferred_municipality) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Set your farm municipality first to see community planting signals.',
+            ], 422);
+        }
+
+        $harvestEstimate = $this->getHarvestEstimate(
+            $validated['crop'],
+            $validated['water_source'],
+            $validated['planting_material'],
+            $validated['planning_date'],
+        );
+
+        return response()->json([
+            'success' => true,
+            'advice' => $cropSignalService->cropPlanAdvice(
+                $user,
+                $validated['crop'],
+                $harvestEstimate['date'],
+            ),
         ]);
     }
 

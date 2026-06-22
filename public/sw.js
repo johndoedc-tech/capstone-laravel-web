@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1.15.18';
+const CACHE_VERSION = 'v1.15.29';
 const PRECACHE = `harviana-precache-${CACHE_VERSION}`;
 const STATIC_CACHE = `harviana-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `harviana-pages-${CACHE_VERSION}`;
@@ -81,6 +81,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
     if (event.data?.type === 'SKIP_WAITING') {
         self.skipWaiting();
+    }
+
+    if (event.data?.type === 'CLEAR_PAGE_CACHE') {
+        event.waitUntil(caches.delete(PAGE_CACHE));
     }
 
     if (event.data?.type === 'CLEAR_RUNTIME_CACHES') {

@@ -55,8 +55,12 @@ class ReportController extends Controller
             'window_start' => $lastThirtyDays,
             'week_start' => $startOfWeek,
         ];
+        $plantingRecords = $this->getPlantingReportRecords(new Request());
+        $plantingSummary = $this->buildPlantingReportSummary($plantingRecords);
+        $harvestAccuracySummary = $plantingSummary['accuracy'];
+        $correctionModelReadiness = $this->buildCorrectionModelReadiness($plantingRecords);
 
-        return view('admin.reports.index', compact('stats', 'predictionSummary'));
+        return view('admin.reports.index', compact('stats', 'predictionSummary', 'harvestAccuracySummary', 'correctionModelReadiness'));
     }
 
     /**
@@ -362,17 +366,28 @@ class ReportController extends Controller
         return view('admin.reports.planting-report', compact('paginatedRecords', 'summary', 'filters'));
     }
 
+    public function mlCorrectionDataset(Request $request)
+    {
+        $records = $this->getPlantingReportRecords($request)
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+
+        return $this->exportMlCorrectionDatasetCSV($records);
+    }
+
     private function getPlantingReportRecords(Request $request): Collection
     {
         $damageTotals = FarmerCalendarEvent::query()
             ->select('crop_plan_event_id', DB::raw('SUM(COALESCE(damage_area_sqm, 0)) as reported_damage_sqm'))
             ->where('category', 'damage_report')
+            ->where('lgu_validation_status', FarmerCalendarEvent::VALIDATION_APPROVED)
             ->whereNotNull('crop_plan_event_id')
             ->groupBy('crop_plan_event_id');
 
         $query = FarmerCalendarEvent::query()
             ->from('farmer_calendar_events as plans')
             ->join('users', 'users.id', '=', 'plans.user_id')
+            ->leftJoin('farmer_calendar_events as harvests', 'harvests.id', '=', 'plans.harvest_event_id')
             ->leftJoinSub($damageTotals, 'damage_totals', function ($join) {
                 $join->on('damage_totals.crop_plan_event_id', '=', 'plans.id');
             })
@@ -389,8 +404,19 @@ class ReportController extends Controller
                 'plans.planting_material',
                 'plans.estimated_harvest_date',
                 'plans.predicted_production_mt',
+                'plans.prediction_confidence',
+                'plans.prediction_source',
                 'plans.is_completed',
+                'plans.lgu_validation_status as plan_validation_status',
+                'plans.lgu_validation_notes as plan_validation_notes',
                 'plans.created_at',
+                DB::raw('COALESCE(harvests.actual_harvest_date, plans.actual_harvest_date) as actual_harvest_date'),
+                DB::raw('COALESCE(harvests.actual_harvest_amount, plans.actual_harvest_amount) as actual_harvest_amount'),
+                DB::raw('COALESCE(harvests.actual_harvest_unit, plans.actual_harvest_unit) as actual_harvest_unit'),
+                DB::raw("CASE WHEN COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') = 'approved' THEN COALESCE(harvests.actual_harvest_production_mt, plans.actual_harvest_production_mt) ELSE NULL END as actual_harvest_production_mt"),
+                DB::raw('COALESCE(harvests.actual_harvest_notes, plans.actual_harvest_notes) as actual_harvest_notes'),
+                DB::raw("COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') as actual_harvest_validation_status"),
+                DB::raw('COALESCE(harvests.lgu_validation_notes, plans.lgu_validation_notes) as actual_harvest_validation_notes'),
                 'users.name as farmer_name',
                 'users.email as farmer_email',
                 'users.preferred_municipality',
@@ -469,6 +495,19 @@ class ReportController extends Controller
             $harvestDate = $row->estimated_harvest_date ? Carbon::parse($row->estimated_harvest_date) : null;
             $latestDamage = $damageReports->get($row->id, collect())->first();
             $status = $this->resolvePlantingReportStatus($row, $reportedDamageSqm, $harvestDate);
+            $actualHarvestProduction = $row->actual_harvest_production_mt !== null
+                ? max(0, (float) $row->actual_harvest_production_mt)
+                : null;
+            $predictionError = $actualHarvestProduction !== null
+                ? round($adjustedProduction - $actualHarvestProduction, 2)
+                : null;
+            $absolutePredictionError = $predictionError !== null ? abs($predictionError) : null;
+            $accuracyPercent = $actualHarvestProduction !== null && $actualHarvestProduction > 0
+                ? max(0, round(100 - (($absolutePredictionError / $actualHarvestProduction) * 100), 1))
+                : null;
+            $errorPercent = $actualHarvestProduction !== null && $actualHarvestProduction > 0
+                ? round(($predictionError / $actualHarvestProduction) * 100, 1)
+                : null;
 
             return [
                 'id' => (int) $row->id,
@@ -487,15 +526,34 @@ class ReportController extends Controller
                 'damage_ha' => round($reportedDamageSqm / 10000, 4),
                 'original_production_mt' => round($originalProduction, 2),
                 'adjusted_production_mt' => $adjustedProduction,
+                'actual_harvest_production_mt' => $actualHarvestProduction !== null ? round($actualHarvestProduction, 2) : null,
+                'prediction_error_mt' => $predictionError,
+                'absolute_prediction_error_mt' => $absolutePredictionError !== null ? round($absolutePredictionError, 2) : null,
+                'accuracy_percent' => $accuracyPercent,
+                'error_percent' => $errorPercent,
+                'error_direction' => $this->resolvePredictionErrorDirection($predictionError),
+                'prediction_confidence' => $row->prediction_confidence !== null ? round((float) $row->prediction_confidence, 4) : null,
+                'prediction_source' => $row->prediction_source ?: null,
+                'actual_harvest_amount' => $row->actual_harvest_amount !== null ? (float) $row->actual_harvest_amount : null,
+                'actual_harvest_unit' => $row->actual_harvest_unit,
+                'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
+                'actual_harvest_notes' => $row->actual_harvest_notes,
+                'actual_harvest_validation_status' => $row->actual_harvest_validation_status ?: 'approved',
+                'actual_harvest_validation_label' => $this->formatValidationStatus($row->actual_harvest_validation_status ?: 'approved'),
+                'actual_harvest_validation_notes' => $row->actual_harvest_validation_notes,
                 'loss_production_mt' => $lossProduction,
                 'farm_type' => $this->formatReportLabel($row->water_source),
                 'seed_type' => $this->formatReportLabel($row->planting_material),
                 'status' => $status,
                 'status_label' => $this->formatReportLabel($status),
                 'damage_title' => $latestDamage?->title,
+                'damage_event_id' => $latestDamage?->id,
                 'damage_description' => $latestDamage?->description,
                 'damage_date' => $latestDamage?->event_date ? Carbon::parse($latestDamage->event_date) : null,
                 'damage_reported_at' => $latestDamage?->created_at ? Carbon::parse($latestDamage->created_at) : null,
+                'damage_validation_status' => $latestDamage?->lgu_validation_status,
+                'damage_validation_label' => $latestDamage ? $this->formatValidationStatus($latestDamage->lgu_validation_status) : null,
+                'damage_photo_path' => $latestDamage?->damage_photo_path,
                 'recorded_at' => $row->created_at ? Carbon::parse($row->created_at) : null,
             ];
         });
@@ -509,6 +567,10 @@ class ReportController extends Controller
 
     private function resolvePlantingReportStatus($row, float $reportedDamageSqm, ?Carbon $harvestDate): string
     {
+        if ($row->actual_harvest_production_mt !== null && (float) $row->actual_harvest_production_mt > 0) {
+            return 'harvested';
+        }
+
         if ($reportedDamageSqm > 0) {
             return 'damaged';
         }
@@ -527,6 +589,7 @@ class ReportController extends Controller
         $healthyAreaHa = max(0, round($totalAreaHa - $damageAreaHa, 2));
         $originalProduction = round($records->sum('original_production_mt'), 2);
         $adjustedProduction = round($records->sum('adjusted_production_mt'), 2);
+        $actualHarvestProduction = round($records->sum(fn ($record) => $record['actual_harvest_production_mt'] ?? 0), 2);
         $lossProduction = max(0, round($originalProduction - $adjustedProduction, 2));
         $cropBreakdown = $records
             ->groupBy('crop')
@@ -540,6 +603,10 @@ class ReportController extends Controller
             })
             ->sortByDesc('records')
             ->values();
+        $accuracyRecords = $records
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+        $accuracySummary = $this->buildHarvestAccuracySummary($accuracyRecords);
 
         $maxCropRecords = max(1, (int) ($cropBreakdown->max('records') ?? 1));
 
@@ -554,12 +621,140 @@ class ReportController extends Controller
             'healthy_area_percent' => $totalAreaHa > 0 ? round(($healthyAreaHa / $totalAreaHa) * 100, 1) : 0,
             'original_production_mt' => $originalProduction,
             'adjusted_production_mt' => $adjustedProduction,
+            'actual_harvest_production_mt' => $actualHarvestProduction,
             'loss_production_mt' => $lossProduction,
             'loss_percent' => $originalProduction > 0 ? round(($lossProduction / $originalProduction) * 100, 1) : 0,
             'crop_breakdown' => $cropBreakdown,
             'crop_types' => $cropBreakdown->count(),
             'max_crop_records' => $maxCropRecords,
+            'accuracy' => $accuracySummary,
         ];
+    }
+
+    private function buildHarvestAccuracySummary(Collection $records): array
+    {
+        $actualTotal = round($records->sum(fn (array $record) => $record['actual_harvest_production_mt'] ?? 0), 2);
+        $predictedTotal = round($records->sum('adjusted_production_mt'), 2);
+        $absoluteErrorTotal = round($records->sum(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2);
+        $signedErrorTotal = round($predictedTotal - $actualTotal, 2);
+        $accuracyPercent = $actualTotal > 0
+            ? max(0, round(100 - (($absoluteErrorTotal / $actualTotal) * 100), 1))
+            : null;
+        $meanAbsoluteError = $records->count() > 0
+            ? round($records->avg(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2)
+            : null;
+        $meanAccuracy = $records->count() > 0
+            ? round($records->avg(fn (array $record) => $record['accuracy_percent'] ?? 0), 1)
+            : null;
+        $biasPercent = $actualTotal > 0
+            ? round(($signedErrorTotal / $actualTotal) * 100, 1)
+            : null;
+
+        return [
+            'records' => $records->count(),
+            'predicted_total_mt' => $predictedTotal,
+            'actual_total_mt' => $actualTotal,
+            'absolute_error_total_mt' => $absoluteErrorTotal,
+            'signed_error_total_mt' => $signedErrorTotal,
+            'accuracy_percent' => $accuracyPercent,
+            'mean_accuracy_percent' => $meanAccuracy,
+            'mean_absolute_error_mt' => $meanAbsoluteError,
+            'bias_percent' => $biasPercent,
+            'bias_label' => $this->resolvePredictionBiasLabel($signedErrorTotal),
+            'by_crop' => $this->buildAccuracyBreakdown($records, 'crop'),
+            'by_municipality' => $this->buildAccuracyBreakdown($records, 'municipality'),
+        ];
+    }
+
+    private function buildCorrectionModelReadiness(Collection $records): array
+    {
+        $actualHarvestRecords = $records
+            ->filter(fn (array $record) => ($record['actual_harvest_production_mt'] ?? null) !== null)
+            ->values();
+        $sampleCount = $actualHarvestRecords->count();
+        $pilotMinimum = 30;
+        $trainingMinimum = 100;
+        $readinessPercent = min(100, round(($sampleCount / $trainingMinimum) * 100));
+
+        if ($sampleCount >= $trainingMinimum) {
+            $status = 'Ready for training';
+            $statusTone = 'emerald';
+            $message = 'Enough real harvest records are available to start a correction-model training run.';
+        } elseif ($sampleCount >= $pilotMinimum) {
+            $status = 'Pilot-ready';
+            $statusTone = 'amber';
+            $message = 'Enough samples are available for pilot testing, but more harvest records will improve reliability.';
+        } else {
+            $status = 'Collecting data';
+            $statusTone = 'slate';
+            $message = 'Keep collecting actual harvest records before training a correction model.';
+        }
+
+        return [
+            'sample_count' => $sampleCount,
+            'pilot_minimum' => $pilotMinimum,
+            'training_minimum' => $trainingMinimum,
+            'readiness_percent' => $readinessPercent,
+            'status' => $status,
+            'status_tone' => $statusTone,
+            'message' => $message,
+            'crop_count' => $actualHarvestRecords->pluck('crop')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'municipality_count' => $actualHarvestRecords->pluck('municipality')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'water_source_count' => $actualHarvestRecords->pluck('farm_type')->filter(fn ($value) => $value !== '-')->unique()->count(),
+            'latest_actual_harvest_date' => $actualHarvestRecords
+                ->pluck('actual_harvest_date')
+                ->filter()
+                ->sortDesc()
+                ->first(),
+            'export_ready' => $sampleCount > 0,
+        ];
+    }
+
+    private function buildAccuracyBreakdown(Collection $records, string $field): Collection
+    {
+        return $records
+            ->groupBy($field)
+            ->map(function (Collection $groupRecords, string $label) {
+                $actualTotal = round($groupRecords->sum(fn (array $record) => $record['actual_harvest_production_mt'] ?? 0), 2);
+                $predictedTotal = round($groupRecords->sum('adjusted_production_mt'), 2);
+                $absoluteErrorTotal = round($groupRecords->sum(fn (array $record) => $record['absolute_prediction_error_mt'] ?? 0), 2);
+                $accuracyPercent = $actualTotal > 0
+                    ? max(0, round(100 - (($absoluteErrorTotal / $actualTotal) * 100), 1))
+                    : null;
+
+                return [
+                    'label' => $label,
+                    'records' => $groupRecords->count(),
+                    'predicted_total_mt' => $predictedTotal,
+                    'actual_total_mt' => $actualTotal,
+                    'absolute_error_total_mt' => $absoluteErrorTotal,
+                    'accuracy_percent' => $accuracyPercent,
+                ];
+            })
+            ->sortByDesc('records')
+            ->values();
+    }
+
+    private function resolvePredictionErrorDirection(?float $predictionError): ?string
+    {
+        if ($predictionError === null) {
+            return null;
+        }
+
+        if (abs($predictionError) < 0.01) {
+            return 'on_target';
+        }
+
+        return $predictionError > 0 ? 'overestimated' : 'underestimated';
+    }
+
+    private function resolvePredictionBiasLabel(float $signedErrorTotal): string
+    {
+        if (abs($signedErrorTotal) < 0.01) {
+            return 'On target';
+        }
+
+        return $signedErrorTotal > 0 ? 'Overestimated' : 'Underestimated';
     }
 
     private function getPlantingReportFilters(): array
@@ -604,6 +799,17 @@ class ReportController extends Controller
         return $value === '' ? '-' : ucwords(strtolower(str_replace('_', ' ', $value)));
     }
 
+    private function formatValidationStatus(?string $status): string
+    {
+        return FarmerCalendarEvent::VALIDATION_STATUS_LABELS[$status]
+            ?? $this->formatReportLabel($status);
+    }
+
+    private function writeCsvRow($file, array $fields): void
+    {
+        fputcsv($file, $fields, ',', '"', '', "\n");
+    }
+
     /**
      * Export production data to CSV
      */
@@ -620,11 +826,11 @@ class ReportController extends Controller
             $file = fopen('php://output', 'w');
             
             // Add header row
-            fputcsv($file, ['Municipality', 'Crop', 'Total Production (MT)', 'Total Area (Ha)', 'Avg Productivity (MT/Ha)', 'Records']);
+            $this->writeCsvRow($file, ['Municipality', 'Crop', 'Total Production (MT)', 'Total Area (Ha)', 'Avg Productivity (MT/Ha)', 'Records']);
             
             // Add data rows
             foreach ($data as $row) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $row->municipality,
                     $row->crop,
                     number_format($row->total_production, 2),
@@ -652,7 +858,7 @@ class ReportController extends Controller
         $callback = function () use ($records) {
             $file = fopen('php://output', 'w');
 
-            fputcsv($file, [
+            $this->writeCsvRow($file, [
                 'Farmer',
                 'Farmer ID',
                 'Municipality',
@@ -668,12 +874,15 @@ class ReportController extends Controller
                 'Farm Type',
                 'Seed Type',
                 'Status',
+                'Actual Harvest (MT)',
+                'Prediction Error (MT)',
+                'Accuracy (%)',
                 'Damage Details',
                 'Recorded At',
             ]);
 
             foreach ($records as $record) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $record['farmer_name'],
                     $record['farmer_id'],
                     $record['municipality'],
@@ -689,8 +898,87 @@ class ReportController extends Controller
                     $record['farm_type'],
                     $record['seed_type'],
                     $record['status_label'],
+                    $record['actual_harvest_production_mt'] !== null ? number_format($record['actual_harvest_production_mt'], 2) : '',
+                    $record['prediction_error_mt'] !== null ? number_format($record['prediction_error_mt'], 2) : '',
+                    $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1) : '',
                     $record['damage_title'] ?: '',
                     $record['recorded_at']?->format('Y-m-d H:i'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function exportMlCorrectionDatasetCSV(Collection $records)
+    {
+        $filename = 'harviana-ml-correction-dataset-' . now()->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($records) {
+            $file = fopen('php://output', 'w');
+
+            $this->writeCsvRow($file, [
+                'record_id',
+                'farmer_id',
+                'municipality',
+                'crop',
+                'water_source',
+                'planting_material',
+                'planting_date',
+                'estimated_harvest_date',
+                'actual_harvest_date',
+                'area_sqm',
+                'area_ha',
+                'damage_sqm',
+                'damage_ratio',
+                'predicted_production_mt',
+                'damage_adjusted_prediction_mt',
+                'actual_harvest_mt',
+                'prediction_error_mt',
+                'absolute_error_mt',
+                'accuracy_percent',
+                'prediction_confidence',
+                'prediction_source',
+                'actual_harvest_unit',
+                'actual_harvest_notes',
+            ]);
+
+            foreach ($records as $record) {
+                $damageRatio = $record['area_sqm'] > 0
+                    ? round($record['damage_sqm'] / $record['area_sqm'], 4)
+                    : 0;
+
+                $this->writeCsvRow($file, [
+                    $record['id'],
+                    $record['farmer_id'],
+                    $record['municipality'],
+                    $record['crop'],
+                    $record['farm_type'],
+                    $record['seed_type'],
+                    $record['planting_date']?->format('Y-m-d'),
+                    $record['harvest_date']?->format('Y-m-d'),
+                    $record['actual_harvest_date']?->format('Y-m-d'),
+                    number_format($record['area_sqm'], 2, '.', ''),
+                    number_format($record['area_ha'], 4, '.', ''),
+                    number_format($record['damage_sqm'], 2, '.', ''),
+                    number_format($damageRatio, 4, '.', ''),
+                    number_format($record['original_production_mt'], 2, '.', ''),
+                    number_format($record['adjusted_production_mt'], 2, '.', ''),
+                    number_format($record['actual_harvest_production_mt'], 2, '.', ''),
+                    $record['prediction_error_mt'] !== null ? number_format($record['prediction_error_mt'], 2, '.', '') : '',
+                    $record['absolute_prediction_error_mt'] !== null ? number_format($record['absolute_prediction_error_mt'], 2, '.', '') : '',
+                    $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1, '.', '') : '',
+                    $record['prediction_confidence'] !== null ? number_format($record['prediction_confidence'], 4, '.', '') : '',
+                    $record['prediction_source'] ?? '',
+                    $record['actual_harvest_unit'] ?? '',
+                    $record['actual_harvest_notes'] ?? '',
                 ]);
             }
 
@@ -716,14 +1004,14 @@ class ReportController extends Controller
             $file = fopen('php://output', 'w');
             
             // Add header row
-            fputcsv($file, [
+            $this->writeCsvRow($file, [
                 'Date', 'User', 'Municipality', 'Crop', 'Farm Type', 'Year', 'Month',
                 'Area Planted', 'Predicted Production', 'Confidence Score', 'Status'
             ]);
             
             // Add data rows
             foreach ($predictions as $pred) {
-                fputcsv($file, [
+                $this->writeCsvRow($file, [
                     $pred->created_at->format('Y-m-d H:i'),
                     $pred->user->name ?? 'N/A',
                     $pred->municipality,

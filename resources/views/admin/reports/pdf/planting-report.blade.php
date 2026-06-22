@@ -41,11 +41,39 @@
                 <div class="value">{{ number_format($summary['adjusted_production_mt'], 2) }} mt</div>
             </div>
             <div class="summary-card">
+                <div class="label">Actual Harvest</div>
+                <div class="value">{{ number_format($summary['actual_harvest_production_mt'] ?? 0, 2) }} mt</div>
+            </div>
+            <div class="summary-card">
                 <div class="label">Loss</div>
                 <div class="value">{{ number_format($summary['loss_production_mt'], 2) }} mt</div>
             </div>
         </div>
     </div>
+
+    <h2>Actual Harvest Accuracy</h2>
+    <table>
+        <tbody>
+            <tr>
+                <th>Harvest Records</th>
+                <td>{{ number_format($summary['accuracy']['records']) }}</td>
+                <th>Weighted Accuracy</th>
+                <td>{{ $summary['accuracy']['accuracy_percent'] !== null ? number_format($summary['accuracy']['accuracy_percent'], 1) . '%' : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Predicted vs Actual</th>
+                <td>{{ number_format($summary['accuracy']['predicted_total_mt'], 2) }} mt / {{ number_format($summary['accuracy']['actual_total_mt'], 2) }} mt</td>
+                <th>Mean Error</th>
+                <td>{{ $summary['accuracy']['mean_absolute_error_mt'] !== null ? number_format($summary['accuracy']['mean_absolute_error_mt'], 2) . ' mt' : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Bias</th>
+                <td>{{ $summary['accuracy']['bias_label'] }}</td>
+                <th>Total Error</th>
+                <td>{{ number_format($summary['accuracy']['signed_error_total_mt'], 2) }} mt</td>
+            </tr>
+        </tbody>
+    </table>
 
     <h2>Planting Records</h2>
     <table>
@@ -80,6 +108,21 @@
                         <strong>{{ number_format($record['area_ha'], 2) }} ha</strong><br>
                         Original: {{ number_format($record['original_production_mt'], 2) }} mt<br>
                         Adjusted: {{ number_format($record['adjusted_production_mt'], 2) }} mt
+                        @if($record['actual_harvest_production_mt'] !== null)
+                            <br><span class="harvested">
+                                Actual: {{ number_format($record['actual_harvest_production_mt'], 2) }} mt
+                                @if($record['actual_harvest_date'])
+                                    on {{ $record['actual_harvest_date']->format('M d, Y') }}
+                                @endif
+                            </span>
+                            @if($record['absolute_prediction_error_mt'] !== null)
+                                <br>
+                                Error: {{ number_format($record['prediction_error_mt'], 2) }} mt
+                                @if($record['accuracy_percent'] !== null)
+                                    ({{ number_format($record['accuracy_percent'], 1) }}% accuracy)
+                                @endif
+                            @endif
+                        @endif
                         @if($record['damage_sqm'] > 0)
                             <br><span class="damaged">
                                 Damage:
