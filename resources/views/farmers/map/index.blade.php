@@ -66,6 +66,243 @@
             background: #7c3aed;
             box-shadow: 0 8px 22px rgb(124 58 237 / 0.38);
         }
+        .map-weather-control {
+            margin: 12px 12px 0 0 !important;
+        }
+        .map-weather-card {
+            width: min(320px, calc(100vw - 48px));
+            border: 1px solid rgb(226 232 240 / 0.95);
+            border-radius: 8px;
+            background: rgb(255 255 255 / 0.96);
+            box-shadow: 0 18px 40px rgb(15 23 42 / 0.16);
+            color: #0f172a;
+            font-family: inherit;
+            padding: 0.875rem;
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+        }
+        .map-weather-card:focus-visible {
+            outline: 3px solid rgb(34 197 94 / 0.35);
+            outline-offset: 2px;
+        }
+        .map-weather-card.is-empty {
+            cursor: default;
+        }
+        .map-weather-card__header,
+        .map-weather-card__main,
+        .map-weather-card__meta {
+            display: flex;
+            align-items: center;
+        }
+        .map-weather-card__header {
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.65rem;
+        }
+        .map-weather-card__label {
+            color: #475569;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .map-weather-card__action {
+            border: 0;
+            border-radius: 9999px;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0.45rem 0.65rem;
+            transition: background 0.16s ease, color 0.16s ease;
+        }
+        .map-weather-card__action:hover,
+        .map-weather-card__action:focus-visible {
+            background: #d1fae5;
+            color: #065f46;
+            outline: none;
+        }
+        .map-weather-card__action:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        .map-weather-card__main {
+            justify-content: space-between;
+            gap: 0.85rem;
+        }
+        .map-weather-card__identity {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 0.65rem;
+        }
+        .map-weather-card__icon {
+            width: 2.35rem;
+            height: 2.35rem;
+            border-radius: 9999px;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+        .map-weather-card__icon img {
+            width: 1.85rem;
+            height: 1.85rem;
+            object-fit: contain;
+        }
+        .map-weather-card__icon-fallback {
+            width: 0.7rem;
+            height: 0.7rem;
+            border-radius: 9999px;
+            background: #38bdf8;
+            box-shadow: 0 0 0 6px rgb(56 189 248 / 0.14);
+        }
+        .map-weather-card__place {
+            color: #0f172a;
+            font-size: 0.9rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .map-weather-card__condition {
+            color: #64748b;
+            font-size: 0.76rem;
+            line-height: 1.25;
+            margin: 0.18rem 0 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .map-weather-card__temp {
+            color: #15803d;
+            flex: 0 0 auto;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+        .map-weather-card__meta {
+            border-top: 1px solid #e2e8f0;
+            color: #475569;
+            display: grid;
+            font-size: 0.74rem;
+            gap: 0.35rem 0.6rem;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 0.75rem;
+            padding-top: 0.65rem;
+        }
+        .map-weather-card__meta span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .map-weather-card__updated {
+            color: #94a3b8;
+            font-size: 0.68rem;
+            margin-top: 0.55rem;
+        }
+        .map-weather-card__status {
+            color: #64748b;
+            font-size: 0.78rem;
+            margin-top: 0.5rem;
+        }
+        .map-weather-card.is-error .map-weather-card__condition,
+        .map-weather-card.is-error .map-weather-card__status {
+            color: #b91c1c;
+        }
+        .map-weather-card.is-stale .map-weather-card__updated::after {
+            content: ' - stale cache';
+            color: #b45309;
+            font-weight: 700;
+        }
+        .weather-map-marker {
+            align-items: center;
+            background: rgb(255 255 255 / 0.97);
+            border: 1px solid #dbeafe;
+            border-radius: 9999px;
+            box-shadow: 0 12px 28px rgb(15 23 42 / 0.2);
+            color: #0f172a;
+            display: inline-flex;
+            gap: 0.45rem;
+            max-width: 145px;
+            min-width: 112px;
+            padding: 0.35rem 0.55rem 0.35rem 0.4rem;
+            pointer-events: auto;
+            white-space: nowrap;
+        }
+        .weather-map-marker__icon {
+            align-items: center;
+            background: #eff6ff;
+            border-radius: 9999px;
+            display: flex;
+            height: 1.65rem;
+            justify-content: center;
+            overflow: hidden;
+            width: 1.65rem;
+            flex: 0 0 auto;
+        }
+        .weather-map-marker__icon img {
+            height: 1.3rem;
+            object-fit: contain;
+            width: 1.3rem;
+        }
+        .weather-map-marker__dot {
+            width: 0.48rem;
+            height: 0.48rem;
+            border-radius: 9999px;
+            background: #38bdf8;
+        }
+        .weather-map-marker__copy {
+            min-width: 0;
+        }
+        .weather-map-marker__temp {
+            color: #15803d;
+            font-size: 0.82rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .weather-map-marker__condition {
+            color: #64748b;
+            font-size: 0.62rem;
+            line-height: 1.15;
+            margin-top: 0.1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .weather-map-marker.is-loading .weather-map-marker__temp,
+        .weather-map-marker.is-error .weather-map-marker__temp {
+            color: #475569;
+        }
+        .weather-map-marker.is-error .weather-map-marker__condition {
+            color: #b91c1c;
+        }
+        @media (max-width: 640px) {
+            .map-weather-control {
+                margin: 10px 10px 0 0 !important;
+            }
+            .map-weather-card {
+                padding: 0.75rem;
+                width: min(290px, calc(100vw - 74px));
+            }
+            .map-weather-card__meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .map-weather-card__temp {
+                font-size: 1.35rem;
+            }
+            .weather-map-marker {
+                max-width: 128px;
+                min-width: 100px;
+            }
+        }
     </style>
     <x-slot name="header">
         <h2 class="font-semibold text-lg lg:text-xl text-gray-800 leading-tight">
@@ -341,6 +578,11 @@
         let filterOptions = {};
         let currentMunicipality = null;
         let detailsRequestToken = 0;
+        let mapWeatherControlEl = null;
+        let mapWeatherMarker = null;
+        let mapWeatherRequestToken = 0;
+        let selectedWeatherMunicipality = null;
+        const weatherPayloadCache = new Map();
 
         // Base URLs using Laravel's url() helper
         const apiBase = '{{ url("/api/map") }}';
@@ -390,6 +632,12 @@
                 maxZoom: 19
             }).addTo(map);
 
+            initMapWeatherControl();
+
+            if (userPreferredMunicipality && municipalityCoords[userPreferredMunicipality]) {
+                loadMapWeatherSummary(userPreferredMunicipality);
+            }
+
             console.log('Map initialized, loading filters...');
             // Load filters
             loadFilters();
@@ -402,6 +650,315 @@
 
                 // Open the details panel for this municipality
                 loadMunicipalityDetails(userPreferredMunicipality);
+            }
+        }
+
+        function initMapWeatherControl() {
+            const weatherControl = L.control({ position: 'topright' });
+
+            weatherControl.onAdd = function () {
+                mapWeatherControlEl = L.DomUtil.create('div', 'leaflet-control map-weather-control');
+                mapWeatherControlEl.innerHTML = `
+                    <div class="map-weather-card is-empty" data-map-weather-card role="button" tabindex="-1" aria-label="Weather outlook">
+                        <div class="map-weather-card__header">
+                            <span class="map-weather-card__label">Field weather</span>
+                            <button type="button" class="map-weather-card__action" data-map-weather-action disabled>View forecast</button>
+                        </div>
+                        <div class="map-weather-card__main">
+                            <div class="map-weather-card__identity">
+                                <div class="map-weather-card__icon" data-map-weather-icon>
+                                    <span class="map-weather-card__icon-fallback"></span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="map-weather-card__place" data-map-weather-place>Select a municipality</p>
+                                    <p class="map-weather-card__condition" data-map-weather-condition>Weather appears here after selection.</p>
+                                </div>
+                            </div>
+                            <div class="map-weather-card__temp" data-map-weather-temp>--</div>
+                        </div>
+                        <div class="map-weather-card__meta" data-map-weather-meta>
+                            <span data-map-weather-rain>Rain --</span>
+                            <span data-map-weather-humidity>Humidity --</span>
+                            <span data-map-weather-wind>Wind --</span>
+                        </div>
+                        <div class="map-weather-card__updated" data-map-weather-updated>Select a map marker to load current field weather.</div>
+                        <p class="map-weather-card__status" data-map-weather-status hidden></p>
+                    </div>
+                `;
+
+                L.DomEvent.disableClickPropagation(mapWeatherControlEl);
+                L.DomEvent.disableScrollPropagation(mapWeatherControlEl);
+
+                const card = mapWeatherControlEl.querySelector('[data-map-weather-card]');
+                const action = mapWeatherControlEl.querySelector('[data-map-weather-action]');
+                const openSelectedWeather = () => {
+                    if (selectedWeatherMunicipality) {
+                        loadMunicipalityDetails(selectedWeatherMunicipality);
+                    }
+                };
+
+                card.addEventListener('click', openSelectedWeather);
+                card.addEventListener('keydown', (event) => {
+                    if ((event.key === 'Enter' || event.key === ' ') && selectedWeatherMunicipality) {
+                        event.preventDefault();
+                        openSelectedWeather();
+                    }
+                });
+                action.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openSelectedWeather();
+                });
+
+                return mapWeatherControlEl;
+            };
+
+            weatherControl.addTo(map);
+            setMapWeatherEmpty();
+        }
+
+        function getMapWeatherCard() {
+            return mapWeatherControlEl?.querySelector('[data-map-weather-card]');
+        }
+
+        function updateMapWeatherText(selector, value) {
+            const element = mapWeatherControlEl?.querySelector(selector);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        function updateMapWeatherAction(enabled) {
+            const action = mapWeatherControlEl?.querySelector('[data-map-weather-action]');
+            const card = getMapWeatherCard();
+
+            if (action) {
+                action.disabled = !enabled;
+            }
+
+            if (card) {
+                card.tabIndex = enabled ? 0 : -1;
+                card.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+            }
+        }
+
+        function setMapWeatherCardClass(state, isStale = false) {
+            const card = getMapWeatherCard();
+            if (!card) return;
+
+            card.classList.remove('is-empty', 'is-loading', 'is-ready', 'is-error', 'is-stale');
+            card.classList.add(`is-${state}`);
+
+            if (isStale) {
+                card.classList.add('is-stale');
+            }
+        }
+
+        function setMapWeatherStatus(message) {
+            const status = mapWeatherControlEl?.querySelector('[data-map-weather-status]');
+            if (!status) return;
+
+            status.textContent = message || '';
+            status.hidden = !message;
+        }
+
+        function setMapWeatherIcon(icon) {
+            const iconEl = mapWeatherControlEl?.querySelector('[data-map-weather-icon]');
+            if (!iconEl) return;
+
+            iconEl.innerHTML = renderWeatherIconHtml(icon, 'map-weather-card__icon-fallback');
+        }
+
+        function setMapWeatherEmpty() {
+            selectedWeatherMunicipality = null;
+            setMapWeatherCardClass('empty');
+            updateMapWeatherAction(false);
+            setMapWeatherIcon(null);
+            updateMapWeatherText('[data-map-weather-place]', 'Select a municipality');
+            updateMapWeatherText('[data-map-weather-condition]', 'Weather appears here after selection.');
+            updateMapWeatherText('[data-map-weather-temp]', '--');
+            updateMapWeatherText('[data-map-weather-rain]', 'Rain --');
+            updateMapWeatherText('[data-map-weather-humidity]', 'Humidity --');
+            updateMapWeatherText('[data-map-weather-wind]', 'Wind --');
+            updateMapWeatherText('[data-map-weather-updated]', 'Select a map marker to load current field weather.');
+            setMapWeatherStatus('');
+            removeWeatherMapMarker();
+        }
+
+        function setMapWeatherLoading(municipalityName) {
+            selectedWeatherMunicipality = municipalityName;
+            setMapWeatherCardClass('loading');
+            updateMapWeatherAction(true);
+            setMapWeatherIcon(null);
+            updateMapWeatherText('[data-map-weather-place]', municipalityName);
+            updateMapWeatherText('[data-map-weather-condition]', 'Loading current field condition...');
+            updateMapWeatherText('[data-map-weather-temp]', '--');
+            updateMapWeatherText('[data-map-weather-rain]', 'Rain --');
+            updateMapWeatherText('[data-map-weather-humidity]', 'Humidity --');
+            updateMapWeatherText('[data-map-weather-wind]', 'Wind --');
+            updateMapWeatherText('[data-map-weather-updated]', 'Updating weather from Google Weather API.');
+            setMapWeatherStatus('');
+            renderWeatherMapMarker(municipalityName, null, 'loading');
+        }
+
+        function setMapWeatherError(municipalityName, message) {
+            selectedWeatherMunicipality = municipalityName;
+            setMapWeatherCardClass('error');
+            updateMapWeatherAction(true);
+            setMapWeatherIcon(null);
+            updateMapWeatherText('[data-map-weather-place]', municipalityName);
+            updateMapWeatherText('[data-map-weather-condition]', 'Weather unavailable');
+            updateMapWeatherText('[data-map-weather-temp]', '--');
+            updateMapWeatherText('[data-map-weather-rain]', 'Rain --');
+            updateMapWeatherText('[data-map-weather-humidity]', 'Humidity --');
+            updateMapWeatherText('[data-map-weather-wind]', 'Wind --');
+            updateMapWeatherText('[data-map-weather-updated]', 'Map and crop data are still available.');
+            setMapWeatherStatus(message || 'Unable to load weather for this municipality.');
+            renderWeatherMapMarker(municipalityName, null, 'error');
+        }
+
+        function renderMapWeatherData(municipalityName, weatherPayload, hasErrors) {
+            const current = weatherPayload?.current || null;
+
+            if (!current) {
+                setMapWeatherError(municipalityName, 'Current conditions are unavailable.');
+                return;
+            }
+
+            selectedWeatherMunicipality = municipalityName;
+            const staleMap = weatherPayload?.metadata?.stale || {};
+            const hasStaleData = Object.values(staleMap).some(Boolean);
+            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
+
+            setMapWeatherCardClass('ready', hasStaleData);
+            updateMapWeatherAction(true);
+            setMapWeatherIcon(current.icon);
+            updateMapWeatherText('[data-map-weather-place]', municipalityName);
+            updateMapWeatherText('[data-map-weather-condition]', current.condition_text || 'Current conditions');
+            updateMapWeatherText('[data-map-weather-temp]', formatTemperature(current.temperature_c));
+            updateMapWeatherText('[data-map-weather-rain]', `Rain ${formatPercent(current.precipitation_probability_percent)}`);
+            updateMapWeatherText('[data-map-weather-humidity]', `Humidity ${formatPercent(current.humidity_percent)}`);
+            updateMapWeatherText('[data-map-weather-wind]', `Wind ${formatWind(current.wind_speed_kph)}`);
+            updateMapWeatherText('[data-map-weather-updated]', `Updated ${formatClock(current.timestamp)}`);
+            setMapWeatherStatus(segmentErrors[0] || (hasErrors ? 'Some forecast data is temporarily unavailable.' : ''));
+            renderWeatherMapMarker(municipalityName, current, 'ready');
+        }
+
+        function formatWeatherIconUrl(icon) {
+            if (!icon) return '';
+
+            const url = String(icon).trim();
+            if (!url) return '';
+
+            if (/\.(svg|png|jpg|jpeg|webp)(\?.*)?$/i.test(url)) {
+                return url;
+            }
+
+            return `${url}.svg`;
+        }
+
+        function renderWeatherIconHtml(icon, fallbackClass) {
+            const iconUrl = formatWeatherIconUrl(icon);
+
+            if (iconUrl) {
+                return `<img src="${escapeHtml(iconUrl)}" alt="" loading="lazy">`;
+            }
+
+            return `<span class="${fallbackClass}"></span>`;
+        }
+
+        function removeWeatherMapMarker() {
+            if (mapWeatherMarker) {
+                map.removeLayer(mapWeatherMarker);
+                mapWeatherMarker = null;
+            }
+        }
+
+        function renderWeatherMapMarker(municipalityName, current, state = 'ready') {
+            if (!map || !municipalityCoords[municipalityName]) {
+                return;
+            }
+
+            removeWeatherMapMarker();
+
+            const isLoading = state === 'loading';
+            const isError = state === 'error';
+            const markerHtml = `
+                <div class="weather-map-marker is-${state}">
+                    <div class="weather-map-marker__icon">
+                        ${renderWeatherIconHtml(current?.icon, 'weather-map-marker__dot')}
+                    </div>
+                    <div class="weather-map-marker__copy">
+                        <div class="weather-map-marker__temp">${escapeHtml(isLoading || isError ? '--' : formatTemperature(current?.temperature_c))}</div>
+                        <div class="weather-map-marker__condition">${escapeHtml(isLoading ? 'Loading' : (isError ? 'Unavailable' : (current?.condition_text || 'Weather')))}</div>
+                    </div>
+                </div>
+            `;
+
+            mapWeatherMarker = L.marker(municipalityCoords[municipalityName], {
+                icon: L.divIcon({
+                    className: '',
+                    html: markerHtml,
+                    iconSize: [145, 46],
+                    iconAnchor: [72, 48],
+                    popupAnchor: [0, -44]
+                }),
+                zIndexOffset: 1200
+            }).addTo(map);
+
+            mapWeatherMarker.on('click', () => loadMunicipalityDetails(municipalityName));
+        }
+
+        async function fetchMunicipalityWeatherPayload(municipalityName, hours = 24, days = 7) {
+            const cacheKey = `${normalizeMunicipalityName(municipalityName)}:${hours}:${days}`;
+
+            if (weatherPayloadCache.has(cacheKey)) {
+                return weatherPayloadCache.get(cacheKey);
+            }
+
+            const requestPromise = (async () => {
+                const weatherParams = new URLSearchParams({
+                    hours: String(hours),
+                    days: String(days)
+                });
+                const response = await fetch(`${apiBase}/weather/${encodeURIComponent(municipalityName)}?${weatherParams}`);
+                const payload = await response.json();
+
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Weather lookup failed.');
+                }
+
+                return payload;
+            })();
+
+            weatherPayloadCache.set(cacheKey, requestPromise);
+
+            try {
+                return await requestPromise;
+            } catch (error) {
+                weatherPayloadCache.delete(cacheKey);
+                throw error;
+            }
+        }
+
+        async function loadMapWeatherSummary(municipalityName) {
+            const requestToken = ++mapWeatherRequestToken;
+            setMapWeatherLoading(municipalityName);
+
+            try {
+                const payload = await fetchMunicipalityWeatherPayload(municipalityName, 24, 7);
+
+                if (requestToken !== mapWeatherRequestToken) {
+                    return;
+                }
+
+                renderMapWeatherData(payload.municipality || municipalityName, payload.weather, payload.has_errors);
+            } catch (error) {
+                if (requestToken !== mapWeatherRequestToken) {
+                    return;
+                }
+
+                setMapWeatherError(municipalityName, error.message);
             }
         }
 
@@ -728,7 +1285,7 @@
 
         function formatTemperature(value) {
             if (value === null || value === undefined || value === '') return '-';
-            return `${Math.round(Number(value))} C`;
+            return `${Math.round(Number(value))}\u00B0C`;
         }
 
         function formatPercent(value) {
@@ -811,7 +1368,7 @@
                         <p class="text-[11px] font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
                         <p class="text-xs font-bold text-sky-700 my-1">${escapeHtml(formatTemperature(item.temperature_c))}</p>
                         <p class="text-[10px] text-gray-600 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <p class="text-[10px] text-sky-600 mt-1">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                        <p class="text-[10px] text-sky-600 mt-1">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
@@ -830,7 +1387,7 @@
                             <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
                             <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
                         </div>
-                        <p class="text-[10px] text-sky-600">💧 ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
+                        <p class="text-[10px] text-sky-600">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
                     </div>
                 `).join('');
             }
@@ -844,22 +1401,26 @@
 
             resetWeatherPanel();
             weatherLoadingEl.classList.remove('hidden');
+            const mapRequestToken = ++mapWeatherRequestToken;
+            setMapWeatherLoading(municipalityName);
 
             try {
-                const weatherParams = new URLSearchParams({ hours: '24', days: '7' });
-                const response = await fetch(`${apiBase}/weather/${encodeURIComponent(municipalityName)}?${weatherParams}`);
-                const payload = await response.json();
+                const payload = await fetchMunicipalityWeatherPayload(municipalityName, 24, 7);
+
+                if (mapRequestToken === mapWeatherRequestToken) {
+                    renderMapWeatherData(payload.municipality || municipalityName, payload.weather, payload.has_errors);
+                }
 
                 if (requestToken !== detailsRequestToken) {
                     return;
                 }
 
-                if (!response.ok || !payload.success) {
-                    throw new Error(payload.message || 'Weather lookup failed.');
-                }
-
                 renderWeatherData(payload.weather, payload.has_errors);
             } catch (error) {
+                if (mapRequestToken === mapWeatherRequestToken) {
+                    setMapWeatherError(municipalityName, error.message);
+                }
+
                 if (requestToken !== detailsRequestToken) {
                     return;
                 }
