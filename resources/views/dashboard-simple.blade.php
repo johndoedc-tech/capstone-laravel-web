@@ -679,16 +679,6 @@
                         </div>
                     </a>
 
-                    <a :href="predictionHref" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-primary-100 bg-white p-5 shadow-sm">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900" x-text="t('action_predict')"></h3>
-                                <p class="mt-2 text-sm leading-6 text-gray-600" x-text="t('action_predict_desc')"></p>
-                            </div>
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-2xl shadow-sm">P</div>
-                        </div>
-                    </a>
-
                     <a href="{{ route('map.index') }}" class="quick-action-btn sm:col-span-2 lg:col-span-6 rounded-2xl border border-blue-100 bg-blue-50 p-5 shadow-sm">
                         <div class="flex items-start justify-between gap-4">
                             <div>
@@ -699,6 +689,7 @@
                         </div>
                     </a>
 
+                    @if(false)
                     <a href="{{ route('predictions.history') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
                         <div class="flex items-start justify-between gap-4">
                             <div>
@@ -708,6 +699,8 @@
                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-2xl">ðŸ“Š</div>
                         </div>
                     </a>
+
+                    @endif
 
                     <a href="{{ route('forum.index') }}" class="quick-action-btn rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:col-span-6">
                         <div class="flex items-start justify-between gap-4">

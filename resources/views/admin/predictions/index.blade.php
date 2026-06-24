@@ -18,8 +18,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Future Production Forecast</h3>
-                                <p class="mt-1 text-sm text-gray-500">Select parameters below to generate a year-over-year production trend analysis.</p>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">ML Forecast Baseline</h3>
+                                <p class="mt-1 text-sm text-gray-500">Use this historical-trained ML outlook as a baseline. Live supply is shown on the dashboard and map.</p>
                             </div>
                         </div>
                     </div>
@@ -57,19 +57,19 @@
 
                                 <!-- Forecast Years -->
                                 <div>
-                                    <label for="forecast_years" class="block text-sm font-medium text-gray-700">Forecast Period</label>
+                                    <label for="forecast_years" class="block text-sm font-medium text-gray-700">Baseline Window</label>
                                     <select id="forecast_years" name="forecast_years" required disabled
                                         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md bg-gray-100 cursor-not-allowed">
-                                        <option value="6" selected>6 Years (2025-2030)</option>
+                                        <option value="6" selected>2025-2030</option>
                                     </select>
-                                    <p class="mt-1 text-xs text-gray-500">Shows year-over-year production trends</p>
+                                    <p class="mt-1 text-xs text-gray-500">Historical ML estimate, not live supply.</p>
                                 </div>
                             </div>
 
                             <div class="mt-6 flex justify-end">
                                 <button type="submit" id="forecastBtn"
                                     class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
-                                    <span id="forecastBtnText">Generate Forecast</span>
+                                    <span id="forecastBtnText">Generate Baseline</span>
                                     <svg id="forecastSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -80,7 +80,7 @@
 
                         <!-- Forecast Results Section -->
                         <div id="forecastResults" class="mt-8 hidden">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-900">Forecast Results</h3>
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900">Baseline Results</h3>
                             
                             <!-- Improved Comparison Chart - Farmer Friendly -->
                             <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-6 mb-6">
@@ -89,7 +89,7 @@
                                         <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
                                         </svg>
-                                        Production Over the Years
+                                        Historical vs ML Baseline
                                     </h4>
                                     <!-- Chart Type Toggle -->
                                     <div class="flex items-center mt-2 sm:mt-0 space-x-2">
@@ -107,11 +107,11 @@
                                 <div class="flex flex-wrap gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 rounded bg-blue-500 mr-2"></div>
-                                        <span class="text-sm font-medium text-gray-700">📊 Actual Production (Nakaraan)</span>
+                                        <span class="text-sm font-medium text-gray-700">Historical records</span>
                                     </div>
                                     <div class="flex items-center">
                                         <div class="w-4 h-4 rounded bg-green-500 mr-2" style="background: repeating-linear-gradient(45deg, #22c55e, #22c55e 2px, #86efac 2px, #86efac 4px);"></div>
-                                        <span class="text-sm font-medium text-gray-700">🔮 Predicted Production (Hinaharap)</span>
+                                        <span class="text-sm font-medium text-gray-700">ML baseline forecast</span>
                                     </div>
                                 </div>
                                 
@@ -123,14 +123,14 @@
                                 <!-- Chart Help Text - Simple Version -->
                                 <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                                     <div class="flex items-center justify-center space-x-6">
-                                        <span class="text-sm">💡 <strong>How to read:</strong></span>
+                                        <span class="text-sm"><strong>How to read:</strong></span>
                                         <div class="flex items-center">
                                             <div class="w-4 h-4 rounded bg-blue-500 mr-2"></div>
-                                            <span class="text-sm font-medium text-gray-700">Historical</span>
+                                            <span class="text-sm font-medium text-gray-700">History</span>
                                         </div>
                                         <div class="flex items-center">
                                             <div class="w-4 h-4 rounded bg-green-500 mr-2"></div>
-                                            <span class="text-sm font-medium text-gray-700">Predicted</span>
+                                            <span class="text-sm font-medium text-gray-700">Baseline</span>
                                         </div>
                                     </div>
                                 </div>
@@ -376,7 +376,7 @@
                                         <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                                         </svg>
-                                        Yearly Forecast (Per Taon)
+                                        Baseline by Year
                                     </h5>
                                 </div>
                     `;
@@ -406,7 +406,7 @@
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-lg font-bold text-gray-800">${item.year}</span>
-                                        <p class="text-xs text-gray-500 mt-0.5">Predicted Production</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">ML baseline</p>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-lg font-bold text-green-700">${parseFloat(item.production).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
@@ -431,16 +431,16 @@
                                 <thead class="bg-gradient-to-r from-green-50 to-emerald-50">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                            📅 Taon (Year)
+                                            Year
                                         </th>
                                         <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                            🌾 Predicted Production
+                                            ML Baseline
                                         </th>
                                         <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                            📊 YoY Growth
+                                            Yearly Change
                                         </th>
                                         <th class="px-6 py-4 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">
-                                            📈 Avg. Trend
+                                            Avg. Trend
                                         </th>
                                     </tr>
                                 </thead>
@@ -479,7 +479,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm ${growthClass} ${growthBg}">
-                                        ${growthRate !== null ? growthSymbol + Math.abs(growthRate).toFixed(2) + '%' : '🔵 Baseline'}
+                                        ${growthRate !== null ? growthSymbol + Math.abs(growthRate).toFixed(2) + '%' : 'Baseline'}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-600">
@@ -498,7 +498,7 @@
                     // Add historical and trend statistics
                     html += `
                         <div class="mt-6">
-                            <h4 class="text-md font-semibold text-gray-800 mb-3">Historical Context & Trend Analysis</h4>
+                            <h4 class="text-md font-semibold text-gray-800 mb-3">Historical Context</h4>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 ${historical.average ? `
                                     <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
@@ -541,7 +541,7 @@
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                         </svg>
                                         <span class="text-sm font-medium text-indigo-900">
-                                            ${result.saved_count} forecast ${result.saved_count === 1 ? 'prediction' : 'predictions'} saved to your history
+                                            ${result.saved_count} baseline ${result.saved_count === 1 ? 'result' : 'results'} saved to history
                                         </span>
                                     </div>
                                     <a href="{{ route('admin.predictions.history') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
@@ -567,7 +567,7 @@
             } finally {
                 // Reset button state
                 forecastBtn.disabled = false;
-                forecastBtnText.textContent = 'Generate Forecast';
+                forecastBtnText.textContent = 'Generate Baseline';
                 forecastSpinner.classList.add('hidden');
             }
         });
@@ -639,7 +639,7 @@
                     labels: allYears.map(y => isMobile ? "'" + String(y).slice(-2) : y),
                     datasets: [
                         {
-                            label: 'Actual (Nakaraan)',
+                            label: 'Historical records',
                             data: historicalDataset,
                             borderColor: 'rgb(59, 130, 246)',
                             backgroundColor: currentChartType === 'bar' ? 'rgba(59, 130, 246, 0.8)' : 'rgba(59, 130, 246, 0.1)',
@@ -654,7 +654,7 @@
                             categoryPercentage: 0.9
                         },
                         {
-                            label: 'Predicted (Hinaharap)',
+                            label: 'ML baseline',
                             data: forecastDataset,
                             borderColor: 'rgb(34, 197, 94)',
                             backgroundColor: currentChartType === 'bar' 
@@ -700,7 +700,7 @@
                                 title: function(context) {
                                     const yearLabel = context[0].label;
                                     const fullYear = yearLabel.startsWith("'") ? '20' + yearLabel.slice(1) : yearLabel;
-                                    return 'Taon ' + fullYear;
+                                    return 'Year ' + fullYear;
                                 },
                                 label: function(context) {
                                     let label = context.dataset.label || '';
@@ -711,7 +711,7 @@
                                         });
                                         return label + ': ' + value + ' metric tons';
                                     }
-                                    return label + ': Walang data';
+                                    return label + ': No data';
                                 },
                                 afterBody: function(context) {
                                     const items = context.filter(c => c.parsed.y !== null);
@@ -719,7 +719,7 @@
                                         const diff = items[1].parsed.y - items[0].parsed.y;
                                         const pct = ((diff / items[0].parsed.y) * 100).toFixed(1);
                                         const arrow = diff >= 0 ? '↑' : '↓';
-                                        return '\n' + arrow + ' Pagbabago: ' + pct + '%';
+                                        return '\n' + arrow + ' Change: ' + pct + '%';
                                     }
                                     return '';
                                 }
@@ -730,7 +730,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Taon (Year)',
+                                text: 'Year',
                                 font: {
                                     size: isMobile ? 12 : 14,
                                     weight: 'bold'
