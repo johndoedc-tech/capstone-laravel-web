@@ -165,8 +165,7 @@
         .pwa-soft-pill.hidden {
             display: none !important;
         }
-        .pwa-crop-row,
-        .pwa-weather-card {
+        .pwa-crop-row {
             border: 1px solid #e5e7eb;
             background: #ffffff;
             border-radius: 0.75rem;
@@ -189,20 +188,6 @@
         .pwa-crop-meta span.is-danger {
             background: #fef2f2;
             color: #b91c1c;
-        }
-        .pwa-weather-summary {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 0.75rem;
-            align-items: start;
-        }
-        .pwa-weather-meta {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 0.45rem 0.75rem;
-            margin-top: 0.75rem;
-            font-size: 0.74rem;
-            color: #64748b;
         }
         .pwa-forecast-strip {
             display: flex;
@@ -495,6 +480,115 @@
         .weather-map-marker.is-error .weather-map-marker__condition {
             color: #b91c1c;
         }
+        .weather-forecast-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: calc(0.75rem + var(--harviana-safe-top)) 0.75rem calc(0.75rem + var(--harviana-safe-bottom));
+        }
+        .weather-forecast-modal[hidden] {
+            display: none !important;
+        }
+        .weather-forecast-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgb(15 23 42 / 0.45);
+            backdrop-filter: blur(4px);
+        }
+        .weather-forecast-dialog {
+            position: relative;
+            width: min(680px, 100%);
+            max-height: min(86vh, calc(var(--harviana-viewport-height) - var(--harviana-safe-top) - var(--harviana-safe-bottom) - 1.5rem));
+            overflow-y: auto;
+            border: 1px solid rgb(226 232 240 / 0.9);
+            border-radius: 1rem 1rem 0.8rem 0.8rem;
+            background: #ffffff;
+            box-shadow: 0 28px 80px rgb(15 23 42 / 0.28);
+        }
+        .weather-forecast-header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: rgb(255 255 255 / 0.96);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        .weather-forecast-close {
+            border: 0;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 0.5rem 0.8rem;
+        }
+        .weather-forecast-close:focus-visible,
+        .weather-forecast-close:hover {
+            background: #e2e8f0;
+            outline: none;
+        }
+        .weather-forecast-body {
+            padding: 1rem;
+        }
+        .weather-forecast-current {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            align-items: center;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.9rem;
+            background: #f0fdf4;
+            padding: 1rem;
+        }
+        .weather-forecast-current-main {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            gap: 0.75rem;
+        }
+        .weather-forecast-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 9999px;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+        .weather-forecast-icon img {
+            width: 2.15rem;
+            height: 2.15rem;
+            object-fit: contain;
+        }
+        .weather-forecast-meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem;
+        }
+        .weather-forecast-meta p {
+            border-radius: 0.75rem;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 0.76rem;
+            padding: 0.65rem;
+        }
+        .weather-forecast-advice {
+            border-radius: 0.8rem;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+            padding: 0.85rem;
+        }
         @media (max-width: 640px) {
             .map-weather-control {
                 margin: 10px 10px 0 0 !important;
@@ -512,6 +606,18 @@
             .weather-map-marker {
                 max-width: 128px;
                 min-width: 100px;
+            }
+            .weather-forecast-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (min-width: 640px) {
+            .weather-forecast-modal {
+                align-items: center;
+                padding: calc(1.25rem + var(--harviana-safe-top)) 1.25rem calc(1.25rem + var(--harviana-safe-bottom));
+            }
+            .weather-forecast-dialog {
+                border-radius: 1rem;
             }
         }
     </style>
@@ -651,7 +757,7 @@
                                     <div class="min-w-0">
                                         <h2 id="panel-municipality-name"
                                             class="truncate text-xl font-bold leading-tight text-slate-900 lg:text-2xl">Municipality Name</h2>
-                                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Planting, supply, and weather for this town.</p>
+                                        <p class="mt-1 text-xs text-slate-500 lg:text-sm">Planting and supply for this town.</p>
                                     </div>
 
                                     <div class="flex shrink-0 items-center gap-2">
@@ -717,55 +823,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Weather Cards -->
-                                <div id="weather-section" class="pwa-panel-section">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h3 class="pwa-section-label">Weather Check</h3>
-                                        <span id="weather-source-badge"
-                                            class="pwa-status-pill is-warning hidden">Stale
-                                            Cache</span>
-                                    </div>
-
-                                    <div id="weather-loading" class="hidden text-xs text-slate-500 mb-3">Loading weather data...</div>
-                                    <div id="weather-error" class="hidden text-xs text-red-600 mb-3"></div>
-
-                                    <div id="weather-content" class="hidden">
-                                        <div class="pwa-weather-summary">
-                                            <div>
-                                                <p id="weather-action-title" class="text-sm font-semibold text-slate-950">Checking weather</p>
-                                                <p id="weather-action-message" class="mt-1 text-xs leading-relaxed text-slate-600">Use this before planting, spraying, or harvesting.</p>
-                                            </div>
-                                            <p id="weather-current-temp" class="text-lg font-bold text-green-700">-</p>
-                                        </div>
-
-                                        <div class="pwa-weather-meta">
-                                            <p>Condition: <span id="weather-current-condition" class="font-medium text-slate-800">-</span></p>
-                                            <p>Rain: <span id="weather-current-rain" class="font-medium text-slate-800">-</span></p>
-                                            <p>Humidity: <span id="weather-current-humidity" class="font-medium text-slate-800">-</span></p>
-                                            <p>Wind: <span id="weather-current-wind" class="font-medium text-slate-800">-</span></p>
-                                            <p class="col-span-2">Updated: <span id="weather-current-time" class="font-medium text-slate-800">-</span></p>
-                                        </div>
-
-                                        <div class="mt-4 space-y-3 border-t border-slate-200 pt-3">
-                                            <div>
-                                                <div class="flex items-center justify-between mb-2">
-                                                    <p class="text-xs font-semibold uppercase text-slate-500">Hourly</p>
-                                                    <span id="weather-hourly-count" class="text-[11px] text-slate-500"></span>
-                                                </div>
-                                                <div id="weather-hourly-list" class="pwa-forecast-strip"></div>
-                                            </div>
-
-                                            <div>
-                                                <div class="flex items-center justify-between mb-2">
-                                                    <p class="text-xs font-semibold uppercase text-slate-500">Daily</p>
-                                                    <span id="weather-daily-count" class="text-[11px] text-slate-500"></span>
-                                                </div>
-                                                <div id="weather-daily-list" class="pwa-forecast-strip"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- Contribution Per Municipality Chart -->
                                 <div id="contribution-section" class="pwa-panel-section pwa-secondary-block hidden">
                                     <div class="flex items-center justify-between mb-3">
@@ -826,6 +883,77 @@
         </div>
     </div>
 
+    <div id="weather-forecast-modal" class="weather-forecast-modal" hidden aria-hidden="true">
+        <div class="weather-forecast-backdrop" data-weather-modal-close></div>
+        <section class="weather-forecast-dialog" role="dialog" aria-modal="true" aria-labelledby="weather-modal-title">
+            <div class="weather-forecast-header">
+                <div class="min-w-0">
+                    <p class="pwa-section-label">Field Weather</p>
+                    <h2 id="weather-modal-title" class="mt-1 text-xl font-bold text-slate-950">Weather forecast</h2>
+                    <p id="weather-modal-subtitle" class="mt-1 text-sm text-slate-500">Choose a municipality to view the forecast.</p>
+                </div>
+                <button type="button" class="weather-forecast-close" data-weather-modal-close>Close</button>
+            </div>
+
+            <div class="weather-forecast-body">
+                <div id="weather-modal-loading" class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                    Loading forecast...
+                </div>
+                <div id="weather-modal-error" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+
+                <div id="weather-modal-content" class="hidden space-y-4">
+                    <div class="weather-forecast-current">
+                        <div class="weather-forecast-current-main">
+                            <div id="weather-modal-icon" class="weather-forecast-icon">
+                                <span class="map-weather-card__icon-fallback"></span>
+                            </div>
+                            <div class="min-w-0">
+                                <p id="weather-modal-place" class="truncate text-base font-extrabold uppercase text-slate-950">-</p>
+                                <p id="weather-modal-condition" class="mt-1 truncate text-sm text-slate-600">-</p>
+                            </div>
+                        </div>
+                        <p id="weather-modal-temp" class="text-3xl font-extrabold text-green-700">-</p>
+                    </div>
+
+                    <div class="weather-forecast-meta">
+                        <p>Rain<br><span id="weather-modal-rain" class="font-bold text-slate-900">-</span></p>
+                        <p>Humidity<br><span id="weather-modal-humidity" class="font-bold text-slate-900">-</span></p>
+                        <p>Wind<br><span id="weather-modal-wind" class="font-bold text-slate-900">-</span></p>
+                    </div>
+
+                    <div class="weather-forecast-advice">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p id="weather-modal-advice-title" class="text-sm font-bold text-slate-950">Checking weather</p>
+                                <p id="weather-modal-advice-message" class="mt-1 text-sm leading-relaxed text-slate-600">Use this before planting, spraying, or harvesting.</p>
+                            </div>
+                            <span id="weather-modal-source-badge" class="pwa-status-pill is-warning hidden">Stale cache</span>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">Updated: <span id="weather-modal-updated">-</span></p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <div class="mb-2 flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Today</p>
+                                <span id="weather-modal-hourly-count" class="text-[11px] text-slate-500"></span>
+                            </div>
+                            <div id="weather-modal-hourly-list" class="pwa-forecast-strip"></div>
+                        </div>
+
+                        <div>
+                            <div class="mb-2 flex items-center justify-between">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Next days</p>
+                                <span id="weather-modal-daily-count" class="text-[11px] text-slate-500"></span>
+                            </div>
+                            <div id="weather-modal-daily-list" class="pwa-forecast-strip"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
@@ -845,6 +973,7 @@
         let mapWeatherControlEl = null;
         let mapWeatherMarker = null;
         let mapWeatherRequestToken = 0;
+        let weatherForecastRequestToken = 0;
         let selectedWeatherMunicipality = null;
         const weatherPayloadCache = new Map();
 
@@ -943,6 +1072,7 @@
                 maxZoom: 19
             }).addTo(map);
 
+            initWeatherForecastModal();
             initMapWeatherControl();
 
             if (userPreferredMunicipality && municipalityCoords[userPreferredMunicipality]) {
@@ -1004,7 +1134,7 @@
                 const action = mapWeatherControlEl.querySelector('[data-map-weather-action]');
                 const openSelectedWeather = () => {
                     if (selectedWeatherMunicipality) {
-                        loadMunicipalityDetails(selectedWeatherMunicipality);
+                        openWeatherForecastModal(selectedWeatherMunicipality);
                     }
                 };
 
@@ -1600,7 +1730,6 @@
             document.getElementById('details-panel').classList.add('translate-x-full');
             currentMunicipality = null;
             detailsRequestToken += 1;
-            resetWeatherPanel();
         }
 
         function openDetailsPanel() {
@@ -1608,25 +1737,7 @@
         }
 
         function resetWeatherPanel() {
-            document.getElementById('weather-loading').classList.add('hidden');
-            document.getElementById('weather-error').classList.add('hidden');
-            document.getElementById('weather-error').textContent = '';
-            document.getElementById('weather-content').classList.add('hidden');
-            document.getElementById('weather-source-badge').classList.add('hidden');
-
-            document.getElementById('weather-action-title').textContent = 'Checking weather';
-            document.getElementById('weather-action-message').textContent = 'Use this before planting, spraying, or harvesting.';
-            document.getElementById('weather-current-condition').textContent = '-';
-            document.getElementById('weather-current-temp').textContent = '-';
-            document.getElementById('weather-current-humidity').textContent = '-';
-            document.getElementById('weather-current-wind').textContent = '-';
-            document.getElementById('weather-current-rain').textContent = '-';
-            document.getElementById('weather-current-time').textContent = '-';
-
-            document.getElementById('weather-hourly-count').textContent = '';
-            document.getElementById('weather-daily-count').textContent = '';
-            document.getElementById('weather-hourly-list').innerHTML = '';
-            document.getElementById('weather-daily-list').innerHTML = '';
+            // Weather forecast details now live in the map popup, not in the side panel.
         }
 
         function formatTemperature(value) {
@@ -1857,12 +1968,16 @@
             })[char]);
         }
 
-        function renderWeatherAdvice(current) {
+        function renderWeatherAdvice(current, titleId = 'weather-modal-advice-title', messageId = 'weather-modal-advice-message') {
             const rainChance = toSafeNumber(current?.precipitation_probability_percent);
             const windSpeed = toSafeNumber(current?.wind_speed_kph);
             const condition = String(current?.condition_text || '').toLowerCase();
-            const titleEl = document.getElementById('weather-action-title');
-            const messageEl = document.getElementById('weather-action-message');
+            const titleEl = document.getElementById(titleId);
+            const messageEl = document.getElementById(messageId);
+
+            if (!titleEl || !messageEl) {
+                return;
+            }
 
             if (rainChance >= 60 || condition.includes('rain')) {
                 titleEl.textContent = 'Rain is likely';
@@ -1886,112 +2001,89 @@
             messageEl.textContent = 'You can plan field work, but still check your area.';
         }
 
-        function renderWeatherDataLegacy(weatherPayload, hasErrors) {
-            const loadingEl = document.getElementById('weather-loading');
-            const errorEl = document.getElementById('weather-error');
-            const contentEl = document.getElementById('weather-content');
-            const sourceBadgeEl = document.getElementById('weather-source-badge');
+        function initWeatherForecastModal() {
+            const modal = document.getElementById('weather-forecast-modal');
+            if (!modal) return;
 
-            loadingEl.classList.add('hidden');
-            errorEl.classList.add('hidden');
-            errorEl.textContent = '';
+            modal.querySelectorAll('[data-weather-modal-close]').forEach((button) => {
+                button.addEventListener('click', closeWeatherForecastModal);
+            });
 
-            const staleMap = weatherPayload?.metadata?.stale || {};
-            const hasStaleData = Object.values(staleMap).some(Boolean);
-            if (hasStaleData) {
-                sourceBadgeEl.classList.remove('hidden');
-            } else {
-                sourceBadgeEl.classList.add('hidden');
-            }
-
-            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
-            if (segmentErrors.length > 0) {
-                errorEl.textContent = segmentErrors[0];
-                errorEl.classList.remove('hidden');
-            } else if (hasErrors) {
-                errorEl.textContent = 'Some weather data is missing.';
-                errorEl.classList.remove('hidden');
-            }
-
-            const current = weatherPayload?.current || {};
-            renderWeatherAdvice(current);
-            document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
-            document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
-            document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
-            document.getElementById('weather-current-wind').textContent = formatWind(current.wind_speed_kph);
-            document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
-            document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
-
-            const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 12);
-            document.getElementById('weather-hourly-count').textContent = `${weatherPayload?.hourly?.items?.length || 0} points`;
-            const hourlyListEl = document.getElementById('weather-hourly-list');
-            if (hourlyItems.length === 0) {
-                hourlyListEl.innerHTML = '<p class="text-xs text-gray-500">No hourly weather yet.</p>';
-            } else {
-                hourlyListEl.innerHTML = hourlyItems.map(item => `
-                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[90px] flex-shrink-0 snap-start text-center">
-                        <p class="text-[11px] font-semibold text-gray-700">${escapeHtml(formatClock(item.timestamp))}</p>
-                        <p class="text-xs font-bold text-sky-700 my-1">${escapeHtml(formatTemperature(item.temperature_c))}</p>
-                        <p class="text-[10px] text-gray-600 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <p class="text-[10px] text-sky-600 mt-1">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
-                    </div>
-                `).join('');
-            }
-
-            const dailyItems = (weatherPayload?.daily?.items || []).slice(0, 7);
-            document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
-            const dailyListEl = document.getElementById('weather-daily-list');
-            if (dailyItems.length === 0) {
-                dailyListEl.innerHTML = '<p class="text-xs text-gray-500">No daily weather yet.</p>';
-            } else {
-                dailyListEl.innerHTML = dailyItems.map(item => `
-                    <div class="flex flex-col items-center justify-center rounded border border-sky-100 bg-sky-50/70 p-2 min-w-[100px] flex-shrink-0 snap-start text-center">
-                        <p class="text-[11px] font-bold text-gray-800">${escapeHtml(formatDay(item.date))}</p>
-                        <p class="text-[10px] text-gray-500 mb-1 truncate w-full" title="${escapeHtml(item.condition_text || 'N/A')}">${escapeHtml(item.condition_text || 'N/A')}</p>
-                        <div class="bg-white rounded px-2 py-1 shadow-sm border border-sky-100 mb-1 w-full">
-                            <p class="text-[11px] font-semibold text-gray-800">${escapeHtml(formatTemperature(item.temp_max_c))}</p>
-                            <p class="text-[9px] text-gray-400">${escapeHtml(formatTemperature(item.temp_min_c))}</p>
-                        </div>
-                        <p class="text-[10px] text-sky-600">Rain ${escapeHtml(formatPercent(item.precipitation_probability_percent))}</p>
-                    </div>
-                `).join('');
-            }
-
-            contentEl.classList.remove('hidden');
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !modal.hidden) {
+                    closeWeatherForecastModal();
+                }
+            });
         }
 
-        function renderWeatherData(weatherPayload, hasErrors) {
-            const loadingEl = document.getElementById('weather-loading');
-            const errorEl = document.getElementById('weather-error');
-            const contentEl = document.getElementById('weather-content');
-            const sourceBadgeEl = document.getElementById('weather-source-badge');
+        function closeWeatherForecastModal() {
+            const modal = document.getElementById('weather-forecast-modal');
+            if (!modal) return;
 
-            loadingEl.classList.add('hidden');
-            errorEl.classList.add('hidden');
-            errorEl.textContent = '';
+            weatherForecastRequestToken += 1;
+            modal.hidden = true;
+            modal.setAttribute('aria-hidden', 'true');
+            document.documentElement.classList.remove('overflow-hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-            const staleMap = weatherPayload?.metadata?.stale || {};
-            sourceBadgeEl.classList.toggle('hidden', !Object.values(staleMap).some(Boolean));
+        function resetWeatherForecastModal(municipalityName) {
+            const modal = document.getElementById('weather-forecast-modal');
+            if (!modal) return;
 
-            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
-            if (segmentErrors.length > 0 || hasErrors) {
-                errorEl.textContent = segmentErrors[0] || 'Some weather data is missing.';
-                errorEl.classList.remove('hidden');
-            }
+            document.getElementById('weather-modal-title').textContent = `${municipalityName} forecast`;
+            document.getElementById('weather-modal-subtitle').textContent = 'Loading weather for field work.';
+            document.getElementById('weather-modal-loading').classList.remove('hidden');
+            document.getElementById('weather-modal-error').classList.add('hidden');
+            document.getElementById('weather-modal-error').textContent = '';
+            document.getElementById('weather-modal-content').classList.add('hidden');
+            document.getElementById('weather-modal-source-badge').classList.add('hidden');
+            document.getElementById('weather-modal-icon').innerHTML = '<span class="map-weather-card__icon-fallback"></span>';
+            document.getElementById('weather-modal-place').textContent = municipalityName;
+            document.getElementById('weather-modal-condition').textContent = '-';
+            document.getElementById('weather-modal-temp').textContent = '-';
+            document.getElementById('weather-modal-rain').textContent = '-';
+            document.getElementById('weather-modal-humidity').textContent = '-';
+            document.getElementById('weather-modal-wind').textContent = '-';
+            document.getElementById('weather-modal-updated').textContent = '-';
+            document.getElementById('weather-modal-hourly-count').textContent = '';
+            document.getElementById('weather-modal-daily-count').textContent = '';
+            document.getElementById('weather-modal-hourly-list').innerHTML = '';
+            document.getElementById('weather-modal-daily-list').innerHTML = '';
+            renderWeatherAdvice(null);
+        }
 
+        function showWeatherForecastModalError(message) {
+            document.getElementById('weather-modal-loading').classList.add('hidden');
+            document.getElementById('weather-modal-content').classList.add('hidden');
+            const errorEl = document.getElementById('weather-modal-error');
+            errorEl.textContent = message || 'Weather forecast is unavailable.';
+            errorEl.classList.remove('hidden');
+        }
+
+        function renderWeatherForecastModal(municipalityName, weatherPayload, hasErrors) {
             const current = weatherPayload?.current || {};
+            const staleMap = weatherPayload?.metadata?.stale || {};
+            const segmentErrors = Object.values(weatherPayload?.errors || {}).filter(Boolean);
+            const hasStaleData = Object.values(staleMap).some(Boolean);
+
+            document.getElementById('weather-modal-loading').classList.add('hidden');
+            document.getElementById('weather-modal-title').textContent = `${municipalityName} forecast`;
+            document.getElementById('weather-modal-subtitle').textContent = segmentErrors[0] || (hasErrors ? 'Some forecast details may be missing.' : 'Use this before planting, spraying, or harvesting.');
+            document.getElementById('weather-modal-source-badge').classList.toggle('hidden', !hasStaleData);
+            document.getElementById('weather-modal-icon').innerHTML = renderWeatherIconHtml(current.icon, 'map-weather-card__icon-fallback');
+            document.getElementById('weather-modal-place').textContent = municipalityName;
+            document.getElementById('weather-modal-condition').textContent = current.condition_text || 'Unavailable';
+            document.getElementById('weather-modal-temp').textContent = formatTemperature(current.temperature_c);
+            document.getElementById('weather-modal-rain').textContent = formatPercent(current.precipitation_probability_percent);
+            document.getElementById('weather-modal-humidity').textContent = formatPercent(current.humidity_percent);
+            document.getElementById('weather-modal-wind').textContent = formatWind(current.wind_speed_kph);
+            document.getElementById('weather-modal-updated').textContent = formatClock(current.timestamp);
             renderWeatherAdvice(current);
-            document.getElementById('weather-current-condition').textContent = current.condition_text || 'Unavailable';
-            document.getElementById('weather-current-temp').textContent = formatTemperature(current.temperature_c);
-            document.getElementById('weather-current-humidity').textContent = formatPercent(current.humidity_percent);
-            document.getElementById('weather-current-wind').textContent = formatWind(current.wind_speed_kph);
-            document.getElementById('weather-current-rain').textContent = formatPercent(current.precipitation_probability_percent);
-            document.getElementById('weather-current-time').textContent = formatClock(current.timestamp);
 
             const hourlyItems = (weatherPayload?.hourly?.items || []).slice(0, 8);
-            document.getElementById('weather-hourly-count').textContent = `${hourlyItems.length} checks`;
-            const hourlyListEl = document.getElementById('weather-hourly-list');
-            hourlyListEl.innerHTML = hourlyItems.length === 0
+            document.getElementById('weather-modal-hourly-count').textContent = `${hourlyItems.length} checks`;
+            document.getElementById('weather-modal-hourly-list').innerHTML = hourlyItems.length === 0
                 ? '<p class="text-xs text-slate-500">No hourly weather yet.</p>'
                 : hourlyItems.map(item => `
                     <div class="pwa-forecast-card">
@@ -2003,9 +2095,8 @@
                 `).join('');
 
             const dailyItems = (weatherPayload?.daily?.items || []).slice(0, 5);
-            document.getElementById('weather-daily-count').textContent = `${dailyItems.length} days`;
-            const dailyListEl = document.getElementById('weather-daily-list');
-            dailyListEl.innerHTML = dailyItems.length === 0
+            document.getElementById('weather-modal-daily-count').textContent = `${dailyItems.length} days`;
+            document.getElementById('weather-modal-daily-list').innerHTML = dailyItems.length === 0
                 ? '<p class="text-xs text-slate-500">No daily weather yet.</p>'
                 : dailyItems.map(item => `
                     <div class="pwa-forecast-card">
@@ -2019,42 +2110,36 @@
                     </div>
                 `).join('');
 
-            contentEl.classList.remove('hidden');
+            document.getElementById('weather-modal-content').classList.remove('hidden');
         }
 
-        async function loadMunicipalityWeather(municipalityName, requestToken) {
-            const weatherLoadingEl = document.getElementById('weather-loading');
-            const weatherErrorEl = document.getElementById('weather-error');
+        async function openWeatherForecastModal(municipalityName) {
+            if (!municipalityName) return;
 
-            resetWeatherPanel();
-            weatherLoadingEl.classList.remove('hidden');
-            const mapRequestToken = ++mapWeatherRequestToken;
-            setMapWeatherLoading(municipalityName);
+            const modal = document.getElementById('weather-forecast-modal');
+            if (!modal) return;
+
+            const requestToken = ++weatherForecastRequestToken;
+            modal.hidden = false;
+            modal.setAttribute('aria-hidden', 'false');
+            document.documentElement.classList.add('overflow-hidden');
+            document.body.classList.add('overflow-hidden');
+            resetWeatherForecastModal(municipalityName);
 
             try {
                 const payload = await fetchMunicipalityWeatherPayload(municipalityName, 24, 7);
 
-                if (mapRequestToken === mapWeatherRequestToken) {
-                    renderMapWeatherData(payload.municipality || municipalityName, payload.weather, payload.has_errors);
-                }
-
-                if (requestToken !== detailsRequestToken) {
+                if (requestToken !== weatherForecastRequestToken) {
                     return;
                 }
 
-                renderWeatherData(payload.weather, payload.has_errors);
+                renderWeatherForecastModal(payload.municipality || municipalityName, payload.weather, payload.has_errors);
             } catch (error) {
-                if (mapRequestToken === mapWeatherRequestToken) {
-                    setMapWeatherError(municipalityName, error.message);
-                }
-
-                if (requestToken !== detailsRequestToken) {
+                if (requestToken !== weatherForecastRequestToken) {
                     return;
                 }
 
-                weatherLoadingEl.classList.add('hidden');
-                weatherErrorEl.textContent = `Weather unavailable: ${error.message}`;
-                weatherErrorEl.classList.remove('hidden');
+                showWeatherForecastModalError(`Weather unavailable: ${error.message}`);
             }
         }
 
@@ -2078,7 +2163,7 @@
             document.getElementById('panel-loading').classList.remove('hidden');
             document.getElementById('panel-content').classList.add('hidden');
 
-            const weatherPromise = loadMunicipalityWeather(municipalityName, requestToken);
+            const weatherPromise = loadMapWeatherSummary(municipalityName);
 
             try {
                 const crop = document.getElementById('crop-filter').value;
@@ -2119,7 +2204,7 @@
                 document.getElementById('panel-content').classList.remove('hidden');
 
                 weatherPromise.catch(() => {
-                    // Weather errors are rendered in the weather section to avoid blocking crop data.
+                    // Weather errors stay in the compact map card and do not block crop data.
                 });
 
             } catch (error) {
