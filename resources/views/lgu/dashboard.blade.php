@@ -88,6 +88,17 @@
                             'rejected' => 'bg-red-50 text-red-700 ring-red-100',
                             default => 'bg-amber-50 text-amber-700 ring-amber-100',
                         };
+                        $authFlags = collect($item->authenticity_flags ?? [])->filter();
+                        $authStatus = $item->authenticity_status ?: 'unchecked';
+                        $authClass = match ($authStatus) {
+                            'clear' => 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+                            'needs_review' => 'bg-amber-50 text-amber-700 ring-amber-100',
+                            default => 'bg-gray-50 text-gray-600 ring-gray-100',
+                        };
+                        $evidencePhotoUrl = ($item->evidence_photo_path || $item->damage_photo_path)
+                            ? route('calendar.evidence-photo', $item)
+                            : null;
+                        $hasLocation = $item->evidence_latitude !== null && $item->evidence_longitude !== null;
                     @endphp
                     <article class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
                         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -98,6 +109,9 @@
                                     </span>
                                     <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $statusClass }}">
                                         {{ $item->lgu_validation_status_label }}
+                                    </span>
+                                    <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $authClass }}">
+                                        {{ $item->authenticity_status_label ?: 'Evidence not checked' }}
                                     </span>
                                 </div>
                                 <h2 class="mt-3 text-lg font-semibold text-gray-900">{{ $item->title }}</h2>
@@ -112,15 +126,62 @@
                                         <p><span class="font-semibold text-gray-900">Harvest:</span> {{ number_format((float) $item->actual_harvest_production_mt, 4) }} mt</p>
                                     @endif
                                 </div>
-                                @if($item->damage_photo_path)
-                                    <a href="{{ route('calendar.damage-photo', $item) }}" target="_blank" class="mt-4 inline-flex overflow-hidden rounded-xl border border-gray-200">
-                                        <img src="{{ route('calendar.damage-photo', $item) }}" alt="Damage evidence" class="h-36 w-48 object-cover">
-                                    </a>
-                                @endif
+                                <div class="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Evidence check</p>
+                                        <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $authClass }}">
+                                            {{ $item->authenticity_status_label ?: 'Evidence not checked' }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-600 sm:grid-cols-3">
+                                        <p><span class="font-semibold text-gray-900">Photo:</span> {{ $evidencePhotoUrl ? 'Attached' : 'Missing' }}</p>
+                                        <p><span class="font-semibold text-gray-900">Location:</span> {{ $hasLocation ? 'Captured' : 'Missing' }}</p>
+                                        <p><span class="font-semibold text-gray-900">Submitted:</span> {{ $item->submitted_to_lgu_at?->format('M d, Y h:i A') ?? '-' }}</p>
+                                    </div>
+                                    @if($hasLocation)
+                                        <a href="https://www.google.com/maps?q={{ $item->evidence_latitude }},{{ $item->evidence_longitude }}" target="_blank" rel="noopener" class="mt-2 inline-flex text-xs font-semibold text-blue-700 underline">
+                                            View captured location
+                                            @if($item->evidence_accuracy_m)
+                                                (about {{ number_format((float) $item->evidence_accuracy_m, 0) }}m accuracy)
+                                            @endif
+                                        </a>
+                                    @endif
+                                    @if($authFlags->isNotEmpty())
+                                        <div class="mt-3 space-y-1">
+                                            @foreach($authFlags->take(3) as $flag)
+                                                <p class="rounded-lg bg-white px-2.5 py-1.5 text-xs text-gray-700">
+                                                    <span class="font-semibold">{{ $flag['label'] ?? 'Needs review.' }}</span>
+                                                    @if(! empty($flag['message']))
+                                                        <span class="text-gray-500">{{ $flag['message'] }}</span>
+                                                    @endif
+                                                </p>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                    @if($evidencePhotoUrl)
+                                        <a href="{{ $evidencePhotoUrl }}" target="_blank" class="mt-3 inline-flex overflow-hidden rounded-xl border border-gray-200 bg-white">
+                                            <img src="{{ $evidencePhotoUrl }}" alt="Evidence photo" class="h-36 w-48 object-cover">
+                                        </a>
+                                    @endif
+                                </div>
                                 @if($item->lgu_validation_notes)
                                     <p class="mt-3 rounded-xl bg-gray-50 px-3 py-2 text-sm text-gray-600">
                                         <span class="font-semibold text-gray-900">LGU note:</span> {{ $item->lgu_validation_notes }}
                                     </p>
+                                @endif
+                                @if($item->audits->isNotEmpty())
+                                    <div class="mt-3 rounded-xl border border-gray-100 bg-white px-3 py-2">
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">History</p>
+                                        <div class="mt-2 space-y-1 text-xs text-gray-600">
+                                            @foreach($item->audits->take(3) as $audit)
+                                                <p>
+                                                    <span class="font-semibold text-gray-900">{{ str_replace('_', ' ', ucfirst($audit->action)) }}</span>
+                                                    by {{ $audit->user?->name ?? 'System' }}
+                                                    <span class="text-gray-400">{{ $audit->created_at?->format('M d, h:i A') }}</span>
+                                                </p>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
 

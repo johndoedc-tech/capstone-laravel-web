@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FarmerCalendarEvent;
+use App\Services\EventAuthenticityService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class LguValidationController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $query = FarmerCalendarEvent::query()
-            ->with(['user', 'lguValidator'])
+            ->with(['user', 'lguValidator', 'audits.user'])
             ->where(function (Builder $query) {
                 $query->where('category', 'damage_report')
                     ->orWhereNotNull('actual_harvest_recorded_at');
@@ -88,6 +89,11 @@ class LguValidationController extends Controller
             'lgu_validation_revision' => (int) $event->lgu_validation_revision + 1,
         ]);
 
+        app(EventAuthenticityService::class)->audit($event->fresh(), Auth::user(), 'lgu_approved', [
+            'notes' => $validated['notes'] ?? null,
+            'authenticity_status' => $event->authenticity_status,
+        ]);
+
         return back()->with('success', 'Report approved and marked as LGU verified.');
     }
 
@@ -105,6 +111,11 @@ class LguValidationController extends Controller
             'lgu_validated_at' => now(),
             'lgu_validation_notes' => $validated['notes'],
             'lgu_validation_revision' => (int) $event->lgu_validation_revision + 1,
+        ]);
+
+        app(EventAuthenticityService::class)->audit($event->fresh(), Auth::user(), 'lgu_rejected', [
+            'notes' => $validated['notes'],
+            'authenticity_status' => $event->authenticity_status,
         ]);
 
         return back()->with('success', 'Report returned to the farmer for correction.');

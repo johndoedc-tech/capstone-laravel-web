@@ -13,10 +13,20 @@ class FarmerCalendarEvent extends Model
     public const VALIDATION_APPROVED = 'approved';
     public const VALIDATION_REJECTED = 'rejected';
 
+    public const AUTHENTICITY_UNCHECKED = 'unchecked';
+    public const AUTHENTICITY_CLEAR = 'clear';
+    public const AUTHENTICITY_NEEDS_REVIEW = 'needs_review';
+
     public const VALIDATION_STATUS_LABELS = [
         self::VALIDATION_PENDING => 'Pending LGU validation',
         self::VALIDATION_APPROVED => 'LGU approved',
         self::VALIDATION_REJECTED => 'Needs correction',
+    ];
+
+    public const AUTHENTICITY_STATUS_LABELS = [
+        self::AUTHENTICITY_UNCHECKED => 'Evidence not checked',
+        self::AUTHENTICITY_CLEAR => 'Evidence OK',
+        self::AUTHENTICITY_NEEDS_REVIEW => 'Needs review',
     ];
 
     protected $fillable = [
@@ -56,6 +66,18 @@ class FarmerCalendarEvent extends Model
         'submitted_to_lgu_at',
         'damage_photo_path',
         'damage_photo_original_name',
+        'evidence_photo_path',
+        'evidence_photo_original_name',
+        'evidence_photo_hash',
+        'evidence_latitude',
+        'evidence_longitude',
+        'evidence_accuracy_m',
+        'evidence_captured_at',
+        'evidence_user_agent',
+        'authenticity_status',
+        'authenticity_flags',
+        'authenticity_checked_at',
+        'authenticity_notes',
     ];
 
     protected $casts = [
@@ -75,6 +97,12 @@ class FarmerCalendarEvent extends Model
         'is_completed' => 'boolean',
         'lgu_validated_at' => 'datetime',
         'submitted_to_lgu_at' => 'datetime',
+        'evidence_latitude' => 'decimal:7',
+        'evidence_longitude' => 'decimal:7',
+        'evidence_accuracy_m' => 'decimal:2',
+        'evidence_captured_at' => 'datetime',
+        'authenticity_flags' => 'array',
+        'authenticity_checked_at' => 'datetime',
     ];
 
     /**
@@ -90,10 +118,21 @@ class FarmerCalendarEvent extends Model
         return $this->belongsTo(User::class, 'lgu_validated_by');
     }
 
+    public function audits()
+    {
+        return $this->hasMany(CalendarEventAudit::class)->latest();
+    }
+
     public function getLguValidationStatusLabelAttribute(): string
     {
         return self::VALIDATION_STATUS_LABELS[$this->lgu_validation_status]
             ?? str_replace('_', ' ', ucfirst((string) $this->lgu_validation_status));
+    }
+
+    public function getAuthenticityStatusLabelAttribute(): string
+    {
+        return self::AUTHENTICITY_STATUS_LABELS[$this->authenticity_status]
+            ?? str_replace('_', ' ', ucfirst((string) $this->authenticity_status));
     }
 
     public function isLguPending(): bool

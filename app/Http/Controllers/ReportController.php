@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
@@ -377,6 +378,7 @@ class ReportController extends Controller
 
     private function getPlantingReportRecords(Request $request): Collection
     {
+        $supportsAuthenticity = $this->supportsReportAuthenticityColumns();
         $damageTotals = FarmerCalendarEvent::query()
             ->select('crop_plan_event_id', DB::raw('SUM(COALESCE(damage_area_sqm, 0)) as reported_damage_sqm'))
             ->where('category', 'damage_report')
@@ -410,6 +412,7 @@ class ReportController extends Controller
                 'plans.lgu_validation_status as plan_validation_status',
                 'plans.lgu_validation_notes as plan_validation_notes',
                 'plans.created_at',
+                DB::raw('COALESCE(harvests.id, plans.id) as actual_harvest_event_id'),
                 DB::raw('COALESCE(harvests.actual_harvest_date, plans.actual_harvest_date) as actual_harvest_date'),
                 DB::raw('COALESCE(harvests.actual_harvest_amount, plans.actual_harvest_amount) as actual_harvest_amount'),
                 DB::raw('COALESCE(harvests.actual_harvest_unit, plans.actual_harvest_unit) as actual_harvest_unit'),
@@ -423,6 +426,14 @@ class ReportController extends Controller
                 'users.cooperative',
                 DB::raw('COALESCE(damage_totals.reported_damage_sqm, 0) as reported_damage_sqm'),
             ]);
+
+        if ($supportsAuthenticity) {
+            $query->addSelect([
+                DB::raw("COALESCE(harvests.authenticity_status, plans.authenticity_status, 'unchecked') as actual_harvest_authenticity_status"),
+                DB::raw('COALESCE(harvests.authenticity_flags, plans.authenticity_flags) as actual_harvest_authenticity_flags'),
+                DB::raw('COALESCE(harvests.evidence_photo_path, plans.evidence_photo_path) as actual_harvest_evidence_photo_path'),
+            ]);
+        }
 
         if ($request->filled('crop')) {
             $query->where('plans.crop', $request->crop);
@@ -484,7 +495,7 @@ class ReportController extends Controller
                 ->groupBy('crop_plan_event_id')
             : collect();
 
-        $records = $rows->map(function ($row) use ($damageReports) {
+        $records = $rows->map(function ($row) use ($damageReports, $supportsAuthenticity) {
             $areaSqm = (float) ($row->desired_area_sqm ?? 0);
             $reportedDamageSqm = min($areaSqm, max(0, (float) ($row->reported_damage_sqm ?? 0)));
             $healthyRatio = $areaSqm > 0 ? max(0, min(1, ($areaSqm - $reportedDamageSqm) / $areaSqm)) : 1;
@@ -498,6 +509,9 @@ class ReportController extends Controller
             $actualHarvestProduction = $row->actual_harvest_production_mt !== null
                 ? max(0, (float) $row->actual_harvest_production_mt)
                 : null;
+            $hasActualHarvestRecord = $row->actual_harvest_date !== null
+                || $row->actual_harvest_amount !== null
+                || $actualHarvestProduction !== null;
             $predictionError = $actualHarvestProduction !== null
                 ? round($adjustedProduction - $actualHarvestProduction, 2)
                 : null;
@@ -538,9 +552,22 @@ class ReportController extends Controller
                 'actual_harvest_unit' => $row->actual_harvest_unit,
                 'actual_harvest_date' => $row->actual_harvest_date ? Carbon::parse($row->actual_harvest_date) : null,
                 'actual_harvest_notes' => $row->actual_harvest_notes,
+                'actual_harvest_event_id' => $row->actual_harvest_event_id ? (int) $row->actual_harvest_event_id : (int) $row->id,
                 'actual_harvest_validation_status' => $row->actual_harvest_validation_status ?: 'approved',
                 'actual_harvest_validation_label' => $this->formatValidationStatus($row->actual_harvest_validation_status ?: 'approved'),
                 'actual_harvest_validation_notes' => $row->actual_harvest_validation_notes,
+                'actual_harvest_authenticity_status' => $supportsAuthenticity && $hasActualHarvestRecord
+                    ? ($row->actual_harvest_authenticity_status ?: FarmerCalendarEvent::AUTHENTICITY_UNCHECKED)
+                    : null,
+                'actual_harvest_authenticity_label' => $supportsAuthenticity && $hasActualHarvestRecord
+                    ? $this->formatAuthenticityStatus($row->actual_harvest_authenticity_status)
+                    : null,
+                'actual_harvest_authenticity_flags' => $supportsAuthenticity && $hasActualHarvestRecord
+                    ? $this->normalizeAuthenticityFlags($row->actual_harvest_authenticity_flags ?? null)
+                    : [],
+                'actual_harvest_evidence_photo_path' => $supportsAuthenticity && $hasActualHarvestRecord
+                    ? ($row->actual_harvest_evidence_photo_path ?: null)
+                    : null,
                 'loss_production_mt' => $lossProduction,
                 'farm_type' => $this->formatReportLabel($row->water_source),
                 'seed_type' => $this->formatReportLabel($row->planting_material),
@@ -554,6 +581,9 @@ class ReportController extends Controller
                 'damage_validation_status' => $latestDamage?->lgu_validation_status,
                 'damage_validation_label' => $latestDamage ? $this->formatValidationStatus($latestDamage->lgu_validation_status) : null,
                 'damage_photo_path' => $latestDamage?->damage_photo_path,
+                'damage_authenticity_status' => $supportsAuthenticity ? $latestDamage?->authenticity_status : null,
+                'damage_authenticity_label' => $supportsAuthenticity && $latestDamage ? $this->formatAuthenticityStatus($latestDamage->authenticity_status) : null,
+                'damage_authenticity_flags' => $supportsAuthenticity ? ($latestDamage?->authenticity_flags ?? []) : [],
                 'recorded_at' => $row->created_at ? Carbon::parse($row->created_at) : null,
             ];
         });
@@ -803,6 +833,34 @@ class ReportController extends Controller
     {
         return FarmerCalendarEvent::VALIDATION_STATUS_LABELS[$status]
             ?? $this->formatReportLabel($status);
+    }
+
+    private function formatAuthenticityStatus(?string $status): string
+    {
+        return FarmerCalendarEvent::AUTHENTICITY_STATUS_LABELS[$status]
+            ?? FarmerCalendarEvent::AUTHENTICITY_STATUS_LABELS[FarmerCalendarEvent::AUTHENTICITY_UNCHECKED];
+    }
+
+    private function normalizeAuthenticityFlags($flags): array
+    {
+        if (is_string($flags)) {
+            $decoded = json_decode($flags, true);
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($flags) ? $flags : [];
+    }
+
+    private function supportsReportAuthenticityColumns(): bool
+    {
+        foreach (['authenticity_status', 'authenticity_flags', 'evidence_photo_path'] as $column) {
+            if (! Schema::hasColumn('farmer_calendar_events', $column)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function writeCsvRow($file, array $fields): void

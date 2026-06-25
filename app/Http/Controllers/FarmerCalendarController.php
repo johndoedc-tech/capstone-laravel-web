@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\FarmerCalendarEvent;
 use App\Services\CommunityCropSignalService;
 use App\Services\CropPredictionService;
+use App\Services\EventAuthenticityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\UploadedFile;
 use Carbon\Carbon;
 
 class FarmerCalendarController extends Controller
@@ -142,6 +144,10 @@ class FarmerCalendarController extends Controller
             'water_source' => 'nullable|required_if:category,crop_plan|string|in:rainfed,irrigated',
             'planting_material' => 'nullable|required_if:category,crop_plan|string|in:seed,seedling',
             'reminder_time' => 'nullable|date_format:H:i',
+            'evidence_latitude' => 'nullable|numeric|between:-90,90',
+            'evidence_longitude' => 'nullable|numeric|between:-180,180',
+            'evidence_accuracy_m' => 'nullable|numeric|min:0|max:100000',
+            'evidence_captured_at' => 'nullable|date',
         ]);
 
         $isCropPlan = ($validated['category'] ?? null) === 'crop_plan';
@@ -191,14 +197,19 @@ class FarmerCalendarController extends Controller
 
         $damagePhotoPath = null;
         $damagePhotoOriginalName = null;
+        $damagePhotoHash = null;
 
         if ($isDamageReport && $request->hasFile('damage_photo')) {
             $photo = $request->file('damage_photo');
+            $damagePhotoHash = $this->uploadedFileHash($photo);
             $damagePhotoPath = $photo->store('damage-reports', 'public');
             $damagePhotoOriginalName = $photo->getClientOriginalName();
         }
+        $evidenceData = $isDamageReport
+            ? $this->buildEvidenceData($request, $request->file('damage_photo'), $damagePhotoPath, $damagePhotoOriginalName, $damagePhotoHash)
+            : [];
 
-        $event = DB::transaction(function () use ($validated, $isCropPlan, $isDamageReport, $damageCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction, $damagePhotoPath, $damagePhotoOriginalName) {
+        $event = DB::transaction(function () use ($validated, $isCropPlan, $isDamageReport, $damageCropPlan, $harvestEstimate, $fertilizationStages, $supportsHarvestEstimate, $supportsStageLinks, $supportsProductionPrediction, $productionPrediction, $damagePhotoPath, $damagePhotoOriginalName, $evidenceData) {
             $eventData = [
                 'user_id' => Auth::id(),
                 'event_date' => $validated['event_date'],
@@ -235,6 +246,10 @@ class FarmerCalendarController extends Controller
             if ($isDamageReport && $this->supportsCalendarColumns(['damage_photo_path', 'damage_photo_original_name'])) {
                 $eventData['damage_photo_path'] = $damagePhotoPath;
                 $eventData['damage_photo_original_name'] = $damagePhotoOriginalName;
+            }
+
+            if ($isDamageReport && $evidenceData) {
+                $eventData = array_merge($eventData, $evidenceData);
             }
 
             if ($supportsHarvestEstimate) {
@@ -296,6 +311,17 @@ class FarmerCalendarController extends Controller
                 }
             }
 
+            if ($isDamageReport) {
+                $authenticity = app(EventAuthenticityService::class);
+                $event = $authenticity->refresh($event);
+                $authenticity->audit($event, Auth::user(), 'damage_report_submitted', [
+                    'damage_area_sqm' => $event->damage_area_sqm,
+                    'has_photo' => (bool) ($event->damage_photo_path || $event->evidence_photo_path),
+                    'has_location' => (bool) ($event->evidence_latitude && $event->evidence_longitude),
+                    'authenticity_status' => $event->authenticity_status,
+                ]);
+            }
+
             return $event->fresh();
         });
 
@@ -351,6 +377,9 @@ class FarmerCalendarController extends Controller
                     'lgu_validation_status_label' => $harvestRecord?->lgu_validation_status_label,
                     'lgu_validation_notes' => $harvestRecord?->lgu_validation_notes,
                     'lgu_validated_at' => $harvestRecord?->lgu_validated_at?->toIso8601String(),
+                    'authenticity_status' => $harvestRecord?->authenticity_status,
+                    'authenticity_status_label' => $harvestRecord?->authenticity_status_label,
+                    'authenticity_flags' => $harvestRecord?->authenticity_flags ?? [],
                     'description' => $plan->description,
                 ];
             });
@@ -485,6 +514,11 @@ class FarmerCalendarController extends Controller
             'actual_harvest_amount' => 'required|numeric|min:0.01|max:999999999.99',
             'actual_harvest_unit' => 'required|string|in:kg,mt',
             'actual_harvest_notes' => 'nullable|string|max:1000',
+            'evidence_photo' => 'nullable|image|max:5120',
+            'evidence_latitude' => 'nullable|numeric|between:-90,90',
+            'evidence_longitude' => 'nullable|numeric|between:-180,180',
+            'evidence_accuracy_m' => 'nullable|numeric|min:0|max:100000',
+            'evidence_captured_at' => 'nullable|date',
         ]);
 
         $event = FarmerCalendarEvent::where('user_id', Auth::id())
@@ -504,8 +538,27 @@ class FarmerCalendarController extends Controller
             ? $actualAmount / 1000
             : $actualAmount;
 
-        DB::transaction(function () use ($validated, $actualAmount, $actualProductionMt, $harvestRecord, $cropPlan) {
-            $harvestRecord->update([
+        $evidencePhotoPath = null;
+        $evidencePhotoOriginalName = null;
+        $evidencePhotoHash = null;
+
+        if ($request->hasFile('evidence_photo')) {
+            $photo = $request->file('evidence_photo');
+            $evidencePhotoHash = $this->uploadedFileHash($photo);
+            $evidencePhotoPath = $photo->store('harvest-evidence', 'public');
+            $evidencePhotoOriginalName = $photo->getClientOriginalName();
+        }
+
+        $evidenceData = $this->buildEvidenceData(
+            $request,
+            $request->file('evidence_photo'),
+            $evidencePhotoPath,
+            $evidencePhotoOriginalName,
+            $evidencePhotoHash
+        );
+
+        DB::transaction(function () use ($validated, $actualAmount, $actualProductionMt, $harvestRecord, $cropPlan, $evidenceData) {
+            $harvestUpdate = [
                 'actual_harvest_date' => $validated['actual_harvest_date'],
                 'actual_harvest_amount' => $actualAmount,
                 'actual_harvest_unit' => $validated['actual_harvest_unit'],
@@ -513,7 +566,13 @@ class FarmerCalendarController extends Controller
                 'actual_harvest_notes' => $validated['actual_harvest_notes'] ?? null,
                 'actual_harvest_recorded_at' => now(),
                 'is_completed' => true,
-            ]);
+            ];
+
+            if ($evidenceData) {
+                $harvestUpdate = array_merge($harvestUpdate, $evidenceData);
+            }
+
+            $harvestRecord->update($harvestUpdate);
 
             if ($this->supportsCalendarColumns(['lgu_validation_status', 'submitted_to_lgu_at'])) {
                 $harvestRecord->update([
@@ -526,6 +585,15 @@ class FarmerCalendarController extends Controller
             if ($cropPlan && $cropPlan->id !== $harvestRecord->id) {
                 $cropPlan->update(['is_completed' => true]);
             }
+
+            $authenticity = app(EventAuthenticityService::class);
+            $refreshedHarvest = $authenticity->refresh($harvestRecord->fresh());
+            $authenticity->audit($refreshedHarvest, Auth::user(), 'actual_harvest_submitted', [
+                'actual_harvest_production_mt' => $refreshedHarvest->actual_harvest_production_mt,
+                'has_photo' => (bool) $refreshedHarvest->evidence_photo_path,
+                'has_location' => (bool) ($refreshedHarvest->evidence_latitude && $refreshedHarvest->evidence_longitude),
+                'authenticity_status' => $refreshedHarvest->authenticity_status,
+            ]);
         });
 
         return response()->json([
@@ -645,6 +713,12 @@ class FarmerCalendarController extends Controller
             'lgu_validation_notes' => $actualHarvestSource->lgu_validation_notes,
             'lgu_validated_at' => $actualHarvestSource->lgu_validated_at?->toIso8601String(),
             'damage_photo_url' => $event->damage_photo_path ? route('calendar.damage-photo', $event) : null,
+            'evidence_photo_url' => ($actualHarvestSource->evidence_photo_path || $event->evidence_photo_path || $event->damage_photo_path)
+                ? route('calendar.evidence-photo', $actualHarvestSource->evidence_photo_path ? $actualHarvestSource : $event)
+                : null,
+            'authenticity_status' => $actualHarvestSource->authenticity_status,
+            'authenticity_status_label' => $actualHarvestSource->authenticity_status_label,
+            'authenticity_flags' => $actualHarvestSource->authenticity_flags ?? [],
             'reminder_time' => $event->reminder_time ? $event->reminder_time->format('H:i') : null,
             'is_completed' => $event->is_completed,
         ];
@@ -980,6 +1054,61 @@ class FarmerCalendarController extends Controller
         }
 
         return $note;
+    }
+
+    private function buildEvidenceData(
+        Request $request,
+        ?UploadedFile $photo = null,
+        ?string $storedPath = null,
+        ?string $originalName = null,
+        ?string $photoHash = null
+    ): array {
+        if (! $this->supportsCalendarColumns([
+            'evidence_photo_path',
+            'evidence_photo_original_name',
+            'evidence_photo_hash',
+            'evidence_latitude',
+            'evidence_longitude',
+            'evidence_accuracy_m',
+            'evidence_captured_at',
+            'evidence_user_agent',
+        ])) {
+            return [];
+        }
+
+        $data = [
+            'evidence_user_agent' => substr((string) $request->userAgent(), 0, 500),
+        ];
+
+        if ($photo && $storedPath) {
+            $data['evidence_photo_path'] = $storedPath;
+            $data['evidence_photo_original_name'] = $originalName ?: $photo->getClientOriginalName();
+            $data['evidence_photo_hash'] = $photoHash;
+        }
+
+        if ($request->filled('evidence_latitude') && $request->filled('evidence_longitude')) {
+            $data['evidence_latitude'] = (float) $request->input('evidence_latitude');
+            $data['evidence_longitude'] = (float) $request->input('evidence_longitude');
+        }
+
+        if ($request->filled('evidence_accuracy_m')) {
+            $data['evidence_accuracy_m'] = (float) $request->input('evidence_accuracy_m');
+        }
+
+        if ($request->filled('evidence_captured_at')) {
+            $data['evidence_captured_at'] = Carbon::parse($request->input('evidence_captured_at'));
+        }
+
+        return $data;
+    }
+
+    private function uploadedFileHash(?UploadedFile $file): ?string
+    {
+        if (! $file || ! $file->getRealPath()) {
+            return null;
+        }
+
+        return hash_file('sha256', $file->getRealPath()) ?: null;
     }
 
     private function supportsCalendarColumns(array $columns): bool

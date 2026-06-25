@@ -218,6 +218,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
 
 Route::middleware(['auth', 'force-password-change'])->group(function () {
     Route::get('/calendar-events/{event}/damage-photo', [CalendarEvidenceController::class, 'show'])->name('calendar.damage-photo');
+    Route::get('/calendar-events/{event}/evidence-photo', [CalendarEvidenceController::class, 'showEvidence'])->name('calendar.evidence-photo');
 });
 
 Route::middleware(['auth', 'force-password-change', 'lgu'])->prefix('lgu')->name('lgu.')->group(function () {

@@ -877,6 +877,12 @@
                                 <input type="date" x-model="harvestForm.actual_harvest_date" :max="todayDate" class="w-full rounded-md border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
                             </div>
 
+                            <div class="mt-3">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Harvest Photo</label>
+                                <input type="file" accept="image/*" capture="environment" @change="harvestForm.evidence_photo = $event.target.files[0] || null" class="w-full rounded-md border border-gray-300 bg-white text-xs file:mr-3 file:border-0 file:bg-emerald-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-emerald-700">
+                                <p class="mt-1 text-[11px] text-gray-500">Optional. This helps LGU verify your harvest faster.</p>
+                            </div>
+
                             <div class="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2">
                                 <p class="text-xs font-semibold uppercase text-emerald-700">Recorded as</p>
                                 <p class="mt-0.5 text-sm font-semibold text-gray-900" x-text="harvestFormMetricTons"></p>
@@ -1016,7 +1022,7 @@
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Photo Evidence</label>
                                         <input type="file" accept="image/*" capture="environment" @change="eventForm.damage_photo = $event.target.files[0] || null" class="w-full rounded-md border border-gray-300 bg-white text-xs file:mr-3 file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-red-700">
-                                        <p class="text-[11px] text-gray-500 mt-1">Optional for LGU check. Max 5MB.</p>
+                                        <p class="text-[11px] text-gray-500 mt-1">Optional. This helps LGU verify your report faster.</p>
                                     </div>
                                 </div>
 
@@ -1281,6 +1287,7 @@
                     actual_harvest_amount: '',
                     actual_harvest_unit: 'kg',
                     actual_harvest_notes: '',
+                    evidence_photo: null,
                 },
 
                 init() {
@@ -2399,6 +2406,7 @@
                             ? actualUnit
                             : 'mt',
                         actual_harvest_notes: record.actual_harvest_notes || '',
+                        evidence_photo: null,
                     };
                     this.showHarvestModal = true;
                 },
@@ -2418,6 +2426,44 @@
                     window.dispatchEvent(new CustomEvent('harviana-toast', {
                         detail: { title, message, type },
                     }));
+                },
+
+                async captureEvidenceLocation() {
+                    if (!navigator.geolocation) {
+                        return {};
+                    }
+
+                    return new Promise((resolve) => {
+                        let settled = false;
+                        const finish = (payload = {}) => {
+                            if (settled) return;
+                            settled = true;
+                            resolve(payload);
+                        };
+
+                        const timeoutId = setTimeout(() => finish({}), 2500);
+
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                clearTimeout(timeoutId);
+                                finish({
+                                    evidence_latitude: position.coords.latitude,
+                                    evidence_longitude: position.coords.longitude,
+                                    evidence_accuracy_m: position.coords.accuracy,
+                                    evidence_captured_at: new Date(position.timestamp || Date.now()).toISOString(),
+                                });
+                            },
+                            () => {
+                                clearTimeout(timeoutId);
+                                finish({});
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 2500,
+                                maximumAge: 60000,
+                            }
+                        );
+                    });
                 },
 
                 closeEventGroupModal() {
@@ -2528,6 +2574,7 @@
                         const eventDescription = isDamageReport && !this.eventForm.description
                             ? `Cause: ${damageCause}. Damage reported for ${selectedPlan?.crop || 'selected crop plan'}. Damaged area: ${this.formatSquareMeters(this.eventForm.damage_area_sqm)}.`
                             : this.eventForm.description;
+                        const evidencePayload = isDamageReport ? await this.captureEvidenceLocation() : {};
 
                         const payload = {
                             event_date: eventDate,
@@ -2542,6 +2589,7 @@
                             water_source: isCropPlan ? this.eventForm.water_source : '',
                             planting_material: isCropPlan ? this.eventForm.planting_material : '',
                             reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || '') : '',
+                            ...evidencePayload,
                         };
 
                         const requestOptions = {
@@ -2552,10 +2600,12 @@
                             },
                         };
 
-                        if (isDamageReport && this.eventForm.damage_photo) {
+                        if (isDamageReport) {
                             const formData = new FormData();
                             Object.entries(payload).forEach(([key, value]) => formData.append(key, value ?? ''));
-                            formData.append('damage_photo', this.eventForm.damage_photo);
+                            if (this.eventForm.damage_photo) {
+                                formData.append('damage_photo', this.eventForm.damage_photo);
+                            }
                             requestOptions.body = formData;
                         } else {
                             requestOptions.headers['Content-Type'] = 'application/json';
@@ -2601,14 +2651,28 @@
 
                     try {
                         const targetId = this.harvestTarget.harvest_event_id || this.harvestTarget.id;
+                        const evidencePayload = await this.captureEvidenceLocation();
+                        const formData = new FormData();
+                        Object.entries({
+                            ...this.harvestForm,
+                            ...evidencePayload,
+                        }).forEach(([key, value]) => {
+                            if (key !== 'evidence_photo') {
+                                formData.append(key, value ?? '');
+                            }
+                        });
+
+                        if (this.harvestForm.evidence_photo) {
+                            formData.append('evidence_photo', this.harvestForm.evidence_photo);
+                        }
+
                         const response = await fetch(`{{ url('farmer/calendar-events') }}/${targetId}/harvest`, {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
-                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
-                            body: JSON.stringify(this.harvestForm),
+                            body: formData,
                         });
 
                         if (response.ok) {

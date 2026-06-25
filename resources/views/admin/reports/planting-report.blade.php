@@ -374,6 +374,24 @@
                                                 Actual harvest: {{ $record['actual_harvest_validation_label'] }}
                                             </p>
                                         @endif
+                                        @if($record['actual_harvest_authenticity_label'] ?? null)
+                                            @php
+                                                $actualEvidenceClass = ($record['actual_harvest_authenticity_status'] ?? null) === 'needs_review'
+                                                    ? 'bg-amber-50 text-amber-700'
+                                                    : (($record['actual_harvest_authenticity_status'] ?? null) === 'clear'
+                                                        ? 'bg-green-50 text-green-700'
+                                                        : 'bg-gray-50 text-gray-600');
+                                            @endphp
+                                            <p class="mt-1 rounded px-2 py-1 text-[11px] font-semibold {{ $actualEvidenceClass }}">
+                                                Evidence: {{ $record['actual_harvest_authenticity_label'] }}
+                                            </p>
+                                            @foreach(array_slice($record['actual_harvest_authenticity_flags'] ?? [], 0, 2) as $flag)
+                                                <p class="mt-1 text-[11px] text-amber-700">{{ $flag['label'] ?? 'Needs review.' }}</p>
+                                            @endforeach
+                                            @if($record['actual_harvest_evidence_photo_path'] ?? null)
+                                                <a href="{{ route('calendar.evidence-photo', $record['actual_harvest_event_id']) }}" target="_blank" class="mt-1 inline-flex text-blue-700 underline">View harvest evidence</a>
+                                            @endif
+                                        @endif
                                         @if($record['damage_sqm'] > 0)
                                             <p class="mt-1 font-semibold text-orange-700">
                                                 Damage:
@@ -402,6 +420,14 @@
                                                     <p class="font-semibold {{ $record['damage_validation_status'] === 'approved' ? 'text-green-700' : 'text-amber-700' }}">
                                                         {{ $record['damage_validation_label'] }}
                                                     </p>
+                                                @endif
+                                                @if($record['damage_authenticity_label'] ?? null)
+                                                    <p class="font-semibold {{ $record['damage_authenticity_status'] === 'needs_review' ? 'text-amber-700' : 'text-green-700' }}">
+                                                        Evidence: {{ $record['damage_authenticity_label'] }}
+                                                    </p>
+                                                    @foreach(array_slice($record['damage_authenticity_flags'] ?? [], 0, 2) as $flag)
+                                                        <p class="text-amber-700">{{ $flag['label'] ?? 'Needs review.' }}</p>
+                                                    @endforeach
                                                 @endif
                                                 @if($record['damage_photo_path'])
                                                     <a href="{{ route('calendar.damage-photo', $record['damage_event_id']) }}" target="_blank" class="inline-flex text-blue-700 underline">View photo evidence</a>

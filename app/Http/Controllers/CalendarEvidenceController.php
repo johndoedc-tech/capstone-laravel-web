@@ -13,6 +13,26 @@ class CalendarEvidenceController extends Controller
     {
         abort_unless($event->damage_photo_path, 404);
 
+        return $this->serveEvidenceFile(
+            $request,
+            $event,
+            $event->damage_photo_path,
+            $event->damage_photo_original_name
+        );
+    }
+
+    public function showEvidence(Request $request, FarmerCalendarEvent $event): StreamedResponse
+    {
+        $path = $event->evidence_photo_path ?: $event->damage_photo_path;
+        $originalName = $event->evidence_photo_original_name ?: $event->damage_photo_original_name;
+
+        abort_unless($path, 404);
+
+        return $this->serveEvidenceFile($request, $event, $path, $originalName);
+    }
+
+    private function serveEvidenceFile(Request $request, FarmerCalendarEvent $event, string $path, ?string $originalName): StreamedResponse
+    {
         $user = $request->user();
         abort_unless($user, 403);
 
@@ -25,8 +45,8 @@ class CalendarEvidenceController extends Controller
             );
 
         abort_unless($canView, 403);
-        abort_unless(Storage::disk('public')->exists($event->damage_photo_path), 404);
+        abort_unless(Storage::disk('public')->exists($path), 404);
 
-        return Storage::disk('public')->response($event->damage_photo_path, $event->damage_photo_original_name);
+        return Storage::disk('public')->response($path, $originalName);
     }
 }
