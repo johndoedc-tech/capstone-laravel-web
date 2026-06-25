@@ -917,9 +917,9 @@
 
                             <div class="space-y-3">
                                 <!-- Title -->
-                                <div x-show="modalType !== 'damage_report'">
-                                    <label class="block text-xs font-medium text-gray-700 mb-1" x-text="modalType === 'crop_plan' ? 'Plan Title (optional)' : (modalType === 'damage_report' ? 'Report Title (optional)' : 'Title *')"></label>
-                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" :placeholder="modalType === 'crop_plan' ? 'e.g., Start cabbage seedbed' : (modalType === 'damage_report' ? 'e.g., Typhoon damage' : 'e.g., Cabbage harvest day')">
+                                <div x-show="modalType !== 'crop_plan' && modalType !== 'damage_report'">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+                                    <input type="text" x-model="eventForm.title" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-orange-500 focus:border-orange-500" placeholder="e.g., Cabbage harvest day">
                                 </div>
 
                                 <!-- Category -->
@@ -2566,7 +2566,7 @@
                         const selectedPlan = this.selectedDamageCropPlan;
                         const damageCause = this.formatDamageCause(this.eventForm.damage_cause);
                         const eventTitle = isCropPlan
-                            ? (this.eventForm.title || `Plan ${this.eventForm.crop}`)
+                            ? `Plan ${this.eventForm.crop}`
                             : (isDamageReport
                                 ? `${damageCause} damage - ${selectedPlan?.crop || 'Crop'}`
                                 : this.eventForm.title);
