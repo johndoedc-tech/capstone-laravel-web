@@ -1,0 +1,98 @@
+{
+  "input": "C:\\Users\\JDnStefs\\Downloads\\Capstone 2\\Abstract Template-1.docx",
+  "fonts_by_char_count": {},
+  "direct_run_formatting_runs": 536,
+  "direct_paragraph_formatting_paragraphs": 56,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 1,
+      "text": "ABSTRACT",
+      "style": "Body Text"
+    },
+    {
+      "para_index": 15,
+      "text": "7.1 Rationale/Background of the Study",
+      "style": "Body Text"
+    },
+    {
+      "para_index": 17,
+      "text": "7.2 Summary",
+      "style": "Body Text"
+    },
+    {
+      "para_index": 25,
+      "text": "7.3 Findings ",
+      "style": "Body Text"
+    },
+    {
+      "para_index": 32,
+      "text": "7.4. Conclusions",
+      "style": "Body Text"
+    },
+    {
+      "para_index": 39,
+      "text": "7.5 Recommendations",
+      "style": "Body Text"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "ABSTRACT",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 2,
+        "text": "Title: TITLE MUST BE ALL CAPSLOCK",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 3,
+        "text": "Total No. of Pages:",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 4,
+        "text": "1.2. \tText No. of Pages:",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 7,
+        "text": "  \t[FAMILY, FIRST MI 2]",
+        "style": "Body Text"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 1,
+        "run_text": "ABSTRACT",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 2,
+        "run_text": "Title: TITLE MUST BE ALL CAPSLOCK",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 3,
+        "run_text": "Total No. of Pages:",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 4,
+        "run_text": "1.2. ",
+        "style": "Body Text"
+      },
+      {
+        "para_index": 4,
+        "run_text": "\tText No. of Pages:",
+        "style": "Body Text"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

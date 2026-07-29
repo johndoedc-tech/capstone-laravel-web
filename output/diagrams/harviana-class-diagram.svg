@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1350" viewBox="0 0 1800 1350" role="img" aria-labelledby="diagramTitle diagramDesc">
+  <title id="diagramTitle">Harviana Class Diagram</title>
+  <desc id="diagramDesc">Logical view of Harviana showing its principal domain models, service classes, attributes, operations, and relationships.</desc>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="openArrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#52645a" stroke-width="1.6"/>
+    </marker>
+    <marker id="solidArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#52645a"/>
+    </marker>
+    <style>
+      .title { font: 700 38px Arial, sans-serif; fill: #163b2b; }
+      .subtitle { font: 400 20px Arial, sans-serif; fill: #53635a; }
+      .note { font: 600 17px Arial, sans-serif; fill: #315a43; }
+      .class-name { font: 700 23px Arial, sans-serif; fill: #ffffff; }
+      .stereotype { font: italic 15px Arial, sans-serif; fill: #e9f5ed; }
+      .member { font: 400 17px Consolas, "Courier New", monospace; fill: #1f2937; }
+      .member-strong { font: 700 17px Consolas, "Courier New", monospace; fill: #1f2937; }
+      .relationship { font: 600 15px Arial, sans-serif; fill: #41554a; }
+      .multiplicity { font: 700 15px Arial, sans-serif; fill: #263b31; }
+      .association { fill: none; stroke: #52645a; stroke-width: 2.5; }
+      .dependency { fill: none; stroke: #64748b; stroke-width: 2.2; stroke-dasharray: 9 7; marker-end: url(#openArrow); }
+      .self-link { fill: none; stroke: #52645a; stroke-width: 2.2; marker-end: url(#solidArrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1350" fill="#ffffff"/>
+  <text x="900" y="58" text-anchor="middle" class="title">Harviana Class Diagram</text>
+  <text x="900" y="92" text-anchor="middle" class="subtitle">Logical relationships among Harviana's core models and services</text>
+  <rect x="500" y="112" width="800" height="42" rx="21" fill="#e8f5eb" stroke="#8ab99a" stroke-width="2"/>
+  <text x="900" y="139" text-anchor="middle" class="note">User roles are stored in User.role; separate Farmer, LGU Validator, and DA Administrator subclasses are not used.</text>
+
+  <!-- Relationships are drawn before class cards. -->
+  <path d="M 720 480 L 305 550" class="association" marker-end="url(#solidArrow)"/>
+  <text x="500" y="493" class="relationship">creates</text>
+  <text x="704" y="500" class="multiplicity">1</text>
+  <text x="320" y="541" class="multiplicity">0..*</text>
+
+  <path d="M 815 480 L 815 520" class="association" marker-end="url(#solidArrow)"/>
+  <text x="746" y="506" class="relationship">owns</text>
+  <text x="793" y="497" class="multiplicity">1</text>
+  <text x="824" y="516" class="multiplicity">0..*</text>
+
+  <path d="M 1025 480 L 1025 520" class="association" marker-end="url(#solidArrow)"/>
+  <text x="1038" y="506" class="relationship">validates</text>
+  <text x="985" y="497" class="multiplicity">0..1</text>
+  <text x="1036" y="516" class="multiplicity">0..*</text>
+
+  <path d="M 900 960 L 900 1030" class="association" marker-end="url(#solidArrow)"/>
+  <text x="915" y="999" class="relationship">records</text>
+  <text x="874" y="981" class="multiplicity">1</text>
+  <text x="910" y="1020" class="multiplicity">0..*</text>
+
+  <path d="M 305 1000 L 305 910" class="dependency"/>
+  <text x="320" y="966" class="relationship">returns prediction</text>
+
+  <path d="M 540 1115 C 580 1070 585 890 620 850" class="dependency"/>
+  <text x="548" y="1030" class="relationship">supplies estimate</text>
+
+  <path d="M 1260 1115 C 1220 1070 1215 890 1180 850" class="dependency"/>
+
+  <path d="M 1180 660 C 1240 660 1240 835 1180 835" class="self-link"/>
+
+  <!-- User -->
+  <g filter="url(#shadow)">
+    <rect x="630" y="175" width="540" height="305" rx="12" fill="#ffffff" stroke="#397a52" stroke-width="3"/>
+    <path d="M 642 175 H 1158 Q 1170 175 1170 187 V 242 H 630 V 187 Q 630 175 642 175 Z" fill="#397a52"/>
+  </g>
+  <text x="900" y="204" text-anchor="middle" class="stereotype">&lt;&lt;model&gt;&gt;</text>
+  <text x="900" y="231" text-anchor="middle" class="class-name">User</text>
+  <line x1="630" y1="242" x2="1170" y2="242" stroke="#397a52" stroke-width="2"/>
+  <text x="652" y="272" class="member">- id: bigint</text>
+  <text x="652" y="299" class="member">- name: string</text>
+  <text x="652" y="326" class="member">- email: string</text>
+  <text x="652" y="353" class="member">- role: string</text>
+  <text x="652" y="380" class="member">- preferred_municipality: string</text>
+  <text x="652" y="407" class="member">- cooperative: string</text>
+  <text x="652" y="434" class="member">- lgu_municipality: string</text>
+  <line x1="630" y1="447" x2="1170" y2="447" stroke="#aac6b4" stroke-width="1.5"/>
+  <text x="652" y="472" class="member-strong">+ isFarmer() / isLguValidator() / isAdmin()</text>
+
+  <!-- Prediction -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="550" width="470" height="360" rx="12" fill="#ffffff" stroke="#4a8bc0" stroke-width="3"/>
+    <path d="M 82 550 H 528 Q 540 550 540 562 V 617 H 70 V 562 Q 70 550 82 550 Z" fill="#4a8bc0"/>
+  </g>
+  <text x="305" y="579" text-anchor="middle" class="stereotype">&lt;&lt;model&gt;&gt;</text>
+  <text x="305" y="606" text-anchor="middle" class="class-name">Prediction</text>
+  <text x="92" y="648" class="member">- id: bigint</text>
+  <text x="92" y="675" class="member">- user_id: bigint</text>
+  <text x="92" y="702" class="member">- municipality: string</text>
+  <text x="92" y="729" class="member">- crop: string</text>
+  <text x="92" y="756" class="member">- year / month: integer</text>
+  <text x="92" y="783" class="member">- predicted_production_mt: decimal</text>
+  <text x="92" y="810" class="member">- confidence_score: decimal</text>
+  <text x="92" y="837" class="member">- status: string</text>
+  <line x1="70" y1="854" x2="540" y2="854" stroke="#b8d0e2" stroke-width="1.5"/>
+  <text x="92" y="883" class="member-strong">+ successful() / forUser()</text>
+
+  <!-- FarmerCalendarEvent -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="520" width="560" height="440" rx="12" fill="#ffffff" stroke="#397a52" stroke-width="3"/>
+    <path d="M 632 520 H 1168 Q 1180 520 1180 532 V 587 H 620 V 532 Q 620 520 632 520 Z" fill="#397a52"/>
+  </g>
+  <text x="900" y="549" text-anchor="middle" class="stereotype">&lt;&lt;model&gt;&gt;</text>
+  <text x="900" y="576" text-anchor="middle" class="class-name">FarmerCalendarEvent</text>
+  <text x="642" y="618" class="member">- id / user_id: bigint</text>
+  <text x="642" y="645" class="member">- category / crop: string</text>
+  <text x="642" y="672" class="member">- event_date: date</text>
+  <text x="642" y="699" class="member">- desired_area_sqm: decimal</text>
+  <text x="642" y="726" class="member">- estimated_harvest_date: date</text>
+  <text x="642" y="753" class="member">- predicted_production_mt: decimal</text>
+  <text x="642" y="780" class="member">- damage_area_sqm: decimal</text>
+  <text x="642" y="807" class="member">- actual_harvest_production_mt: decimal</text>
+  <text x="642" y="834" class="member">- lgu_validation_status: string</text>
+  <text x="642" y="861" class="member">- lgu_validated_by: bigint</text>
+  <line x1="620" y1="878" x2="1180" y2="878" stroke="#aac6b4" stroke-width="1.5"/>
+  <text x="642" y="907" class="member-strong">+ isLguPending() / isLguApproved()</text>
+  <text x="642" y="934" class="member-strong">+ isLguRejected()</text>
+
+  <!-- CropProduction -->
+  <g filter="url(#shadow)">
+    <rect x="1260" y="550" width="470" height="360" rx="12" fill="#ffffff" stroke="#4a8bc0" stroke-width="3"/>
+    <path d="M 1272 550 H 1718 Q 1730 550 1730 562 V 617 H 1260 V 562 Q 1260 550 1272 550 Z" fill="#4a8bc0"/>
+  </g>
+  <text x="1495" y="579" text-anchor="middle" class="stereotype">&lt;&lt;model&gt;&gt;</text>
+  <text x="1495" y="606" text-anchor="middle" class="class-name">CropProduction</text>
+  <text x="1282" y="648" class="member">- id: bigint</text>
+  <text x="1282" y="675" class="member">- municipality: string</text>
+  <text x="1282" y="702" class="member">- farm_type: string</text>
+  <text x="1282" y="729" class="member">- year / month: integer</text>
+  <text x="1282" y="756" class="member">- crop: string</text>
+  <text x="1282" y="783" class="member">- area_planted: decimal</text>
+  <text x="1282" y="810" class="member">- area_harvested: decimal</text>
+  <text x="1282" y="837" class="member">- production / productivity: decimal</text>
+  <line x1="1260" y1="854" x2="1730" y2="854" stroke="#b8d0e2" stroke-width="1.5"/>
+  <text x="1282" y="883" class="member-strong">+ municipality() / crop() / year()</text>
+
+  <!-- CropPredictionService -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="1000" width="470" height="280" rx="12" fill="#ffffff" stroke="#7758a3" stroke-width="3"/>
+    <path d="M 82 1000 H 528 Q 540 1000 540 1012 V 1067 H 70 V 1012 Q 70 1000 82 1000 Z" fill="#7758a3"/>
+  </g>
+  <text x="305" y="1029" text-anchor="middle" class="stereotype">&lt;&lt;service&gt;&gt;</text>
+  <text x="305" y="1056" text-anchor="middle" class="class-name">CropPredictionService</text>
+  <text x="92" y="1098" class="member">- apiUrl: string</text>
+  <text x="92" y="1125" class="member">- timeout: integer</text>
+  <line x1="70" y1="1143" x2="540" y2="1143" stroke="#c9bce0" stroke-width="1.5"/>
+  <text x="92" y="1173" class="member-strong">+ predict()</text>
+  <text x="92" y="1200" class="member-strong">+ predictCropPlanProduction()</text>
+  <text x="92" y="1227" class="member-strong">+ forecast()</text>
+
+  <!-- CalendarEventAudit -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="1030" width="560" height="250" rx="12" fill="#ffffff" stroke="#b0782e" stroke-width="3"/>
+    <path d="M 632 1030 H 1168 Q 1180 1030 1180 1042 V 1097 H 620 V 1042 Q 620 1030 632 1030 Z" fill="#b0782e"/>
+  </g>
+  <text x="900" y="1059" text-anchor="middle" class="stereotype">&lt;&lt;model&gt;&gt;</text>
+  <text x="900" y="1086" text-anchor="middle" class="class-name">CalendarEventAudit</text>
+  <text x="642" y="1128" class="member">- id: bigint</text>
+  <text x="642" y="1155" class="member">- farmer_calendar_event_id: bigint</text>
+  <text x="642" y="1182" class="member">- user_id: bigint</text>
+  <text x="642" y="1209" class="member">- action: string</text>
+  <text x="642" y="1236" class="member">- metadata: JSON</text>
+  <line x1="620" y1="1250" x2="1180" y2="1250" stroke="#ddc7a9" stroke-width="1.5"/>
+  <text x="642" y="1274" class="member-strong">+ event() / user()</text>
+
+  <!-- MunicipalSupplyForecastService -->
+  <g filter="url(#shadow)">
+    <rect x="1260" y="1000" width="470" height="280" rx="12" fill="#ffffff" stroke="#7758a3" stroke-width="3"/>
+    <path d="M 1272 1000 H 1718 Q 1730 1000 1730 1012 V 1067 H 1260 V 1012 Q 1260 1000 1272 1000 Z" fill="#7758a3"/>
+  </g>
+  <text x="1495" y="1029" text-anchor="middle" class="stereotype">&lt;&lt;service&gt;&gt;</text>
+  <text x="1495" y="1056" text-anchor="middle" class="class-name">MunicipalSupplyForecastService</text>
+  <line x1="1260" y1="1098" x2="1730" y2="1098" stroke="#c9bce0" stroke-width="1.5"/>
+  <text x="1282" y="1130" class="member-strong">+ getMunicipalityOutlook()</text>
+  <text x="1282" y="1160" class="member-strong">+ getMunicipalitySummaries()</text>
+  <text x="1282" y="1190" class="member-strong">+ getFarmerCountsByMunicipality()</text>
+</svg>

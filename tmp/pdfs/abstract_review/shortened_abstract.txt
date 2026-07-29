@@ -1,0 +1,50 @@
+7.1 Rationale/Background of the Study
+
+Vegetable production is important to Benguet, yet crop plans, damage records, and actual-harvest data can be difficult to consolidate when handled through separate processes. Farmers need an organized way to record crop activities, while agricultural administrators require updated and validated data for monitoring and planning. Harviana was developed as a GIS-integrated decision-support system that organizes farm records, presents location-based production information, and supports municipal supply monitoring. It links Farmers, LGU Validators, and DA Administrators through a structured workflow for submission, validation, monitoring, and reporting.
+
+7.2 Summary
+
+This study aimed to design and develop Harviana: A GIS-Integrated Decision Support System for Visualizing Vegetable Production Trends in Benguet. Specifically, the researchers sought to:
+
+1. identify the information requirements of Harviana;
+2. determine the architectural framework of Harviana;
+3. identify the features of Harviana; and
+4. measure the extent of usability of Harviana among participating Farmers and DA Administrators.
+
+The researchers used Scrum to develop the system through five Sprints: Requirements Gathering and Planning, GIS Visualization Module Development, Core Feature Development, Machine Learning Production Estimation and Supply Forecast Integration, and Testing and Evaluation. This approach supported the iterative development, testing, and refinement of the system.
+
+7.3 Findings
+
+Based on the data gathered and analyzed in relation to the objectives of the study, the researchers identified the following findings:
+
+1. Harviana's information requirements were identified according to its user roles. Farmers provide farm, crop-plan, damage, and actual-harvest information; LGU Validators review submitted records; and DA Administrators access consolidated information for monitoring, forecasting, and reporting. The minimum and recommended system requirements were also determined.
+
+2. The "4+1" View Model served as the architectural framework of Harviana. Its scenario, logical, process, development, and physical views described the users, system structure, activities, software components, and deployment environment. Harviana is deployed on Railway and connected to its machine-learning service and Railway PostgreSQL.
+
+3. Harviana provides crop planning, farmer calendar management, production estimation, damage and actual-harvest recording, LGU validation, interactive map and weather viewing, municipal supply forecasting, and report generation and export. These features support the flow of agricultural information from Farmer submission through LGU validation to DA administrative monitoring.
+
+4. The 132 Farmer respondents obtained a mean SUS score of 71.55, interpreted as "OK to Good" and "Marginal to Acceptable." The 18 DA Administrator respondents obtained an overall USE weighted mean of 6.32, interpreted as "Strongly Agree."
+
+7.4 Conclusions
+
+Based on the findings of the study, the researchers arrived at the following conclusions:
+
+1. The identified information requirements provide the records needed for crop monitoring, report validation, forecasting, and reporting.
+
+2. The "4+1" View Model provides an organized framework for describing the users, structure, processes, components, and deployment of Harviana.
+
+3. The features of Harviana establish a connected workflow for recording, validating, monitoring, visualizing, and reporting vegetable-production information.
+
+4. Harviana was generally usable for the participating Farmers and DA Administrators, although the farmer-side interface may still be improved for first-time users.
+
+7.5 Recommendations
+
+Based on the conclusions of the study, the researchers recommend the following:
+
+1. Harviana's information requirements and validation procedures should be reviewed regularly with its intended users to keep agricultural records complete and relevant.
+
+2. The system's database, machine-learning service, security controls, backups, and Railway deployment should be maintained and monitored regularly.
+
+3. Future development may support additional crops, use more validated production and harvest data, improve user instructions, and provide better access in areas with limited internet connectivity.
+
+4. Future usability evaluations should include LGU Validators and respondents from additional municipalities in Benguet to further improve the interface and validation workflow.

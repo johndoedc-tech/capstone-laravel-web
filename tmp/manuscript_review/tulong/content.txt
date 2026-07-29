@@ -1,0 +1,1075 @@
+P0000	[Normal]	TULONGLEGAL: A GEMINI-POWERED CLIENT-LAWYER MATCHING
+P0001	[Normal]	PLATFORM FOR LEGAL SERVICES IN BAGUIO CITY
+P0009	[Normal]	A Capstone Project Presented to the Faculty of the
+P0011	[Normal]	College of Information Technology and Computer Sciences
+P0013	[Normal]	University of the Cordilleras
+P0023	[Normal]	In Partial Fulfillment
+P0025	[Normal]	of the Requirements for the Degree
+P0027	[Normal]	BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY
+P0035	[Normal]	by
+P0036	[Normal]	CAMIL GRACE J. BUMATAY
+P0037	[Normal]	BIANCA CASSANDRA M. JIMENEZ
+P0038	[Normal]	KIRSTEN JOY Q. LAZARO
+P0039	[Normal]	August 2025
+P0040	[Normal]	APPROVAL SHEET
+P0041	[Normal]	This project study entitled TULONGLEGAL: A GEMINI-POWERED CLIENT-LAWYER MATCHING PLATFORM FOR LEGAL SERVICES IN BAGUIO CITY prepared and submitted by CAMIL GRACE J. BUMATAY, BIANCA CASSANDRA M. JIMENEZ, KIRSTEN JOY Q. LAZARO in partial fulfillment of the requirements for the degree BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY, has been examined and is recommended for acceptance and approval for oral examination.
+P0043	[Normal]	ANNA RHODORA M. QUITALEG, MIT
+P0044	[Normal]	Adviser
+P0046	[Normal]	Project Study Committee
+P0048	[Normal]	ANNA RHODORA M. QUITALEG, MIT	   MELINDA A. BENINSIG, MIT
+P0049	[Normal]	Member				       Member
+P0051	[Normal]	DYNAH M. TAMAYO, BSIT
+P0052	[Normal]	Chairperson
+P0054	[Normal]	PANEL OF EXAMINERS
+P0055	[Normal]	APPROVED by the Committee on Oral Examination on __________________ with a grade of _____________.
+P0057	[Normal]	DYNAH M. TAMAYO, BSIT
+P0058	[Normal]	Chairperson
+P0061	[Normal]	ANNA RHODORA M. QUITALEG, MIT	     MELINDA A. BENINSIG, MIT
+P0062	[Normal]	Member			              Member
+P0065	[Normal]	ACCEPTED AND APPROVED in partial fulfillment of the requirements for the degree BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY.
+P0069	[Normal]	MELINDA A. BENINSIG, MIT			 JEFFREY S. INGOSAN, DIT
+P0070	[Normal]	IT Program Chair			      Dean, College of
+P0071	[Normal]	College of Information Technology   Information Technology
+P0072	[Normal]	and Computer Science			 and Computer Science
+P0073	[Normal]	ABSTRACT
+P0074	[Normal]	Title: TULONGLEGAL: A GEMINI-POWERED CLIENT-LAWYER
+       MATCHING PLATFORM FOR LEGAL SERVICES IN
+P0075	[Normal]	BAGUIO CITY
+P0077	[Normal]	Total No. of Pages: 145
+P0078	[Normal]	1.2. 	Text No. of Pages: 101
+P0080	[Normal]	Authors: 	BUMATAY, CAMIL GRACE J.
+P0081	[Normal]	JIMENEZ, BIANCA CASSANDRA M.
+P0082	[Normal]	LAZARO, KIRSTEN JOY Q.
+P0083	[Normal]	Type of Document: Capstone Project
+P0084	[Normal]	Type of Publication: Unpublished
+P0085	[Normal]	Accrediting Institution: University of the
+P0086	[Normal]	Cordilleras, Gov. Pack Rd.
+P0087	[Normal]	Baguio City
+P0089	[Normal]	Keywords: Lawyer-Client Matching, Natural Language
+P0090	[Normal]	Processing, Mobile Legal Platform, Legal
+P0091	[Normal]	Document Access, Legal Appointment
+P0092	[Normal]	Scheduling, Gemini
+P0094	[Normal]	Abstracts:
+P0095	[Normal]	7.1 Rationale/Background of the Study
+P0096	[Normal]	This study addresses the difficulties that many individuals face in accessing legal services, particularly in Baguio City. Many individuals face financial constraints, limited awareness of their legal rights, and challenges in reaching legal assistance due to geographic inaccessibility. The shortage of public attorneys further limits available support, leaving many without adequate and just representation. It also highlights challenges encountered by legal professionals, including low visibility and difficulty acquiring clients. The system leverages the Gemini 1.5 Flash model for its Natural Language Processing (NLP) capabilities, which support multilingual input, instruction following, and varied prompt handling capabilities. This enables accurate classification of legal concerns and effective client-lawyer matching through a five-step process: user
+P0097	[Normal]	input, prompt construction, model processing, structured output generation, and lawyer matching.
+P0099	[Normal]	7.2 Summary
+P0101	[Normal]	This proposed study aims to design and develop TulongLegal, a mobile-based legal matching application to improve access to legal representation by connecting clients with appropriate lawyers based on their specific legal concerns. Specifically, the researchers aimed to achieve the following objectives:
+P0102	[Normal]	to identify the information requirements of the proposed system;
+P0103	[Normal]	to determine the architectural framework of the proposed system;
+P0104	[Normal]	to identify the features of the proposed system; and
+P0105	[Normal]	to measure the extent of usability of the proposed system.
+P0106	[Normal]	The researchers selected the Feature-Driven Development (FDD) methodology due to its simplicity, flexibility, and adaptability. It consists of five main stages, which covers the core components of the software development lifecycle. Its structured and iterative nature also supports the consistent implementation of development tasks and project milestones, which makes it suitable for the organized and timely completion of the system development process.
+P0107	[Normal]	7.3 Findings
+P0108	[Normal]	Based on the data gathered from the study’s objectives and overall analysis, the researchers identified the following findings:
+P0109	[Normal]	The system’s requirements included key user information such as client identification and lawyer credentials and technical specifications like RAM, storage, OS version, and internet connectivity.
+P0110	[Normal]	The study applied the 4+1 architectural framework, using UML diagrams: logical, development, process, physical, and scenarios to clearly depict system components, user roles, and their interactions.
+P0111	[List Paragraph]	The key features of TulongLegal include Lawyer
+P0112	[Normal]	Client Matching, Appointment Scheduling, Legal Document Library, and User Profiles.
+P0113	[Normal]	4.  The application’s average SUS scores, 72 for clients and 71 for lawyers, fall within a ‘C’ grade, reflecting ‘Good’ usability and performance above 60–64% of comparable systems.
+P0115	[Normal]	7.4. Conclusions
+P0117	[Normal]	The following are the conclusions the researchers have derived based on the objectives of the study:
+P0118	[Normal]	The system’s information requirements were defined for clients, who provide personal details and ID, and lawyers, who provide professional credentials and firm information, alongside system specifications like RAM, storage, OS, and connectivity.
+P0119	[Normal]	The 4+1 architectural framework, supported by UML diagrams, effectively guided the system’s structural design and facilitated a smooth transition from planning to development
+P0120	[Normal]	The study identified core features of the system, including lawyer-client matching, user profiles, legal document access, and scheduling functionality.  The application achieved a ‘C’ grade in usability, with SUS scores of 72 from clients and 71 from lawyers, ranking in the 60–64th percentile.
+P0121	[Normal]	Usability testing results placed the application within a ‘C’ grade range, reflecting a good level of usability while indicating areas that can be improved.
+P0123	[Normal]	7.5 Recommendations
+P0124	[Normal]	The following suggestions are the researchers
+P0125	[Normal]	recommendations for future researchers of the same topic:
+P0126	[Normal]	Clearly define and refine client and lawyer information requirements to support accurate and secure system functionality.
+P0127	[Normal]	Establish partnerships with public legal institutions in Baguio City to expand legal access and build system credibility.
+P0128	[Normal]	Enable offline access to selected legal documents to increase usability in low-connectivity areas.
+P0129	[Normal]	4.  Conduct regular usability testing with real users to continuously identify pain points and optimize user experience in future updates.
+P0130	[Normal]	ACKNOWLEDGEMENT
+P0131	[Normal]	The researchers wish to express their sincere gratitude to the following individuals for their invaluable support in the development of this study.
+	They extend their heartfelt appreciation to the lawyers for their valuable guidance, generous time, and unwavering support throughout the course of this project. The shared expertise, professional insight, and thoughtful feedback provided by these legal professionals helped shape the direction of the research and enhanced the quality of the study.
+	The researchers are also deeply grateful to their adviser, Ma’am Anna Rhodora M. Quitaleg; the Chairperson, Ma’am Dynah M. Tamayo; the panel member, Ma’am Melinda A. Beninsig; and their teacher in charge, Ma’am Natividad B. Concepcion. Their insightful feedback and meaningful suggestions played a vital role in the successful completion of this capstone project.
+	Special thanks are also extended to the researchers' families and friends for their constant support and encouragement. Their unwavering support, compassion, and encouragement gave the researchers the strength and motivation needed to persevere through the challenges
+P0132	[Normal]	encountered throughout the course of this project.	Above all, the researchers give thanks to the Almighty     Father for His blessings, guidance, and unending love. His divine strength and wisdom sustained them mentally, physically, and spiritually throughout the development of this study.
+	The researchers are deeply grateful to all who contributed to the completion of this paper.
+P0133	[Normal]	C.G.J.B
+P0134	[Normal]	B.C.M.J
+P0135	[Normal]	K.J.Q.L
+P0147	[Normal]	DEDICATION
+P0148	[Normal]	This project study is wholeheartedly dedicated to the people who have been our source of inspiration, strength, and support throughout this journey.
+P0149	[Normal]	To our families and friends, who have provided unwavering encouragement, love, and understanding, even during the most challenging times, thank you for believing in us and standing by our side.
+P0150	[Normal]	To our teachers and mentors, especially Ma’am Anna Rhodora M. Quitaleg, Ms. Melinda A. Beninsig, Ma’am Dynah M. Tamayo, and Ma’am Natividad B. Concepcion, thank you for your patience, wisdom, and guidance, which have been instrumental in shaping this study.
+P0151	[Normal]	To the lawyers and participants who shared their time, expertise, and insights, your contribution made this study possible and meaningful.
+P0152	[Normal]	And finally, to our Almighty God, for granting us the strength, perseverance, and clarity of mind to complete this work, we dedicate this accomplishment to You.
+P0153	[Normal]	Camil
+P0154	[Normal]	Bianca
+P0155	[Normal]	Kirsten
+P0156	[Normal]	TABLE OF CONTENTS
+P0157	[Normal]	Page
+P0158	[Normal]	TITLE PAGE . . . . . . . . . . . . . . . . . . . . . . .  1
+P0159	[Normal]	APPROVAL SHEET . . . . . . . . . . . . . . . . . . . . .  2
+P0160	[Normal]	ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . .  3
+P0161	[Normal]	ACKNOWLEDGEMENT . . . . . . . . . . . . . . . . . . . . . 6
+P0162	[Normal]	DEDICATION . . . . . . . . . . . . . . . . . . . . . . .  8
+P0163	[Normal]	TABLE OF CONTENTS . . . . . . . . . . . . . . . . . . . . 9
+P0164	[Normal]	LIST OF FIGURES . . . . . . . . . . . . . . . . . . . .  11
+P0165	[Normal]	LIST OF TABLES . . . . . . . . . . . . . . . . . . . . . 13
+P0166	[Normal]	CHAPTER
+P0167	[Normal]	1 	INTRODUCTION
+P0168	[Normal]	Background of the Study . . . . . . . . . . .  14
+P0169	[Normal]	Importance of the Study . . . . . . . . . . .  34
+P0170	[Normal]	Objectives of the Study . . . . . . . . . . .  36
+P0171	[Normal]	Definition of Terms . . . . . . . . . . . . .  36
+P0172	[Normal]	2	METHODOLOGY
+P0173	[Normal]	Software Development Methodology . . . . . . . 39
+P0174	[Normal]	Design Thinking . . . . . . . . . . . . . . .  44 Scope and Delimitation . . . . . . . . . . . . 59
+P0175	[Normal]	Data Gathering Techniques . . . . . . . . . .  61
+P0176	[Normal]	Sources of Data . . . . . . . . . . . . . . .  62
+P0177	[Normal]	Software Development Tools . . . . . . . . . . 64
+P0178	[Normal]	3 	FINDINGS OF THE STUDY
+P0179	[Normal]	Information Requirements of TulongLegal . . .  66
+P0180	[Normal]	Architecture Framework of TulongLegal . . . .  70
+P0181	[Normal]	Features of TulongLegal . . . . . . . . . . .  87
+P0182	[Normal]	Extent of Usability of TulongLegal . . . . . . 99
+P0183	[Normal]	4 	CONCLUSIONS AND RECOMMENDATIONS
+P0184	[Normal]	Conclusions . . . . . . . . . . . . . . . . . 113
+P0185	[Normal]	Recommendations . . . . . . . . . . . . . . . 109
+P0186	[Normal]	REFERENCES . . . . . . . . . . . . . . . .  . . . . . . 114
+P0187	[Normal]	APPENDICES
+P0188	[Normal]	A	Communication Letters  . . . . . . . . . . . . 127
+P0189	[Normal]	B	TBI Assessment Certificate . . . . . . . . .  129
+P0190	[Normal]	C	Letter of Request . . . . . . . . . . . . . . 130
+P0191	[Normal]	D	Sample Usability Test Survey . .  . . . . . . 131
+P0192	[Normal]	E	List of Legal Specializations. . . . . . . .  132
+P0193	[Normal]	F	Sample Generated JSON Objects . . . . . . . . 133
+P0194	[Normal]	G	Sample of Lawyer Profile from Database . . .  134
+P0195	[Normal]	H	Documentation . . . . . . . . . . . . . . . . 135
+P0196	[Normal]	I	Technology Brief . . . . . . . . . . . . . .  136
+P0197	[Normal]	J	Code Snippets for Main Features . . . . . .   137
+P0198	[Normal]	K	User Manual . . . . . . . . . . . . . . . . . 139
+P0199	[Normal]	CURRICULUM VITAE . . . . . . . . . . . . . . . . . . .  140
+P0202	[Normal]	LIST OF FIGURES
+P0203	[Normal]	Figure No. 			Figure Title 				Page
+P0204	[Normal]	1 	Feature-Driven Development Diagram . . . . .  40
+P0205	[Normal]	2 	Design Thinking . . . . . . . . . . . . . . . 45
+P0206	[Normal]	3 	Empathy Map . . . . . . . . . . . . . . . . . 47
+P0207	[Normal]	4 	The 5 Why Analysis . . . . . . . . . . . . .  49
+P0208	[Normal]	5 	Mind Map . . . . . . . . . . . . . . . . . .  51
+P0209	[Normal]	6 	Landing Page . . . . . . . . . . . . . . . .  52
+P0210	[Normal]	7 	Login and Registration . . . . . . . . . . .  53
+P0211	[Normal]	8	Lawyer Matching . . . . . . . . . . . . . .   54
+P0212	[Normal]	9	Book Appointment . . . . . . . . . . . . . .  55
+P0213	[Normal]	10	Legal Document Library . . . . . . . . . . .  56
+P0214	[Normal]	11	Profiles . . . . . . . . . . . . . . . . . .  57
+P0215	[Normal]	12	The “4+1” view Model by Krutchen . . . . . .  71
+P0216	[Normal]	13	TulongLegal Use Case Diagram for Clients and Lawyers . . . . . . . . . . . . . . . . . .   72
+P0217	[Normal]	14	TulongLegal Use Case Diagram for Admin . .    74
+P0218	[Normal]	15	TulongLegal Class Diagram . . . . . . . . .   75
+P0219	[Normal]	16	TulongLegal Sequence Diagram for Legal Document    Library . . . . . . . . . . . . . . . . . . . 77
+P0220	[Normal]	17	TulongLegal Sequence Diagram for Calendar
+P0221	[Normal]	and Daily Scheudle . . .  . . . . . . . . . . 78
+P0222	[Normal]	18	TulongLegal Sequence Diagram for Client-Lawyer 			Matching . . . . . . . . . . . . . . . . . . 80
+P0223	[Normal]	19	TulongLegal Sequence Diagram for
+P0224	[Normal]	Notifications . . . . . . . . . . . . . . .  81
+P0225	[Normal]	20	TulongLegal Sequence Diagram for User
+P0226	[Normal]	Profiles . . . . . . . . . . . . . . . . . . 82
+P0227	[Normal]	21	TulongLegal Sequence Diagram for User
+P0228	[Normal]	Verification . . . . . . . . . . . . . . . . 83
+P0229	[Normal]	22	TulongLegal Package Diagram . . . . . . . .  84
+P0230	[Normal]	23	Deployment Diagram of TulongLegal . . . . .  86
+P0231	[Normal]	24	Client Login and Registration . . . . . . .  88
+P0232	[Normal]	25	Lawyer Matching System . . . . . . . . . . . 89
+P0233	[Normal]	26	Client Appointments . . . . . . . . . . . .  90
+P0234	[Normal]	27	Legal Document Library . . . . . . . . . . . 91
+P0235	[Normal]	28	Client Profile . . . . . . . . . . . . . . . 92
+P0236	[Normal]	29	Lawyer Login and Registration . . . . . . .  93
+P0237	[Normal]	30	Lawyer Profile . . . . . . . . . . . . . . . 94
+P0238	[Normal]	31	Calendar and Daily Schedule . . . . . . . .  95
+P0239	[Normal]	32	Lawyer Appointments . . . . . . . . . . . .  96
+P0240	[Normal]	33	Admin . . . . . . . . . . . . . . . . . . .  97
+P0241	[Normal]	34	Client Verification . . . . . . . . . . . .  98
+P0242	[Normal]	35	Lawyer Verification . . . . . . . . . . . .  99
+P0243	[Normal]	LIST OF TABLES
+P0244	[Normal]	Table No. 			Table Title 				Page
+P0245	[Normal]	1 	Client Information Types . . . . . . . . . .  67
+P0246	[Normal]	2	Lawyer Information Types . . . . . . . . . .  68
+P0247	[Normal]	3	System Requirements . . . . . . . . . . . . . 69
+P0248	[Normal]	4 	SUS Scores Interpretation. . . . .  . . . . . 102
+P0249	[Normal]	5	Responses from Clients . . . . . . . . . . .  103
+P0250	[Normal]	6	Responses from Lawyers . . . . . . . . . . .  105
+P0251	[Normal]	7	Client SUS Results . . . . . . . . . . . . .  107
+8 	Lawyer SUS Results . . . . . . . . . . . . .  111
+P0252	[Normal]	Chapter 1
+P0253	[Normal]	INTRODUCTION
+P0254	[Normal]	Background of the Study
+P0255	[Normal]	The process of searching for legal representation and assistance remains a significant challenge for individuals across the globe. Navigating the legal system is not a straightforward task for most people, especially those who are unfamiliar with its structure or processes. As noted by Chaware et al. (2024), it can be particularly daunting for individuals to manage the complexities of legal systems when they are in need of guidance for legal matters. This difficulty is often rooted in the use of specialized legal terminologies and the presence of complex procedural requirements that can be confusing to the average person. Further, these elements create substantial barriers to access, which frequently leaves individuals overwhelmed by the volume and complexity of information they must navigate and act upon in order to move forward with their legal concerns.
+P0256	[Normal]	Many individuals, particularly those with limited legal knowledge or resources, often lack the necessary support when navigating legal systems and seeking legal aid. According to the findings of van Rooij (2021), the
+P0257	[Normal]	lack of accessible legal support makes it more challenging for individuals to fully understand the legal system. This poses a major challenge for individuals, as they are limited in what they can do without proper guidance in such a complex field. Without accessible legal support, individuals may struggle to understand procedures, deadlines, and rights, increasing the risk of unfavorable outcomes or missed opportunities for legal remedies.
+P0258	[Normal]	In addition to lacking proper guidance and support, individuals are also constrained by a lack of essential resources and the necessary capability to navigate the legal system with confidence and clarity. Hagan and Özenç (2020) explained that lacking the capabilities to navigate systems like health, work, finances, government, and law can lead to deep disadvantages for many affected individuals. Those who lack the skills to navigate the legal system may face not only adverse outcomes in their legal matters but also harm to their overall well-being. This can include failing to understand their rights and benefits or resolve disputes. Without access to appropriate guidance or tools, individuals are left to interpret complex legal procedures on their own, which can discourage them from seeking help altogether. These challenges often
+P0259	[Normal]	result in unresolved legal problems that may escalate over time which may lead to further social and economic instability.
+P0260	[Normal]	In relation to limited access to legal systems, disparities in digital access affect how people engage with public systems. The study of Singh and Chobotaru (2022) reveals that in Canada, poor outcomes among marginalized populations when accessing online government services illustrate the broader issue of digital inequity. This finding emphasizes how access to government services remain unequal despite the availability of online platforms. Furthermore, it reflects how structural limitations continue to prevent marginalized communities from fully accessing essential public systems that are built to benefit them.
+P0261	[Normal]	In the same way that digital disparities limit access to public systems, economic constraints also deepen the gap in legal access, especially for individuals who struggle to meet their basic needs. In exploring this issue, Abegunde and Joshua (2020) assert that for those who cannot afford to feed themselves each day, the idea of paying for legal representation when their rights are violated exposes the reality of unequal access to justice. When basic survival
+P0262	[Normal]	is at stake, seeking legal help becomes a low priority or even an impossibility, which furthers the cycle of marginalization. This shows that justice is more easily accessed by those with financial means, while the poor remain vulnerable and often unheard in legal processes.
+P0263	[Normal]	The lack of accessibility to legal services is not just a matter for individuals but also affects the sustainability of legal practices. As individuals struggle to seek legal aid due to the complex legal system, lawyers, particularly new practitioners, have difficulties in acquiring clients. According to Yao (2021), the legal industry is experiencing an oversupply of lawyers and a shortage of legal opportunities, especially at the lower end of the market. This imbalance means that many lawyers, particularly those who are newly starting their careers or trying to establish themselves, find it difficult to acquire enough clients. Consequently, these lawyers often face financial instability, as they struggle to find enough work to sustain their practice.
+P0264	[Normal]	While the legal field continues to grow, many competent lawyers and smaller firms are overlooked as clients often depend on rankings or referrals that emphasize prestige over relevant expertise. As discussed in
+P0265	[Normal]	the study of Mojon et al. (2024), despite the growing number of legal professionals, many capable lawyers and smaller firms remain overlooked due to limited visibility in mainstream platforms and a client tendency to rely on rankings or referrals that prioritize reputation over actual suitability or expertise in a particular legal area. This highlights how current methods of finding legal representation often favor visibility over merit, making it difficult for clients to connect with lawyers who are genuinely suited to handle their specific legal concerns.
+P0266	[Normal]	In the context of the Philippines, navigating the legal system, like those in different countries, is characterized by its own set of complexities. In the article of Tiongco (2021), it is highlighted that navigating the Philippine legal system heavily requires time and resources, which impacts both clients and lawyers. Legal procedures are costly due to fees such as administrative costs and filing fees. This makes expenses a barrier to accessing legal aid, especially for indigent Filipinos. Additionally, the financial limitations of indigent individuals often result in delay of legal proceedings due to the high costs of litigation.
+	Such financial and procedural challenges point to a
+P0267	[Normal]	deeper issue of inaccessibility within the Philippine legal system. According to the World Justice Project (2022), the Philippines received a low overall score of 0.47 out of 1.00 on the Rule of Law Index, a global measure to evaluate how well countries uphold the rule of law, with its ranking dropping from 51st to 97th out of 140 countries due to poor ratings in civil and criminal justice accessibility. This significant decline shows the persistent struggles many Filipinos face in accessing fair and efficient legal processes. Additionally, it suggests that many people still cannot access legal protection, especially those who lack the money, resources, and understanding needed to navigate the system.
+	In many cases, financial constraints combined with systemic issues such as delays and procedural complexities further complicate the legal process. Legal proceedings are often lengthy, involving multiple steps such as issue identification, evidence collection, and analysis. Connosco (2023) explains that the intricate nature of legal inquiries frequently results in extended timelines, highlighting the broader systemic challenges within legal practice. These delays stem from the complexity of individual cases and the necessity for thorough research
+P0268	[Normal]	and documentation, as each stage demands careful attention to detail. 
+	Building on these procedural and financial challenges, the lack of access to competent legal services further prevents many individuals, especially those from underprivileged sectors from participating in the justice system. An article by Santiago (2024) identifies limited access to competent legal services as a key reason why justice remains out of reach for many Filipinos belonging to marginalized and underprivileged communities. Lack of access to competent legal services prevents individuals from asserting their rights and seeking fair resolution to their legal issues. The gap in legal access is further intensified by systemic limitations within public legal institutions. Even when individuals attempt to seek help, they are often met with overburdened systems that lack the capacity to respond due to demand.
+	Organizations that provide legal services, such as the Public Attorney’s Office, often face limited capacity and heavy caseloads. This makes it difficult to engage with clients in a timely manner and further contributes to delays in legal processes. In an interview by Santos (2023), the shortage of public attorneys and their
+P0269	[Normal]	overwhelming caseloads were identified as key factors contributing to delays in proceedings, as lawyers are often tasked with representing multiple clients at once, making it difficult to guarantee fair and timely trials. The growing strain on public legal institutions shows the imbalance between the demand for legal assistance and the resources available to meet it. With lawyers handling numerous cases simultaneously, individuals depending on these services often face delays and reduced quality in legal representation. There is a growing need for better ways to connect clients with the right legal support, as traditional systems can no longer keep up with demand.
+P0270	[Normal]	Many Filipinos, especially those from disadvantaged communities, still face significant barriers in seeking legal assistance. An article by Tiongco (2020) talks about how a large portion of Filipinos are unable to access legal assistance, with most who do seek help turning to family or friends rather than legal professionals. Rather than turning to professionals, many are left to navigate legal problems through informal advice, which may lead to misinformation or unresolved issues. This indicates how disconnected formal legal services remain from the people who need them most.
+P0271	[Normal]	Acquiring legal assistance is also made complicated by travel costs and time. In the article by Tiongco (2022), it is emphasized that the financial and time-related burdens of traveling to and from courts make navigating the Philippine legal system challenging. These challenges are not unique to rural areas, but are particularly prominent in highly urbanized regions like Baguio City.
+P0272	[Normal]	Baguio City is known to be more urbanized compared to its surrounding areas and has a higher population of legal professionals. According to Medina (2024), Baguio City was named the most competitive highly urbanized city in Northern Luzon and ranked 17th overall in the country. However, considering its location atop a mountain range, individuals, including legal professionals struggle with accessibility due to travel costs and time.
+	Moreover, environmental factors also play a crucial role in limiting access to legal services in certain regions. In areas like Baguio City, the terrain and weather conditions can significantly impact travel and accessibility. An article from Baguio C.D.R.R.M.C.-Disaster Operations Center (2025) highlights that the city’s mountainous location makes it especially prone to natural hazards such as flash floods and landslides during the
+P0273	[Normal]	rainy season, with steep slopes and narrow valleys that further worsen mobility and accessibility challenges. Accessing legal services becomes even more difficult when mobility is compromised by environmental risks. In cities like Baguio, where geographic conditions already pose challenges, seasonal hazards can bring legal activities to a temporary halt. These disruptions not only delay court proceedings but also discourage individuals from pursuing legal action altogether.
+P0274	[Normal]	Indigenous people comprise a large portion of Baguio City's population. Minority Rights Group (2023) discussed that Indigenous peoples comprise over 60 percent of Baguio City’s population, making them a dominant demographic group in the city. Despite this, their concerns remain overlooked in formal legal settings, where decisions are often made without their active participation. According to Borla and Cruz (2024), one of the core issues indigenous communities face is the persistent lack of adequate representation within formal legal and institutional frameworks. This hinders their ability to assert and protect their rights and contributes to consequences such as the appropriation of their ancestral lands. Lack of inclusion in legal processes leaves indigenous communities vulnerable to
+P0275	[Normal]	exploitation and systemic neglect.
+P0276	[Normal]	This situation regarding accessibility reflects a larger issue, where traditional methods of acquiring legal aid have become increasingly ineffective, especially for individuals with limited financial resources or those residing in less accessible regions. In the study of Chaware et al. (2024), it is explained that traditional methods of acquiring legal aid have become increasingly ineffective for individuals with limited financial resources or those living in less accessible regions. As a result, many people in these areas are left without sufficient legal representation, making it even more difficult to navigate the legal system.
+P0277	[Normal]	Furthermore, in a highly urbanized area like Baguio City with a competitive market in terms of legal practices, lawyers also face challenges in building and sustaining their client base. In such a market, standing out can be challenging, and many lawyers may be overlooked or not seen at all by potential clients. Bottorff (2023) emphasized that even the best lawyers can be overlooked if they are not visible to those seeking legal help, leading clients to hire the first seemingly reputable lawyer they find online. This can hinder lawyers from building a sustainable and
+P0278	[Normal]	profitable practice.
+	This lack of visibility, combined with delayed responses and insufficient data collection, can significantly hinder lawyers from building a sustainable and profitable practice, especially in a competitive legal environment. Bottorff (2023) explained that 42% of the time, law firms fail to respond to leads within three days, which severely limits their chances of converting potential clients into actual cases or consultations. When law firms do respond, they often neglect to collect critical qualifying case information, with 90% of incoming lead inquiries lacking the necessary details required for proper evaluation and follow-up. Delayed responses and insufficient data collection, when combined, lead to numerous missed opportunities and reduced client engagement.
+P0279	[Normal]	In correspondence with the 17 Sustainable Development Goals, the study aligns with Target 16.3, which focuses on promoting the rule of law at both the national and international levels and ensuring equal access to justice for all individuals. Emphasized by this target is the importance of building legal systems that uphold fairness, transparency, and accountability in order to serve the
+P0280	[Normal]	needs of the entire population. Achieving SDG 16.3 involves strengthening legal institutions and removing barriers that prevent people, especially those from marginalized sectors, from accessing legal support. It highlights the need to create systems that are not only functional but also inclusive. This ensures that justice is not merely a privilege reserved for a few percent of the population but a guaranteed right that can be exercised by everyone regardless of their background or circumstance.
+	Along with this, the study also aligns with Target 8.3, which focuses on promoting development-oriented policies that support productive activities, decent job creation, entrepreneurship, creativity, and innovation. This target also encourages the formalization and expansion of micro, small, and medium-sized enterprises, including through improved access to financial services. In line with this goal, the project contributes to the growth of entrepreneurship within the legal sector by providing opportunities for smaller law firms and individual practitioners to expand their reach. It does so by offering a platform that facilitates meaningful connections between clients and qualified lawyers wherein legal professionals are allowed to grow their practices and increase visibility
+P0281	[Normal]	in a competitive landscape.
+	To further emphasize the study’s alignment with these targets, the findings of Okoro (2022) point out the clear need for continuous efforts to improve both the accessibility and quality of legal aid services by addressing systemic barriers and ensuring these services reach the individuals who need them most. Legal aid does not only facilitate access to justice but also plays a crucial role in advancing social and economic development by enabling individuals to exercise their rights and engage in society. This emphasizes the importance of initiatives that improve legal access at the local level, particularly through innovative and technology-driven solutions.
+P0282	[Normal]	The capstone project seeks to understand the challenges faced by individuals in Baguio City in accessing legal representation due to the challenges that both individuals and legal professionals face. These challenges include not only the complexity of legal processes but also barriers related to awareness and logistical accessibility.
+P0283	[Normal]	The project aims to address these barriers by providing an efficient and accessible way to connect clients with qualified lawyers using advanced technology. Through this approach, the project intends to reduce
+P0284	[Normal]	friction in the legal process and create more inclusive pathways for legal support. As highlighted by Lupo & Carnevali (2022), technology has allowed smaller groups and individuals to create impactful solutions once reserved for industry giants. This reinforces the feasibility of developing community-level innovations with real, scalable impact.
+P0285	[Normal]	The main goal of the project is to create a platform through a mobile application that improves access to legal services for individuals by reducing the time and effort needed for clients to find a suitable lawyer by using natural language processing (NLP) to match clients with lawyers based on their specific legal needs. This matching process is expected to simplify legal searches and increase client satisfaction by ensuring that users are connected with professionals who are best suited to handle their specific legal concerns. As defined by Sanadi and Bhat (2022), NLP enables machines to understand, process, and interpret human language. It supports developers in structuring information for various tasks such as translation, Named Entity Recognition (NER), and topic segmentation, making it a crucial component in systems that require interaction with human inputs. Given this,
+P0286	[Normal]	selecting an appropriate NLP-supported model is needed to make sure that the application delivers accurate and relevant matches between clients and legal professionals.
+P0287	[Normal]	In connection with this, the application makes use of the Gemini 1.5 Flash model developed by Google to support its core matching functionality. According to Google (2024), Gemini 1.5 Flash is a multimodal model capable of processing a wide range of input types, including text, images, audio, video, and PDF documents, all within a single prompt, and can generate outputs in the form of either natural language or code.
+P0288	[Normal]	This advanced functionality allows the model to accommodate diverse user inputs and respond appropriately based on the context and content of the prompt. The model’s integration into the application strengthens its use of NLP by enhancing the system’s ability to understand, interpret, and process user-submitted queries. This is especially important for accurately classifying legal concerns and effectively matching users with qualified lawyers suited to address their specific legal needs.
+	The Gemini 1.5 Flash model supports several core functionalities that are essential for natural language
+P0289	[Normal]	understanding in complex and dynamic environments that
+P0292	[Normal]	require deep comprehension, such as instruction following, context-sensitive reasoning, and multilingual processing. These capabilities make it well-suited for applications that require precise interpretation of user input. As stated by the Gemini Team (2024), multilingual support is essential to ensure that Gemini models can accommodate a broad range of language inputs which enables the system to function effectively across diverse linguistic contexts. By integrating a model that can interpret and respond across multiple languages, the application becomes more inclusive. This is particularly beneficial in Baguio City, where both English and Filipino are commonly used in everyday communication. As a result, users are more likely to receive accurate and personalized legal support that aligns with their expressed concerns, language preferences, and specific legal needs.
+P0293	[Normal]	In addition to the multilingual capabilities of the model, another important feature of Gemini 1.5 Flash is its ability to process prompts that differ in structure, detail, and user expectations. The Gemini Team (2024) highlights that user prompts can vary significantly in terms of complexity, level of detail, and formatting needs, which requires the model to be flexible and adaptive in its
+P0294	[Normal]	understanding. In the application, clients may communicate their concerns using varying levels of specificity. Some may provide clear descriptions and others may only give general or fragmented information. The model’s capacity to recognize and respond appropriately to different types of prompts helps ensure that users receive relevant matches regardless of how they express their legal concerns. This improves the platform’s usability and accessibility, particularly for individuals who may not be familiar with legal terminology or formal language.
+	Moreover, the model’s ability to follow instructions precisely plays a crucial role in delivering accurate results. The Gemini Team (2024) emphasizes that accurate instruction following is a foundation skill for large language models, particularly as prompts become more detailed and complex. The model’s capacity to interpret nuanced instructions helps ensure that user intent is understood correctly and that the system responds accordingly, whether identifying a legal category, prioritizing urgency, or recommending a lawyer with specific expertise. As a result, the application becomes more dependable and responsive for individuals seeking help for a wide range of legal concerns.
+P0295	[Normal]	To discuss exactly how Gemini 1.5 Flash is integrated into the application through the matching feature, the entire process is done in five key steps: user input, prompt construction, model processing, structured output generation, and lawyer matching.
+	The process begins with a user input, where a user submits a legal concern through the application’s input field. This input is typically expressed in natural language and may be written in English, Filipino, or a combination of both. For example, a client enters the input: “Good morning po, gusto ko lang sana magtanong. Yung asawa ko po kasi ayaw na magbigay ng sustento para sa mga anak namin. Ano po ba ang pwede kong gawin?”.
+P0296	[Normal]	The second stage is prompt construction, where the user’s raw input is embedded into a larger prompt sent to the Gemini API. This prompt instructs Gemini to act as a legal assistant, use the application’s specific list of legal categories and subcategories, and detect the language used in the input. Refer to Appendix E for the complete list of legal categories and subcategories used.
+P0297	[Normal]	The third stage is model processing, where the Gemini model processes the entire prompt as a unified input, taking into account both the instructions and the user’s
+P0298	[Normal]	message. It understands the user’s mixed-language (Taglish) input, such as “ayaw magbigay ng sustento,” and correctly interprets its context. Based on the instructions provided in the prompt, the model generates a structured JSON object as its output, containing the identified legal category, subcategory, and a brief explanation of the classification. Refer to Appendix F for the generated JSON object for the sample input.
+	The fourth stage is structured output generation, where Gemini 1.5 Flash returns a structured JSON response based on the user's input and the prompt’s instructions. This output includes the predicted legal category and subcategory. For example, "Family Law" and "Child Custody & Support", as well as a brief explanation. This response is essential, as it allows the Android application to easily parse the data and use it to perform a precise query against the Firestore database. By identifying the relevant specialization, the application is prepared to filter legal professionals accordingly.
+P0299	[Normal]	The fifth and final stage is lawyer matching, in which the application uses the classification data provided by the model to search its database for lawyers whose expertise aligns with the identified category and
+P0300	[Normal]	subcategory. This approach ensures that users are connected with legal professionals who are best suited to address their specific concerns, making the legal matching process more efficient, accurate, and accessible. For the example provided, the classification under “Family Law” and “Child Custody & Support” would match the user with a lawyer who specializes in that field. Refer to Appendix G for a sample of a lawyer profile retrieved from the application’s database.
+P0301	[Normal]	Importance of the Study
+P0302	[Normal]	This study provides a technology-driven solution to improve access to legal services, particularly in Baguio City. Many clients struggle to find the right lawyer who matches their needs, often facing delays, confusion, and miscommunication. The proposed system uses Gemini API to match clients with lawyers based on case descriptions and preferences, efficiently streamlining the appointment booking process. Overall, it contributes to building a more accessible, organized, and modern legal service ecosystem for the local community.
+P0303	[Normal]	To the Lawyers of Baguio City. This study shall help lawyers expand their professional reach by matching them with clients whose legal needs align with their areas of
+P0304	[Normal]	expertise. It also assists independent practitioners in establishing their practice by increasing their visibility and access to potential clients.
+P0305	[Normal]	To the Clients. This shall provide a user-friendly and accessible way for individuals to find legal assistance. Clients will receive lawyer recommendations based on their case type and availability, saving time and reducing the stress of manual searching.
+P0306	[Normal]	To the City of Baguio. This initiative shall advance the city's efforts toward becoming a smart city and to help build connected governance. By supporting access to justice through technology, it contributes to social development and public service innovation while also encouraging modern and efficient approaches to delivering legal assistance.
+P0307	[Normal]	To the Researchers. This study shall serve as a demonstration of the researchers’ skills in software development. It also expands their understanding of real-world problems and how information technology can be used to solve them.
+P0308	[Normal]	To the Future Researchers. This framework shall serve as a foundation for future enhancements in legal-tech
+P0309	[Normal]	applications, offering ideas for improving efficiency, inclusivity, and security in similar systems.
+P0310	[Normal]	Objectives of the Study
+P0311	[Normal]	The main objective of this study is to design and develop a mobile application that efficiently matches clients with qualified lawyers suited to their needs and enhance the productivity of both parties, utilizing Gemini’s natural language processing (NLP) capabilities, as an emerging technology to optimize the matching process. Specifically, it will aim to answer the following;
+P0312	[Normal]	1. to identify the information requirements of the proposed system;
+P0313	[Normal]	2. to determine the architectural framework of the proposed system;
+P0314	[Normal]	3. to identify the features of the proposed system;
+P0315	[Normal]	and
+P0316	[Normal]	4. to measure the extent of usability of the proposed system.
+P0317	[Normal]	Definition of Terms
+P0318	[Normal]	To ensure clarity and consistency throughout this study, the following terms are defined as they are used within the context of the research and system development. These definitions aim to provide a common understanding of key concepts and functionalities relevant to the legal-tech application.
+P0319	[Normal]	Appointment Booking. Appointment booking is the process within the application where a client selects a preferred date and time to submit a legal consultation request with a matched lawyer.
+ 	Availability Schedule. Availability schedule is the set of time slots during which a lawyer is available to accept legal consultation appointment bookings, which clients can view prior to scheduling.
+P0320	[Normal]	Case Description. Case description is the summary or explanation provided by the client about their legal issue, which the system uses to match them with an appropriate lawyer.
+P0321	[Normal]	Client. A client is an individual seeking legal services who registers and uses the application to connect with available lawyers.
+P0322	[Normal]	Extent of Usability. Extent of Usability is the degree to which specific users are able to use a product effectively, efficiently, and with satisfaction to accomplish defined goals within a particular context of use.
+ 	Feature-Driven Development. Feature-driven development is an Agile Methodology that focuses on delivering tangible, customer-valued features within fixed time
+P0323	[Normal]	frames.
+P0324	[Normal]	Gemini API. Gemini API, by Google, is the service used to integrate NLP into the mobile application.
+ 	JSON. JSON (JavaScript Object Notation) is a lightweight data-interchange format used to structure data.
+P0325	[Normal]	Lawyer Matching. Lawyer matching is a system feature of TulongLegal that uses predefined criteria to recommend the most appropriate lawyer for a client’s case.
+P0326	[Normal]	Legal categories and subcategories. Legal categories and subcategories is the predefined classifications of legal concerns used by the system to organize and match user input with appropriate legal professionals.
+	Legal Services. Legal services is assistance provided by licensed legal professionals in matters concerning the law, which may include consultations, document preparation, representation, and legal advice.
+	Natural Language Processing (NLP). Natural Language Processing is a subfield of artificial intelligence that enables the system to understand and interpret human language inputs, allowing users to express their legal concerns in everyday language.
+P0327	[Normal]	Chapter 2
+P0328	[Normal]	METHODOLOGY
+P0329	[Normal]	This chapter discusses the design thinking process and software development methodology implemented by the researchers of the capstone project.
+P0330	[Normal]	Software Development Methodology
+P0331	[Normal]	Feature-Driven Development (FDD) is a client-centric and architecture-first software development methodology that emphasizes building and delivering software by focusing on small, functional features. FDD organizes the development process into distinct, sequential phases that guide teams in modeling the system, identifying required features, and iteratively designing and building each feature. It ensures clarity, continuous progress, and alignment with user expectations through structured planning and feature-level implementation.
+P0332	[Normal]	The researchers adopted the FDD methodology to build TulongLegal. FDD was selected because of its focus on delivering client-valued functionality through incremental development and its suitability for managing complex systems with defined goals, such as legal service access and Gemini-Powered matching. Figure 1 shows the five phases of the FDD model.
+P0333	[Normal]	Figure 1
+P0334	[Normal]	Feature-Driven Development Diagram
+P0336	[Normal]	The system was developed through the following five phases of the FDD model:
+P0337	[Normal]	Develop on overall model. The first phase of FDD focuses on establishing a high-level understanding of the system’s architecture. This phase is crucial as it defines the project’s scope, structure, and overall vision. By developing a conceptual model, the team ensures that everyone has a shared understanding of how different system components relate to one another. It serves as the foundation for all subsequent phases and helps identify the core problems the application aims to solve.
+P0338	[Normal]	During this stage, the development team conducted interviews with clients and lawyers in Baguio City to gain
+P0339	[Normal]	insight into their challenges related to accessing legal services. Based on this input, the researchers created domain models and diagrams including use case, class, and activity diagrams, to visualize how the application would function. These deliverables clarified system behavior and user roles, guiding the identification of essential components and their interactions. The overall model became the reference point for system structure and informed all future design and development efforts.
+P0340	[Normal]	Build a feature list. The second phase involves identifying and listing all the key features that the system must support. This step transitions the abstract system model into a concrete set of user-oriented capabilities. Features are broken down into smaller, manageable components grouped into feature sets, each corresponding to a core module of the application. This granular breakdown allows for focused and iterative development in later phases.
+P0341	[Normal]	Using insights from the initial modeling and user interviews, the researchers outlined a comprehensive list of features. These included lawyer-client matching, appointment booking, profile management for both lawyers and clients, and access to a legal document
+P0342	[Normal]	library. Each feature was based on user stories and feedback to ensure the system addresses real user needs. These features were then grouped according to their functionality to facilitate smoother planning and development.
+P0343	[Normal]	Plan by feature. In the third phase, the team planned the development roadmap based on the previously defined feature list. The objective of this phase is to determine the sequence of implementation, taking into account complexity, dependencies, and priority. It also involves assigning responsibilities and preparing timelines to ensure a balanced workload and efficient progress.
+P0344	[Normal]	The development team held sprint planning sessions to allocate tasks and assign deadlines. Features were prioritized based on user impact, technical difficulty, and the need for early testing. Risk assessment was also performed to anticipate potential development blockers. Resource planning and scheduling deliverables helped streamline the development workflow and set clear expectations for team members.
+P0345	[Normal]	Design by feature. This phase involves designing each individual feature in detail. It emphasizes creating user-focused interfaces and workflows that align with the system
+P0346	[Normal]	model. Good design ensures usability and helps users interact intuitively with the application. This stage often includes the creation of visual prototypes and iterative revisions based on user feedback.
+P0347	[Normal]	The team utilized design tools such as Figma to produce mockups of the system's interfaces. These designs included wireframes for the lawyer-client matching interface, profile dashboards, and the appointment booking screen. Attention was given to visual consistency and ease of use, incorporating feedback from early surveys and usability tests. Deliverables in this phase included finalized UI layouts and workflow diagrams for each feature.
+P0348	[Normal]	Build by feature. The final phase of FDD is where features are developed, tested, and integrated into the main system. Each feature is built independently to allow for focused development and easier troubleshooting. This step-by-step approach ensures that features are implemented correctly and meet their intended goals before being merged into the full application.
+P0349	[Normal]	Using Android Studio and Firebase, the development team implemented core components such as the NLP classifier powered by Gemini, the lawyer matching logic, and a real-
+P0350	[Normal]	time booking interface. GitHub was used for version control and collaboration. Features were tested individually using unit tests, and user feedback was incorporated to address any issues. This incremental approach ensured that the application was continuously improved and aligned with user expectations at each stage of development.
+P0351	[Normal]	Design Thinking
+P0352	[Normal]	Design thinking is a human-centered approach to problem-solving. It prioritizes the needs of the consumer and uses empathy to understand their interactions with products and services. This iterative process involves rapid prototyping and testing to refine solutions. Unlike traditional linear problem-solving, design thinking is not about finding a single solution. Instead, it focuses on continuous evolution and adaptation to meet changing consumer needs, ensuring that the platform remains relevant, user-centered, and responsive to emerging legal challenges. By observing and understanding consumer behavior, designers can create innovative solutions that provide lasting value.
+P0353	[Normal]	Design thinking emphasizes the importance of real-world observation and experimentation. By involving consumers in the design process, designers can gain
+P0354	[Normal]	valuable insights and create products that truly resonate with their target audience. This human-centered approach leads to more innovative and effective solutions. According to Tuttle (2021), the Design Thinking process can be divided into five phases. Figure 2 shows the five stages of design thinking.
+P0355	[Normal]	Figure 2
+P0356	[Normal]	Design Thinking
+P0358	[Normal]	Empathize. In this first stage, the designer observes consumers to gain a deeper understanding of how they interact with or are affected by a product or issue. Tuttle (2021) explained that the observations must happen with empathy, which means withholding judgement and not imparting preconceived notions of what the consumer needs.
+P0359	[Normal]	Observing with empathy is powerful because it can uncover issues the consumer didn’t even know they had or that they could not themselves verbalize. From this point,
+P0360	[Normal]	it is easier to understand the human need for which you are designing. In this stage, the researchers searched for different law firms in Baguio City and interviewed them to gain deeper insights into how clients find or approach them, as well as the problems and concerns lawyers face in handling various legal cases. To conduct these interviews, the researchers personally visited different law firms to speak directly with legal professionals.
+P0361	[Normal]	For residential users or clients, the researchers approached individuals they passed by in various locations around Baguio City and asked them questions to understand their perspectives on finding lawyers and the challenges they encounter in choosing one. The clients say they need help understanding their rights and think the legal process is confusing and difficult to navigate without proper guidance or support. They often search online for information, ask friends and family for advice, and avoid professional help due to cost, fear, or lack of access.
+P0362	[Normal]	On the other hand, legal professionals say they want to reach more clients and think about ways to stand out in a competitive market. They rely on word-of-mouth referrals, and struggle to manage client inquiries effectively, leading to frustration with traditional marketing methods
+P0363	[Normal]	and concerns about attracting new clients while being eager to expand their practices.
+P0364	[Normal]	Figure 3 presents an Empathy Map that illustrates the thoughts, feelings, behaviors, and needs of two key user groups.
+P0365	[Normal]	Figure 3
+P0366	[Normal]	Empathy Map
+P0368	[Normal]	Define. In this second stage, you gather your observations from the first stage to define the problem you’re trying to solve. Tuttle (2021) notes to think about the difficulties your consumers are brushing up against, what the repeatedly struggle with, and what you’ve gleaned from how they’re affected by the issue. Once you synthesize your findings, you are able to define the problem they face.
+P0369	[Normal]	The researchers made use of the 5 Why Analysis tool
+P0370	[Normal]	to determine the root causes of a social issue and identify them. The identified root causes help the researchers to effectively formulate appropriate solutions to address the social issue in a more focused and targeted manner. The social issue identified in the analysis is that many people often struggle to find the right lawyer for their specific legal needs.
+P0371	[Normal]	The root causes identified from the data collected are as follows: (1) people struggle to find the right lawyer due to the complexity of the legal system and the lack of clear, personalized methods to find the right legal professional for their specific needs, which often leads to delays in seeking appropriate legal support, and (2) people struggle to find the right lawyer because they lack a clear understanding of the legal process and the required documents, which often leaves them feeling confused, frustrated, and uncertain about what steps to take next. As a result, this ultimately increases their hesitation to move forward with their legal concerns.
+P0372	[Normal]	Figure 4 presents the 5 Why Analysis, which identifies the root causes of user difficulties in seeking legal assistance and informs the development of the app’s key features through targeted solutions.
+P0373	[Normal]	Figure 4
+P0374	[Normal]	The 5 Why Analysis
+P0378	[Normal]	Ideate. The next step is to brainstorm ideas about how to solve the problem you’ve identified. According to Tuttle (2021), these ideation sessions could be in a group, where your researchers gather in an office space that encourages creativity and collaboration, an innovation lab, or can be done solo. The important part is to generate a bunch of     different ideas. At the end of this process, you’ll come up with a few ideas with which to move forward.
+P0379	[Normal]	The researchers came up with solutions based on the root causes found in the previous stage. It was decided that the best solution is to create a mobile application that connects individuals with lawyers based on their specific needs. This includes building an online directory where clients can book appointments with lawyers who are matched to their specific legal needs. Additionally, an online library is included to provide templates for legal documents that clients can download. This is the best possible solution because the intended system, a mobile application, can accommodate and address the root problems identified in the define stage.
+P0380	[Normal]	Figure 5 illustrates a mind map outlining the core components of the proposed mobile application. It highlights the three main solutions: online directory,
+P0381	[Normal]	online library, and integrated features that collectively address users' legal needs through accessible, user-friendly, and functional tools.
+P0382	[Normal]	Figure 5
+P0383	[Normal]	Mind Map
+P0385	[Normal]	Prototype. Tuttle (2021) describes this as the stage that turns ideas into an actual solution. Prototypes are not meant to be perfect. The point of a prototype is to come out quickly with a concrete version of the idea to see how it is accepted by consumers.
+P0386	[Normal]	In this stage the researchers created a high-fidelity prototype to visually represent the application's user interface. The created prototype includes several key features designed to enhance user experience and facilitate access to legal services.
+P0387	[Normal]	Figure 6 shows the initial interface of the application, where users are welcomed and guided to either log in or register. It serves as the entry point to the platform, designed with simplicity and accessibility in mind.
+P0388	[Normal]	Figure 6
+P0389	[Normal]	Landing Page
+P0391	[Normal]	The login and registration system allows users to create secure accounts, which ensure their privacy, user authentication, and personalized access to their profiles and consultations.
+P0392	[Footer]	Figure 7 presents the secure login and registration system that enables both clients and lawyers to create accounts, access personalized services, and protect their private data through user authentication.
+P0393	[Normal]	Figure 7
+P0394	[Normal]	Login and Registration
+P0396	[Normal]	The lawyer matching feature is designed to seamlessly connect clients with legal professionals who align with their specific needs and preferences. This tailored approach ensures that clients are matched with qualified and trustworthy lawyers who can effectively address their legal concerns. This ultimately saves time and effort while significantly enhancing the overall user experience throughout the entire legal assistance and consultation process.
+P0397	[Footer]	Figure 8 shows the matching system that pairs clients with suitable lawyers based on their specific legal needs.
+P0398	[Normal]	Figure 8
+P0399	[Normal]	Lawyer Matching
+P0402	[Normal]	To enhance user experience, the platform features an appointment booking system that allows clients to schedule consultations directly with matched lawyers. Clients can choose a convenient date and time from the lawyer’s available slots. This feature promotes efficiency, saves time, and ensures a smoother connection between clients and legal professionals.
+P0403	[Normal]	Figure 9 shows the appointment booking interface, where clients can schedule consultations with their matched lawyers by selecting from available time slots.
+P0404	[Normal]	Figure 9
+P0405	[Normal]	Book Appointment
+P0407	[Normal]	The legal document library offers access to a range of templates and resources for common legal documents, providing clients with helpful references for their legal needs. It allows clients to access and download essential legal document templates at their convenience.
+P0408	[Normal]	Figure 10 presents the legal document library, which provides clients with downloadable templates for commonly used legal documents such as contracts and agreements
+P0409	[Normal]	Figure 10
+P0410	[Normal]	Legal Document Library
+P0412	[Normal]	Lastly, the user profile customization feature allows lawyers and clients to tailor their experience by managing notifications and saved documents, ultimately enhancing user satisfaction. Additionally, lawyers may control what information is displayed publicly or kept private.
+P0413	[Normal]	Figure 11 depicts the profile customization feature, allowing both clients and lawyers to manage their personal information, preferences, and visibility settings for a more tailored experience.
+P0414	[Normal]	Figure 11
+P0415	[Normal]	Profiles
+P0417	[Normal]	Test. This is the final stage of the five-stage model; however, in an iterative process such as design thinking, the results generated are often used to redefine one or more further problems. According to Dam (2024), this increased level of understanding may help you investigate the conditions of use and how people think, behave and feel towards the product, and even lead you to loop back to a previous stage in the design thinking process. You can then proceed with further iterations and make alterations and refinements to rule out alternative solutions. The ultimate goal is to get as deep an understanding of the product and its clients as possible.
+P0418	[Normal]	In this stage, user and lawyer feedback has been invaluable in refining our features, ensuring that the application effectively meets the diverse needs of its user base while streamlining access to legal services. Clients appreciate the app's user-friendly interface but suggest adding a feature to filter lawyers based on their availability and preferred consultation times. They find the app understandable and easy to navigate, while also recommending the implementation of a credibility verification system for lawyers, such as ratings or reviews from previous clients.
+P0419	[Normal]	Additionally, clients have noted that the legal document library is particularly helpful. The lawyers express enthusiasm for the mobile application concept and are eager to sign up and use it. They recommend localizing the app to connect clients specifically within Baguio City. Furthermore, they suggest implementing a verification process for clients or clients to ensure authenticity and credibility. This feedback guides our ongoing development efforts, allowing us to enhance user experience and trust in our platform.
+P0420	[Normal]	Scope and Delimitation
+P0421	[Normal]	The scope of this study focuses exclusively on the legal services within Baguio City, Philippines. The application is limited to clients and lawyers who are physically based in Baguio City. As such, clients cannot browse and match with lawyers outside of this geographical area. This makes legal services remain locally relevant and compliant with the jurisdiction-specific practices and regulations in Baguio City.
+P0422	[Normal]	The application includes a wide range of legal categories and corresponding subcategories to help users find appropriate legal assistance. The legal categories are: Family Law, Criminal Law, Civil Law, Labor Law,
+P0423	[Normal]	Immigration Law, Consumer Protection Law, Real Estate, Property & Succession Law, Business & Corporate Law, Tax Law, Health Law, Environmental Law, Public Assistance & Welfare Law, Barangay Justice and Mediation, Cybercrime Law, and OFW and Migrant Worker Rights.
+P0424	[Normal]	Each category contains specific subcategories, such as marriage and annulment, criminal defense, damages and torts, employee rights, visa and work permits, consumer complaints, property transactions, business formation, taxation, medical malpractice, pollution complaints, government assistance programs, barangay complaints, online harassment, and illegal recruitment. These subcategories support categorization of legal concerns within the app.
+P0425	[Normal]	Moreover, the application is developed solely for Android devices, as Android is the most commonly used mobile platform among the target population, particularly in Baguio City. This decision ensures that the application remains accessible to the majority of intended users based on current mobile usage trends.
+P0426	[Normal]	The system accepts both English and Tagalog inputs for its client-lawyer matching feature, made possible by the integration of Google’s Gemini 1.5 Flash language model. This advanced model supports multilingual understanding and
+P0427	[Normal]	is capable of processing natural language input in both English and Tagalog. It enables accurate sentence classification and question answering, allowing the system to effectively interpret client concerns and match them with the most appropriate legal professionals.
+P0428	[Normal]	Furthermore, the application supports real-time appointment confirmations, enabling lawyers to accept or decline consultation requests based on their availability. However, the platform currently does not support in-app messaging or video consultations; such communications must be handled externally by the matched client and lawyer.
+P0429	[Normal]	Data Gathering Techniques
+P0430	[Normal]	The researchers utilized various techniques to collect the necessary information for designing and developing the proposed system. These methods were essential in evaluating the overall quality of the system, its performance, and its effectiveness within the intended environment.
+P0431	[Normal]	Interview. The researchers conducted interviews with both clients and practicing lawyers in Baguio City to understand their current experiences and challenges in legal consultations. The responses helped the team identify pain points, preferred features, and the common obstacles in traditional lawyer-client engagements.
+P0432	[Normal]	Observation. The researchers observed how clients currently seek legal services whether through social media, referrals, or direct walk-ins. This allowed the team to evaluate the inefficiencies in the existing processes and recognize potential areas for automation and enhancement through the application.
+P0433	[Normal]	Floating of Survey Questionnaires. Surveys were distributed to a wider range of respondents, including law students, clients, and legal professionals, to gather quantitative data on service preferences, and booking behaviors. The feedback was analyzed to shape the feature list and user flow of the system.
+P0434	[Normal]	Sources of Data
+	The researchers gathered information from key individuals involved in the legal service process to ensure the system addresses real and practical needs. Data was collected from clients who were actively seeking legal assistance in Baguio City. These individuals shared their experiences and common struggles, such as difficulty in finding the right lawyer, delays in setting appointments, and lack of access to legal information. Their feedback played a significant role in shaping the system’s client interface and matching functionality.
+P0435	[Normal]	In addition, the researchers consulted with licensed lawyers to understand their preferences, availability, and client interaction processes. The insights provided by these legal professionals helped guide the development of the booking and profile management features of the system.
+	As part of the observation method, the researchers monitored how clients typically seek legal services, whether through social media, referrals, or walk-ins at law offices. This allowed the team to assess the limitations and inefficiencies of traditional methods and identify opportunities for automation and digital enhancement through the application.
+	For the development of the Legal Document Library, the researchers sourced publicly available legal templates and forms from the website E-CODAL: A Virtual Compendium of Philippine Laws and Jurisprudence. These documents served as references to provide users with accessible legal resources relevant to common legal transactions. 
+Software Development Tools
+	The researchers utilized the following tools and technologies to develop the proposed system.
+P0436	[Normal]	Android Studio. Android Studio is the official integrated development environment (IDE) for Android app
+P0437	[Normal]	development. The researchers selected Android Studio as the primary IDE for building, coding, and testing the mobile application due to its reliability, comprehensive tools, and community support.
+P0438	[Normal]	Firebase. Firebase is a platform developed by Google that provides tools for managing databases, authentication, and real-time data synchronization. Firebase is the chosen backend platform for managing the mobile application's data. Its seamless integration with Android Studio allowed for efficient development and testing. Additionally, its real-time database feature enabled the researchers to store and retrieve data instantly, ensuring clients always had access to the most current information.
+P0439	[Normal]	Gemini 1.5 Flash. The application utilizes Google’s Gemini 1.5 Flash language model to process and understand user input efficiently. By leveraging this model, the platform ensures fast and context-aware client-lawyer matching while maintaining high performance and responsiveness.
+P0440	[Normal]	GitHub. GitHub is a web-based platform for version control and collaborative software development which allows developers to store, manage, and track changes to their code. By hosting the code repositories on GitHub, the
+P0441	[Normal]	researchers could track changes, collaborate efficiently, and ensure code consistency across the project.
+P0442	[Normal]	Figma. Figma is a cloud-based design tool used for creating user interfaces and prototypes. Figma was employed as the primary tool for designing and prototyping the user interface (UI) and user experience (UX) of the mobile application.
+P0443	[Normal]	Chapter 3
+P0444	[Normal]	FINDINGS OF THE STUDY
+P0445	[Normal]	This chapter presents the findings and discussions from identifying the information requirements of the system. Defining the architecture framework of the proposed system, determining the features of the proposed system, and measuring the extent of the usability of the proposed system.
+P0446	[Normal]	Information Requirements of TulongLegal
+P0447	[Normal]	This section covers the information requirements of TulongLegal including the user information, and software and hardware requirements. It addresses the necessary prerequisites for the application’s successful operation. It also outlines the essential components that must be in place to ensure compatibility, usability, and system efficiency.
+P0448	[Normal]	User Information. For the application’s users to use and access the features of the application, crucial information about the two user groups is required. The client information consists of the client’s full name, email address, phone number, password, and valid ID. Upon registration, clients are required to provide their name, email, and password, which are used to identify and
+P0449	[Normal]	authenticate them within the system. A valid ID is required from the clients if they wish to find a lawyer using the application. This ensures that their identity is verified, which can help prevent fraudulent activity and to maintain the integrity of the system.
+P0450	[Normal]	On the other hand, the lawyer information consists of the lawyer’s name, email address, and phone number. Additionally, the application collects information about the lawyer’s firm including the firm's name, and address. Once registered, both clients and lawyers can access their respective dashboards, where they can manage their profiles and interactions. Tables 1 and 2 show user and lawyer data along with its types for storing purposes.
+P0451	[Normal]	Table 1
+P0452	[Normal]	Client Information Types
+TABLE 0 (6x3)
+Field	Data Type	Length
+FULL_NAME	String	100
+CONTACT_NO	String	30
+EMAIL	String	254
+USERNAME	String	50
+PASSWORD	String	6 - 100
+END TABLE
+P0454	[Normal]	Table 2
+P0455	[Normal]	Lawyer Information Types
+TABLE 1 (11x3)
+Field	Data Type	Length
+FIRST_NAME	String	50
+MIDDLE_NAME	String	50
+LAST_NAME	String	50
+CONTACT_NO	String	30
+EMAIL	String	254
+USERNAME	String	50
+PASSWORD	String	6 - 100
+FIRM_NAME	String	100
+FIRM_ADDRESS	String	250
+LEGAL_SPECIALZIATIONS	String	250
+END TABLE
+P0457	[Normal]	System Requirements. The minimum operating system requirement for the application is Android 7.0 Nougat that corresponds to API level 24. For optimal performance and stability, it is recommended to use Android 8.0 Oreo with API level 26 or higher. The application requires a minimum RAM of 2GB. However, since devices with lower memory may
+P0458	[Normal]	experience slow loading times and crashes, to enhance responsiveness, 4GB of RAM is recommended. The application requires at least 2GB of free space for installation, storage, and caching. Meanwhile, it is recommended to use a device with at least 5GB of free space. Additionally, a stable network connection is required to ensure that the features of the application work smoothly.
+	Table 3 presents the software requirements for TulongLegal.
+P0459	[Normal]	Table 3
+P0460	[Normal]	System Requirements
+TABLE 2 (7x3)
+	Minimum System Requirement	Recommended System Requirement
+Operating System	Android 7.0 (Nougat)	Android 8.0 (Oreo)
+Android API	24	26
+RAM	2GB	4GB
+Storage	At least 2GB free	At least 5GB free
+Wi-Fi	Yes	Yes
+Mobile Data	Yes	Yes
+END TABLE
+P0462	[Normal]	Architecture Framework of TulongLegal
+P0463	[Normal]	The architectural framework of a system serves as a blueprint for system developers to use. It showcases the different components of a system to provide clear visualization before development commences. Additionally, it creates a standardized language for viewers of the system to better understand its different processes, tasks, and system components. By defining the system's structure in detail, it helps in aligning the system’s design with the intended requirements and goals of the project. This section discusses the architectural framework of TulongLegal.
+P0464	[Normal]	Kruchten’s 4+1 View Model of Architecture is a framework that explains the architecture of systems that are software-intensive. It addresses the concerns of stakeholders by utilizing multiple concurrent views. This architectural view model includes four views which are named as: Logical View, Development View, Process View, and Physical View. The fifth view, also referred to as the “+1”, is the Scenarios. These different views allow stakeholders to analyze the different aspects of the system, including its functionality, behavior, structure, and deployment.
+P0465	[Normal]	Figure 12
+P0466	[Normal]	The “4+1” view model by Kruchten
+P0468	[Normal]	Scenarios. In order to identify the most important components and functionalities of the system from the users’ point of view, the researchers made use of a use case diagram. This diagram serves as a visual representation of the different ways users interact with the system and outlines the actions they can perform based on their roles. This provides a clear illustration of how users engage with the primary functions of the system.
+P0469	[Normal]	Scenarios help both stakeholders and developers gain a clearer understanding of how the system behaves and responds to user actions, ensuring that the system design aligns with the intended user experience and functional requirements.
+P0470	[Normal]	Figure 13 illustrates the core functionalities of TulongLegal for two primary actors: Clients and Lawyers.
+P0471	[Normal]	Figure 13
+P0472	[Normal]	TulongLegal Use Case Diagram for Clients and Lawyers
+P0474	[Normal]	The use case diagram illustrates the core functionalities of TulongLegal for two primary actors: clients and lawyers. Both actors begin by either registering or logging into the system, which serves as the gateway to the platform’s features. Once logged in, clients gain access to the client dashboard, which includes several
+P0475	[Normal]	key functions such as viewing and editing their profile, accessing the legal document library, using the client-lawyer matching interface, and managing their appointments and notifications. It is important to note that before a client can utilize the lawyer matching interface, they are required to complete a verification process to ensure authenticity and security.
+P0476	[Normal]	Lawyers, after completing their login and verification steps, are directed to the lawyer dashboard. From there, they can manage their personal profiles, update their availability through the calendar and daily schedule features, oversee their appointment requests, and receive important system notifications. These tools support lawyers in efficiently handling their client engagements. The diagram also shows the interaction between clients and lawyers through the appointment approval process, which serves as the central connection point between the two user roles within the platform.
+P0477	[Normal]	The system also includes an administrator who is primarily responsible for verifying user accounts and ensuring secure access. Figure 14 shows the use case diagram for admin functions within the system.
+P0478	[Normal]	Figure 14
+P0479	[Normal]	TulongLegal Use Case Diagram for Admin
+P0487	[Normal]	The admin use case diagram illustrates the admin dashboard which serves as the central interface. From the dashboard, the admin can verify lawyers and clients. The admin can either approve or deny the respective users.
+P0488	[Normal]	Logical View. This view provides a visualization of the main functionalities of a system. It defines the key classes, objects, and how they interact with each other. Moreover, the logical view allows developers to have a deeper understanding of data and operations within their system.
+P0489	[Normal]	Figure 15 presents the class diagram of the system which shows the main classes of the system along with its attributes and relationships.
+P0490	[Normal]	Figure 15
+P0491	[Normal]	TulongLegal Class Diagram
+P0493	[Normal]	The class diagram represents the structure of TulongLegal. The admin can verify and approve clients and lawyers, and has a dashboard for managing verifications. clients and lawyers have their respective profiles and dashboards, allowing them to view and update information, manage appointments, and access notifications. The ClientLawyerMatching class handles the process of matching clients with lawyers, while ClientAppointment and LawyerAppointment store and manage appointment details. The system includes notification classes for both clients and lawyers. LegalDocumentLibrary provides access to legal documents, and Calendar and DailySchedule classes help lawyers manage their availability.
+P0494	[Normal]	Process View. This view focuses on the processes involved in each operation within the system. The process view provides a clearer understanding of the system’s internal behavior and performance by defining how various components interact with one another during runtime. It highlights the flow of logic and communication between elements as specific actions are performed. To illustrate this, the researchers used sequence diagrams to show the sequence of messages exchanged between components during different processes. This allows stakeholders to visualize
+P0495	[Normal]	the order of operations and the dynamic behavior of the system.
+	Figure 16 shows the sequence diagram for the Legal Document Library which is specific to the “clients” group.
+P0496	[Normal]	Figure 16
+P0497	[Normal]	TulongLegal Sequence Diagram for Legal Document Library
+P0499	[Normal]	This sequence diagram illustrates how a Client accesses and downloads documents from the Legal Document Library via the Client Dashboard. The client views the dashboard, which fetches and displays the document library. Upon requesting to view a document, the content is displayed, and when the client downloads it, the document is provided by the library.
+P0500	[Normal]	Unique to the “lawyers” group, figure 17 shows the sequence diagram for the calendar and daily schedule.
+P0501	[Normal]	Figure 17
+P0502	[Normal]	TulongLegal Sequence Diagram for Calendar and Daily Schedule
+P0505	[Normal]	The sequence diagram illustrates the interactions between the Lawyer, LawyerDashboard, DailySchedule, Calendar, and LawyerAppointment classes. In the first part, the lawyer accesses the dashboard which triggers a request to daily schedule and in return gives the schedule. The dashboard then displays the data to the lawyer. The lawyer is also given the option to add a new schedule event which updates the schedule which reflects the change after. In the second part, a similar process occurs with the calendar system. The viewLawyerDashboard() function initiates getCalendar() to retrieve calendar data by using giveCalendar(). After which, it is shown with displayCalendar(). The lawyer adds events using addCalendarEvent(), updating the calendar through updateCalendar() and displaying the result with displayCalendarEvent(). The third part of the diagram illustrates an appointment initiated by displayLawyerAppointment(), which updates the Calendar and confirms with displayCalendarEvent() to the Lawyer.
+P0506	[Normal]	Figure 18 illustrates the sequence diagrams that involve both clients and lawyers in key interactive processes within the system. These include the Client-Lawyer Matching and the Appointment scheduling.
+P0507	[Normal]	Figure 18
+P0508	[Normal]	TulongLegal Sequence Diagram for Client-Lawyer Matching
+P0509	[Normal]	The diagram shows how the client views the dashboard, triggers lawyer matching, and verifies ID through requestIDVerification(), which is processed and used to display lawyer profiles. The client matches with a lawyer, creating an appointment request that is passed from client appointment to lawyer appointment, where it is displayed and approved, then confirmed back to the client.
+P0510	[Normal]	Figure 19 presents the notifications feature for both user groups show the relationship between the Appointment and Notification classes.
+P0511	[Normal]	Figure 19
+P0512	[Normal]	TulongLegal Sequence Diagram for Notifications
+P0514	[Normal]	The diagram shows how a lawyer views notifications, which triggers an update from the lawyer notification system, retrieves data from lawyer appointment, and then displays the notification. The same process occurs for a client. Viewing notifications prompts an update, retrieves data from Client Appointment, and displays the client’s notification.
+P0515	[Normal]	Figure 20 shows the sequence diagram of both user groups when they access and edit their respective profiles.
+P0516	[Normal]	Figure 20
+P0517	[Normal]	TulongLegal Sequence Diagram for User Profiles
+P0520	[Normal]	The sequence diagram shows how a client views their profile, which displays the information, then edits it. The updated profile is then displayed. A lawyer follows the same steps. Viewing the profile, displaying the profile, edits the profile, and returns the updated profile to the lawyer.
+P0521	[Normal]	Figure 21 illustrates the verification process for users within the system, showing how client and lawyer accounts are reviewed by the administrator before gaining full access to the platform’s features.
+P0522	[Normal]	Figure 21
+P0523	[Normal]	TulongLegal Sequence Diagram for User Verification
+P0525	[Normal]	A client requests ID verification through client-LawyerMatching, which forwards the request to the AdminDashboard, where the admin displays and verifies the client. A lawyer sends a verification request upon registration where the admin verifies the lawyer's information.
+P0526	[Normal]	Development View. The development view focuses on the architecture of a system from the viewpoint of the developer. It allows developers to understand the structure of the software’s modules and dependencies. The researchers made use of a package diagram to illustrate the system’s software components, their relationships, and dependencies.
+P0527	[Normal]	Figure 22 shows the package diagram of TulongLegal, including its modules and relationships between them.
+Figure 22
+P0528	[Normal]	TulongLegal Package Diagram
+P0530	[Normal]	The package diagram shows the module access relationships within the system. The module interactions are as follows: LawyerDashboard accesses Lawyers and LawyerNotification. ClientDashboard accesses Clients, Appointments, ClientNotification, and ClientLawyerMatching. Both ClientNotification and LawyerNotification access the Appointments module.
+P0531	[Normal]	Physical View . To illustrate the physical aspects of the system, which includes the essential hardware, software, and infrastructure components involved in its operation, the researchers utilized a deployment diagram. This diagram provides a clear representation of how different software elements of the application are deployed across various physical or cloud-based hardware environments. It also details how these components interact and communicate with each other during real-time operations, such as user authentication, data retrieval, and lawyer-client matching.
+P0532	[Normal]	Figure 23 illustrates the deployment diagram of TulongLegal, which emphasize the connections between user devices, servers, databases, and external services like the Gemini API that allows for the application’s full functionality.
+P0533	[Normal]	Figure 23
+P0534	[Normal]	Deployment Diagram of TulongLegal
+P0536	[Normal]	The user device runs a mobile application that communicates with Firebase via HTTPS. The web server, running Kotlin, interacts with the application server, which hosts core components like Matching System, appointments, notifications, and verification. The application Server accesses the Firestore containing collections for lawyers, clients, legal documents, and appointments. Additionally, the Gemini API is integrated with the Web Server for NLP processing and cloud database access.
+P0537	[Normal]	Features of TulongLegal
+P0538	[Normal]	This section provides a detailed overview of the features offered by TulongLegal, the platform includes essential functionalities such as a user-friendly landing page, secure login and registration system, and a lawyer matching system powered by Gemini. It also features a legal document library with essential templates, and profile customization options for both clients and legal professionals. Additional features include a verification system and advanced search and filter options. The overall functionality and user experience of the TulongLegal system are significantly improved by the following distinctive features:
+P0539	[Normal]	Client login and registration system. Displayed in figure 24, Clients can securely register on the TulongLegal platform by providing essential personal and account details. The registration form is designed to be user-friendly, with validation checks that minimize errors and ensure all required information is complete. Passwords are protected and encrypted to maintain privacy. After registration, clients can log in using their credentials and are redirected to their dashboard. This ensures that only legitimate users gain access to the system.
+P0540	[Normal]	Figure 24
+P0541	[Normal]	Client Login and Registration
+P0543	[Normal]	Lawyer matching system. As shown in figure 25, the lawyer matching system enables clients to describe their legal concerns, which the system interprets using NLP through Gemini, ensuring an intuitive and accessible user experience. Based on the input, the system recommends appropriate legal professionals suited to the issue, providing clients with targeted suggestions for their specific needs. The results are presented in a clear, easy-to-read list showing lawyers' practice area, specific cases handled, and contact information. Clients can filter matches by legal category to ensure that they find a lawyer that fits their specific needs.
+P0544	[Normal]	Figure 25
+P0545	[Normal]	Lawyer Matching System
+P0547	[Normal]	Client Appointments. Illustrated in figure 26, the client appointments feature allows clients to view their appointments, and manage their consultations with matched lawyers. It provides a simple interface for informing the
+P0548	[Normal]	clients of the details of their appointments along with keeping track of upcoming or past appointments.
+P0549	[Normal]	Figure 26
+P0550	[Normal]	Client Appointments
+P0552	[Normal]	Legal document library. TulongLegal provides a legal document library specifically for clients who need templates for common legal forms. This includes affidavits, contracts, and various agreements that can be downloaded for personal use. Each document is accompanied by a brief explanation of its purpose to help clients understand its legal context. The library is categorized to make it easy
+P0553	[Normal]	to find documents relevant to different legal concerns. Clients can handle basic legal tasks without the immediate need for a lawyer, saving both time and money. The interface for the legal document library is shown in figure 27.
+P0554	[Normal]	Figure 27
+P0555	[Normal]	Legal Document Library
+P0557	[Normal]	Client profile and customization. Depicted in figure 28, clients have full control over their profiles and can customize them to fit their needs. They can update personal details like name, email, and contact number at any time. The interface allows for easy profile photo uploads to
+P0558	[Normal]	personalize their account. Password changes and security options are available to protect their information. All settings are accessible from a central profile page, making the process straightforward. This personalization enhances user experience and supports better communication.
+P0559	[Normal]	Figure 28
+P0560	[Normal]	Client Profile
+P0562	[Normal]	Lawyer login and registration system. As shown in figure 29, Lawyers register by entering their personal and professional credentials. The registration form includes validation to ensure accurate and complete data submission. After successful registration, lawyers can log in securely using encrypted passwords. They are redirected to a
+P0563	[Normal]	specialized dashboard designed to help them manage client matches, messages, and profile updates. The login system protects sensitive data through encryption and secure session handling. Lawyers must also proceed with identity verification to access all features.
+P0564	[Normal]	Figure 29
+P0565	[Normal]	Lawyer Login and Registration
+P0567	[Normal]	Lawyer profile and customization. As seen in figure 30, the customization feature enables lawyers to present a professional profile that highlights their expertise. They can include specialization areas and sub-categories handled typically handled. A profile photo and visibility settings
+P0568	[Normal]	help balance credibility and privacy. Lawyers have full control over what information is publicly displayed. They can also edit contact details, security settings, and other system preferences. This customizable profile helps them stand out and makes it easier for clients to select legal professionals that meet their needs. A well-managed profile increases trust and improves the overall client experience.
+P0569	[Normal]	Figure 30
+P0570	[Normal]	Lawyer Profile
+P0572	[Normal]	Calendar and daily schedule for lawyers. As shown in figure 31, lawyers can set specific time slots for
+P0573	[Normal]	consultations, block off unavailable periods, and make adjustments as needed. Along with this, approved client appointments are automatically Along with this, approved client appointments are automatically added to their schedule. This helps lawyers stay organized and ensures that all confirmed appointments are reflected in their daily calendar.
+P0574	[Normal]	Figure 31
+P0575	[Normal]	Calendar and Daily Schedule
+P0578	[Normal]	Lawyer appointments. Presented in figure 32, the lawyer appointments feature allows lawyers to view incoming match requests from clients and choose whether to accept or decline them. It displays essential client details and requested consultation times for review.
+P0579	[Normal]	Figure 32
+P0580	[Normal]	Lawyer Appointments
+P0593	[Normal]	The admin registration management feature, as shown in figure 33, allows administrators to review, accept, or decline registration requests from both clients and
+P0594	[Normal]	lawyers. It displays submitted account details, including identification and credentials, for verification. This ensures that only verified and legitimate users are granted access to the platform, maintaining its security and credibility.
+P0595	[Normal]	Figure 33
+P0596	[Normal]	Admin
+P0598	[Normal]	Shown in figure 34, the client verification feature allows administrators to review, accept, or decline verification requests submitted by clients. It displays essential details such as the client’s name, ID type, and verification status, along with who performed the verification and when. Clients with valid and complete information are listed under accepted client verifications, while those pending review or declined due to incomplete or inaccurate submissions appear under pending or declined
+P0599	[Normal]	client verifications, respectively. This process ensures that only legitimate individuals gain access to the TulongLegal platform, safeguarding user trust and system integrity.
+P0600	[Normal]	Figure 34
+Client Verification
+P0602	[Normal]	Shown in figure 35, the lawyer approval feature enables administrators to manage registrations from both law firms and individual lawyers. For pending registrations, submitted information such as law firm names, contact details, IBP ID, and face photos are displayed for verification. Admins can review each submission and choose to accept or decline based on compliance and authenticity. Approved lawyers are listed under Accepted Lawyers with a record of their firm
+P0603	[Normal]	affiliation, email, and the admin responsible for the approval. This verification helps maintain a credible and professional network of legal practitioners.
+P0604	[Normal]	Figure 35
+P0605	[Normal]	Lawyer Verification
+P0607	[Normal]	Extent of the Usability of TulongLegal
+P0608	[Normal]	The researchers utilized the System Usability Scale questionnaire. According to Bhat (2023), The System Usability Scale (SUS) is a questionnaire developed by John Brooke in 1986 to evaluate the usability of products and services using a Likert scale ranging from "I strongly agree" to "I strongly disagree." It serves as a quantitative method to assess the usability of various system.
+P0609	[Normal]	The researchers used the Slovin’s Formula to determine
+P0610	[Normal]	the appropriate sample size of respondents for the usability testing. To solve for the sample size (n), the researchers opted for a 10% margin of error (e) and a population size (N) of 276,719, the total population of adults living in Baguio City according to the Philippine Statistics Authority (2023). The formula is as follows:
+P0611	[Normal]	Given:
+P0612	[Normal]	N = 276,719
+P0613	[Normal]	e = 10% or 0.10
+P0614	[Normal]	Solution:
+P0616	[Normal]	or 100 Adults Living in Baguio City
+P0617	[Normal]	The calculated sample size reveals that 100 adults residing in Baguio City are needed to perform the usability testing. To further implement this, the researchers utilized Convenience Sampling to select participants based on their accessibility and willingness to respond. Golzar et al. (2022) defined Convenience Sampling as a method in which researchers choose participants who are easily accessible and readily available to them. Participants were selected based on their availability and willingness to
+P0618	[Normal]	participate, considering time constraints and the ease of reaching available adult users within Baguio City.
+P0619	[Normal]	To gather usability feedback from the client perspective, individuals residing in Baguio City who represented the application’s target user base were invited to participate in the evaluation via Google Forms. The participants were asked to respond to a questionnaire following the System Usability Scale (SUS) format, which provided a standardized set of items focusing on usability aspects such as ease of use, efficiency, and overall satisfaction.
+P0620	[Normal]	For the legal professionals’ perspective, the researchers collaborated with ten practicing lawyers based in Baguio City. These lawyers were selected based on their relevance to the study and willingness to participate in the evaluation process. Their feedback was collected using SUS questionnaires, which were made available both online via Google Forms and during in-person meetings.
+P0621	[Normal]	Table 4 serves as a reference guide for interpreting the results from the system usability testing. It provides the corresponding letter grades and ranks assigned to specific SUS score ranges, along with associated percentile rankings.
+P0623	[Normal]	Table 4
+P0624	[Footer]	SUS Scores Interpretation
+TABLE 3 (6x4)
+SUS Score	Percentile range	Grade	Rank
+84.1 – 100
+80.8 – 84.0
+78.9 – 80.7	96 – 100
+90 – 95
+85- 89	A+
+A
+A-	Best imaginable
+77.2 – 78.8
+74.1 – 77.1
+72.6 – 74.0	80 - 84
+70 – 79
+65 - 69	B+
+B
+B-	Excellent
+71.1 – 72.5
+65.0 – 71.0
+62.7 – 64.9	60 – 64
+41 – 59
+35 - 40	C+
+C
+C-	Good
+51.7 – 62.6	15-34	D	Okay
+0 – 51.6	0 - 14	F	Poor
+END TABLE
+P0626	[Normal]	Table 5 presents the responses gathered from the client group who participated in the usability evaluation process. It provides a detailed account of how frequently each numerical value on the Likert scale was chosen for every individual item included in the questionnaire. The table lists the counts for all possible response options ranging from 1 to 5 for each question.
+P0627	[Normal]	Table 5
+P0628	[Normal]	Responses from Clients
+TABLE 4 (7x6)
+Question	Frequency	Frequency	Frequency	Frequency	Frequency
+	1	2	3	4	5
+1. I think that I would like to use this system frequently.	0	2	22	43	33
+2. I found the system unnecessarily complex.	21	27	33	11	8
+3. I thought the system was easy to use.	1	4	19	32	44
+4. I think that I would need the support of a technical person to be able to use this system.	26	32	24	11	7
+5. I found the various functions in this system were well integrated.	0	2	18	40	40
+END TABLE
+TABLE 5 (5x6)
+6. I thought there was too much inconsistency in this system.	27	38	25	6	4
+7. I would imagine that most people would learn to use this system very quickly.	1	2	22	30	45
+8. I found the system very cumbersome (awkward or difficult to handle) to use.	42	30	22	2	4
+9. I felt very confident using the system.	1	2	17	41	39
+10. I needed to learn a lot of things before I could get going with this system.	22	33	21	11	13
+END TABLE
+P0631	[Normal]	Table 6 presents the responses gathered from the lawyer group who participated in the usability evaluation process. It shows a detailed breakdown of how often each numerical value on the Likert scale was selected for every item in the questionnaire. The table lists the counts for all available response options from 1 to 5 for each question which reflect the recorded answers provided by all participating lawyers.
+P0632	[Normal]	Table 6
+P0633	[Normal]	Responses from Lawyers
+TABLE 6 (9x6)
+Questions	Frequency	Frequency	Frequency	Frequency	Frequency
+	1	2	3	4	5
+1. I think that I would like to use this system frequently.	0	0	6	4	0
+2. I found the system unnecessarily complex.	2	4	4	0	0
+3. I thought the system was easy to use.	0	0	4	4	2
+4. I think that I would need the support of a technical person to be able to use this system.	4	3	3	0	0
+5. I found the various functions in this system were well integrated.	0	0	6	1	3
+6. I thought there was too much inconsistency in this system.	2	6	2	0	0
+7. I would imagine that most people would learn to use this system very quickly.	0	0	3	4	3
+END TABLE
+TABLE 7 (1x6)
+8. I found the system very cumbersome (awkward or difficult to handle) to use.	3	4	3	0	0
+END TABLE
+TABLE 8 (2x6)
+9. I felt very confident using the system.	0	0	5	3	2
+10. I needed to learn a lot of things before I could get going with this system.	3	3	4	0	0
+END TABLE
+P0636	[Normal]	Upon collecting the SUS questionnaire responses, each individual response is converted into corresponding scores. For the odd-numbered questions (1, 3, 5, 7, and 9), the number 1 is subtracted from the participant’s original response. For the even-numbered questions (2, 4, 6, 8, and 10), the participant’s response is subtracted from the number 5. All of the adjusted scores from the questionnaire are then summed together, and this total is subsequently multiplied by 2.5 to obtain the final overall SUS score.
+P0637	[Normal]	Table 7 presents the computed results from the clients’ responses after processing the odd- and even-numbered questions in the System Usability Scale (SUS) questionnaire.
+P0638	[Normal]	Table 7
+P0639	[Normal]	Clients SUS Results
+TABLE 9 (29x13)
+Respondent	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Total	SUS Score
+	1	2	3	4	5	6	7	8	9	10		
+1	4	2	4	3	3	3	3	3	3	3	31	77.5
+2	3	2	2	2	3	2	3	2	3	1	23	57.5
+3	3	3	3	4	3	3	2	3	3	1	28	70
+4	2	2	2	2	2	2	2	2	2	2	20	50
+5	2	2	4	2	4	2	2	2	2	0	22	55
+6	4	2	4	0	4	0	4	0	4	0	22	55
+7	4	0	4	0	4	0	4	0	4	0	20	50
+8	3	1	2	2	2	2	2	2	1	2	19	47.5
+9	4	1	3	3	3	3	3	3	3	1	27	67.5
+10	3	2	4	1	2	1	2	0	3	1	19	47.5
+11	4	4	4	4	4	4	4	4	4	4	40	100
+12	2	2	2	2	2	2	2	1	0	2	17	42.5
+13	3	3	3	4	3	2	2	3	3	4	30	75
+14	3	4	3	4	3	4	3	4	3	4	35	87.5
+15	4	4	2	4	2	2	3	4	2	0	27	67.5
+16	4	1	4	4	4	4	4	4	4	4	37	92.5
+17	3	4	2	4	2	4	2	4	3	3	31	77.5
+18	4	2	4	3	3	3	3	3	4	3	32	80
+19	3	1	3	0	4	2	4	3	3	0	23	57.5
+20	3	3	3	3	4	3	4	4	4	2	33	82.5
+21	3	2	1	3	3	2	3	3	3	2	25	62.5
+22	4	0	4	0	4	4	4	4	4	4	32	80
+23	4	0	4	0	4	0	4	4	4	0	24	60
+24	3	1	4	3	3	3	4	3	4	4	32	80
+25	3	2	3	2	3	2	4	2	3	2	26	65
+26	4	4	4	2	4	3	4	3	3	2	33	82.5
+27	2	4	3	3	4	2	4	3	3	3	31	77.5
+END TABLE
+TABLE 10 (32x13)
+28	3	4	2	2	3	3	4	4	3	1	29	72.5
+29	2	4	4	4	4	4	4	4	4	4	38	95
+30	4	3	4	3	4	3	2	3	4	3	33	82.5
+31	2	4	3	3	4	3	3	2	3	2	29	72.5
+32	2	2	2	2	2	2	2	2	2	2	20	50
+33	2	2	2	1	1	2	2	2	1	1	16	40
+34	3	4	3	3	4	3	4	3	3	3	33	82.5
+35	4	2	4	4	4	4	4	4	4	0	34	85
+36	4	0	4	4	4	4	4	4	4	0	32	80
+37	3	4	4	4	3	4	4	4	4	4	38	95
+38	2	2	1	3	1	3	3	2	2	2	21	52.5
+39	3	0	4	1	3	2	3	2	3	1	22	55
+40	2	3	1	4	3	3	2	2	2	3	25	62.5
+41	1	1	2	2	2	2	1	2	2	2	17	42.5
+42	3	4	3	3	3	3	2	3	3	2	29	72.5
+43	4	2	2	0	2	2	3	2	4	0	21	52.5
+44	2	0	1	1	2	1	0	3	2	3	15	37.5
+45	2	3	2	3	3	2	2	2	2	2	23	57.5
+46	3	2	3	1	3	1	3	3	3	1	23	57.5
+47	2	2	2	1	2	3	2	3	2	0	19	47.5
+48	1	2	2	2	3	2	2	3	2	1	20	50
+49	4	1	4	2	4	3	3	3	3	3	30	75
+50	4	2	4	3	2	4	3	3	4	3	32	80
+51	2	2	0	4	2	3	3	4	3	4	27	67.5
+52	3	1	4	1	3	1	4	0	4	0	21	52.5
+53	2	2	2	0	3	2	1	2	2	2	18	45
+54	3	3	3	4	3	3	3	4	4	4	34	85
+55	3	2	3	1	4	3	3	2	3	3	27	67.5
+56	4	0	3	1	3	0	4	1	4	0	20	50
+57	2	2	3	4	2	2	3	4	3	3	28	70
+58	3	2	4	3	4	4	4	4	3	3	34	85
+59	3	3	4	4	4	4	3	4	4	4	37	92.5
+END TABLE
+TABLE 11 (32x13)
+60	4	3	3	2	4	3	3	3	4	3	32	80
+61	4	3	4	3	4	4	4	4	4	3	37	92.5
+62	3	3	4	3	3	4	3	4	4	4	35	87.5
+63	3	3	4	3	3	3	4	3	4	3	33	82.5
+64	4	1	3	1	3	3	2	2	4	3	26	65
+65	4	2	4	3	4	4	4	4	4	4	37	92.5
+66	4	3	4	3	3	3	4	4	4	4	36	90
+67	3	4	4	4	4	3	3	4	4	4	37	92.5
+68	3	2	2	2	2	2	3	3	4	3	26	65
+69	4	3	4	4	4	2	4	4	4	3	36	90
+70	3	3	3	3	4	4	4	3	4	3	34	85
+71	3	3	4	3	4	4	4	4	3	3	35	87.5
+72	3	3	3	3	3	3	4	4	3	2	31	77.5
+73	4	4	4	4	3	4	4	4	3	4	38	95
+74	3	3	4	3	4	4	4	4	3	3	35	87.5
+75	3	2	3	2	4	3	3	2	2	2	26	65
+76	4	3	4	2	4	3	4	4	3	3	34	85
+77	3	3	3	3	3	3	4	4	3	3	32	80
+78	3	3	3	4	3	3	4	4	3	3	33	82.5
+79	4	4	4	3	4	4	4	4	4	3	38	95
+80	3	3	4	3	4	4	4	4	3	2	34	85
+81	2	3	3	3	3	3	4	3	3	3	30	75
+82	3	3	3	3	3	3	3	3	3	3	30	75
+83	3	4	2	2	3	3	3	3	3	3	29	72.5
+84	4	0	4	4	4	3	4	4	4	4	35	87.5
+85	3	2	3	2	3	4	4	3	2	2	28	70
+86	2	2	4	4	3	3	4	4	4	4	34	85
+87	2	1	2	3	2	2	2	2	3	1	20	50
+88	4	2	3	2	4	3	2	3	3	2	28	70
+89	3	2	4	2	2	1	3	2	3	3	25	62.5
+90	3	1	3	2	3	1	3	2	2	1	21	52.5
+91	3	2	3	1	3	2	2	3	3	0	22	55
+END TABLE
+TABLE 12 (10x13)
+92	2	3	3	4	4	3	4	4	3	3	33	82.5
+93	4	4	4	2	4	4	4	4	4	2	36	90
+94	4	4	4	4	4	4	4	4	4	4	40	100
+95	3	3	3	2	3	3	2	4	3	3	29	72.5
+96	2	2	2	3	3	2	3	2	2	3	24	60
+97	3	2	3	2	3	3	2	3	2	2	25	62.5
+98	2	4	4	3	2	4	3	4	4	4	34	85
+99	4	4	4	4	4	4	4	4	4	4	40	100
+100	4	4	4	4	4	4	4	4	4	4	40	100
+Avg SUS												72.3
+END TABLE
+P0644	[Normal]	For the user group, the summation of final SUS scores is 7320, with a total sample size of 100 respondents. To compute the average SUS score, the total SUS score was divided by the number of respondents, resulting in an average score of 72.
+P0645	[Normal]	Average SUS Score from Users:
+P0646	[Normal]	Given:
+P0647	[Normal]	= 7320
+P0649	[Normal]	Solution:
+P0651	[Normal]	Users’ average SUS Score
+P0652	[Normal]	Table 8 presents the computed results from the lawyers’ responses after processing the odd- and even-numbered questions in the System Usability Scale (SUS)
+P0653	[Normal]	questionnaire. For odd-numbered items, 1 was subtracted from the original score, while for even-numbered items, the original score was subtracted from 5.
+P0654	[Normal]	Table 8
+P0655	[Normal]	Lawyers SUS Results
+TABLE 13 (13x13)
+Respondent	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Question No.	Total	SUS Score
+	1	2	3	4	5	6	7	8	9	10		
+1	3	2	3	2	2	3	3	2	2	2	24	60
+2	2	2	2	3	2	3	4	3	4	3	28	70
+3	2	2	2	2	2	2	2	2	2	2	20	50
+4	3	3	3	3	3	3	4	3	3	2	30	75
+5	2	4	4	4	4	4	4	4	4	4	38	95
+6	3	4	4	4	4	4	3	4	3	4	37	92.5
+7	2	2	2	2	2	2	2	2	2	2	20	50
+8	2	3	2	4	2	3	3	3	2	4	28	70
+9	3	3	3	4	2	3	3	3	2	3	29	72.5
+10	2	3	3	3	4	3	2	4	3	3	30	75
+Avg SUS												71
+END TABLE
+P0657	[Normal]	The lawyer group arrived to a summation of final SUS scores amounting to 710, with a total sample size of 10 respondents. The researchers computed an average SUS score of 71.
+P0658	[Normal]	Average SUS Score from Lawyers:
+P0659	[Normal]	Given:
+P0662	[Normal]	Solution:
+P0664	[Normal]	Lawyers’ average SUS Score
+P0665	[Normal]	Furthermore, the total computed SUS score from the user group, which is 72, along with the computed SUS score from the lawyer group, which is 71, both fall within the 60th to 64th percentile range. This indicates that the system scored between 60 to 64 percent higher than other comparable systems, demonstrating above-average performance relative to similar applications. In terms of grading, this percentile range corresponds to a "C+" grade and is classified with a "Good" usability rank. These results suggest that the application is generally functional, operational, and meets the basic expectations of both user groups. The scores reflect a generally positive perception of the system’s usability, indicating that users and lawyers find the interface acceptable and reasonably easy to navigate.
+P0666	[Normal]	At the same time, although the scores are favorable, they also imply that there are still areas within the system that may benefit from further refinement and improvement to enhance the overall user experience.
+P0667	[Normal]	Chapter 4
+P0668	[Normal]	CONCLUSIONS AND RECOMMENDATIONS
+P0669	[Normal]	This chapter provides a summary of the conclusions drawn from the results and findings of the study. It presents the key interpretations which reflect how the objectives of the research were addressed. In addition, it presents the researchers' recommendations, which are intended to guide future researchers and developers who may undertake similar studies.
+P0670	[Normal]	Conclusions
+P0671	[Normal]	This section presents the conclusions of the four objectives of the study. The following findings were identified by the researchers:
+P0672	[Normal]	1. The system’s information requirements were defined for clients, who provide personal details and ID, and lawyers, who provide professional credentials and firm information, alongside system specifications like RAM, storage, OS, and connectivity.
+P0673	[Normal]	2. The 4+1 architectural framework, supported by UML diagrams, effectively guided the system’s structural design and facilitated a smooth transition from planning to development.
+P0674	[Normal]	3. The study identified core features of the system, including lawyer-client matching, user profiles, legal document access, and scheduling functionality.
+P0675	[Normal]	4. Usability testing results placed the application within a ‘C’ grade range, reflecting a good level of usability while indicating areas that can be improved.
+P0676	[Normal]	Recommendations
+P0677	[Normal]	The following recommendations present ways to enhance the application and guide future researchers exploring the system:
+P0678	[Normal]	1. Clearly define and refine client and lawyer information requirements to support accurate and secure system functionality.
+P0679	[Normal]	2. Establish partnerships with public legal institutions in Baguio City to expand legal access and build system credibility.
+P0680	[Normal]	3. Enable offline access to selected legal documents to increase usability in low-connectivity areas.
+P0681	[Normal]	4. Conduct regular usability testing with real users to continuously identify pain points and optimize user experience in future updates.
+P0682	[Normal]	REFERENCES
+P0683	[Footer]	ABA issues guidance for lawyers with clients who have communication differences. (2021, October 21). American Bar Association. https://www.americanbar.org/news/abanews/aba-news-archives/2021/10/aba-issues-guidance-for-lawyers-with-clients-who-have-communicat/
+P0684	[Footer]	Abegunde, B., & Joshua, B. O. T. (2020). Reflections on the legal aid architecture in Nigeria and the syndrome of unequal access to justice. Journal of Law and Judicial System, 3(1), 16–27. https://doi.org/10.22259/2637-5893.0301002
+P0685	[Footer]	Ahmadzadegan, M. H., Izadyar, M., Deilami, H. A., A, S. B., & Ghorbani, H. (2020). Detailed study on the features of mobile applications. 2020 International Conference on Electronics and Sustainable Communication Systems (ICESC), 901–907. https://doi.org/10.1109/icesc48915.2020.9155780
+P0686	[Footer]	Ahmadzadegan, M. H., Izadyar, M., Deilami, H. A., Banu, S., & Ghorbani, H. (2020). Detailed study on the features of mobile applications. 2020 International Conference on Electronics and Sustainable Communication Systems
+P0687	[Footer]	(ICESC). https://doi.org/10.1109/icesc48915.2020.9155780
+P0688	[Footer]	Bhat, A. (2023, August 14). System Usability Scale: What it is, Calculation + Usage. QuestionPro. https://www.questionpro.com/blog/system-usability-scale/
+P0689	[Footer]	Borla, A. J., & Cruz, M. J. (2024). The Conflicts in Legal Structure in Recognizing the Rights of Indigenous Communities in the Philippines. Far Eastern University-Manila. https://doi.org/10.13140/RG.2.2.22893.81120
+P0690	[Footer]	Bottorff, S. (2023, August 25). How Do Lawyers Get More Clients? National Law Review. https://natlawreview.com/article/how-do-lawyers-get-more-clients?fbclid=IwY2xjawGpe2lleHRuA2FlbQIxMAABHVxK9byGk3Yb37GYEn7UkREzH096In3xu3wyxiqMbjusY2EVwvYk81kUZA_aem_4814li9C-ERlu8RXFVtsvQ
+P0691	[Footer]	CDRRMO-BAGUIO - Hazards. (2025). https://www.cdrrmo.baguio.gov.ph/advisory/hazards
+P0692	[Footer]	Chaware, P., Mahajan, P., Kharade, R., Kharat, V., & Waghmode, R. (2024). Android Legal Assistance Application: Bridging the Gap in Legal Access.
+P0693	[Footer]	International Journal of Scientific Research in Engineering and Management (IJSREM), 08(04). https://doi.org/10.55041/IJSREM31822
+P0694	[Footer]	Connosco, F. (2023, August 29). Legal Enquiry: Expert Legal Advice & Consultation | [Brand Name] – Produtores Florestais. https://www.produtoresflorestais.pt/legal-enquiry-expert-legal-advice-consultation-brand-name/
+P0695	[Footer]	Dam, R. F. (2024, November 27). The 5 stages in the design thinking process. The Interaction Design Foundation. https://www.interaction-design.org/literature/article/5-stages-in-the-design-thinking-process?srsltid=AfmBOopaNP94ws8usxFiWi3qVRcFjX-6OCswE7hXgoCDVggtS84kjAKu&fbclid=IwY2xjawGz5vVleHRuA2FlbQIxMAABHU5wpiokQBQH2IxurQmYWG4OlxppE69lym9mIkzzL1FtVZ6zs92zw2IvxA_aem_ivwzeisgl6dwTylAhpJPBw
+P0696	[Footer]	Gemini Team, Anil, R., Borgeaud, S., Alayrac, J., Yu, J., Soricut, R., Schalkwyk, J., Dai, A. M., Hauth, A., Millican, K., Silver, D., Johnson, M., Antonoglou, I., Schrittwieser, J., Glaese, A., Chen, J., Pitler, E.,
+P0697	[Footer]	Lillicrap, T., Lazaridou, A., Vinyals, O. (2023, December 19). Gemini: a family of highly capable multimodal models. arXiv.org. https://arxiv.org/abs/2312.11805
+P0698	[Footer]	Golzar, J., Noor, S., & Tajik, O. (2022). Convenience Sampling. www.ijels.net. https://doi.org/10.22034/ijels.2022.162981
+P0699	[Footer]	Google (2024). Gemini 1.5 Flash. https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/1-5-flash
+P0700	[Footer]	Hagan, M., & Li, Y. (2020). Legal Help Search Audit: Are search engines effective brokers of legal information? SSRN Electronic Journal. https://doi.org/10.2139/ssrn.3623333
+P0701	[Footer]	Hagan, M., & Özenç, F. K. (2020). A design space for legal and systems capability: interfaces for Self-Help in complex systems. Design Issues, 36(3), 61–81. https://doi.org/10.1162/desi_a_00604
+P0702	[Footer]	Kinney, B. (2024). The new standard: Why every ethical lawyer should have an app. https://www.casestatus.com/blog/best-app-for-lawyers
+P0703	[Footer]	Laoyan, S. (2024, February 2). What is Agile Methodology? (A Beginner’s Guide) [2024] • Asana. Asana. https://asana.com/resources/agile-methodology
+P0704	[Footer]	Lupo, G., & Carnevali, D. (2022). Smart Justice in Italy: cases of apps created by lawyers for lawyers and
+P0705	[Footer]	beyond. Laws, 11(3), 51. https://doi.org/10.3390/laws11030051
+P0706	[Footer]	Matich, T. (2024, October 8). A guide to better law firm client communication. Clio. https://www.clio.com/blog/law-firm-client-communication/
+P0707	[Footer]	Matsyupa, K. V., Maksimova, S. Y., & Ilyukhin, N. I. (2022). Legalese or lawspeak – diversity within the unity. The European Proceedings of Social & Behavioural Sciences, 424–431. https://doi.org/10.15405/epsbs.2022.01.68
+P0708	[Footer]	Medina, M. (2024, January 6). Baguio City in focus | Inquirer Business. INQUIRER.net. https://business.inquirer.net/439869/baguio-city-in-focus-2
+P0709	[Footer]	Mike. (2024, October 3). New study: How consumers choose lawyers in 2024 | iLawyerMarketing.com. Internet Marketing for Lawyers. https://www.ilawyermarketing.com/new-study-how-consumers-choose-lawyers-in-2024/
+P0710	[Footer]	Minaee, S., Kalchbrenner, N., Cambria, E., Nikzad, N., Chenaghlu, M., & Gao, J. (2020). Deep Learning based text Classification: A Comprehensive review.
+P0711	[Footer]	arXiv(Cornell University). https://doi.org/10.48550/arxiv.2004.03705
+P0712	[Footer]	Minority Rights Group. (2024, April 12). Indigenous peoples in the Philippines - Minority Rights Group. https://minorityrights.org/communities/indigenous-peoples-5/
+P0713	[Footer]	Mojon, A., Mahari, R., & Lera, S. C. (2024, August 29). Data-Driven law firm rankings to reduce information asymmetry in legal disputes. arXiv.org. https://arxiv.org/abs/2408.16863
+P0714	[Footer]	Okeowo, K. (2024, September 27). How Legal Mobile Apps are Empowering Legal Professionals and Clients in 2024 - aptResponse Blog. aptResponse Blog - Top legal platform in Nigeria. https://blog.aptresponse.io/how-legal-mobile-apps-are-empowering-legal-professionals-and-clients-in-2024/
+P0715	[Footer]	Okoro, A. S. (2022). Access to Justice: The Role of Legal Aid in Society. Journal of Interdisciplinary Studies in Society, Law, and Politics, 1(2), 34–41. https://doi.org/10.61838/kman.isslp.1.2.6
+P0716	[Footer]	Ostendorff, M., Blume, T., & Ostendorff, S. (2020). Towards an Open Platform for Legal Information. arXiv, 385–388. https://doi.org/10.1145/3383583.3398616Park, S.,
+P0717	[Footer]	Lee, D., Park, J., & Kim, J. (2021). A survey of
+research on Data Analytics-Based Legal Tech.
+Sustainability, 13(14), 8085.
+https://doi.org/10.3390/su13148085
+P0718	[Footer]	Philippine Statistics Authority. (2023, February 15). https://rssocar.psa.gov.ph/population-statistics/node/56698
+P0719	[Footer]	Quteishat, N. E. M. A. (2024). Exploring the role of AI in modern legal practice: opportunities, challenges, and ethical implications. Deleted Journal, 20(6s), 3040–3050. https://doi.org/10.52783/jes.3320
+P0720	[Footer]	Reuters, T. (2024, October 26). Attorney-client communication: The key to happy clients | Legal Insights Europe. Legal Insights Europe. https://legalsolutions.thomsonreuters.co.uk/blog/2024/10/26/exceptional-communication-the-key-to-keeping-your-legal-clients-happy/
+P0721	[Footer]	Sanadi, N. a. M., & Bhat, N. V. (2022). A review paper on Natural Language Processing (NLP). International Journal of Advanced Research in Science Communication and Technology, 23–29. https://doi.org/10.48175/ijarsct-2685
+P0722	[Footer]	Santiago, R. (2024, May 30). Justice for the Marginalized:
+P0723	[Footer]	beyond free legal services, addressing systemic
+     injustices. Manila Bulletin.
+     https://mb.com.ph/2024/5/29/justice-for-the
+ 	marginalized-beyond-free-legal-services-addressing
+     systemic-injustices
+P0724	[Footer]	Santos, J., Jr. (2023, August 10). Legal services still elusive for poor Filipinos amid reform attempts. https://phkule.org/article/780/legal-services-still-elusive-for-poor-filipinos-amid-reform-attempts/
+P0725	[Footer]	Singh, V., & Chobotaru, J. (2022). Digital Divide: Barriers to accessing online government services in Canada. Administrative Sciences, 12(3), 112. https://doi.org/10.3390/admsci12030112
+P0726	[Footer]	Thakur, A. (2024). The Art of Prompting: Unleashing the Power of Large Language Models. Amity Institute of Information and Technology. https://doi.org/10.13140/RG.2.2.18470.54089
+P0727	[Footer]	The importance of case consultations: Why they matter. (2024, May 17). BertgramGraf. https://www.bertramgraf.com/blog/2024/may/the-importance-of-case-consultations-why-they-ma/
+P0728	[Footer]	Tiongco, G. J. (2020, September 20). Challenges of Free
+Legal Aid in the Philippines - Thomson Reuters
+P0729	[Footer]	Foundation. Thomson Reuters Foundation.
+https://www.trust.org/impact-story/a-rock-and-a-hard-
+place-challenges-of-free-legal-aid-in-the-philippines/
+P0730	[Footer]	Tiongco, G. J. (2022). A ROCK AND a HARD PLACE: Challenges of free legal aid in the Philippines | TSB LAW. TSB LAW. https://www.tiongcosiaobellolaw.com/news/a-rock-and-a-hard-place%3A-challenges-of-free-legal-aid-in-the-philippines
+P0731	[Footer]	Tung, K. (2019). AI, the internet of legal things, and lawyers. Journal of Management Analytics, 6(4), 390–403. https://doi.org/10.1080/23270012.2019.1671242
+P0732	[Footer]	Tuttle, G. (2021, July 1). What is design thinking and why is it important? Ideas. https://www.wework.com/ideas/professional-development/creativity-culture/what-is-design-thinking?fbclid=IwY2xjawGz5vNleHRuA2FlbQIxMAABHeuY9xJzrB73R_8tDrWggwJJJgNP5a1jG9uzJMXtmftBNQEx7NM-pDk0rQ_aem_x3BJ27Na662vOsoAJtrqpA
+P0733	[Footer]	Uppal, C. (2021, September 26). Issues people face when looking for the perfect lawyer for their case. The Student Lawyer. https://thestudentlawyer.com/2021/06/30/issues-people-
+P0734	[Footer]	face-when-looking-for-the-perfect-lawyer-for-their-case/
+P0735	[Footer]	Usha, M., & Kumar, H. R. S. (2024). Legal ease. International Journal of Advanced Research in Science Communication and Technology, 144–149. https://doi.org/10.48175/ijarsct-19118
+P0736	[Footer]	van Rooij, B. (2021). Do People Know the Law? Empirical Evidence about Legal Knowledge and Its Implications for Compliance. In Cambridge University Press eBooks (pp. 467–488). https://doi.org/10.1017/9781108759458.032
+P0737	[Footer]	Voumick, D., Sen, S., Kazi, N. J., Parisa, H. I., Khan, M. M., & Dixit, P. (2022). Development a web application for lawyer and client virtual communication. 2022 IEEE 12th Annual Computing and Communication Workshop and Conference (CCWC), 0295–0301. https://doi.org/10.1109/ccwc54503.2022.9720907
+P0738	[Footer]	Waghmode, R. (2024). Revolutionizing Legal Assistance: A comprehensive survey on the development and implementation of a Personalized Legal Guidance Android application. INTERANTIONAL JOURNAL OF SCIENTIFIC RESEARCH IN ENGINEERING AND MANAGEMENT, 08(03), 1–13. https://doi.org/10.55041/ijsrem28971
+P0739	[Footer]	Wang, M. (2023). Use of artificial intelligence (AI) in the field of law. Arizona Law Journal of Emerging Technologies., 6(1). https://doi.org/10.2458/azlawjet.5766
+P0740	[Footer]	Waye, V., Bogomolov, T., & Pich, A. (2020). Consumer perceptions of online legal service providers. ANU Journal of Law and Technology, 1. https://find.library.unisa.edu.au/discovery/fulldisplay/alma9916446198401831/61USOUTHAUS_INST:ROR
+P0741	[Footer]	What is Rapid Prototyping in UX Design? (2024, November 30). The Interaction Design Foundation. https://www.interaction-design.org/literature/topics/rapid-prototyping?srsltid=AfmBOootJwcZFC5yRsPcjDocKBjd9wDitCNmICifn_1EvRnlWiiqbFV2&fbclid=IwY2xjawHOiH5leHRuA2FlbQIxMQABHTe6nHhd34RQc0PnRALvaaY32MzorLXSSdNgwls4r7ryWJ-y3zBG6hC6Bg_aem_YBgQF17Y8gJfYF8CUH6r_g#1._create_the_prototype-5
+P0742	[Footer]	WJP Rule of Law Index. (n.d.). https://worldjusticeproject.org/rule-of-law-index/country/2022/Philippines/Wu, Y., Wang, C.,
+P0743	[Footer]	Gumusel, E., & Liu, X. (2024). Knowledge-Infused Legal Wisdom: Navigating LLM Consultation through the Lens
+P0744	[Footer]	of Diagnostics and Positive-Unlabeled Reinforcement Learning. arXiv (Cornell University). https://doi.org/10.48550/arxiv.2406.03600
+P0745	[Footer]	Yang, X., Wang, Z., Wang, Q., Wei, K., Zhang, K., & Shi, J. (2024). Large language models for automated Q&A involving legal documents: a survey on algorithms, frameworks and applications. International Journal of Web Information Systems, 20(4), 413–435. https://doi.org/10.1108/ijwis-12-2023-0256
+P0746	[Footer]	Yao, Y. (2021). Uberizing the Legal Profession? Three Essays on Lawyers in Digital Platform-based Legal Services. University of Toronto.
+P0747	[Normal]	APPENDICES
+P0748	[Normal]	Appendix A
+P0749	[Normal]	COMMUNICATION LETTERS
+P0753	[Normal]	Appendix B
+P0754	[Normal]	TBI ASSESSMENT CERTIFICATE
+P0756	[Normal]	Appendix C
+P0757	[Normal]	LETTER OF REQUEST
+P0759	[Normal]	Appendix D
+P0760	[Normal]	SAMPLE USABILITY TEST SURVEY
+P0764	[Normal]	Appendix E
+P0765	[Normal]	LIST OF LEGAL SPECIALIZATIONS
+P0770	[Normal]	Appendix F
+P0771	[Normal]	SAMPLE GENERATED JSON OBJECTS
+P0778	[Normal]	Appendix G
+P0779	[Normal]	SAMPLE OF LAWYER PROFILE FROM DATABASE
+P0782	[Normal]	Appendix H
+P0783	[Normal]	DOCUMENTATION
+P0785	[Normal]	Consultation and interview for the design thinking stage at Oracion Barlis & Associates.
+P0786	[Normal]	Consultation and interview for application testing and application refinements with Atty. Jadis Domogan of The Law Firm of Domogan Chan and Mabalot.
+P0787	[Normal]	Appendix I
+P0788	[Normal]	TECHNOLOGY BRIEF
+P0795	[Normal]	Appendix J
+P0796	[Normal]	CODE SNIPPETS FOR MAIN FEATURES
+P0798	[Normal]	Snippet 1: The Main NLP Router (findLawyer function)
+P0799	[Normal]	Main decision-making function for lawyer matching.
+P0800	[Normal]	This function determines whether to use direct mapping for pre-defined cases or to initiate NLP analysis for custom user input.
+P0807	[Normal]	Snippet 2: Gemini API Integration for NLP
+P0808	[Normal]	This function sends user input to the Gemini API to classify legal concerns into categories and subcategories using natural language understanding, returning a structured JSON response with an empathetic explanation in the user's language.
+P0809	[Normal]	Appendix K
+P0810	[Normal]	USER MANUAL
+P0816	[Normal]	CURRICULUM VITAE
+TABLE 14 (8x3)
+CAMIL GRACE J. BUMATAY
+- 124-A, Purok Pidawan, Loakan Proper, Baguio City
+( +63.977.720.5190
+: bumataygrace7@gmail.com	CAMIL GRACE J. BUMATAY
+- 124-A, Purok Pidawan, Loakan Proper, Baguio City
+( +63.977.720.5190
+: bumataygrace7@gmail.com	
+		
+WORK EXPERIENCE	WORK EXPERIENCE	WORK EXPERIENCE
+AI Data Annotator
+
+
+Online Transcriptionist	: Welocalize
+: Remote (Worked from Home)
+: November 2024 – Present
+: Transcription Staff
+: Remote (Worked from Home)
+: June 2020 – July 2022	: Welocalize
+: Remote (Worked from Home)
+: November 2024 – Present
+: Transcription Staff
+: Remote (Worked from Home)
+: June 2020 – July 2022
+EDUCATIONAL ATTAINMENT	EDUCATIONAL ATTAINMENT	EDUCATIONAL ATTAINMENT
+Tertiary	: Bachelor of Science in Information Technology
+: Web Technology
+: University of the Cordilleras
+: Gov. Pack Rd., Baguio City
+: Expected Date of Graduation: September 2025	: Bachelor of Science in Information Technology
+: Web Technology
+: University of the Cordilleras
+: Gov. Pack Rd., Baguio City
+: Expected Date of Graduation: September 2025
+Secondary	: University of the Cordilleras
+: Gov. Pack Rd., Baguio City
+: July 25, 2020
+: With Honors	: University of the Cordilleras
+: Gov. Pack Rd., Baguio City
+: July 25, 2020
+: With Honors
+Primary	: Dona Aurora Elementary School
+: Lopez Jaena St, Baguio, 2600 Benguet
+: March 28, 2014	: Dona Aurora Elementary School
+: Lopez Jaena St, Baguio, 2600 Benguet
+: March 28, 2014
+END TABLE
+TABLE 15 (9x2)
+SKILLS AND QUALIFICATIONS	SKILLS AND QUALIFICATIONS
+Knowledgeable in Laravel 7, WordPress, and Visual Studio Code
+Proficient in Python, Java, and PHP
+Experienced in Adobe Photoshop, Adobe Premiere, Microsoft Word, Excel, and PowerPoint
+Skilled in front-end and back-end web development
+Capable of multitasking and working well under pressure
+Strong in verbal and interpersonal communication skills	Knowledgeable in Laravel 7, WordPress, and Visual Studio Code
+Proficient in Python, Java, and PHP
+Experienced in Adobe Photoshop, Adobe Premiere, Microsoft Word, Excel, and PowerPoint
+Skilled in front-end and back-end web development
+Capable of multitasking and working well under pressure
+Strong in verbal and interpersonal communication skills
+AWARDS AND CERTIFICATES	AWARDS AND CERTIFICATES
+With Honors - Information and Communications Technology Strand – Major in Contact Center Services (Senior High School)
+July 25, 2020
+University of the Cordilleras, Gov. Pack Rd., Baguio City	With Honors - Information and Communications Technology Strand – Major in Contact Center Services (Senior High School)
+July 25, 2020
+University of the Cordilleras, Gov. Pack Rd., Baguio City
+PERSONAL INFORMATION	PERSONAL INFORMATION
+Date of Birth	: July 20, 2002
+Age	: 22 years old
+Height	: 5’2”
+Weight	: 75 kgs.
+END TABLE
+P0819	[Normal]	Bianca Cassandra M. Jimenez
+P0820	[Normal]	 #59 Middle Quezon Hill, Baguio City
+P0821	[Normal]	 0977 810 0582
+P0822	[Normal]	 biancajimenez250@gmail.com
+TABLE 16 (6x2)
+EDUCATIONAL ATTAINMENT	EDUCATIONAL ATTAINMENT
+Undergraduate	: Bachelor of Science in Information Technology - Major in Network and Security 
+: University of the Cordilleras 
+: Governor Pack Road, Baguio City 
+: Expected date of graduation: September 2025
+Senior High School	: Science, Technology, Engineering, and Mathematics Track 
+: Saint Louis University – Laboratory Senior High School 
+: C.M. Recto St., Baguio City 
+: March 2020
+Junior High School	:  Saint Louis University – Laboratory Junior High School 
+:  C.M. Recto St., Baguio City 
+: March 2018
+Primary	:  Baguio Achievers Academy 
+: 15 S Laurel St., Baguio City 
+: April 2014
+SKILLS AND QUALIFICATIONS	SKILLS AND QUALIFICATIONS
+END TABLE
+P0823	[Normal]	Experienced in Cisco Packet Tracer
+P0824	[Normal]	Experienced in Adobe After Effects
+P0825	[Normal]	Experienced in Microsoft Office and Google Workspace
+P0826	[Normal]	Experienced in configuring basic Cisco network devices
+P0827	[Normal]	Knowledgeable in Figma and Proto.io
+P0828	[Normal]	Knowledgeable in Python
+P0829	[Normal]	Knowledgeable in HTML and CSS
+P0830	[Normal]	Strong written, verbal, and interpersonal skill
+P0831	[Normal]	Critical thinking and attention to detail
+P0832	[Normal]	Team collaboration abilities
+P0833	[Normal]	Pleasant and professional personality
+P0834	[Heading 1]	SEMINARS and TRAININGS ATTENDED
+P0835	[Normal]	• 	Google I/O Extended 2024 Baguio
+P0836	[Normal]	July 20, 2024
+P0837	[Normal]	University of Baguio
+P0838	[Heading 1]	AWARDS and CERTIFICATES
+P0839	[Normal]	Participant – Cisco NetAcad Riders 2025 Round 1
+P0840	[Normal]	March 26, 2025
+P0841	[Normal]	University of the Cordilleras
+P0842	[Normal]	Cybersecurity Essentials – Cisco Networking Academy
+P0843	[Normal]	July 11, 2024
+P0844	[Normal]	University of the Cordilleras
+P0845	[Normal]	Participant - Cisco NetAcad Riders 2024 Round 1
+P0846	[Normal]	March 26, 2024
+P0847	[Normal]	University of the Cordilleras
+P0848	[Normal]	Champion – Technopreneurship Demo Day V3
+P0849	[Normal]	March 31, 2023
+P0850	[Normal]	University of the Cordilleras – Legarda Campus, Baguio City
+TABLE 17 (8x2)
+PERSONAL INFORMATION	
+Date of Birth	: September 25, 2002
+Place of Birth	: Baguio City
+Age	: 22 years old
+Gender	: Female
+Citizenship	: Filipino
+Height	: 5’2”
+Weight	: 50 kgs.
+END TABLE
+P0852	[Normal]	KIRSTEN JOY Q. LAZARO
+P0853	[Normal]	 #370 Iron Street Upper Quezon Hill,
+P0854	[Normal]	Baguio City, Philippines
+P0855	[Normal]	 +63.968.758.7080
+P0856	[Normal]	 lazarokirstenjoy@gmail.com
+P0857	[Heading 1]	EDUCATIONAL ATTAINMENT
+TABLE 18 (3x2)
+Undergraduate	: Bachelor of Science in Information Technology  
+: Web Technology Track  
+: University of the Cordilleras  
+: Gov. Pack Rd., Baguio City  
+: Expected Date of Graduation: September 2025
+Senior High School
+ 
+ 
+
+Junior High School	: Systems Technology Institute 
+: New Lucban, Baguio City 
+: 2018  
+
+: Saint Louis School Center High School Dept.
+: Naguillian Road, Baguio City
+: 2016
+Primary	: Quezon Hill Elementary School
+END TABLE
+P0858	[Normal]	: Quezon Hill Road, Baguio City
+P0859	[Normal]	: 2012
+P0860	[Heading 1]	SKILLS AND QUALIFICATIONS
+P0861	[List Paragraph]	Web Design
+P0863	[List Paragraph]	Design Thinking
+P0865	[List Paragraph]	Front End Coding
+P0867	[List Paragraph]	Problem Solving
+P0868	[List Paragraph]	Experienced in using Visual Studio Code
+P0870	[List Paragraph]	Experienced in using Laravel
+P0872	[List Paragraph]	Strong Communication Skills
+P0873	[Heading 1]	SEMINARS & TRAININGS ATTENDED
+P0874	[List Paragraph]	Certified Information Systems Security Professional (CISSP)
+P0876	[List Paragraph]	Live Webinar, Mastering Microsoft Excel for Advanced Users
+P0878	[List Paragraph]	Computer System Servicing NCII
+P0880	[List Paragraph]	Google I/O Extended 2024 Baguio
+P0882	[Heading 1]	PERSONAL INFORMATION
+TABLE 19 (5x2)
+Date of Birth	: March 15, 2000
+Age	: 25 years old
+Height	: 5’1
+Weight	: 42 kgs.
+	
+END TABLE

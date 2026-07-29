@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="diagramTitle diagramDesc">
+  <title id="diagramTitle">The 4+1 View Model of Harviana</title>
+  <desc id="diagramDesc">Harviana architectural framework showing Logical, Development, Process, and Physical views connected through the central Scenarios view.</desc>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f7d5a"/>
+    </marker>
+    <style>
+      .page-title { font: 700 38px Arial, sans-serif; fill: #163b2b; letter-spacing: 0.4px; }
+      .subtitle { font: 400 20px Arial, sans-serif; fill: #52645a; }
+      .box-title { font: 700 27px Arial, sans-serif; fill: #ffffff; }
+      .box-text { font: 400 21px Arial, sans-serif; fill: #24342c; }
+      .center-title { font: 700 31px Arial, sans-serif; fill: #ffffff; }
+      .center-role { font: 700 20px Arial, sans-serif; fill: #17462f; }
+      .center-note { font: 400 19px Arial, sans-serif; fill: #315a43; }
+      .caption { font: italic 18px Arial, sans-serif; fill: #4b5d52; }
+      .connector { fill: none; stroke: #3f7d5a; stroke-width: 4; marker-start: url(#arrowGreen); marker-end: url(#arrowGreen); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <rect x="56" y="36" width="1488" height="928" rx="26" fill="#fbfdfb" stroke="#d7e4db" stroke-width="2"/>
+
+  <text x="800" y="88" text-anchor="middle" class="page-title">The “4+1” View Model of Harviana</text>
+  <text x="800" y="122" text-anchor="middle" class="subtitle">Architecture framework adapted to Harviana’s farmer-LGU-DA workflow</text>
+
+  <!-- Connectors are drawn before the cards so their ends sit cleanly behind the shapes. -->
+  <path d="M 627 392 C 660 428, 690 447, 712 462" class="connector"/>
+  <path d="M 973 392 C 940 428, 910 447, 888 462" class="connector"/>
+  <path d="M 627 658 C 660 622, 690 603, 712 588" class="connector"/>
+  <path d="M 973 658 C 940 622, 910 603, 888 588" class="connector"/>
+
+  <!-- Logical View -->
+  <g filter="url(#shadow)">
+    <rect x="96" y="158" width="540" height="238" rx="22" fill="#f7fbff" stroke="#4c8fc8" stroke-width="3"/>
+    <path d="M 118 158 H 614 Q 636 158 636 180 V 218 H 96 V 180 Q 96 158 118 158 Z" fill="#377db7"/>
+  </g>
+  <text x="126" y="202" class="box-title">Logical View</text>
+  <text x="130" y="255" class="box-text">• MVC application structure</text>
+  <text x="130" y="292" class="box-text">• Users, crop data, and predictions</text>
+  <text x="130" y="329" class="box-text">• Crop plans and calendar events</text>
+  <text x="130" y="366" class="box-text">• LGU validation relationships</text>
+
+  <!-- Development View -->
+  <g filter="url(#shadow)">
+    <rect x="964" y="158" width="540" height="238" rx="22" fill="#fbf8ff" stroke="#8063b5" stroke-width="3"/>
+    <path d="M 986 158 H 1482 Q 1504 158 1504 180 V 218 H 964 V 180 Q 964 158 986 158 Z" fill="#7053a5"/>
+  </g>
+  <text x="994" y="202" class="box-title">Development View</text>
+  <text x="998" y="255" class="box-text">• Laravel 12 and PHP 8.3</text>
+  <text x="998" y="292" class="box-text">• Blade, Tailwind CSS, and Alpine.js</text>
+  <text x="998" y="329" class="box-text">• Service and controller modules</text>
+  <text x="998" y="366" class="box-text">• Leaflet and OpenStreetMap</text>
+
+  <!-- Process View -->
+  <g filter="url(#shadow)">
+    <rect x="96" y="654" width="540" height="238" rx="22" fill="#fffaf2" stroke="#c3832d" stroke-width="3"/>
+    <path d="M 118 654 H 614 Q 636 654 636 676 V 714 H 96 V 676 Q 96 654 118 654 Z" fill="#b8741c"/>
+  </g>
+  <text x="126" y="698" class="box-title">Process View</text>
+  <text x="130" y="751" class="box-text">• Authentication and role access</text>
+  <text x="130" y="788" class="box-text">• Crop plan to ML estimate</text>
+  <text x="130" y="825" class="box-text">• Farmer report to LGU validation</text>
+  <text x="130" y="862" class="box-text">• Forecast and report updates</text>
+
+  <!-- Physical View -->
+  <g filter="url(#shadow)">
+    <rect x="964" y="654" width="540" height="238" rx="22" fill="#f4fcfa" stroke="#388c80" stroke-width="3"/>
+    <path d="M 986 654 H 1482 Q 1504 654 1504 676 V 714 H 964 V 676 Q 964 654 986 654 Z" fill="#2d7e72"/>
+  </g>
+  <text x="994" y="698" class="box-title">Physical View</text>
+  <text x="998" y="751" class="box-text">• Web browsers on user devices</text>
+  <text x="998" y="788" class="box-text">• Laravel application on Railway</text>
+  <text x="998" y="825" class="box-text">• Railway PostgreSQL database</text>
+  <text x="998" y="862" class="box-text">• ML and weather services</text>
+
+  <!-- Central Scenarios View -->
+  <g filter="url(#shadow)">
+    <ellipse cx="800" cy="525" rx="224" ry="126" fill="#e7f5eb" stroke="#2f7a4d" stroke-width="5"/>
+    <path d="M 591 495 A 224 126 0 0 1 1009 495 L 1009 518 L 591 518 Z" fill="#2f7a4d"/>
+  </g>
+  <text x="800" y="490" text-anchor="middle" class="center-title">Scenarios (+1)</text>
+  <rect x="623" y="535" width="113" height="38" rx="19" fill="#ffffff" stroke="#86b895" stroke-width="2"/>
+  <rect x="744" y="535" width="149" height="38" rx="19" fill="#ffffff" stroke="#86b895" stroke-width="2"/>
+  <rect x="901" y="535" width="76" height="38" rx="19" fill="#ffffff" stroke="#86b895" stroke-width="2"/>
+  <text x="679" y="561" text-anchor="middle" class="center-role">Farmer</text>
+  <text x="818" y="561" text-anchor="middle" class="center-role">LGU Validator</text>
+  <text x="939" y="561" text-anchor="middle" class="center-role">DA</text>
+  <text x="800" y="606" text-anchor="middle" class="center-note">Role-based use cases connect and validate all views</text>
+
+  <text x="800" y="938" text-anchor="middle" class="caption">Figure X. The “4+1” View Model of Harviana.</text>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1080" viewBox="0 0 1600 1080">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#263238"/>
+    </marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#173b2c}.subtitle{font:18px Arial,sans-serif;fill:#54635c}
+      .head{font:700 20px Arial,sans-serif;fill:#18352a}.msg{font:18px Arial,sans-serif;fill:#263238}.small{font:16px Arial,sans-serif;fill:#455a64}.label{font:700 17px Arial,sans-serif;fill:#315846}
+      .life{stroke:#789187;stroke-width:2;stroke-dasharray:9 8}.call{stroke:#263238;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.return{stroke:#52665d;stroke-width:2.2;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1080" fill="#ffffff"/>
+  <text x="800" y="55" text-anchor="middle" class="title">Harviana User Login Sequence Diagram</text>
+  <text x="800" y="86" text-anchor="middle" class="subtitle">Authentication and role-based redirection</text>
+
+  <g>
+    <rect x="80" y="125" width="230" height="72" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/>
+    <text x="195" y="168" text-anchor="middle" class="head">User</text>
+    <rect x="440" y="125" width="250" height="72" rx="10" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/>
+    <text x="565" y="168" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="810" y="125" width="360" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/>
+    <text x="990" y="157" text-anchor="middle" class="head">AuthenticatedSessionController</text>
+    <text x="990" y="181" text-anchor="middle" class="small">and LoginRequest</text>
+    <rect x="1290" y="125" width="240" height="72" rx="10" fill="#fff3e0" stroke="#b27624" stroke-width="2"/>
+    <text x="1410" y="155" text-anchor="middle" class="head">Railway</text>
+    <text x="1410" y="181" text-anchor="middle" class="head">PostgreSQL</text>
+  </g>
+
+  <line x1="195" y1="197" x2="195" y2="1005" class="life"/>
+  <line x1="565" y1="197" x2="565" y2="1005" class="life"/>
+  <line x1="990" y1="197" x2="990" y2="1005" class="life"/>
+  <line x1="1410" y1="197" x2="1410" y2="1005" class="life"/>
+
+  <line x1="195" y1="260" x2="565" y2="260" class="call"/>
+  <text x="380" y="248" text-anchor="middle" class="msg">1. Enter email and password</text>
+  <line x1="565" y1="330" x2="990" y2="330" class="call"/>
+  <text x="778" y="317" text-anchor="middle" class="msg">2. Submit POST /login</text>
+  <line x1="990" y1="400" x2="1410" y2="400" class="call"/>
+  <text x="1200" y="387" text-anchor="middle" class="msg">3. Retrieve user account</text>
+  <line x1="1410" y1="470" x2="990" y2="470" class="return"/>
+  <text x="1200" y="456" text-anchor="middle" class="msg">4. Return account and password hash</text>
+
+  <path d="M990 530 h115 v62 h-115" class="call"/>
+  <text x="1120" y="552" class="msg">5. Verify credentials,</text>
+  <text x="1120" y="576" class="msg">rate limit, and account</text>
+
+  <rect x="105" y="630" width="1435" height="324" rx="8" fill="#f8fbf9" stroke="#6b8779" stroke-width="2"/>
+  <path d="M105 630 h230 l25 24 h-255 z" fill="#dcece2" stroke="#6b8779" stroke-width="2"/>
+  <text x="135" y="652" class="label">alt</text>
+  <text x="385" y="655" class="label">Valid credentials</text>
+  <line x1="105" y1="790" x2="1540" y2="790" stroke="#9aaca3" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="130" y="818" class="label">Invalid credentials</text>
+
+  <line x1="990" y1="700" x2="565" y2="700" class="return"/>
+  <text x="778" y="686" text-anchor="middle" class="msg">6. Regenerate session and redirect by role</text>
+  <line x1="565" y1="755" x2="195" y2="755" class="return"/>
+  <text x="380" y="741" text-anchor="middle" class="msg">7. Display assigned dashboard</text>
+
+  <line x1="990" y1="855" x2="565" y2="855" class="return"/>
+  <text x="778" y="842" text-anchor="middle" class="msg">6a. Return authentication error</text>
+  <line x1="565" y1="910" x2="195" y2="910" class="return"/>
+  <text x="380" y="897" text-anchor="middle" class="msg">7a. Display login error</text>
+
+  <g transform="translate(0,808)">
+    <rect x="80" y="197" width="230" height="52" rx="8" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/>
+    <text x="195" y="230" text-anchor="middle" class="head">User</text>
+    <rect x="440" y="197" width="250" height="52" rx="8" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/>
+    <text x="565" y="230" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="810" y="197" width="360" height="52" rx="8" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/>
+    <text x="990" y="230" text-anchor="middle" class="head">Authentication Controller</text>
+    <rect x="1290" y="197" width="240" height="52" rx="8" fill="#fff3e0" stroke="#b27624" stroke-width="2"/>
+    <text x="1410" y="230" text-anchor="middle" class="head">Railway PostgreSQL</text>
+  </g>
+</svg>

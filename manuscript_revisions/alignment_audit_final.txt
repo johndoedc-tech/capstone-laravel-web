@@ -1,0 +1,233 @@
+FRONT MATTER
+
+[TABLE OF CONTENTS]
+0155 tabs=[] tabchars=0 left=None hanging=None first=None jc=center fields=[] text='TABLE OF CONTENTS'
+0156 tabs=[] tabchars=0 left=7200 hanging=None first=None jc=None fields=[] text='Page'
+0157 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=[] text='TITLE PAGE 1'
+0158 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF approval \\h'] text='APPROVAL SHEET 2'
+0159 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF abstract \\h'] text='ABSTRACT 3'
+0160 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF acknowledgement \\h'] text='ACKNOWLEDGEMENT 6'
+0161 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF dedication \\h'] text='DEDICATION 8'
+0162 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF toc \\h'] text='TABLE OF CONTENTS 9'
+0163 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF lof \\h'] text='LIST OF FIGURES 11'
+0164 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF lot \\h'] text='LIST OF TABLES 14'
+0165 tabs=[] tabchars=0 left=None hanging=None first=None jc=None fields=[] text='CHAPTER'
+0166 tabs=[] tabchars=1 left=None hanging=None first=720 jc=None fields=[] text='1 INTRODUCTION'
+0167 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF background \\h'] text='Background of the Study 15'
+0168 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF importance \\h'] text='Importance of the Study 31'
+0169 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF objectives \\h'] text='Objectives of the Study 35'
+0170 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF definitions \\h'] text='Definition of Terms 35'
+0171 tabs=[] tabchars=1 left=None hanging=None first=720 jc=None fields=[] text='2 METHODOLOGY'
+0172 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF software_methodology \\h'] text='Software Development Methodology 40'
+0173 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF design_thinking \\h'] text='Design Thinking 47'
+0174 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF scope \\h'] text='Scope and Delimitation of the Study 65'
+0175 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF data_gathering \\h'] text='Data Gathering Techniques 68'
+0176 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF sources \\h'] text='Sources of Data 70'
+0177 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF usability_instruments \\h'] text='Usability Evaluation Instruments 72'
+0178 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF software_tools \\h'] text='Software Development Tools 76'
+0179 tabs=[] tabchars=1 left=None hanging=None first=720 jc=None fields=[] text='3 FINDINGS OF THE STUDY'
+0180 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF information_requirements \\h'] text='Information Requirements for Harviana 82'
+0181 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF architecture \\h'] text='Architecture Framework of Harviana 87'
+0182 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF features \\h'] text='Features of Harviana 101'
+0183 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF extent_usability \\h'] text='Extent of the Usability of Harviana 113'
+0184 tabs=[] tabchars=1 left=None hanging=None first=720 jc=None fields=[] text='4 CONCLUSIONS AND RECOMMENDATIONS'
+0185 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF conclusions \\h'] text='Conclusions 129'
+0186 tabs=[('right', '8208', 'dot')] tabchars=2 left=720 hanging=None first=720 jc=None fields=['PAGEREF recommendations \\h'] text='Recommendations 131'
+0187 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF references \\h'] text='REFERENCES 133'
+0188 tabs=[] tabchars=0 left=None hanging=None first=None jc=None fields=[] text='APPENDICES'
+0189 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_a \\h'] text='A Communication Letter 141'
+0190 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_b \\h'] text='B Endorsement Letter 142'
+0191 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_c \\h'] text='C Business Model Canvas 143'
+0192 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_d \\h'] text='D Invitation Letter 145'
+0193 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_e \\h'] text='E TBI Assessment Certificate 148'
+0194 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_f \\h'] text='F Sample Usability Test Survey 149'
+0195 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_g \\h'] text='G Technology Brief 150'
+0196 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_h \\h'] text='H Documentation 151'
+0197 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_i \\h'] text='I Supporting Interfaces of Harviana 152'
+0198 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_j \\h'] text='J Relevant Code Snippets 154'
+0199 tabs=[('left', '1440', None), ('right', '8208', 'dot')] tabchars=4 left=720 hanging=None first=None jc=None fields=['PAGEREF appendix_k \\h'] text='K User Manual 159'
+0200 tabs=[('right', '8208', 'dot')] tabchars=2 left=None hanging=None first=None jc=None fields=['PAGEREF curriculum_vitae \\h'] text='CURRICULUM VITAE 162'
+
+[LIST OF FIGURES]
+0202 tabs=[] tabchars=0 left=None hanging=None first=None jc=center fields=[] text='LIST OF FIGURES'
+0203 tabs=[] tabchars=7 left=None hanging=None first=None jc=None fields=[] text='Figure No. Figure Title Page'
+0204 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_1 \\h'] text='1 Scrum Framework Applied to Harviana 43'
+0205 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_2 \\h'] text='2 Design Thinking 47'
+0206 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_3 \\h'] text='3 Empathy Map 49'
+0207 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_4 \\h'] text='4 The 5 Why Analysis 51'
+0208 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_5 \\h'] text='5 Impact-Effort Matrix 53'
+0209 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_6 \\h'] text='6 Overall Low-Fidelity Prototype of Harviana?s Main Features 55'
+0210 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_7 \\h'] text='7 Login and Registration Prototype 56'
+0211 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_8 \\h'] text='8 Crop Planning and Farmer Calendar Prototype 57'
+0212 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_9 \\h'] text='9 ML-Based Production Estimate Prototype 58'
+0213 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_10 \\h'] text='10 Damage Report Submission Prototype 59'
+0214 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_11 \\h'] text='11 Actual Harvest Recording Prototype 60'
+0215 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_12 \\h'] text='12 LGU Report Validation Prototype 61'
+0216 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_13 \\h'] text='13 Interactive Map and Weather Prototype 62'
+0217 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='14 DA Dashboard and Supply'
+0218 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF figure_14 \\h'] text='Forecast Prototype 63'
+0219 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_15 \\h'] text='15 Reports and Export Prototype 64'
+0220 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_16 \\h'] text='16 The ?4+1? View Model by Kruchten 88'
+0221 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_17 \\h'] text='17 Harviana Use Case Diagram 90'
+0222 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_18 \\h'] text='18 Harviana Class Diagram 92'
+0223 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_19 \\h'] text='19 Harviana Login Sequence Diagram 94'
+0224 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_20 \\h'] text='20 Harviana Crop Plan and Production Estimate Sequence Diagram 95'
+0225 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='21 Farmer Report and LGU Validation'
+0226 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF figure_21 \\h'] text='Sequence Diagram 96'
+0227 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='22 Harviana S equence Diagram for DA Administrator'
+0228 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF figure_22 \\h'] text='Supply Forecast 97'
+0229 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_23 \\h'] text='23 Harviana Sequence Diagram for DA Report Generation and Export 98'
+0230 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_24 \\h'] text='24 Harviana Package Diagram 99'
+0231 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_25 \\h'] text='25 Harviana Deployment Diagram 101'
+0232 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_26 \\h'] text='26 Farmer Dashboard and Crop Recommendations 103'
+0233 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_27 \\h'] text='27 Crop Planning and Farmer Calendar 104'
+0234 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_28 \\h'] text='28 ML-Based Production Estimate 105'
+0235 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_29 \\h'] text='29 Damage Report Submission 106'
+0236 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_30 \\h'] text='30 Actual Harvest Recording 107'
+0237 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_31 \\h'] text='31 LGU Report Validation 108'
+0238 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_32 \\h'] text='32 Administrative Dashboard and Municipal Supply Forecast 109'
+0239 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_33 \\h'] text='33 Crop Data Management 110'
+0240 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_34 \\h'] text='34 Interactive Agricultural Map and Weather 111'
+0241 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_35 \\h'] text='35 Reports and Export Generation 112'
+0242 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_36 \\h'] text='36 Business Model Canvas 143'
+0243 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_37 \\h'] text='37 Harviana Landing Page 152'
+0244 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF figure_38 \\h'] text='38 Harviana User Login and Registration Pages 153'
+
+[LIST OF TABLES]
+0246 tabs=[] tabchars=0 left=None hanging=None first=None jc=center fields=[] text='LIST OF TABLES'
+0247 tabs=[] tabchars=7 left=None hanging=None first=None jc=None fields=[] text='Table No. Table Title Page'
+0248 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_1 \\h'] text='1 Farmer Information 85'
+0249 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_2 \\h'] text='2 LGU Validator Information 85'
+0250 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_3 \\h'] text='3 DA Administrator Information 86'
+0251 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_4 \\h'] text='4 System Requirements 87'
+0252 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_5 \\h'] text='5 SUS Score Interpretation Scale 114'
+0253 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_6 \\h'] text='6 Farmers? SUS Questionnaire Results 115'
+0254 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_7 \\h'] text='7 Summary of Farmers? SUS Score 117'
+0255 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='8 Seven-Point USE Questionnaire'
+0256 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_8 \\h'] text='Interpretation Scale 119'
+0257 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='9 Usefulness: Usability Testing Result for'
+0258 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_9 \\h'] text='DA Administrators 120'
+0259 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='10 Ease of Use: Usability Testing Result for'
+0260 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_10 \\h'] text='DA Administrators 121'
+0261 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='11 Ease of Learning: Usability Testing Result for'
+0262 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_11 \\h'] text='DA Administrators 123'
+0263 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='12 Satisfaction: Usability Testing Result for'
+0264 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_12 \\h'] text='DA Administrators 124'
+0265 tabs=[('left', '1440', None)] tabchars=2 left=1440 hanging=720 first=None jc=None fields=[] text='13 Overall USE Questionnaire Result for'
+0266 tabs=[('right', '8496', 'dot')] tabchars=2 left=1440 hanging=None first=None jc=None fields=['PAGEREF table_13 \\h'] text='DA Administrators 126'
+0267 tabs=[('left', '1440', None), ('right', '8496', 'dot')] tabchars=4 left=1440 hanging=720 first=None jc=None fields=['PAGEREF table_14 \\h'] text='14 Overall Usability Summary of Harviana 127'
+
+SECTIONS
+section=01 body_index=0043 titlePg=True refs=[('even', 'rId8'), ('default', 'rId9'), ('first', 'rId12')] next='APPROVAL SHEET'
+section=02 body_index=0078 titlePg=True refs=[('default', 'rId14'), ('first', 'rId15')] next='ABSTRACT'
+section=03 body_index=0130 titlePg=True refs=[('default', 'rId17'), ('first', 'rId18')] next='A CKNOWLEDGEMENT'
+section=04 body_index=0142 titlePg=True refs=[('default', 'rId20'), ('first', 'rId21')] next='DEDICATION'
+section=05 body_index=0154 titlePg=True refs=[('default', 'rId23'), ('first', 'rId24')] next='TABLE OF CONTENTS'
+section=06 body_index=0201 titlePg=True refs=[('default', 'rId26'), ('first', 'rId27')] next='LIST OF FIGURES'
+section=07 body_index=0245 titlePg=True refs=[('default', 'rId29'), ('first', 'rId30')] next='LIST OF TABLES'
+section=08 body_index=0268 titlePg=True refs=[('default', 'rId32'), ('first', 'rId33')] next='Ch apter 1'
+section=09 body_index=0332 titlePg=True refs=[('default', 'rId35'), ('first', 'rId36')] next='Chapter 2'
+section=10 body_index=0473 titlePg=True refs=[('default', 'rId54'), ('first', 'rId55')] next='Chapter 3'
+section=11 body_index=0717 titlePg=True refs=[('default', 'rId78'), ('first', 'rId79')] next='Chapter 4'
+section=12 body_index=0744 titlePg=True refs=[('default', 'rId81'), ('first', 'rId82')] next='REFERENCES'
+section=13 body_index=0781 titlePg=True refs=[('default', 'rId84'), ('first', 'rId85')] next='APPENDICES'
+section=14 body_index=0784 titlePg=True refs=[('default', 'rId87'), ('first', 'rId89')] next='Appendix B'
+section=15 body_index=0790 titlePg=True refs=[('default', 'rId93'), ('first', 'rId95')] next='Appendix C'
+section=16 body_index=0799 titlePg=True refs=[('default', 'rId98'), ('first', 'rId99')] next='Appendix D'
+section=17 body_index=0828 titlePg=True refs=[('default', 'rId104'), ('first', 'rId105')] next='Appendix E'
+section=18 body_index=0831 titlePg=True refs=[('default', 'rId108'), ('first', 'rId109')] next='Appendix F'
+section=19 body_index=0835 titlePg=True refs=[('default', 'rId112'), ('first', 'rId113')] next='Appendix G Technology Brief'
+section=20 body_index=0837 titlePg=True refs=[('default', 'rId116'), ('first', 'rId117')] next='Appendix H'
+section=21 body_index=0843 titlePg=True refs=[('default', 'rId125'), ('first', 'rId126')] next='Appendix I Supporting Interfaces of Harviana'
+section=22 body_index=0869 titlePg=True refs=[('default', 'rId131'), ('first', 'rId132')] next='Appendix J Relevant Code Snippets Shared Recommendation Processing'
+section=23 body_index=0895 titlePg=True refs=[('default', 'rId139'), ('first', 'rId140')] next='A ppendix K User Manual'
+section=24 body_index=0900 titlePg=True refs=[('default', 'rId146'), ('first', 'rId147')] next='CURRICULUM VITAE JOHNDOE AMIEL I. DELA CRUZ # 96 Camp 8 , Baguio City +63.9 77 . 076 . 5709 johndoed'
+section=25 body_index=0909 titlePg=True refs=[('default', 'rId150'), ('first', 'rId151')] next='LORD ALFREY T. BATERINA # 69 Purok 8 , Irisan, Baguio City + 63.992.024.9564 baterinalordalfrey8@gma'
+section=26 body_index=0918 titlePg=True refs=[('default', 'rId154'), ('first', 'rId155')] next='J OJEMAY M. TAGALOG # 7 Sumulong St., Holy Ghost Proper, Baguio City + 63. 969.232.8464 jojemaytagal'
+section=27 body_index=0924 titlePg=True refs=[('default', 'rId159'), ('first', 'rId160')] next=''
+
+HEADERS
+word/header1.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}]
+word/header2.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '6045', None)]}]
+word/header3.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}]
+word/header4.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header5.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header6.xml: text='Abstract 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header7.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header8.xml: text='Acknowledgement 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header9.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header10.xml: text='Dedication 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header11.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header12.xml: text='Table of Contents 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header13.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header14.xml: text='List of Figures 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header15.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header16.xml: text='List of Tables 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header17.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header18.xml: text='Introduction 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header19.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header20.xml: text='Methodology 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header21.xml: text='' fields=[] props=[{'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4830', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header22.xml: text='Findings of the Study 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header23.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header24.xml: text='Conclusions and Recommendations 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header25.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header26.xml: text='References 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header27.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header28.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header29.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header30.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header31.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header32.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header33.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header34.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header35.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header36.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header37.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header38.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header39.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header40.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header41.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header42.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header43.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header44.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header45.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header46.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header47.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header48.xml: text='Appendices 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header49.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header50.xml: text='Curriculum Vitae 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header51.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header52.xml: text='Curriculum Vitae 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header53.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header54.xml: text='Curriculum Vitae 1' fields=['PAGE'] props=[{'jc': 'right', 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+word/header55.xml: text='' fields=[] props=[{'jc': None, 'tabs': []}, {'jc': None, 'tabs': [('clear', '4320', None), ('clear', '8640', None), ('left', '4605', None), ('left', '4830', None), ('left', '5100', None), ('left', '6090', None), ('left', '6540', None)]}]
+
+SECTION HEADER TARGETS
+1 [('even', 'rId8', 'header1.xml'), ('default', 'rId9', 'header2.xml'), ('first', 'rId12', 'header3.xml')]
+2 [('default', 'rId14', 'header4.xml'), ('first', 'rId15', 'header5.xml')]
+3 [('default', 'rId17', 'header6.xml'), ('first', 'rId18', 'header7.xml')]
+4 [('default', 'rId20', 'header8.xml'), ('first', 'rId21', 'header9.xml')]
+5 [('default', 'rId23', 'header10.xml'), ('first', 'rId24', 'header11.xml')]
+6 [('default', 'rId26', 'header12.xml'), ('first', 'rId27', 'header13.xml')]
+7 [('default', 'rId29', 'header14.xml'), ('first', 'rId30', 'header15.xml')]
+8 [('default', 'rId32', 'header16.xml'), ('first', 'rId33', 'header17.xml')]
+9 [('default', 'rId35', 'header18.xml'), ('first', 'rId36', 'header19.xml')]
+10 [('default', 'rId54', 'header20.xml'), ('first', 'rId55', 'header21.xml')]
+11 [('default', 'rId78', 'header22.xml'), ('first', 'rId79', 'header23.xml')]
+12 [('default', 'rId81', 'header24.xml'), ('first', 'rId82', 'header25.xml')]
+13 [('default', 'rId84', 'header26.xml'), ('first', 'rId85', 'header27.xml')]
+14 [('default', 'rId87', 'header28.xml'), ('first', 'rId89', 'header29.xml')]
+15 [('default', 'rId93', 'header30.xml'), ('first', 'rId95', 'header31.xml')]
+16 [('default', 'rId98', 'header32.xml'), ('first', 'rId99', 'header33.xml')]
+17 [('default', 'rId104', 'header34.xml'), ('first', 'rId105', 'header35.xml')]
+18 [('default', 'rId108', 'header36.xml'), ('first', 'rId109', 'header37.xml')]
+19 [('default', 'rId112', 'header38.xml'), ('first', 'rId113', 'header39.xml')]
+20 [('default', 'rId116', 'header40.xml'), ('first', 'rId117', 'header41.xml')]
+21 [('default', 'rId125', 'header42.xml'), ('first', 'rId126', 'header43.xml')]
+22 [('default', 'rId131', 'header44.xml'), ('first', 'rId132', 'header45.xml')]
+23 [('default', 'rId139', 'header46.xml'), ('first', 'rId140', 'header47.xml')]
+24 [('default', 'rId146', 'header48.xml'), ('first', 'rId147', 'header49.xml')]
+25 [('default', 'rId150', 'header50.xml'), ('first', 'rId151', 'header51.xml')]
+26 [('default', 'rId154', 'header52.xml'), ('first', 'rId155', 'header53.xml')]
+27 [('default', 'rId159', 'header54.xml'), ('first', 'rId160', 'header55.xml')]

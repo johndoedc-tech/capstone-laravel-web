@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1140" viewBox="0 0 1800 1140">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#344d42"/></marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#173b2c}.subtitle{font:18px Arial,sans-serif;fill:#54635c}.groupTitle{font:700 22px Arial,sans-serif;fill:#173b2c}.nodeTitle{font:700 20px Arial,sans-serif;fill:#18352a}.stereo{font:italic 15px Arial,sans-serif;fill:#557066}.item{font:17px Arial,sans-serif;fill:#263238}.small{font:15px Arial,sans-serif;fill:#455a64}.edgeLabel{font:700 16px Arial,sans-serif;fill:#344d42}
+      .boundary{fill:#fbfdfc;stroke:#6f8c7f;stroke-width:2.5;stroke-dasharray:10 7}.link{stroke:#344d42;stroke-width:2.8;fill:none;marker-end:url(#arrow)}.bi{stroke:#344d42;stroke-width:2.8;fill:none;marker-start:url(#arrow);marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1800" height="1140" fill="#ffffff"/>
+  <text x="900" y="54" text-anchor="middle" class="title">Harviana Physical View Deployment Diagram</text>
+  <text x="900" y="84" text-anchor="middle" class="subtitle">Production deployment and communication between physical and cloud nodes</text>
+
+  <!-- Client devices -->
+  <rect x="45" y="135" width="390" height="900" rx="18" class="boundary"/>
+  <text x="240" y="176" text-anchor="middle" class="stereo">&lt;&lt;device group&gt;&gt;</text>
+  <text x="240" y="207" text-anchor="middle" class="groupTitle">User Devices</text>
+
+  <g>
+    <rect x="93" y="265" width="290" height="170" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2.5"/>
+    <path d="M383 265 l14 14 v170 l-14 -14 z" fill="#cfe7d5" stroke="#3f7d58" stroke-width="2"/>
+    <path d="M93 265 l14 -14 h290 l-14 14 z" fill="#f3fbf5" stroke="#3f7d58" stroke-width="2"/>
+    <text x="238" y="303" text-anchor="middle" class="stereo">&lt;&lt;device&gt;&gt;</text>
+    <text x="238" y="335" text-anchor="middle" class="nodeTitle">Farmer Device</text>
+    <text x="238" y="369" text-anchor="middle" class="item">Smartphone or Computer</text>
+    <text x="238" y="399" text-anchor="middle" class="small">Web Browser / Installable PWA</text>
+  </g>
+
+  <g>
+    <rect x="93" y="500" width="290" height="170" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2.5"/>
+    <path d="M383 500 l14 14 v170 l-14 -14 z" fill="#cfe7d5" stroke="#3f7d58" stroke-width="2"/>
+    <path d="M93 500 l14 -14 h290 l-14 14 z" fill="#f3fbf5" stroke="#3f7d58" stroke-width="2"/>
+    <text x="238" y="538" text-anchor="middle" class="stereo">&lt;&lt;device&gt;&gt;</text>
+    <text x="238" y="570" text-anchor="middle" class="nodeTitle">LGU Validator Device</text>
+    <text x="238" y="604" text-anchor="middle" class="item">Smartphone or Computer</text>
+    <text x="238" y="634" text-anchor="middle" class="small">Modern Web Browser</text>
+  </g>
+
+  <g>
+    <rect x="93" y="735" width="290" height="170" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2.5"/>
+    <path d="M383 735 l14 14 v170 l-14 -14 z" fill="#cfe7d5" stroke="#3f7d58" stroke-width="2"/>
+    <path d="M93 735 l14 -14 h290 l-14 14 z" fill="#f3fbf5" stroke="#3f7d58" stroke-width="2"/>
+    <text x="238" y="773" text-anchor="middle" class="stereo">&lt;&lt;device&gt;&gt;</text>
+    <text x="238" y="805" text-anchor="middle" class="nodeTitle">DA Administrator Device</text>
+    <text x="238" y="839" text-anchor="middle" class="item">Desktop or Laptop Computer</text>
+    <text x="238" y="869" text-anchor="middle" class="small">Modern Web Browser</text>
+  </g>
+
+  <!-- Railway cloud -->
+  <rect x="535" y="135" width="770" height="900" rx="20" fill="#f8fbf9" stroke="#4c8b5f" stroke-width="3"/>
+  <text x="920" y="176" text-anchor="middle" class="stereo">&lt;&lt;cloud platform&gt;&gt;</text>
+  <text x="920" y="207" text-anchor="middle" class="groupTitle">Railway Production Environment</text>
+
+  <g>
+    <rect x="625" y="270" width="590" height="360" rx="10" fill="#e3f2fd" stroke="#4179a5" stroke-width="2.8"/>
+    <path d="M1215 270 l16 16 v360 l-16 -16 z" fill="#c7dff1" stroke="#4179a5" stroke-width="2"/>
+    <path d="M625 270 l16 -16 h590 l-16 16 z" fill="#f2f8fd" stroke="#4179a5" stroke-width="2"/>
+    <text x="920" y="312" text-anchor="middle" class="stereo">&lt;&lt;web application service&gt;&gt;</text>
+    <text x="920" y="347" text-anchor="middle" class="nodeTitle">Harviana Laravel Application</text>
+    <rect x="690" y="380" width="460" height="190" rx="10" fill="#ffffff" stroke="#82a8c4" stroke-width="2"/>
+    <text x="920" y="414" text-anchor="middle" class="stereo">&lt;&lt;deployed artifact&gt;&gt;</text>
+    <text x="920" y="447" text-anchor="middle" class="nodeTitle">Harviana Web System</text>
+    <text x="920" y="480" text-anchor="middle" class="item">PHP 8.3 and Laravel 12</text>
+    <text x="920" y="510" text-anchor="middle" class="item">Blade, Vite, Tailwind CSS, and JavaScript</text>
+    <text x="920" y="540" text-anchor="middle" class="small">Authentication, prediction, validation, maps, reports, and PWA assets</text>
+    <text x="920" y="600" text-anchor="middle" class="small">Built with Nixpacks and served through the Railway web process</text>
+  </g>
+
+  <g>
+    <rect x="700" y="745" width="440" height="205" rx="10" fill="#fff3e0" stroke="#b27624" stroke-width="2.8"/>
+    <path d="M1140 745 l16 16 v205 l-16 -16 z" fill="#f1d8b1" stroke="#b27624" stroke-width="2"/>
+    <path d="M700 745 l16 -16 h440 l-16 16 z" fill="#fff9ef" stroke="#b27624" stroke-width="2"/>
+    <text x="920" y="787" text-anchor="middle" class="stereo">&lt;&lt;database service&gt;&gt;</text>
+    <text x="920" y="822" text-anchor="middle" class="nodeTitle">Railway PostgreSQL</text>
+    <text x="920" y="860" text-anchor="middle" class="item">Users and role information</text>
+    <text x="920" y="890" text-anchor="middle" class="item">Crop plans, predictions, reports, and validations</text>
+    <text x="920" y="920" text-anchor="middle" class="small">Persistent Harviana application records</text>
+  </g>
+
+  <!-- Connected services -->
+  <rect x="1390" y="135" width="365" height="900" rx="18" class="boundary"/>
+  <text x="1573" y="176" text-anchor="middle" class="stereo">&lt;&lt;connected nodes&gt;&gt;</text>
+  <text x="1573" y="207" text-anchor="middle" class="groupTitle">External Services</text>
+
+  <g>
+    <rect x="1430" y="300" width="285" height="225" rx="10" fill="#f3e5f5" stroke="#7e57a1" stroke-width="2.8"/>
+    <path d="M1715 300 l14 14 v225 l-14 -14 z" fill="#dfcbe5" stroke="#7e57a1" stroke-width="2"/>
+    <path d="M1430 300 l14 -14 h285 l-14 14 z" fill="#fbf4fc" stroke="#7e57a1" stroke-width="2"/>
+    <text x="1573" y="342" text-anchor="middle" class="stereo">&lt;&lt;API service&gt;&gt;</text>
+    <text x="1573" y="377" text-anchor="middle" class="nodeTitle">Machine-Learning Service</text>
+    <text x="1573" y="416" text-anchor="middle" class="item">Crop production prediction API</text>
+    <text x="1573" y="447" text-anchor="middle" class="item">Forecast endpoints</text>
+    <text x="1573" y="480" text-anchor="middle" class="small">Returns estimates and confidence values</text>
+  </g>
+
+  <g>
+    <rect x="1430" y="650" width="285" height="245" rx="10" fill="#ede7f6" stroke="#6c5aa7" stroke-width="2.8"/>
+    <path d="M1715 650 l14 14 v245 l-14 -14 z" fill="#d9d0eb" stroke="#6c5aa7" stroke-width="2"/>
+    <path d="M1430 650 l14 -14 h285 l-14 14 z" fill="#f8f5fc" stroke="#6c5aa7" stroke-width="2"/>
+    <text x="1573" y="692" text-anchor="middle" class="stereo">&lt;&lt;third-party APIs&gt;&gt;</text>
+    <text x="1573" y="727" text-anchor="middle" class="nodeTitle">Google Services</text>
+    <text x="1573" y="766" text-anchor="middle" class="item">Weather API</text>
+    <text x="1573" y="797" text-anchor="middle" class="item">Gemini API</text>
+    <text x="1573" y="828" text-anchor="middle" class="item">Google OAuth</text>
+    <text x="1573" y="862" text-anchor="middle" class="small">Weather, chatbot, and sign-in integration</text>
+  </g>
+
+  <!-- Communication paths -->
+  <path d="M435 575 C485 575 500 455 625 455" class="bi"/>
+  <rect x="465" y="488" width="115" height="28" rx="14" fill="#ffffff"/><text x="523" y="508" text-anchor="middle" class="edgeLabel">HTTPS</text>
+
+  <path d="M920 630 L920 745" class="bi"/>
+  <rect x="830" y="676" width="180" height="29" rx="14" fill="#ffffff"/><text x="920" y="697" text-anchor="middle" class="edgeLabel">PostgreSQL / TLS</text>
+
+  <path d="M1215 390 C1300 390 1340 408 1430 408" class="bi"/>
+  <rect x="1282" y="367" width="125" height="29" rx="14" fill="#ffffff"/><text x="1345" y="388" text-anchor="middle" class="edgeLabel">HTTPS / JSON</text>
+
+  <path d="M1215 515 C1300 560 1350 760 1430 760" class="bi"/>
+  <rect x="1288" y="638" width="128" height="29" rx="14" fill="#ffffff"/><text x="1352" y="659" text-anchor="middle" class="edgeLabel">HTTPS / OAuth</text>
+</svg>

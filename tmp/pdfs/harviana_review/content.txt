@@ -1,0 +1,4436 @@
+
+===== PDF PAGE 1 =====
+
+  
+HARVIANA: A GIS-INTEGRATED DECISION SUPPORT SYSTEM FOR 
+VISUALIZING VEGETABLE PRODUCTION TRENDS 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+A Capstone Project Presented to the Faculty of the 
+ 
+College of Information Technology and Computer Sciences 
+ 
+University of the Cordilleras 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+In Partial Fulfillment 
+ 
+of the Requirements for the Degree 
+ 
+BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+by 
+ 
+LORD ALFREY TONGNAWA BATERINA 
+ 
+JOHNDOE AMIEL ISIT DELA CRUZ 
+ 
+JOJEMAY MAGALSO TAGALOG 
+ 
+ 
+February 2026                       
+
+===== PDF PAGE 2 =====
+
+  
+ 
+APPROVAL SHEET 
+ 
+ This capstone project proposal entitled HARVIANA: A 
+GIS-INTEGRATED DECISION SUPPORT SYSTEM FOR VISUALIZING 
+VEGETABLE PRODUCTION TRENDS, prepared and submitted by LORD 
+ALFREY T. BATERINA, JOHNDOE AMIEL I. DELA CRUZ, and JOJEMAY 
+M. TAGALOG in partial fulfillment of the requirements for 
+the degree BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY, 
+has been examined and is recommended for acceptance and 
+approval for oral examination 
+ 
+ 
+ 
+          ANNA RHODORA M. QUITALEG, MIT 
+         Adviser 
+ 
+ 
+CAPSTONE PROJECT COMMITTEE 
+ 
+ 
+ 
+ANNA RHODORA M. QUITALEG, MIT     RAZIELLE JEYNA MAE F. BERNALDEZ, BSCS 
+        Member            Member 
+ 
+ 
+ 
+GEM A. BALAY-ODAO, BSCS 
+Chairperson 
+
+===== PDF PAGE 3 =====
+
+  
+ 
+TABLE OF CONTENTS 
+             Page 
+TITLE PAGE . . . . . . . . . . . . . . . . . . . . . . 1 
+APPROVAL SHEET . . . . . . . . . . . . . . . . . . . . 2 
+TABLE OF CONTENTS . . . . . . . . . . . . . . . . . .  3         
+CHAPTER 
+1 INTRODUCTION  
+Rationale . . . .  . . . . . . . . . . . . . 4 
+Project Objectives . . . . . . . . . . . . . 11 
+Proposed Solutions . . . . . . . . . . . . . 12 
+2 DESIGN THINKING  
+Empathize  . . . . . . . . . . . . . . . . . 16 
+Define . . . . . . . . . . . . . . . . . . . 21 
+Ideate . . . . . . . . . . . . . . . . . . . 27 
+Prototype  . . . . . . . . . . . . . . . . . 29 
+Test . . . . . . . . . . . . . . . . . . . . 41 
+REFERENCES  . . . . . . . . . . . . . . . .  . . . . . 44 
+APPENDICES 
+ A Communication Letter . . . . . . . . . . . . 48 
+ B Endorsement Letter . . . . . . . . . . . . . 49 
+ C Business Model Canvas . . . . . . . . . . . 50 
+ D Invitation Letter . . . . . . . . . . . . .  52 
+E Documentation . . . . . . . . . . . . . . . 55
+
+===== PDF PAGE 4 =====
+
+    
+ 
+Chapter 1 
+INTRODUCTION 
+Background of the Study 
+ Agriculture plays an important role in food supply, 
+livelihood, and local economic activity. In agricultural 
+communities, farmers and decision-makers rely on timely and 
+organized information to support crop planning, production 
+monitoring, and response to crop-related problems. However, 
+agricultural information is often recorded separately by 
+farmers, local offices, and administrative agencies, which 
+can make it difficult to produce updated and reliable data 
+for planning. This problem becomes more significant in 
+vegetable-producing areas where crops are seasonal, 
+affected by weather conditions, and sensitive to delays in 
+planting, harvesting, and distribution. 
+ The need for digital support in agriculture is 
+connected to the broader modernization of the Philippine 
+agricultural sector. The World Bank (2020) emphasized that 
+transforming Philippine agriculture into a more dynamic and 
+diversified sector is important not only for food security 
+but also for improving the welfare of rural communities. 
+This supports the need for agricultural systems that can 
+help organize production data, improve monitoring, and 
+
+===== PDF PAGE 5 =====
+
+    
+ 
+provide useful information for both farmers and government 
+decision-makers. 
+ The Philippine Development Plan 2023-2028 also 
+emphasizes the modernization of agriculture and 
+agribusiness. The plan views agriculture as part of a 
+larger agri-food system that includes production, 
+processing, marketing, consumption, and waste management. 
+It also highlights the need to improve agricultural 
+efficiency, strengthen value chains, and support the 
+adoption of improved technologies. This relates to Harviana 
+because the system contributes to agricultural 
+modernization by organizing crop records, improving 
+monitoring, and supporting data-based decision-making among 
+farmers, LGU validators, and DA administrators. 
+ The Department of Agriculture’s National Agriculture 
+and Fisheries Modernization and Industrialization Plan 
+2021-2030 further supports the need for coordinated and 
+technology-assisted agricultural development. The 
+Agricultural Training Institute (2022) described NAFMIP as 
+a whole-of-nation plan that guides sector-wide growth and 
+encourages public and private stakeholders to work toward a 
+shared agricultural vision. This is connected to Harviana 
+because the system provides a digital workflow that links 
+
+===== PDF PAGE 6 =====
+
+    
+ 
+farm-level records with validation and administrative 
+monitoring, allowing agricultural information to move in a 
+more organized and coordinated manner. 
+ In the Philippines, the use of digital technology in 
+agriculture has become increasingly important. Briones, 
+Galang, and Latigar (2023) discussed that digital 
+agriculture can support productivity, market access, 
+sustainability, and decision-support systems. However, they 
+also noted that digital agriculture must address issues 
+such as the digital divide, rural connectivity, and the 
+need to harmonize government data and advisory services. 
+This shows that digital tools should not only collect data 
+but should also organize information in a way that can be 
+used by farmers and agricultural offices. 
+ The Food and Agriculture Organization (2022) also 
+emphasized that automation and digital technologies can 
+contribute to more resilient and productive agrifood 
+systems. The report explained that agricultural automation 
+can improve productivity, resource-use efficiency, and 
+sustainability when properly adopted. However, it also 
+recognized that small-scale producers may face barriers in 
+accessing and using these technologies. This supports the 
+need for agricultural systems that are practical and 
+
+===== PDF PAGE 7 =====
+
+    
+ 
+accessible to local users. Harviana responds to this 
+concern by providing a web-based system that focuses on 
+organized crop planning, reporting, validation, and 
+administrative monitoring rather than requiring complex 
+equipment from farmers. 
+ The use of information and communication technologies 
+in agriculture is also supported by the E-Agriculture 
+Strategy Guide developed by the Food and Agriculture 
+Organization and the International Telecommunication Union. 
+FAO and ITU (2016) explained that e-agriculture strategies 
+help countries use ICT in a more organized way by 
+establishing a vision, action plan, and monitoring 
+framework. This supports the need for systems like 
+Harviana, which apply digital tools to improve agricultural 
+data collection, monitoring, reporting, and decision 
+support. 
+ At the policy level, digital technologies can also 
+improve how agricultural programs are planned and 
+implemented. The Organisation for Economic Co-operation and 
+Development (2019) explained that digital innovations can 
+help agricultural policies by reducing information gaps, 
+lowering transaction costs, and improving the way different 
+actors work together. This is relevant to Harviana because 
+
+===== PDF PAGE 8 =====
+
+    
+ 
+the system connects farmers, LGU validators, and DA 
+administrators in one workflow. Through this structure, the 
+information submitted by farmers can be reviewed, 
+organized, and used by administrators for reports and 
+supply-related monitoring. 
+ At the system level, digital agriculture becomes more 
+useful when data, users, and decision-making tools are 
+connected in one organized structure. The World Bank, Gates 
+Foundation, and Boston Consulting Group (2025) described a 
+Digital Agriculture Roadmap as a strategy and 
+implementation plan that guides the transformation of 
+agriculture through digital technologies. The report also 
+emphasized that digital agriculture involves user-facing 
+applications, data systems, integration layers, and 
+decision-support tools. This is related to Harviana because 
+the system connects farmer-submitted crop plans, harvest 
+records, damage reports, LGU validation, and DA 
+administrative monitoring into a single digital workflow. 
+ The growing discussion on digital agriculture in the 
+Philippines also shows the importance of preparing farmers 
+and agricultural offices for technology-based systems. The 
+International Rice Research Institute and CGIAR (2024) 
+reported that Philippine stakeholders have recognized 
+
+===== PDF PAGE 9 =====
+
+    
+ 
+digital technologies as an important part of the future of 
+agriculture, while also noting challenges such as digital 
+literacy, infrastructure limitations, and data security. 
+These concerns are important in developing agricultural 
+systems because technology must be usable, secure, and 
+meaningful to its target users. Harviana addresses this by 
+providing role-based access for farmers, LGU validators, 
+and DA administrators, allowing each user group to access 
+only the functions related to their responsibilities. 
+ The Cordillera Administrative Region, particularly 
+Benguet, is one of the country’s major sources of highland 
+vegetables. According to the Philippine Statistics 
+Authority RSSO-CAR (2025), CAR produced 432,068.1 metric 
+tons of vegetables in 2024, with Benguet contributing 
+371,151.5 metric tons or 85.9 percent of the region’s total 
+vegetable production. Because of Benguet’s major role in 
+vegetable supply, crop production records, damage reports, 
+harvest information, and planting schedules are important 
+for monitoring agricultural conditions. Aquino, Delos 
+Reyes, and Catelo (2025) also emphasized the importance of 
+Benguet-sourced vegetables in food value chain networks, 
+showing how vegetable production in the province 
+
+===== PDF PAGE 10 =====
+
+    
+ 
+contributes to household food access and wider supply 
+movement. 
+ Despite this importance, farmers and agricultural 
+offices may still experience difficulties in monitoring 
+crop activities, validating field reports, and converting 
+submitted farm information into useful administrative 
+records. Farmers need a system that can help them plan 
+crops, monitor farm activities, report damages, and record 
+actual harvest results. Local government validators need a 
+way to review submitted information before it is used for 
+decision-making. DA administrators, on the other hand, need 
+consolidated records that can support monitoring, 
+reporting, and forecasting. Without an organized system, 
+agricultural information may become delayed, incomplete, or 
+difficult to verify. 
+ Agricultural extension and advisory services also play 
+an important role in helping farmers and agricultural 
+offices use information for better decisions. The 
+Philippine Agriculture and Fisheries Extension Strategic 
+Plan 2023-2028 emphasizes the need to reframe extension and 
+advisory services for food systems transformation. The 
+Agricultural Training Institute (2023) stated that the plan 
+supports efficient production, competitiveness, stronger 
+
+===== PDF PAGE 11 =====
+
+    
+ 
+extension institutions, and empowered farmers and 
+fisherfolk. Harviana supports this direction by providing 
+farmers and agricultural administrators with a platform 
+where crop plans, damage reports, harvest records, and 
+validation results can be accessed and used for monitoring. 
+ The Agricultural Training Institute’s e-Extension 
+Program also shows how digital systems can support 
+agricultural information delivery in the Philippines. ATI 
+describes e-Extension as the digital strategy of the 
+Department of Agriculture for delivering agricultural 
+extension services. It provides farmers, fisherfolk, 
+agricultural extension workers, and other stakeholders with 
+access to agriculture and fisheries-related information, 
+online courses, and technical support. This strengthens the 
+relevance of Harviana because the system also uses a 
+digital platform to support farmers and agricultural 
+offices, particularly in organizing crop-related records 
+and making information easier to access. 
+ Weather conditions also affect agricultural 
+production. PAGASA describes the Philippines as having a 
+tropical and maritime climate characterized by relatively 
+high temperature, high humidity, and abundant rainfall. 
+These conditions make weather-related monitoring important 
+
+===== PDF PAGE 12 =====
+
+    
+ 
+for crop planning and farm activity scheduling. For 
+farmers, access to crop calendars and weather information 
+can help them become more aware of possible risks. For 
+administrators, weather and location-based information can 
+support better interpretation of crop conditions and 
+production records. 
+ Digital agriculture is also useful in addressing 
+agricultural risks related to changing environmental 
+conditions. Stephenson et al. (2021) explained that digital 
+agriculture can support climate adaptation and that spatial 
+information can help inform government priorities and 
+decisions related to crop suitability and agricultural 
+planning. This supports Harviana’s use of map-based 
+monitoring and weather information, since these features 
+help users relate crop records with location and field 
+conditions without requiring manual consolidation of data. 
+ GIS and WebGIS technologies have become important in 
+agricultural monitoring because they allow production 
+records to be viewed and analyzed according to location. 
+Raihan (2024) emphasized that Geographic Information 
+Systems can support evidence-based agricultural decision-
+making by helping users analyze spatial information related 
+to crop production, sustainability, and planning. 
+
+===== PDF PAGE 13 =====
+
+    
+ 
+Similarly, Cui et al. (2022) demonstrated the use of open-
+source WebGIS tools in managing agricultural land 
+information, while Patel et al. (2023) showed how Web GIS-
+based decision-support systems can assist in agricultural 
+monitoring and management. These studies support the 
+development of Harviana as a GIS-integrated system that 
+visualizes vegetable production records through map-based 
+monitoring. 
+ Recent studies also show the value of combining 
+agricultural data, forecasting, and spatial monitoring for 
+better production-related decisions. Alemán-Montes et al. 
+(2025) presented a near real-time spatial decision-support 
+system that used a satellite mapping web browser to support 
+crop monitoring. Wu et al. (2023) also emphasized that 
+reliable crop monitoring requires timely and useful crop 
+information that can support food security decisions. In 
+relation to crop forecasting, Ali et al. (2022) discussed 
+the role of multi-sensor remote sensing in crop yield 
+prediction, while Jabed and Azmi Murad (2024) reviewed how 
+machine learning and deep learning approaches can support 
+crop yield prediction. These studies support Harviana’s use 
+of map visualization, production estimation, and 
+forecasting as decision-support features. 
+
+===== PDF PAGE 14 =====
+
+    
+ 
+ Local studies further strengthen the relevance of 
+Harviana to vegetable production in Benguet. Pilay and 
+Werdenberg (2024) applied SARIMA-based forecasting to 
+vegetable production in Benguet, showing the importance of 
+analyzing production trends to understand possible future 
+outputs. Quitaleg and Dumlao (2023) also developed a 
+decision-support system for Benguet upland vegetable crop 
+prediction using machine learning techniques. These studies 
+show that forecasting and decision-support systems are 
+relevant to Benguet’s vegetable production context. 
+Harviana builds on this direction by combining crop 
+planning, farmer-submitted records, LGU validation, GIS 
+visualization, supply forecasting, and DA report generation 
+in one web-based platform. 
+ In response to these needs, this study proposes 
+Harviana, a web-based agricultural decision-support system 
+designed to assist farmers, LGU validators, and DA 
+administrators. Harviana allows farmers to create crop 
+plans, view calendar-based farm activities, receive ML-
+based production estimates, submit crop damage reports, and 
+record actual harvest results. Submitted reports can be 
+reviewed by LGU validators to improve the reliability of 
+information before it is used for administrative 
+
+===== PDF PAGE 15 =====
+
+    
+ 
+monitoring. DA administrators can view dashboards, monitor 
+crop records, access interactive map and weather 
+information, generate reports, and review real-time supply 
+forecasts. 
+ Harviana is designed to create a connected flow of 
+agricultural information from farmers to LGU validators and 
+DA administrators. Through this structure, the system helps 
+transform farmer-submitted data into validated and 
+organized records that can support crop monitoring, report 
+generation, and supply-related decision-making. The system 
+supports the goals of digital agriculture by improving the 
+collection, validation, visualization, and use of 
+agricultural data. 
+ The study is also aligned with Sustainable Development 
+Goal 2: Zero Hunger, which promotes sustainable 
+agriculture, improved food security, and support for small-
+scale farmers. Harviana contributes to this goal by helping 
+improve crop planning, harvest monitoring, and agricultural 
+reporting. It also supports Sustainable Development Goal 
+12, particularly the reduction of food losses along 
+production and supply chains, by allowing the system to 
+record damage reports, actual harvests, and production-
+
+===== PDF PAGE 16 =====
+
+    
+ 
+related information that can support better agricultural 
+monitoring. 
+Importance of the Study 
+This study is significant because it provides a 
+digital approach to improving how agricultural information 
+is collected, validated, monitored, and used for decision-
+making. Harviana supports the flow of crop-related data 
+from farmers to LGU validators and DA administrators, 
+allowing crop plans, damage reports, actual harvest 
+records, and supply-related information to be organized in 
+one system. Through this, the study contributes to the 
+improvement of agricultural data management, crop 
+monitoring, report generation, and decision-support 
+processes. 
+To the Farmers. This study is beneficial to farmers 
+because Harviana provides tools that help them manage crop 
+planning and farm activity monitoring. Through the system, 
+farmers can create crop plans, view scheduled crop 
+activities through the farmer calendar, receive reminders, 
+and check ML-based production estimates during the crop 
+planning process. The system also allows farmers to submit 
+crop damage reports and record actual harvest results, 
+helping them document important farm events in a more 
+
+===== PDF PAGE 17 =====
+
+    
+ 
+organized way. With these features, farmers are supported 
+in monitoring their production activities and maintaining 
+clearer records of their crops. 
+To the LGU Validators. This study is significant to 
+LGU validators because it provides a validation process for 
+farmer-submitted reports. Through Harviana, LGU validators 
+can view submitted damage reports, review report details 
+and evidence, and decide whether a report should be 
+approved or returned for correction. This process helps 
+improve the reliability of agricultural information before 
+it is used for DA monitoring and reporting. It also creates 
+a checking layer between farmer submissions and 
+administrative decision-making. 
+To the DA Administrators. This study is beneficial to 
+DA administrators because Harviana provides features for 
+monitoring crop records, viewing dashboards, accessing map 
+and weather information, reviewing supply forecasts, and 
+generating reports. These features help DA administrators 
+organize validated agricultural data and use it for 
+administrative monitoring and planning. The system also 
+supports report export, allowing important crop and harvest 
+information to be prepared for documentation, analysis, and 
+decision-making. 
+
+===== PDF PAGE 18 =====
+
+    
+ 
+To the Researchers. This study is significant to the 
+researchers because it allows them to apply concepts in 
+system development, database management, geographic 
+information systems, machine learning, and usability 
+testing to a real agricultural problem. Through the 
+development of Harviana, the researchers are able to design 
+a system that connects farmers, validators, and 
+administrators in one digital workflow. The study also 
+helps the researchers understand how technology can be used 
+to support agricultural monitoring and decision-making. 
+To Future Researchers. This study may serve as a 
+useful reference for future researchers interested in 
+developing agricultural decision-support systems, crop-
+monitoring platforms, GIS-based applications, or other 
+digital agriculture technologies. They may use the 
+findings, system architecture, development process, and 
+identified user requirements of Harviana as a foundation 
+for designing similar systems for other crops, farming 
+sectors, or geographic locations. Future studies may 
+improve the machine-learning models, expand crop and 
+municipal coverage, introduce mobile or offline 
+capabilities, and integrate additional agricultural, 
+environmental, or government data sources. Researchers may 
+
+===== PDF PAGE 19 =====
+
+    
+ 
+also conduct further evaluations involving a wider range of 
+respondents, including LGU Validators, to assess system 
+usability and operational effectiveness more 
+comprehensively. Moreover, this study may guide future work 
+concerning report validation, map-based production 
+monitoring, municipal supply forecasting, data security, 
+and agricultural report generation. 
+Objectives of the Study 
+The main objective of this study is to design and 
+develop “Harviana: a GIS-integrated decision support system 
+for visualizing vegetable production trends in Benguet”, a 
+web-based agricultural decision-support system that 
+supports crop planning, farmer calendar management, crop 
+monitoring, LGU validation, DA administrative monitoring, 
+and supply forecasting. 
+Specifically, this study aims to answer the following: 
+1. to identify the information requirements of the 
+proposed system; 
+2. to determine the architectural framework of the 
+proposed system; 
+3. to identify the features of the proposed system; and 
+
+===== PDF PAGE 20 =====
+
+    
+ 
+4. to measure the extent of usability of the proposed 
+system among participating farmers and DA 
+administrators. 
+Definition of Terms 
+To ensure clarity and consistency throughout this 
+study, the following terms are defined based on how they 
+are used in the development and discussion of Harviana. 
+Actual Harvest Record. This refers to the record 
+submitted by a farmer after harvesting a crop. In this 
+study, it includes the harvest amount, unit, harvest date, 
+photo evidence, and notes. The system uses this record to 
+compare expected production with the farmer-recorded 
+harvest result. 
+Agricultural Decision-Support System. This refers to a 
+digital system that helps users collect, organize, analyze, 
+and present agricultural information for planning and 
+decision-making. In this study, it refers to Harviana, 
+which supports farmers, LGU validators, and DA 
+administrators in crop planning, validation, monitoring, 
+forecasting, and reporting. 
+Crop Damage Report. This refers to a report submitted 
+by a farmer when a crop has been affected by damage. In 
+this study, it includes the cause of damage, affected crop 
+
+===== PDF PAGE 21 =====
+
+    
+ 
+plan, damaged area, damage date, optional notes, and photo 
+evidence. The report is reviewed by the LGU validator 
+before being used for monitoring and report generation. 
+Crop Plan. This refers to the farmer’s planned crop 
+production record. In this study, it includes details such 
+as crop type, planting information, farm area, expected 
+harvest schedule, and related crop activities. Crop plans 
+are used in the farmer calendar, ML-based production 
+estimate, and supply forecast features of Harviana. 
+DA Administrator. This refers to the system user 
+responsible for administrative monitoring of crop records, 
+forecasts, reports, users, and system data. In this study, 
+the DA administrator can access dashboards, map and weather 
+data, supply forecasting, and report generation features. 
+Farmer. This refers to the primary user of Harviana 
+who creates crop plans, views calendar activities, receives 
+production estimates, submits crop damage reports, and 
+records actual harvest results. 
+Farmer Calendar. This refers to the calendar feature 
+of Harviana that displays crop plans, farm activities, 
+reminders, and schedules. In this study, it helps farmers 
+monitor planting, maintenance, and harvest-related 
+activities. 
+
+===== PDF PAGE 22 =====
+
+    
+ 
+Geographic Information System. This refers to a system 
+used to store, manage, and display location-based 
+information. In this study, GIS-related features are 
+represented through Harviana’s interactive map, which helps 
+users view agricultural records and weather information 
+based on location. 
+Harviana. This refers to the proposed web-based 
+agricultural decision-support system developed in this 
+study. It supports crop planning, farmer calendar 
+management, ML-based production estimation, crop damage 
+reporting, actual harvest recording, LGU validation, DA 
+monitoring, map and weather viewing, supply forecasting, 
+and report generation. 
+LGU Validator. This refers to the system user 
+responsible for reviewing and validating farmer-submitted 
+crop damage reports. In this study, the LGU validator can 
+approve reports or return them for correction. 
+Machine Learning. This refers to the use of 
+computational models that learn from data to provide 
+predictions or estimates. In this study, machine learning 
+is used to support production estimation during crop 
+planning and supply forecasting. 
+
+===== PDF PAGE 23 =====
+
+    
+ 
+ML-Based Production Estimate. This refers to the 
+estimated crop production generated by the system during 
+the crop planning process. In this study, it gives farmers 
+an expected production value based on the information 
+provided in the crop plan and the system’s prediction 
+support. 
+Real-Time Supply Forecast. This refers to the DA 
+feature that provides a forecast of crop supply using 
+available crop plan, harvest, damage, and validation-
+related data. In this study, it helps DA administrators 
+review possible supply conditions for monitoring and 
+planning. 
+Report Generation. This refers to the process of 
+organizing system records into report-focused views that 
+can be used for documentation, analysis, and administrative 
+decision-making. In this study, DA administrators can 
+generate and export planting and harvest-related reports. 
+Role-Based Access Control. This refers to a system 
+security approach that limits access based on the role 
+assigned to each user. In this study, Harviana provides 
+different access and functions for farmers, LGU validators, 
+and DA administrators. 
+
+===== PDF PAGE 24 =====
+
+    
+ 
+Usability. This refers to the extent to which users 
+can use the system effectively, efficiently, and 
+satisfactorily. In this study, usability is measured 
+through usability testing conducted with farmers and DA 
+administrators. 
+Web-Based System. This refers to a system that can be 
+accessed through a web browser using an internet-connected 
+device. In this study, Harviana is a web-based system 
+designed for farmers, LGU validators, and DA 
+administrators. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 25 =====
+
+    
+ 
+Chapter 2 
+METHODOLOGY 
+ This chapter presents the methodology used in the 
+development of Harviana. It discusses the software 
+development methodology, design thinking process, scope and 
+delimitation, data gathering techniques, sources of data, 
+and software development tools used by the researchers. 
+These methods served as the guide in identifying the needs 
+of the users, designing the system features, developing the 
+web-based platform, and evaluating the usability of 
+Harviana. 
+Software Development Methodology 
+ The researchers adopted the Scrum framework as the 
+specific Agile software development methodology for 
+Harviana. Scrum is a lightweight framework that supports 
+the iterative and incremental development of complex 
+products through short development cycles known as Sprints. 
+It allows the development team to organize requirements, 
+produce functional system increments, examine completed 
+work, gather feedback, and make necessary adjustments 
+throughout the development process (Schwaber & Sutherland, 
+2020). 
+
+===== PDF PAGE 26 =====
+
+    
+ 
+ Scrum was appropriate for Harviana because the system 
+consists of interconnected modules for farmers, LGU 
+Validators, and DA Administrators. These modules include 
+crop planning, calendar-based farm activity monitoring, 
+machine-learning-based production estimation, damage and 
+actual-harvest reporting, LGU validation, GIS 
+visualization, weather information, municipal supply 
+forecasting, and administrative report generation. Through 
+incremental development, the researchers were able to focus 
+on related system components during each development cycle 
+and ensure that completed features could operate with the 
+existing parts of the platform. 
+ The development of Harviana was divided into five 
+project-specific Sprints: Requirements Gathering and 
+Planning, GIS Visualization Module Development, Core 
+Feature Development, Machine Learning Production Estimation 
+and Supply Forecast Integration, and Testing and 
+Evaluation. Each Sprint focused on a particular group of 
+system requirements and produced a functional increment 
+that contributed to the overall development of Harviana. 
+Figure 1 presents the five-Sprint Scrum development 
+process followed by the researchers. 
+  
+
+===== PDF PAGE 27 =====
+
+    
+ 
+Figure 1  
+Scrum Development Process of Harviana 
+ 
+ Requirements Gathering and Planning. The Requirements 
+Gathering and Planning Sprint focused on identifying the 
+problems, user needs, information requirements, and 
+technical resources necessary for developing Harviana. Its 
+purpose was to establish a clear understanding of what the 
+system needed to accomplish before the major modules were 
+implemented. The information gathered during this Sprint 
+served as the basis for defining the system’s scope, user 
+roles, functional requirements, data requirements, and 
+initial development priorities. 
+ During this Sprint, the researchers reviewed the 
+agricultural decision-support components inherited from 
+PASYA and determined which functions would be retained, 
+modified, or developed specifically for Harviana. 
+Information was gathered from farmers and DA Administrators 
+concerning crop planning, agricultural record management, 
+
+
+===== PDF PAGE 28 =====
+
+    
+ 
+monitoring, and reporting. The LGU Validator role was also 
+included in the planned workflow to provide a validation 
+layer for farmer-submitted records. Based on the gathered 
+information, the researchers prepared the Product Backlog, 
+initial user workflows, database requirements, system 
+diagrams, interface prototypes, and prioritized list of 
+features for the succeeding Sprints. 
+ GIS Visualization Module Development. The GIS 
+Visualization Module Development Sprint focused on 
+implementing the location-based monitoring components of 
+Harviana. Its purpose was to provide farmers and DA 
+Administrators with a visual representation of vegetable-
+production information across the municipalities of 
+Benguet. Through this module, agricultural records could be 
+viewed according to their geographic location, allowing 
+users to understand the distribution of crop-related 
+information more easily than through ordinary tabular 
+records alone. 
+ During this Sprint, the researchers developed the 
+interactive agricultural map using Leaflet and 
+OpenStreetMap. The map was connected to the agricultural 
+records stored in PostgreSQL and provided filters for crop 
+type, year, view type, farm type, and municipality. The 
+
+===== PDF PAGE 29 =====
+
+    
+ 
+researchers also integrated weather information so users 
+could view temperature, weather conditions, rainfall 
+probability, humidity, and wind speed for selected 
+locations. The map interface, information panels, markers, 
+filters, and municipal summaries were tested and refined to 
+ensure that the displayed agricultural and weather 
+information was understandable and accessible through 
+different screen sizes. 
+ Core Feature Development. The Core Feature Development 
+Sprint focused on implementing the primary role-based 
+workflows of Harviana. Its purpose was to create the 
+functions required by Farmers, LGU Validators, and DA 
+Administrators to enter, review, validate, monitor, and 
+manage agricultural information. This Sprint established 
+the main flow of data from farmer crop planning and report 
+submission to LGU validation and DA administrative 
+monitoring. 
+ During this Sprint, the researchers developed account 
+registration, login, Google authentication, role-based 
+access, farmer onboarding, profile management, farmer 
+dashboards, crop planning, and calendar-based farm activity 
+monitoring. Features for submitting damage reports and 
+recording actual harvests were also implemented. The LGU 
+
+===== PDF PAGE 30 =====
+
+    
+ 
+Validator module was developed to allow assigned validators 
+to review evidence, approve reports, return submissions for 
+correction, and provide validation notes. For DA 
+Administrators, the researchers implemented administrative 
+dashboards, user and crop-data management, report-focused 
+views, and the generation and export of agricultural 
+records. 
+ Machine Learning Production Estimation and Supply 
+Forecast Integration. The Machine Learning Production 
+Estimation and Supply Forecast Integration Sprint focused 
+on connecting Harviana with its machine-learning service 
+and transforming farmer crop-plan data into decision-
+support information. Its purpose was to provide farmers 
+with an estimated production value during crop planning and 
+assist DA Administrators in monitoring the expected 
+municipal vegetable supply. This Sprint connected the 
+farmer’s planned agricultural activities with the 
+forecasting and monitoring functions available on the 
+administrative side of the system. 
+ During this Sprint, the Laravel application was 
+connected to the machine-learning service, which processed 
+information such as municipality, farm type, selected crop, 
+expected harvest period, and intended planting area. The 
+
+===== PDF PAGE 31 =====
+
+    
+ 
+returned production estimate and confidence value were 
+stored with the farmer’s crop plan. Harviana then used the 
+stored estimates together with LGU-approved damage reports 
+and validated actual-harvest records to calculate adjusted 
+municipal supply information. The resulting supply forecast 
+was presented to DA Administrators through the 
+administrative dashboard and interactive agricultural map. 
+ Testing and Evaluation. The Testing and Evaluation 
+Sprint focused on determining whether the completed 
+Harviana modules functioned according to their intended 
+requirements and whether the system’s inherited interaction 
+design provided an acceptable usability foundation. Its 
+purpose was to identify functional errors, verify the 
+complete role-based workflow, examine the communication 
+among connected services, and determine whether further 
+improvements were required before the system was prepared 
+for deployment and presentation. 
+ During this Sprint, the researchers tested account 
+authentication, role-based access, farmer onboarding, crop 
+planning, calendar activities, production estimation, 
+damage reporting, actual-harvest recording, LGU validation, 
+administrative dashboards, GIS visualization, weather 
+information, municipal supply forecasting, and report 
+
+===== PDF PAGE 32 =====
+
+    
+ 
+generation and export. The LGU Validator workflow was 
+examined through functional testing, while the usability 
+evaluation covered the farmer and DA Administrator 
+respondent groups using the adviser-approved results 
+originally gathered from PASYA. Identified errors and 
+interface concerns were corrected and tested again. After 
+the major functions were verified, Harviana was deployed on 
+Railway and connected to Railway PostgreSQL and its 
+machine-learning service. 
+Design Thinking 
+ Design Thinking was used by the researchers to 
+understand the needs, problems, and expectations of the 
+target users of Harviana. This approach helped the 
+researchers focus on the actual experiences of farmers, LGU 
+validators, and DA administrators before finalizing the 
+system features. Since Harviana is intended to support 
+agricultural planning, validation, monitoring, and 
+decision-making, the researchers used Design Thinking to 
+ensure that the system was based on real user concerns 
+rather than assumptions. 
+ Design Thinking is a human-centered and iterative 
+process that allows developers to study user needs, define 
+problems, generate possible solutions, create prototypes, 
+
+===== PDF PAGE 33 =====
+
+    
+ 
+and test the proposed system. In this study, the 
+researchers followed the five phases of Design Thinking: 
+empathize, define, ideate, prototype, and test. These 
+phases guided the researchers in identifying the problems 
+in agricultural data collection and monitoring, designing 
+possible solutions, and improving Harviana based on user 
+needs and feedback. Figure 2 shows the Design Thinking 
+process used in the development of Harviana. 
+Figure 2 
+Design Thinking 
+ 
+Empathize. The Empathize phase focused on 
+understanding the experiences and challenges of the target 
+users considered in the design of Harviana. The researchers 
+gathered information from farmers and DA administrators to 
+identify the difficulties they encounter in crop planning, 
+record management, monitoring, reporting, and agricultural 
+
+
+===== PDF PAGE 34 =====
+
+    
+ 
+decision-making. The LGU Validator role was also considered 
+in the system workflow because it serves as the validation 
+layer between farmer-submitted records and DA 
+administrative monitoring. 
+Based on the gathered information, farmers experienced 
+challenges in organizing crop plans, monitoring farm 
+activities, reporting crop damage, and keeping harvest 
+records in a way that can be reviewed and used later. DA 
+administrators needed consolidated and updated agricultural 
+records that could support dashboards, map-based 
+monitoring, supply forecasting, and report generation. 
+Meanwhile, the LGU Validator role was identified as 
+necessary for reviewing farmer-submitted reports and 
+checking whether the information provided is acceptable 
+before it becomes part of the system’s validated records. 
+These findings helped the researchers identify the user 
+needs that Harviana should address.  
+Figure 3 presents the empathy map for farmers, 
+illustrating their statements, thoughts, actions, and 
+feelings concerning crop planning and farm-record 
+management. It emphasizes their need for a simpler and more 
+organized way to monitor crop activities, document damage 
+
+===== PDF PAGE 35 =====
+
+    
+ 
+incidents, record actual harvest results, and access 
+relevant agricultural information for decision-making. 
+Figure 3 
+Empathy Map 
+ 
+ Define. The Define phase organized the information 
+gathered during the Empathize phase into clear problem 
+statements. The researchers identified that agricultural 
+information is often recorded manually, stored separately, 
+
+
+===== PDF PAGE 36 =====
+
+    
+ 
+or difficult to validate and consolidate. Farmers need 
+support in organizing crop plans, monitoring farm 
+activities, submitting crop damage reports, and recording 
+actual harvest results. DA administrators need reliable and 
+updated agricultural data that can be used for dashboards, 
+map-based monitoring, supply forecasting, and report 
+generation. 
+  Through this phase, the researchers defined the main 
+problem as the lack of an integrated digital system that 
+connects farmer-submitted agricultural records with 
+validation and administrative monitoring. This problem 
+affects the availability, reliability, and usability of 
+crop-related information for planning and decision-making. 
+ The researchers used the 5 Whys Analysis to identify 
+the root causes of the problems encountered in agricultural 
+record management and monitoring. This helped the 
+researchers trace visible problems, such as scattered 
+records, delayed reports, and difficulty in reviewing crop-
+related information, to deeper causes such as the lack of 
+coordinated data flow, limited validation process, 
+fragmented agricultural data, and absence of an integrated 
+monitoring system.  
+
+===== PDF PAGE 37 =====
+
+    
+ 
+Figure 4 presents the 5 Whys Analysis used to identify 
+the root causes addressed by Harviana. 
+Figure 4 
+The 5 Why Analysis
+ 
+ The 5 Whys Analysis shows that the main problem 
+addressed by Harviana is not only the lack of production 
+data, but the absence of an integrated and validated data 
+flow that can transform scattered crop-related records into 
+useful visual and administrative information. This root 
+cause guided the development of Harviana as a GIS-
+integrated decision-support system that allows vegetable 
+production information to be collected, validated, 
+visualized, forecasted, and reported within one connected 
+platform. 
+
+
+===== PDF PAGE 38 =====
+
+    
+ 
+ Ideate. Ideate is the stage where the researchers 
+generate possible solutions based on the problem identified 
+in the Define phase. In this phase, the researchers 
+considered the root cause found in the 5 Whys Analysis, 
+which showed the need for an integrated and validated data 
+flow for visualizing vegetable production information in 
+Benguet. Based on the root cause identified, the 
+researchers proposed Harviana as a GIS-integrated decision-
+support system that connects farmer-submitted records, LGU 
+validation, and DA administrative monitoring. The proposed 
+features included crop planning, farmer calendar, ML-based 
+production estimates, damage report submission, actual 
+harvest recording, LGU report validation, DA dashboard, 
+interactive map and weather viewing, real-time supply 
+forecasting, and report generation.  
+ To organize these ideas and determine which features 
+should be prioritized, the researchers used an Impact-
+Effort Matrix. This tool helped the researchers evaluate 
+each proposed feature based on its expected value to the 
+users and the level of effort required for implementation. 
+Features with high impact and manageable effort were 
+prioritized because they directly support the main purpose 
+of Harviana. 
+
+===== PDF PAGE 39 =====
+
+    
+ 
+ The matrix helped the researchers identify the core 
+features needed for the system. Farmer-side features such 
+as crop planning, farmer calendar, damage report 
+submission, and actual harvest recording were prioritized 
+because they serve as the source of agricultural data. The 
+LGU validation feature was also included because it 
+supports the reliability of submitted records. DA-side 
+features such as dashboards, map and weather viewing, 
+supply forecasting, and report generation were prioritized 
+because they allow agricultural information to be 
+visualized, monitored, and used for decision-making. 
+ Figure 5 presents the Impact-Effort Matrix used to 
+prioritize the features of Harviana. 
+Figure 5 
+Impact-Effort Matrix 
+ 
+
+
+===== PDF PAGE 40 =====
+
+    
+ 
+ Prototype. Prototype is the stage where the ideas from 
+the previous phase are transformed into a visual 
+representation of the proposed system. Prototypes do not 
+need to be fully functional at first, but they help the 
+researchers present the layout, navigation, and expected 
+user interaction of the system before final development. 
+Through this phase, the researchers were able to show how 
+the main features of Harviana would appear and function for 
+its intended users. 
+ In this stage, the researchers created low-fidelity 
+prototypes to represent the basic interface of Harviana. 
+The prototypes focused on the major features of the system, 
+including the landing page, login and registration, farmer 
+crop planning, calendar, ML-based production estimate, 
+damage report submission, actual harvest recording, LGU 
+report validation, interactive map and weather viewing, DA 
+dashboard, supply forecast, and report generation. 
+ The Landing Page serves as the first screen accessed 
+by visitors. It introduces Harviana as a GIS-integrated 
+decision-support system and provides access to general 
+platform information, system features, development team 
+details, login, and registration. This page helps users 
+
+===== PDF PAGE 41 =====
+
+    
+ 
+understand the purpose of the system before entering the 
+role-based platform. 
+ Figure 6 presents the Landing Page prototype of 
+Harviana, which introduces the platform and provides 
+navigation to important public pages and account access 
+options. 
+Figure 6  
+Harviana Landing Page Overview 
+ 
+ The Login and Registration feature allows users to 
+access the system using their account credentials or create 
+a new account. This feature supports role-based access by 
+ensuring that users are directed to the correct interface 
+depending on their assigned role, such as Farmer, LGU 
+Validator, or DA Administrator.  
+ Figure 7 presents the Login and Registration 
+prototype, showing the basic account access screens used 
+for signing in and creating a new user account. 
+
+
+===== PDF PAGE 42 =====
+
+    
+ 
+Figure 7 
+Login and Registration 
+ 
+ The Crop Planning and Farmer Calendar feature allows 
+farmers to create crop plans and organize their farm 
+activities according to the selected crop, intended 
+planting area, water source, planting material, planting 
+date, and expected harvest date. It provides farmers with a 
+structured way to manage active crop plans and monitor 
+important production activities throughout the cropping 
+period. The calendar also displays scheduled tasks and 
+reminders, helping farmers keep track of planting, crop 
+maintenance, fertilizer application, and harvest-related 
+activities. 
+ Figure 8 presents the Crop Planning and Farmer 
+Calendar prototype, demonstrating how farmers can create 
+crop plans and view their scheduled activities through a 
+single interface. The prototype illustrates how crop 
+
+
+===== PDF PAGE 43 =====
+
+    
+ 
+information, expected production schedules, reminders, and 
+farm tasks are organized to support more convenient and 
+systematic monitoring. 
+Figure 8 
+Crop Planning and Farmer Calendar Prototype 
+ 
+ The ML-Based Production Estimate feature is included 
+in the crop planning process to provide farmers with an 
+estimated production value before finalizing a crop plan. 
+The prototype shows how crop-related inputs may be entered 
+and how the estimated output is displayed to the farmer. 
+This feature supports crop planning by giving users an 
+early reference regarding possible production based on the 
+information provided. It does not replace the farmer’s 
+decision, but it provides additional data that can help 
+farmers review their crop plan more clearly. 
+
+
+===== PDF PAGE 44 =====
+
+    
+ 
+ Figure 9 presents the ML-Based Production Estimate 
+prototype, showing how estimated production information is 
+displayed as part of the crop planning process. 
+Figure 9 
+ML-Based Production Estimate Prototype 
+ 
+ The Damage Report Submission feature allows farmers to 
+document crop damage incidents in a structured and 
+organized manner. The prototype includes fields for the 
+cause of damage, affected crop plan, damaged area, date of 
+occurrence, additional notes, and optional photographic 
+evidence. It also connects each submitted report to the 
+appropriate crop plan, helping the system maintain accurate 
+and traceable damage records. The information is forwarded 
+to the assigned LGU Validator, who can review the report 
+and supporting evidence before approving it or returning it 
+for correction. By providing a dedicated reporting form, 
+Harviana helps farmers submit more complete damage 
+
+
+===== PDF PAGE 45 =====
+
+    
+ 
+information that can support validation, production 
+monitoring, supply forecasting, and administrative report 
+generation.  
+Figure 10 presents the Damage Report Submission 
+prototype, showing the form used by farmers to submit crop 
+damage details and supporting evidence. 
+Figure 10 
+Damage Report Submission 
+ 
+ The Actual Harvest Recording feature allows farmers to 
+submit the final harvest result of a crop plan. This 
+includes the harvest amount, unit, harvest date, notes, and 
+optional photo evidence. The system can also convert the 
+submitted harvest amount into metric tons and compare it 
+with the expected production from the crop plan. This 
+feature helps improve production monitoring because it 
+allows Harviana to compare estimated production with actual 
+farmer-recorded harvest data. 
+
+
+===== PDF PAGE 46 =====
+
+    
+ 
+ Figure 11 presents the Actual Harvest Recording 
+prototype, showing how farmers can submit harvest 
+information and review the comparison between expected and 
+actual production. 
+Figure 11 
+Actual Harvest Recording 
+ 
+ The LGU Report Validation feature serves as the 
+checking layer between farmer-submitted records and DA 
+administrative monitoring. Through this feature, LGU 
+Validators can view submitted reports, review report 
+details, check evidence, and decide whether a report should 
+be approved or returned for correction. This process helps 
+improve the reliability of the information stored in the 
+system. It also ensures that reports used for DA 
+dashboards, maps, forecasts, and generated reports have 
+passed a validation step. 
+
+
+===== PDF PAGE 47 =====
+
+    
+ 
+ Figure 12 presents the LGU Report Validation 
+prototype, showing the validation queue, report details, 
+evidence section, and approval or return actions. 
+Figure 12 
+LGU Report Validation 
+ 
+ The Interactive Map and Weather feature allows users 
+to view agricultural information according to location and 
+selected filters. The prototype includes filters for crop 
+type, year, view type, and farm type, allowing users to 
+focus on specific records. It also includes a map area and 
+weather information panel, which may show details such as 
+temperature, rainfall probability, humidity, and wind 
+speed. This feature supports spatial monitoring by helping 
+users relate crop records with geographic and weather-
+related conditions. 
+ Figure 13 presents the Interactive Map and Weather 
+prototype, showing the map area, filter options, and 
+
+
+===== PDF PAGE 48 =====
+
+    
+ 
+weather information panel used for location-based 
+agricultural monitoring. 
+Figure 13 
+Interactive Map and Weather Prototype 
+ 
+ The DA Dashboard and Supply Forecast feature is 
+designed to help DA Administrators monitor validated 
+agricultural records in a summarized format. The dashboard 
+presents important information such as harvest accuracy, 
+crop production, damage records, and report categories. The 
+supply forecast section provides support for reviewing 
+expected supply conditions based on available crop and 
+harvest-related data. This feature helps administrators 
+quickly understand production-related trends before viewing 
+more detailed records or generating reports. 
+ Figure 14 presents the DA Dashboard and Supply 
+Forecast prototype, showing the summarized monitoring 
+
+
+===== PDF PAGE 49 =====
+
+    
+ 
+cards, dashboard chart, and supply forecast section for DA 
+Administrators. 
+Figure 14 
+DA Dashboard and Supply Forecast 
+ 
+ The Reports and Export feature allows DA 
+Administrators to organize validated agricultural records 
+into report form. The prototype includes sections for 
+planting records, harvest records, damage records, and 
+export options. This feature supports administrative 
+documentation because it allows system data to be prepared 
+for review, analysis, and decision-making. Through report 
+generation and export, Harviana helps transform farmer-
+submitted and validated information into usable records for 
+agricultural monitoring and planning. 
+ Figure 15 presents the Reports and Export prototype, 
+showing the report table and export options used by DA 
+Administrators to prepare agricultural records. 
+
+
+===== PDF PAGE 50 =====
+
+    
+ 
+Figure 15 
+Reports and Export 
+ 
+Test. The Test phase focused on evaluating whether the 
+proposed system features were understandable, usable, and 
+aligned with the needs of the target users. In this phase, 
+the researchers conducted testing activities to check the 
+main workflows of Harviana, including crop planning, farmer 
+calendar use, ML-based production estimate viewing, damage 
+report submission, actual harvest recording, LGU report 
+validation, dashboard monitoring, interactive map and 
+weather viewing, supply forecast review, and report 
+generation. 
+ The testing process involved participating farmers and 
+DA administrators. Farmers tested the farmer-side features 
+by performing tasks such as creating crop plans, viewing 
+calendar reminders, submitting damage reports, and 
+recording actual harvest results. These activities helped 
+
+
+===== PDF PAGE 51 =====
+
+    
+ 
+determine whether the farmer interface was understandable 
+and useful for organizing farm-related records. DA 
+administrators tested the administrative features by 
+reviewing dashboards, viewing map and weather information, 
+checking supply forecast data, and generating reports. This 
+helped determine whether the system could support 
+agricultural monitoring and decision-making. 
+Scope and Delimitation 
+ The scope of this study focuses on the design and 
+development of Harviana, a GIS-integrated decision-support 
+system for visualizing vegetable production trends in 
+Benguet. The system is designed to support vegetable 
+production-related monitoring activities by organizing crop 
+plans, farmer-submitted reports, harvest records, 
+validation results, map-based information, supply 
+forecasts, and generated reports. 
+ Harviana is intended for three main user groups: 
+farmers, LGU Validators, and DA Administrators. Farmers are 
+provided with features for account registration, login, 
+crop planning, farmer calendar viewing, ML-based production 
+estimate viewing, damage report submission, and actual 
+harvest recording. These features allow farmers to organize 
+
+===== PDF PAGE 52 =====
+
+    
+ 
+crop activities and submit crop-related information through 
+a web-based platform. 
+ The system also includes an LGU validation feature, 
+which allows submitted farmer reports to be reviewed, 
+approved, or returned for correction. This validation 
+process serves as a checking layer before farmer-submitted 
+information becomes part of the validated records used for 
+administrative monitoring. 
+ For DA Administrators, Harviana provides features for 
+dashboard monitoring, crop data viewing, interactive map 
+and weather viewing, real-time supply forecast review, 
+report generation, and export of agricultural records. 
+These features are designed to support the monitoring of 
+validated crop information and the preparation of 
+agricultural reports for documentation and decision-making. 
+ The study is delimited to vegetable production-related 
+records within Benguet. The system does not cover 
+agricultural records from other provinces or farming 
+sectors outside the identified scope of the study. The 
+production estimates and supply forecasts generated by 
+Harviana are intended to serve as decision-support 
+information and should not be treated as final or absolute 
+production values. The reliability of these outputs depends 
+
+===== PDF PAGE 53 =====
+
+    
+ 
+on the completeness and accuracy of the data available in 
+the system. 
+ Harviana is developed as a web-based system that can 
+be accessed through a browser using an internet-connected 
+device. The system does not include full market price 
+prediction, community forum functions, IoT-based farm 
+monitoring, offline mobile synchronization, or direct 
+integration with all external government databases. It also 
+does not replace the decision-making authority of farmers, 
+LGU personnel, or DA Administrators. Instead, it provides 
+digital support for crop planning, validation, 
+visualization, forecasting, and reporting. 
+ For the usability evaluation, the study involved 
+participating farmers and DA Administrators. Farmers 
+evaluated the farmer-side features of the system, while DA 
+Administrators evaluated the administrative monitoring and 
+reporting features. Although the LGU Validator module is 
+included in the system workflow, LGU Validators were not 
+included as usability respondents due to the study’s 
+respondent availability and scope limitations. 
+Data Gathering Techniques 
+The researchers utilized several data gathering 
+techniques to collect the necessary information for the 
+
+===== PDF PAGE 54 =====
+
+    
+ 
+design, development, and evaluation of Harviana. These 
+techniques helped the researchers understand the needs of 
+the target users, identify the system requirements, 
+determine the necessary features, and evaluate the 
+usability of the system. The gathered information served as 
+the basis for developing a GIS-integrated decision-support 
+system that supports crop planning, validation, monitoring, 
+forecasting, and report generation. 
+Interview. The researchers gathered information from 
+farmers and DA Administrators to understand the current 
+challenges encountered in crop planning, agricultural 
+record management, monitoring, and reporting. The responses 
+helped the researchers identify the difficulties 
+experienced by farmers in organizing crop activities, 
+submitting damage reports, and recording actual harvest 
+results. The information gathered from DA Administrators 
+also helped determine the need for organized dashboards, 
+map-based monitoring, supply forecast information, and 
+report generation features. 
+Survey Questionnaires. The researchers used survey 
+questionnaires to evaluate the usability of Harviana among 
+the participating users. Farmers evaluated the farmer-side 
+features of the system using the System Usability Scale 
+
+===== PDF PAGE 55 =====
+
+    
+ 
+(SUS), while DA Administrators evaluated the administrative 
+features using the USE questionnaire. The System Usability 
+Scale introduced by Brooke (1996) was used because it 
+provides a structured way to measure the perceived 
+usability of a system. The USE questionnaire developed by 
+Lund (2001) was used to evaluate the DA Administrator side 
+of the system in terms of usefulness, ease of use, ease of 
+learning, and satisfaction. The responses gathered from the 
+questionnaires were used to measure the extent of usability 
+of Harviana based on user experience, ease of use, 
+usefulness, and satisfaction. 
+System Testing. The researchers also conducted system 
+testing to check whether the major features of Harviana 
+functioned according to their intended purpose. The testing 
+covered crop planning, farmer calendar, ML-based production 
+estimate, damage report submission, actual harvest 
+recording, report validation, dashboard monitoring, 
+interactive map and weather viewing, supply forecasting, 
+and report generation. This helped ensure that the system 
+workflows were functional before the usability results were 
+analyzed. 
+ 
+ 
+
+===== PDF PAGE 56 =====
+
+    
+ 
+Sources of Data 
+ The researchers gathered data from individuals and 
+references related to the agricultural sector to ensure 
+that Harviana addressed the practical needs of its intended 
+users. Primary data were gathered from participating 
+farmers and DA Administrators. The farmers provided 
+information about their experiences in crop planning, farm 
+activity monitoring, damage reporting, and harvest 
+recording. Their responses helped the researchers identify 
+the farmer-side features needed in the system, such as crop 
+planning, farmer calendar, ML-based production estimate, 
+damage report submission, and actual harvest recording. 
+ The researchers also gathered data from DA 
+Administrators to understand the administrative side of 
+agricultural monitoring and reporting. Their input helped 
+the researchers determine the need for organized 
+dashboards, map-based visualization, weather information, 
+supply forecast viewing, and report generation. These data 
+served as a basis for designing the administrative features 
+of Harviana and ensuring that validated crop-related 
+information could be presented in a more useful and 
+organized manner. 
+
+===== PDF PAGE 57 =====
+
+    
+ 
+ Secondary data were gathered from related studies, 
+government reports, agricultural references, and online 
+sources relevant to digital agriculture, geographic 
+information systems, decision-support systems, machine 
+learning, crop monitoring, and vegetable production in 
+Benguet. These sources helped establish the background of 
+the study and supported the development of Harviana as a 
+GIS-integrated decision-support system. The researchers 
+also reviewed references related to usability evaluation to 
+guide the use of the System Usability Scale (SUS) for 
+farmers and the USE questionnaire for DA Administrators. 
+ The data gathered from these sources were used to 
+identify system requirements, determine the necessary 
+features, design user workflows, and evaluate the usability 
+of Harviana. Through these sources, the researchers were 
+able to align the system with the needs of farmers and DA 
+Administrators while supporting the overall goal of 
+improving crop planning, validation, visualization, 
+forecasting, and reporting. 
+Software Development Tools 
+ The researchers utilized various software development 
+tools and technologies in designing and developing 
+Harviana. These tools supported the creation of the user 
+
+===== PDF PAGE 58 =====
+
+    
+ 
+interface, system modules, database management, map 
+visualization, forecasting support, report generation, and 
+deployment of the system. 
+ Figma. Figma was used in designing the initial 
+interface and layout of Harviana. It helped the researchers 
+prepare the low-fidelity and high-fidelity prototypes of 
+the system, including the landing page, login and 
+registration pages, farmer dashboard, crop planning, 
+calendar, map, validation, reports, and administrator 
+modules. Through Figma, the researchers were able to 
+visualize the structure of the system before proceeding to 
+actual development. 
+ Visual Studio Code. Visual Studio Code served as the 
+main code editor used in developing the system. It was used 
+for writing, editing, and organizing the source code of 
+Harviana, including the backend files, frontend views, 
+routes, controllers, models, and styling files. Its 
+extensions and integrated terminal also helped the 
+researchers manage the development process more 
+efficiently. 
+ PHP. PHP was used as the main server-side programming 
+language of Harviana. It handled the backend logic of the 
+system, including user authentication, crop plan 
+
+===== PDF PAGE 59 =====
+
+    
+ 
+processing, report submission, validation workflows, 
+harvest records, and administrative report generation. 
+ Laravel Framework. Laravel was used as the primary web 
+development framework of Harviana. It provided the 
+structure for implementing the system through routes, 
+controllers, models, views, middleware, authentication, and 
+database handling. Laravel also supported the role-based 
+access of Farmers, LGU Validators, and DA Administrators, 
+ensuring that each user group could access only the 
+functions assigned to them. 
+ Blade, Tailwind CSS, and Alpine.js. Laravel Blade was 
+used to create the interface templates of the system, while 
+Tailwind CSS was used for styling and responsive layout 
+design. Alpine.js supported interactive frontend behavior 
+such as dropdowns, modals, filters, dynamic forms, and 
+other user interface actions. These tools helped improve 
+the usability and appearance of Harviana across different 
+system pages. 
+ JavaScript and Chart.js. JavaScript was used to 
+support interactive system functions such as map controls, 
+form actions, dashboard updates, and dynamic page 
+responses. Chart.js was used to present agricultural data 
+in visual form, such as crop production charts, forecast 
+
+===== PDF PAGE 60 =====
+
+    
+ 
+charts, dashboard summaries, and report-related graphs. 
+These tools helped transform system records into easier-to-
+understand visual information. 
+ Vite, Node.js, and npm. Vite, Node.js, and npm were 
+used to manage and build the frontend assets of the system. 
+These tools supported the compilation of scripts and 
+stylesheets, allowing the researchers to organize and 
+optimize the frontend resources used by Harviana. 
+ PostgreSQL. PostgreSQL was used as the database 
+management system of Harviana. It stored the system records 
+such as user accounts, crop plans, farm details, harvest 
+records, damage reports, validation results, map-related 
+data, and report information. The database served as the 
+central storage for the agricultural records used in 
+monitoring, forecasting, and report generation. 
+ Leaflet and OpenStreetMap. Leaflet and OpenStreetMap 
+were used to support the GIS-integrated map feature of 
+Harviana. These tools allowed the system to display 
+agricultural records through map-based visualization, 
+helping users view crop-related information by location. 
+Through this feature, Farmers and DA Administrators can 
+better understand vegetable production trends in different 
+areas of Benguet. 
+
+===== PDF PAGE 61 =====
+
+    
+ 
+ Google Weather API. The Google Weather API was used to 
+provide weather-related information in the map feature of 
+the system. It supported the display of field weather data 
+such as temperature, rainfall probability, humidity, wind 
+speed, and weather condition. This helped users relate 
+agricultural records with environmental conditions that may 
+affect crop production. 
+ Python and Machine Learning API. Python was used for 
+the machine learning component connected to Harviana. The 
+machine learning service supported production estimation 
+and forecasting functions by processing crop-related data 
+and returning prediction results to the Laravel system. 
+This allowed Harviana to provide data-driven support for 
+crop planning and agricultural monitoring. 
+ Laravel DomPDF and Maatwebsite Excel. Laravel DomPDF 
+and Maatwebsite Excel were used to support report 
+generation and export features. DomPDF allowed the system 
+to generate printable PDF reports, while Maatwebsite Excel 
+supported spreadsheet-based report export. These tools 
+helped DA Administrators prepare agricultural records for 
+documentation, analysis, and decision-making. 
+ GitHub. GitHub was used for version control and 
+project collaboration. It helped the researchers manage 
+
+===== PDF PAGE 62 =====
+
+    
+ 
+changes in the system source code, track development 
+progress, and maintain a backup of the project files during 
+development. 
+ Railway. Railway was used as the deployment platform 
+for Harviana. It allowed the researchers to deploy the web 
+application and connect it with its database and machine 
+learning service. Through Railway, the system became 
+accessible online for testing and demonstration. 
+
+===== PDF PAGE 63 =====
+
+    
+ 
+              
+Chapter 3 
+FINDINGS OF THE STUDY 
+ This chapter presents the findings of the study based on 
+the development and evaluation of Harviana, a GIS-integrated 
+decision-support system for visualizing vegetable production 
+trends in Benguet. The findings are organized according to the 
+objectives of the study, beginning with the identified 
+information requirements, followed by the architectural 
+framework, system features, and extent of usability of the 
+system. This chapter also discusses how Harviana supports crop 
+planning, report validation, map-based monitoring, supply 
+forecasting, and report generation through its web-based 
+platform. Lastly, it presents the usability evaluation results 
+gathered from the participating farmers and DA Administrators. 
+Information Requirements for Harviana 
+ This section presents the information requirements 
+necessary for the operation of Harviana as a GIS-integrated 
+decision support system for vegetable production in 
+Benguet. These requirements consist of user account 
+information, agricultural production records, farmer crop-
+planning data, and validation information. The system also 
+requires technical resources that support its forecasting, 
+mapping, monitoring, and reporting functions. Defining 
+these requirements ensures that the information collected 
+
+===== PDF PAGE 64 =====
+
+    
+ 
+              
+and processed by Harviana is accurate, organized, secure, 
+and suitable for the needs of farmers, LGU validators, and 
+Department of Agriculture administrators. 
+ User Information. Harviana has three primary user 
+groups: farmers, LGU validators, and DA administrators. 
+Each user is required to provide specific account and 
+location information according to their assigned role. 
+These details allow the system to authenticate users, 
+control access to features, personalize the information 
+displayed, and associate agricultural records with the 
+appropriate farmer and municipality. 
+ Farmer information consists of the farmer’s full name, 
+email address, password, preferred municipality, 
+cooperative, and selected crops. During registration, 
+farmers provide their name, email address, and password. 
+After signing in, they complete the onboarding process by 
+selecting their municipality and cooperative. This location 
+information allows Harviana to display crop 
+recommendations, municipal production information, weather 
+conditions, and agricultural insights that are relevant to 
+the farmer’s area. 
+ Farmers also provide operational information through 
+the crop-planning and farmer-calendar features. This 
+
+===== PDF PAGE 65 =====
+
+    
+ 
+              
+information includes the selected crop, intended planting 
+area, water source, planting material, planning date, 
+estimated harvest date, and other details required to 
+organize scheduled farm activities. During the production 
+cycle, farmers may submit damage reports containing the 
+affected crop plan, damaged area, cause and date of damage, 
+supporting description, and optional photographic evidence. 
+These reports are forwarded to the assigned LGU Validator 
+for review, approval, or return for correction. 
+ Once harvesting is completed, farmers may record the 
+actual harvest date, harvested amount, measurement unit, 
+additional notes, and optional photo evidence. Harviana 
+converts the reported quantity into metric tons and 
+compares the actual harvest with the production estimate 
+associated with the crop plan. These records help the 
+system maintain organized crop information, measure 
+differences between estimated and actual production, and 
+provide updated data for municipal supply monitoring and 
+administrative reporting. Tables 1, 2, and 3 present the 
+information required for Farmers, LGU Validators, and DA 
+Administrators, together with the corresponding data types 
+and storage formats, while Table 4 presents the minimum and 
+recommended system requirements for operating Harviana. 
+
+===== PDF PAGE 66 =====
+
+    
+ 
+              
+Table 1 
+Farmer Information  
+Field                 Data Type Length 
+USER_ID               INTEGER              
+FULL_NAME             STRING                     
+EMAIL_ADDRESS         STRING 
+PASSWORD              STRING 
+MUNICIPALITY          STRING 
+COOPERATIVE           STRING 
+ACCOUNT_STATUS        BOOLEAN 
+Auto-generated 
+255 
+255 
+Encrypted 
+255 
+255 
+Active/Inactive 
+ 
+Table 2 
+LGU Validator Information 
+Field                 Data Type Length 
+USER_ID               INTEGER              
+FULL_NAME             STRING                     
+EMAIL_ADDRESS         STRING 
+PASSWORD              STRING 
+LGU_MUNICIPALITY      STRING 
+LGU_BARANGAY          STRING 
+ACCOUNT_STATUS        BOOLEAN 
+VALIDATION_NOTES      Text 
+Auto-generated 
+255 
+255 
+Encrypted 
+255 
+255 
+Active/Inactive 
+Variable Length 
+ 
+Table 3 
+DA-Admin Information  
+Field                 Data Type Length 
+USER_ID               INTEGER              
+FULL_NAME             STRING                     
+EMAIL_ADDRESS         STRING 
+PASSWORD              STRING 
+USER_ROLE             STRING 
+ACCOUNT_STATUS        BOOLEAN 
+Auto-generated 
+255 
+255 
+Encrypted 
+Administrator 
+Active/Inactive 
+System Requirements. Harviana is a responsive web-
+based application that can be accessed through smartphones, 
+tablets, laptops, and desktop computers. Users must have a 
+modern browser with JavaScript, cookies, and local browser 
+storage enabled. A stable internet connection is required 
+to retrieve map tiles, weather information, prediction 
+results, and updated agricultural records. A stronger 
+
+===== PDF PAGE 67 =====
+
+    
+ 
+              
+connection is recommended when uploading photographic 
+evidence for damage and harvest reports. Table 4 presents 
+the software and hardware requirements for the application. 
+Table 4 
+System Requirements 
+Requirement Minimum System 
+Requirement            
+Recomended 
+Device 
+ 
+ 
+Operating System 
+ 
+ 
+ 
+RAM  
+Connectivity 
+Smartphone, tablet, 
+laptop, or desktop 
+ 
+Android 10+, iOS/iPadOS 
+17+, Windows 10+, or 
+macOS 12 Monterey+ 
+ 
+2GB 
+3G or Wi-Fi 
+Recent 
+smartphone or 
+computer 
+Android 12+, 
+iOS/iPadOS 17+, 
+Windows 11, or 
+macOS 13+ 
+4GB or higher 
+4G/LTE, 5G 
+ 
+Architecture Framework of Harviana 
+ The architectural framework serves as the structural 
+guide for the development and operation of Harviana. It 
+presents how the system’s user interfaces, application 
+modules, databases, and external services work together to 
+support agricultural planning and monitoring. The framework 
+also provides a common representation that helps 
+researchers, developers, and stakeholders understand the 
+system’s processes, responsibilities, and technical 
+components. Through this structure, the design of Harviana 
+is aligned with the requirements of farmers, LGU 
+validators, and DA administrators. 
+
+===== PDF PAGE 68 =====
+
+    
+ 
+              
+ Figure 16 presents Kruchten’s “4+1” View Model used as the 
+architectural framework of Harviana. 
+Figure 16 
+The “4+1” View Model of Harviana 
+ 
+The researchers used Kruchten’s “4+1” View Model to 
+describe the architecture of Harviana from different 
+perspectives. The model consists of the Scenarios, Logical, 
+Process, Development, and Physical views. These views may be 
+represented using use case, class, sequence, package, and 
+deployment diagrams. Together, they explain the system’s user 
+interactions, functional structure, runtime processes, software 
+organization, and deployment environment. 
+Scenarios. The scenario perspective describes Harviana 
+according to the activities performed by its users during actual 
+system operation. It presents the responsibilities, access 
+privileges, and system interactions assigned to Farmers, LGU 
+
+
+===== PDF PAGE 69 =====
+
+    
+ 
+              
+Validators, and DA Administrators. This view identifies how 
+farmers submit crop plans, damage reports, and actual harvest 
+records; how LGU validators review and verify these submissions; 
+and how DA administrators use the consolidated information for 
+monitoring, forecasting, and reporting. Through these role-based 
+interactions, the scenario perspective demonstrates how 
+agricultural information moves across the system and supports 
+Harviana’s overall decision-support process. 
+Figure 17 maps the system’s principal activities across 
+these three roles and clarifies how information moves from farmer 
+submission to local validation and administrative use. 
+Figure 17 
+Harviana Use Case Diagram 
+ 
+ The use case diagram illustrates the core functions 
+available to the three actors of Harviana. All actors must first 
+complete the “Login/Authenticate” process before accessing their 
+
+
+===== PDF PAGE 70 =====
+
+    
+ 
+              
+respective dashboards and system features. Farmers may register 
+their accounts and complete the onboarding process by providing 
+their municipality and cooperative information. 
+ Once authenticated, farmers can manage their profiles, view 
+personalized dashboards and crop recommendations, create crop 
+plans, and receive machine-learning-based production estimates. 
+They can also manage their farming calendar, submit damage 
+reports, record actual harvest results, and access municipality-
+level maps and weather information. The “Create Crop Plan” use 
+case includes the generation of a production estimate based on 
+the crop, municipality, planting area, water source, and expected 
+harvest period provided by the farmer. 
+ LGU validators are responsible for reviewing damage reports 
+and actual harvest records submitted by farmers within their 
+assigned municipalities. They can view pending submissions, 
+inspect the available evidence, approve valid records, or return 
+submissions that require correction. Validators may also provide 
+notes explaining their decision, while the system records the 
+validation activity for monitoring purposes. 
+ DA administrators have broader access to the system’s 
+agricultural and administrative functions. They can manage user 
+accounts and roles, maintain historical crop-production records, 
+monitor the administrative dashboard, and access the real-time 
+municipal supply forecast. They may also view the interactive map 
+and weather information, generate reports, and examine prediction 
+analytics for agricultural planning and system evaluation. 
+
+===== PDF PAGE 71 =====
+
+    
+ 
+              
+ Logical View. The Logical View describes the internal 
+organization of Harviana by presenting the data objects and 
+service components responsible for its major functions. It 
+focuses on how user accounts, agricultural records, crop plans, 
+predictions, validation activities, and supply forecasts are 
+represented within the application. A class diagram was developed 
+to show the attributes, operations, and relationships of these 
+components. 
+ Figure 18 presents the principal classes and services that 
+support Harviana’s role-based and agricultural decision-support 
+functions. 
+Figure 18 
+Harviana Class Diagram 
+ 
+ The class diagram represents the structure and primary 
+components of Harviana. The User class manages the accounts and 
+assigned roles of Farmers, LGU Validators, and DA Administrators. 
+Farmers use the FarmerCalendarEvent class to create crop plans, 
+
+
+===== PDF PAGE 72 =====
+
+    
+ 
+              
+organize planting and harvest schedules, submit damage reports, 
+and record actual harvest results. LGU Validators review these 
+submissions, provide validation notes, and approve or return 
+records for correction, while the CalendarEventAudit class 
+maintains a record of validation activities. The Prediction class 
+stores production estimates generated for specific crops and 
+municipalities. The CropProduction class maintains historical 
+agricultural records used for dashboards, maps, reports, and 
+forecasting. The CropPredictionService communicates with the 
+machine-learning service to generate production estimates, while 
+the MunicipalSupplyForecastService combines crop plans with 
+approved damage and actual harvest information to calculate 
+municipality-level supply forecasts for DA Administrators. 
+ Process View. The process view describes how Harviana’s 
+users and system components interact during runtime. It presents 
+the sequence of requests and responses involving Farmers, LGU 
+Validators, DA Administrators, controllers, services, the 
+connected machine-learning service, and Railway PostgreSQL. The 
+following sequence diagrams cover user authentication, crop-plan 
+production estimation, and LGU validation of farmer reports. 
+ Figure 19 presents the authentication sequence diagram of 
+Harviana, illustrating how user credentials are submitted, 
+verified, and processed before the user is directed to the 
+appropriate interface based on their assigned role. 
+ 
+ 
+
+===== PDF PAGE 73 =====
+
+    
+ 
+              
+Figure 19 
+Harviana Login Sequence Diagram 
+ 
+ The sequence diagram illustrates how user enters an 
+email address and password, which are submitted to the 
+authentication controller. The system retrieves the 
+corresponding account from Railway PostgreSQL and verifies 
+the credentials. When authentication is successful, the 
+session is regenerated, and the user is redirected to the 
+appropriate dashboard based on their role as a Farmer, LGU 
+Validator, or DA Administrator. If the credentials are 
+invalid, the login page displays an authentication error. 
+ Figure 20 presents the sequence diagram how Harviana 
+generates a production estimate for a farmer’s crop plan. 
+ 
+ 
+
+
+===== PDF PAGE 74 =====
+
+    
+ 
+              
+Figure 20 
+Harviana Crop Plan and Production Estimate Sequence Diagram 
+ 
+The diagram shows how the Farmer provides the crop, 
+desired planting area, water source, planting material, and 
+planning date. The Farmer Calendar Controller validates the 
+information and calculates the estimated harvest date. The 
+Crop Prediction Service sends the required data to the 
+connected machine-learning service, which returns the 
+predicted production and confidence value. After reviewing 
+the result, the Farmer may save the crop plan, together 
+with its prediction and estimated harvest date, in Railway 
+PostgreSQL. 
+Figure 21 presents the submission and LGU validation 
+of farmers’ damage and harvest reports. 
+
+
+===== PDF PAGE 75 =====
+
+    
+ 
+              
+Figure 21 
+Farmer Report and LGU Validation Sequence Diagram 
+ 
+ The sequence begins when the Farmer submits damage or 
+actual-harvest information together with the required details and 
+optional photographic evidence. Harviana stores the submitted 
+report with a pending validation status and forwards it to the 
+LGU Validator assigned to the farmer’s municipality. The LGU 
+Validator reviews the report details and supporting evidence 
+before approving the submission or returning it to the Farmer 
+with correction notes. The system records the validation 
+decision, validator information, date and time of validation, and 
+corresponding audit entry. Once approved, the validated 
+information becomes available for administrative reports and is 
+included in the calculation of municipal supply forecasts 
+accessible to the DA Administrator. 
+
+
+===== PDF PAGE 76 =====
+
+    
+ 
+              
+ Figure 22 presents the DA Administrator’s process for 
+viewing municipal supply forecasts. 
+Figure 22 
+Harviana Sequence Diagram for DA Administrator Supply 
+Forecast 
+ 
+ The sequence diagram shows how the DA Administrator 
+accesses the interactive map and applies forecast filters. 
+The Municipal Supply Forecast Service retrieves farmer crop 
+plans, stored production predictions, and LGU-approved 
+damage and actual-harvest records from Railway PostgreSQL. 
+It calculates the adjusted municipal supply and returns the 
+results for display on the administrator’s map. 
+ Figure 23 presents the report generation and export 
+process available to the DA Administrator. 
+ 
+
+
+===== PDF PAGE 77 =====
+
+    
+ 
+              
+Figure 23 
+Harviana Sequence Diagram for DA Report Generation and 
+Export 
+ 
+ The sequence diagram shows how the DA Administrator 
+selects a report and applies the necessary filters. The 
+Report Controller retrieves the required records from 
+Railway PostgreSQL and processes them into summaries and 
+analytics for display. The administrator can then export 
+the generated report as a PDF or CSV file. The system 
+prepares the selected format and sends the completed report 
+to the browser for download. 
+ Development View. The development view presents 
+Harviana’s software organization from the developers’ 
+
+
+===== PDF PAGE 78 =====
+
+    
+ 
+              
+perspective. It shows how the application is divided into 
+packages and how these packages depend on one another. A 
+package diagram is used to represent the presentation 
+layer, routing and access control, controllers, domain 
+services, data models, external services, and database. 
+ Figure 24 presents the package diagram of Harviana and 
+the dependencies among its software modules. 
+Figure 24 
+Harviana Package Diagram 
+ 
+ The package diagram shows how requests from the 
+Farmer, LGU Validator, and DA Administrator interfaces pass 
+through the routing and access-control package before 
+reaching the appropriate controllers. The controllers use 
+domain services for production prediction, supply 
+
+
+===== PDF PAGE 79 =====
+
+    
+ 
+              
+forecasting, report validation, weather information, and 
+other system operations. These services access the system’s 
+data models and connected external services. The data 
+models manage Harviana’s records stored in Railway 
+PostgreSQL. 
+ Physical View. The physical view presents the 
+hardware, cloud services, and external systems used to 
+operate Harviana. It shows where the application is 
+deployed and how user devices, the web application, 
+database, machine-learning service, and third-party APIs 
+communicate. A deployment diagram is used to represent 
+these physical and cloud-based connections. 
+ Figure 25 presents the deployment structure of 
+Harviana and its connected services. 
+Figure 25 
+Harviana Deployment Diagram 
+ 
+
+
+===== PDF PAGE 80 =====
+
+    
+ 
+              
+ The deployment diagram shows Farmers, LGU Validators, 
+and DA Administrators accessing Harviana through web 
+browsers or the installable PWA over HTTPS. The Laravel 
+application is deployed on Railway and communicates with 
+Railway PostgreSQL to manage user accounts, crop plans, 
+predictions, validation records, and reports. Production-
+estimation requests are sent to the connected machine-
+learning service. Harviana also communicates with Google 
+services for weather information, chatbot responses, and 
+OAuth authentication. 
+Features of Harviana 
+ This section presents the major features available in 
+Harviana. The system provides secure role-based access, 
+farmer crop-planning tools, machine-learning production 
+estimates, LGU validation, municipal supply forecasting, 
+and administrative reports. These features establish a 
+connected flow in which farmer-submitted information is 
+reviewed by LGU Validators and transformed into decision-
+support information for DA Administrators. 
+ Harviana landing page. It serves as the first page 
+accessed by visitors and introduces the purpose of the platform. 
+Through this page, users can view general information about the 
+system, explore its features, learn about the development team, 
+and proceed to the login or account registration page. The 
+
+===== PDF PAGE 81 =====
+
+    
+ 
+              
+landing page also gives users an initial understanding of how 
+Harviana supports agricultural activities through digital crop 
+monitoring, data collection, and forecasting support. It presents 
+Harviana as an agricultural decision-support system designed to 
+assist farmers and decision-makers in managing crop-related 
+information more efficiently. 
+ Figure 26 presents the public landing page that 
+introduces Harviana as an agricultural decision-support 
+system. 
+Figure 26 
+Harviana landing page 
+ 
+ User Login and Registration. These pages allow registered 
+users to sign in using their account credentials or Google 
+authentication, while new users can create an account by entering 
+the required registration details. After successful login, the 
+system identifies the user’s assigned role and directs them to 
+the appropriate interface, such as the Farmer dashboard, LGU 
+Validator workspace, or DA Administrator dashboard. This role-
+
+
+===== PDF PAGE 82 =====
+
+    
+ 
+              
+based access helps organize the system functions according to the 
+responsibilities of each user group. Through this process, 
+Harviana ensures that users can access only the features, 
+records, and information related to their role within the system, 
+improving both usability and data security.  
+Figure 27 presents the login and registration pages of 
+Harviana, which provide the main access points for users of the 
+system. 
+Figure 27 
+User Login and Registration 
+ 
+ Farmer  Dashboard. This page provides farmers with an 
+overview of their crop-related activities, nearby crop 
+monitoring, crop outlook, harvest progress, and quick access to 
+the farmer calendar. Through this feature, farmers can 
+
+
+===== PDF PAGE 83 =====
+
+    
+ 
+              
+immediately review useful agricultural information in one place 
+before proceeding to planning, monitoring, or reporting 
+activities. The dashboard helps farmers track their current farm 
+records and understand the status of their crop activities more 
+conveniently. 
+ Figure 28 presents the Farmer Dashboard of Harviana, which 
+serves as the main workspace for farmer accounts after login. 
+Figure 28 
+Farmer Dashboard 
+ 
+ Farmer Calendar and Crop Planning. Through this feature, 
+farmers can create crop plans, view active crops, check upcoming 
+reminders, and see scheduled crop activities such as planting, 
+fertilizer application, and other crop management tasks. The 
+calendar also helps farmers follow the expected timeline of their 
+crop production activities from the planning stage up to the 
+harvest period. By placing crop plans and farm tasks in a 
+calendar format, the system allows farmers to monitor important 
+dates more easily and avoid overlooking scheduled activities. 
+
+
+===== PDF PAGE 84 =====
+
+    
+ 
+              
+This supports more organized monitoring of planting, maintenance, 
+and harvest-related activities. 
+Figure 29 presents the Farmer Calendar and Crop Planning 
+feature of Harviana, which allows farmers to organize crop 
+activities based on dates and planned farm operations. 
+Figure 29 
+Farmer Calendar and Crop Planning 
+ 
+ ML-Based Production Estimate. This feature provides an 
+estimated production value after the farmer enters important crop 
+plan details, including crop type, planting area, water source, 
+seed type, and planning date. The system also displays an 
+estimated harvest date and crop activity stages to guide the 
+farmer throughout the production cycle. This helps farmers 
+understand the possible output of a planned crop before the 
+harvest period and gives them additional information for planning 
+their farm activities. 
+ Figure 30 presents the ML-Based Production Estimate feature 
+of Harviana, which is displayed during the crop planning process 
+after the farmer provides the required crop plan details. This 
+
+
+===== PDF PAGE 85 =====
+
+    
+ 
+              
+feature shows the estimated production output generated by the 
+system to help farmers preview the possible result of their 
+planned crop before the actual harvest period. 
+Figure 30 
+ML-Based Production Estimate 
+ 
+ Damage Report Submission. In this feature, farmers can 
+select the cause of damage, affected crop plan, damaged area, 
+damage date, and optional notes or photo evidence to support 
+their report. The submitted information can later be reviewed by 
+the LGU Validator before it is included in monitoring records and 
+report generation. This process helps ensure that crop losses are 
+properly documented, validated, and connected to the correct crop 
+plan. It also allows the system to keep more reliable damage 
+records for agricultural monitoring and decision-making. 
+ Figure 31 presents the Damage Report Submission feature of 
+Harviana, which allows farmers to document crop damage that 
+occurs during the production period. 
+ 
+
+
+===== PDF PAGE 86 =====
+
+    
+ 
+              
+Figure 31 
+Damage Report Submission 
+ 
+ Actual Harvest Recording. This feature allows farmers to 
+record the actual harvest amount, unit of measurement, harvest 
+date, optional photographic evidence, and additional notes after 
+completing the crop-production period. The system converts the 
+submitted quantity into metric tons and compares it with the 
+expected production generated from the corresponding crop plan. 
+Through this comparison, Harviana can display the difference 
+between the predicted output and the actual harvest recorded by 
+the farmer. The submitted record is forwarded to the assigned LGU 
+Validator for review before it is included in validated 
+agricultural records. This process supports more accurate 
+production monitoring and provides useful information for 
+evaluating crop performance, updating municipal supply forecasts, 
+and preparing administrative reports. 
+ Figure 32 presents the Actual Harvest Recording feature of 
+Harviana, which enables farmers to submit their harvest results 
+after the crop production period. 
+
+
+===== PDF PAGE 87 =====
+
+    
+ 
+              
+Figure 32 
+Actual Harvest Recording 
+ 
+ LGU Report Validation. Through this feature, LGU Validators 
+can view report queues, filter farmer submissions, check 
+validation statuses, review report details, and examine the 
+available supporting evidence. Based on the information provided, 
+they can approve a valid report or return an incomplete or 
+questionable submission to the farmer with correction notes. The 
+system also records the validator’s decision, account 
+information, validation date and time, and corresponding audit 
+entry for monitoring and traceability. This process allows 
+farmer-submitted information to be examined before it becomes 
+part of Harviana’s validated agricultural records. It improves 
+the reliability and accuracy of the information used by the 
+system and establishes a checking layer between farmer 
+submissions and DA administrative monitoring. Consequently, only 
+reviewed records are included in municipal supply forecasting, 
+report generation, agricultural analysis, and administrative 
+decision-making. 
+
+
+===== PDF PAGE 88 =====
+
+    
+ 
+              
+ Figure 33 presents the LGU Report Validation feature of 
+Harviana, which supports the review of farmer-submitted reports 
+before they are used in higher-level monitoring. 
+Figure 33 
+LGU Report Validation 
+ 
+ Administrator Dashboard and Supply Forecast. This feature 
+displays a summary of system records, crop records, predictions, 
+municipalities, and current supply information. The dashboard 
+includes supply forecast values, harvested crop data, remaining 
+supply, reported damage, and top municipality summaries. Through 
+this feature, the DA Administrator can monitor agricultural 
+conditions and use updated information for planning, 
+coordination, and decision-making.  
+Figure 34 presents the DA Administrator Dashboard and Real-
+Time Supply Forecast feature of Harviana, which provides DA 
+
+
+===== PDF PAGE 89 =====
+
+    
+ 
+              
+administrators with a centralized view of crop and supply-related 
+records. 
+Figure 34 
+Administrator Dashboard and Supply Forecast 
+ 
+ Interactive Agricultural Map and Weather. Users can filter 
+map information according to crop type, year, view type, and farm 
+type to focus on specific crop or area records. The map also 
+displays field weather information such as temperature, weather 
+condition, rainfall probability, humidity, and wind speed, 
+allowing users to view agricultural data together with relevant 
+environmental conditions. Through this feature, users can better 
+understand how crop records are distributed across different 
+municipalities. This supports spatial monitoring by helping users 
+relate agricultural records with location and weather conditions 
+for more informed planning and decision-making.  
+Figure 35 presents the Interactive Agricultural Map and 
+Weather feature of Harviana, which provides a location-based view 
+of agricultural information across municipalities. 
+ 
+
+
+===== PDF PAGE 90 =====
+
+    
+ 
+              
+Figure 35 
+Interactive Agricultural Map and Weather 
+  
+ Reports and Export Generation. This feature summarizes 
+important agricultural information, including harvest accuracy, 
+crop production, damage records, report categories, planting 
+records, planted areas, crop types, production estimates, and 
+actual-harvest results. It allows DA Administrators to filter and 
+review validated records according to relevant categories, 
+locations, crops, and reporting periods. Through the summarized 
+information, administrators can compare forecasted production 
+with farmer-recorded harvest outcomes, identify differences 
+between expected and actual results, and examine significant 
+production or damage trends. The feature also supports report 
+generation and export, enabling validated system data to be 
+prepared in accessible formats for documentation, further 
+analysis, agricultural planning, and administrative decision-
+making. 
+
+
+===== PDF PAGE 91 =====
+
+    
+ 
+              
+ Figure 36 presents the Reports and Export Generation 
+feature of Harviana, which organizes agricultural information 
+into a report-focused view for DA Administrators. 
+Figure 36 
+Reports and Export Generation 
+ 
+ 
+Extent of the Usability of Harviana 
+ The extent of usability of Harviana was evaluated to 
+determine how the system was perceived by its intended users 
+after interacting with its major features. The evaluation focused 
+on two user groups: farmers and DA Administrators. The farmer-
+side evaluation measured the usability of features such as crop 
+planning, farmer calendar monitoring, damage report submission, 
+and actual harvest recording. The DA Administrator-side 
+
+
+===== PDF PAGE 92 =====
+
+    
+ 
+              
+evaluation measured the usability of features such as dashboard 
+monitoring, interactive map and weather viewing, supply forecast 
+review, report generation, and export of agricultural records. 
+ The researchers used two usability instruments to evaluate 
+the system. The System Usability Scale (SUS) was used for the 
+farmer respondents, while the USE questionnaire was used for the 
+DA Administrator respondents. A total of 132 valid responses were 
+used for the farmer-side SUS evaluation, while 18 valid responses 
+were used for the DA Administrator-side USE evaluation. These 
+responses were analyzed according to the scoring procedures and 
+interpretation scales of the selected usability instruments. 
+ For the farmer evaluation, the System Usability Scale (SUS) 
+developed by Brooke (1996) was used to measure the perceived 
+usability of the farmer-side features of Harviana. The SUS is 
+composed of ten statements rated using a five-point scale. For 
+the computation, the odd-numbered items were scored by 
+subtracting one from the participant’s response, while the even-
+numbered items were scored by subtracting the participant’s 
+response from five. The adjusted scores were added together and 
+multiplied by 2.5 to convert the result into a score ranging from 
+0 to 100. The interpretation of SUS scores was adapted from 
+Bangor, Kortum, and Miller (2009). 
+ Table 5 presents the SUS score interpretation scale used in 
+analyzing the farmer usability results 
+ 
+ 
+
+===== PDF PAGE 93 =====
+
+    
+ 
+              
+Table 5 
+SUS Score Interpretation Scale 
+Grade SUS Score 
+Range 
+Adjective Range Length 
+A- to A+ 
+ 
+B- to B+ 
+ 
+C- to C+ 
+ 
+ 
+D 
+ 
+F 
+78.9–100 
+ 
+72.6–78.8 
+ 
+62.7–72.5 
+ 
+ 
+51.7–62.6 
+ 
+0.0–51.6 
+Excellent – Best 
+Imaginable 
+ 
+Good to Excellent 
+ 
+OK to Good 
+ 
+ 
+OK 
+ 
+Worst Imaginable - Poor 
+Acceptable 
+ 
+Acceptable 
+ 
+Marginal - 
+Acceptable 
+ 
+Marginal 
+ 
+Not 
+Acceptable 
+ Table 5 served as the basis for interpreting the overall 
+SUS score of Harviana from the farmer perspective. Higher SUS 
+scores indicate a more positive usability evaluation. Scores 
+within the higher ranges suggest that users can understand and 
+operate the system with less difficulty, while lower scores 
+indicate that the system may require further improvement to 
+support user interaction. 
+Table 6 presents the farmers’ responses to the SUS 
+questionnaire. The values under columns 1 to 5 show the number of 
+farmers who selected each response option. The item contribution 
+mean shows the average score contribution of each item after 
+applying the SUS scoring procedure. 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 94 =====
+
+    
+ 
+              
+Table 6  
+Farmers’ SUS Questionnaire Results 
+No. Statement 1 2 3 4 5 Item 
+Contribu
+tion 
+Mean 
+1 
+ 
+ 
+2 
+ 
+ 
+3 
+ 
+ 
+4 
+ 
+ 
+ 
+5 
+ 
+ 
+ 
+6 
+ 
+ 
+ 
+7 
+ 
+ 
+ 
+8 
+ 
+ 
+9 
+ 
+ 
+10 
+I think that I would like 
+to use frequently. 
+ 
+I found the system 
+Unnecessarily complex. 
+ 
+I thought the system was 
+easy to use. 
+ 
+I think that I would need 
+assistance to use the 
+system. 
+ 
+I found the various 
+features of the system 
+were well integrated. 
+ 
+I thought there was too 
+much inconsistency in the 
+system. 
+ 
+I would imagine that most 
+users would learn to use 
+the system very quickly. 
+ 
+I found the system very 
+difficult to use. 
+ 
+I felt very confident 
+using the system. 
+ 
+I needed to learn many 
+things before I could get 
+started with the system. 
+3 
+ 
+ 
+44 
+ 
+ 
+2 
+ 
+ 
+34 
+ 
+ 
+ 
+2 
+ 
+ 
+ 
+50 
+ 
+ 
+ 
+3 
+ 
+ 
+ 
+45 
+ 
+ 
+4 
+ 
+ 
+32 
+4 
+ 
+ 
+39 
+ 
+ 
+3 
+ 
+ 
+37 
+ 
+ 
+ 
+6 
+ 
+ 
+ 
+33 
+ 
+ 
+ 
+8 
+ 
+ 
+ 
+38 
+ 
+ 
+10 
+ 
+ 
+37 
+15 
+ 
+ 
+25 
+ 
+ 
+24 
+ 
+ 
+31 
+ 
+ 
+ 
+18 
+ 
+ 
+ 
+31 
+ 
+ 
+ 
+22 
+ 
+ 
+ 
+34 
+ 
+ 
+33 
+ 
+ 
+30 
+46 
+ 
+ 
+13 
+ 
+ 
+53 
+ 
+ 
+20 
+ 
+ 
+ 
+52 
+ 
+ 
+ 
+14 
+ 
+ 
+ 
+48 
+ 
+ 
+ 
+13 
+ 
+ 
+42 
+ 
+ 
+18 
+64 
+ 
+ 
+11 
+ 
+ 
+50 
+ 
+ 
+10 
+ 
+ 
+ 
+54 
+ 
+ 
+ 
+4 
+ 
+ 
+ 
+51 
+ 
+ 
+ 
+2 
+ 
+ 
+43 
+ 
+ 
+15 
+3.24 
+ 
+ 
+2.70 
+ 
+ 
+3.11 
+ 
+ 
+2.49 
+ 
+ 
+ 
+3.14 
+ 
+ 
+ 
+2.84 
+ 
+ 
+ 
+3.03 
+ 
+ 
+ 
+2.84 
+ 
+ 
+2.83 
+ 
+ 
+2.40 
+ As shown in Table 6, the farmer respondents generally gave 
+favorable responses to the positive statements and lower 
+responses to the negatively worded statements. For the positive 
+
+===== PDF PAGE 95 =====
+
+    
+ 
+              
+items, many respondents selected 4 and 5, showing agreement with 
+statements related to frequent use, ease of use, feature 
+integration, learnability, and confidence in using Harviana. For 
+the negative items, many respondents selected 1 and 2, showing 
+disagreement with statements suggesting that the system was 
+complex, inconsistent, difficult to use, or required too much 
+learning before use. 
+ The pattern of responses indicates that the farmers were 
+generally able to understand and interact with the farmer-side 
+features of Harviana. The results suggest that the crop planning, 
+calendar, damage report, and actual harvest recording features 
+were usable for the participating farmers. However, the presence 
+of varied responses also suggests that some users may still need 
+guidance or interface improvements, especially for first-time 
+use. 
+ After computing the SUS scores of the 132 valid farmer 
+responses, the total SUS score obtained was 9,445. The average 
+SUS score was computed as follows: 
+Average SUS Score = Σ SUS Scores / n 
+Average SUS Score = 9,445 / 132 
+Average SUS Score = 71.55 or approximately 71.6 
+ Table 7 presents the summary of the farmers’ SUS score, 
+including the number of valid respondents, total computed SUS 
+score, mean score, median score, standard deviation, minimum 
+score, maximum score, and overall interpretation. This table 
+provides an overview of the usability result obtained from the 
+
+===== PDF PAGE 96 =====
+
+    
+ 
+              
+farmer respondents after their individual SUS scores were 
+computed and summarized. 
+Table 7 
+Summary of Farmers’ SUS Score 
+Measure Result 
+Number of Valid Respondents 
+ 
+Total SUS Score 
+ 
+Mean SUS Score 
+ 
+Median SUS Score 
+ 
+Standard Deviation 
+ 
+Minimum Score 
+ 
+Maximum Score 
+ 
+Overall Interpretation 
+132 
+ 
+9,445 
+ 
+71.55 
+ 
+75.00 
+ 
+15.21 
+ 
+32.50 
+ 
+97.50 
+ 
+OK to Good / Marginal to 
+Acceptable 
+ As presented in Table 7, the farmers obtained a mean SUS 
+score of 71.55. Based on the interpretation scale, this falls 
+within the C- to C+ range, with an adjective rating of OK to Good 
+and an acceptability range of Marginal to Acceptable. This means 
+that the farmer-side features of Harviana were generally usable, 
+but there are still areas that may be improved to make the system 
+easier and more comfortable for all farmer users. 
+ The result shows that Harviana can support farmers in 
+performing important crop-related tasks such as creating crop 
+plans, viewing scheduled farm activities, submitting crop damage 
+reports, and recording actual harvest results. Since the score is 
+close to the acceptable range, the findings suggest that the 
+
+===== PDF PAGE 97 =====
+
+    
+ 
+              
+farmer-side interface has a positive usability foundation. 
+However, refinements in user guidance, interface clarity, and 
+ease of first-time navigation may further improve the farmer 
+experience. 
+ For the DA Administrator evaluation, the USE questionnaire 
+developed by Lund (2001) was used to evaluate the usability of 
+the administrative side of Harviana. The questionnaire measured 
+four dimensions: usefulness, ease of use, ease of learning, and 
+satisfaction. These dimensions were appropriate for evaluating 
+the DA Administrator side of the system because the 
+administrative features are intended to support monitoring, map-
+based visualization, supply forecast review, and report 
+generation. 
+ The DA Administrators rated each statement using a seven-
+point scale. Higher ratings indicate stronger agreement with the 
+usability statement and a more positive evaluation of the system. 
+The verbal interpretation ranges were computed by the researchers 
+based on the seven-point response scale. 
+ Table 8 presents the seven-point USE questionnaire 
+interpretation scale used to analyze the responses of the DA 
+Administrators. It shows the point values, corresponding mean 
+ranges, and verbal interpretations used to determine the level of 
+agreement for each usability dimension. This table served as the 
+basis for interpreting the computed weighted means for 
+usefulness, ease of use, ease of learning, and satisfaction. 
+ 
+
+===== PDF PAGE 98 =====
+
+    
+ 
+              
+Table 8 
+Seven-Point USE Questionnaire Interpretation Scale 
+Point Mean Range Verbal Interpretation 
+1 
+2 
+3 
+4 
+5 
+6 
+7 
+1.00–1.86 
+1.87–2.72 
+2.73–3.58 
+3.59–4.44 
+4.45–5.30 
+5.31–6.16 
+6.17–7.00 
+Strongly Disagree 
+Disagree 
+Somewhat Disagree 
+Neutral 
+Somewhat Agree 
+Agree 
+Strongly Agree 
+ Table 8 was used to interpret the weighted means obtained 
+from the DA Administrator responses. Mean values closer to 7 
+indicate stronger agreement and more favorable usability 
+perception. This scale allowed the researchers to determine the 
+usability level of Harviana’s administrative features in each USE 
+dimension. 
+ Table 9 presents the usability testing result for the 
+Usefulness dimension of the USE questionnaire. It shows the 
+responses of the DA Administrators for each usefulness-related 
+statement, including the frequency of ratings from 1 to 7 and the 
+computed weighted mean for each item. This table was used to 
+determine how useful Harviana was in helping DA Administrators 
+perform monitoring, forecasting, map viewing, and report 
+generation tasks. 
+ 
+ 
+
+===== PDF PAGE 99 =====
+
+    
+ 
+              
+Table 9 
+Usefulness: Usability Testing Result for DA Administrators 
+No. Statement 1 2 3 4 5 6 7 Weighted 
+Mean 
+1 
+ 
+ 
+2 
+ 
+ 
+3 
+ 
+4 
+ 
+ 
+ 
+ 
+5 
+ 
+ 
+ 
+ 
+6 
+ 
+ 
+7 
+ 
+8 
+ 
+It helps me be more 
+effective. 
+ 
+It helps me be more 
+productive. 
+ 
+It is useful. 
+ 
+It gives me more 
+control over the 
+activities in my 
+work. 
+ 
+It makes the things 
+I want to 
+accomplish easier 
+to get done. 
+ 
+It saves me time 
+when I use it. 
+ 
+It meets my needs. 
+ 
+It does everything 
+I would expect it 
+to do 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+1 
+ 
+ 
+1 
+ 
+ 
+0 
+ 
+ 
+2 
+ 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+1 
+ 
+2 
+4 
+ 
+ 
+4 
+ 
+ 
+1 
+ 
+ 
+4 
+ 
+ 
+ 
+ 
+1 
+ 
+ 
+ 
+1 
+ 
+ 
+2 
+ 
+3 
+7 
+ 
+ 
+6 
+ 
+ 
+6 
+ 
+ 
+7 
+ 
+ 
+ 
+ 
+11 
+ 
+ 
+ 
+10 
+ 
+ 
+10 
+ 
+9 
+6 
+ 
+ 
+7 
+ 
+ 
+11 
+ 
+ 
+5 
+ 
+ 
+ 
+ 
+6 
+ 
+ 
+ 
+7 
+ 
+ 
+5 
+ 
+4 
+6.00 
+ 
+ 
+6.06 
+ 
+ 
+6.56 
+ 
+ 
+5.83 
+ 
+ 
+ 
+ 
+6.28 
+ 
+ 
+ 
+6.33 
+ 
+ 
+6.06 
+ 
+5.83 
+ Mean        6.12 
+ As shown in Table 9, the Usefulness dimension obtained a 
+mean of 6.12, which is interpreted as Agree. This indicates that 
+the DA Administrators generally found Harviana useful in 
+supporting their administrative tasks. The highest-rated item was 
+“It is useful,” with a weighted mean of 6.56, showing that the 
+respondents recognized the value of the system in their work. The 
+results suggest that Harviana can help DA Administrators review 
+
+===== PDF PAGE 100 =====
+
+    
+ 
+              
+agricultural records, monitor crop-related information, and use 
+system-generated data for planning and decision-making. 
+ Table 10 presents the usability testing results for the 
+Ease of Use dimension of the USE questionnaire. It shows the DA 
+Administrators’ responses to each statement, including the 
+frequency of ratings from 1 to 7 and the corresponding weighted 
+mean. The results were used to determine how easily the 
+respondents could navigate Harviana, understand its interface, 
+complete administrative tasks, and recover from errors while 
+using the system. 
+Table 10 
+Ease of Use: Usability Testing Result for DA Administrators 
+No. Statement 1 2 3 4 5 6 7 Weighted 
+Mean 
+9 
+ 
+10 
+ 
+ 
+11 
+ 
+ 
+12 
+ 
+ 
+ 
+ 
+ 
+13 
+ 
+14 
+ 
+ 
+15 
+ 
+ 
+It is easy to use. 
+ 
+It is simple to 
+use. 
+ 
+It is user-
+friendly. 
+ 
+It requires the 
+fewest steps 
+possible to 
+accomplish what I 
+want to do with it. 
+ 
+It is flexible. 
+ 
+Using it is 
+effortless. 
+ 
+I can use it 
+without 
+instructions. 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+1 
+ 
+ 
+ 
+1 
+ 
+1 
+ 
+1 
+ 
+ 
+0 
+ 
+ 
+ 
+1 
+ 
+ 
+ 
+ 
+1 
+ 
+2 
+ 
+ 
+ 
+0 
+ 
+9 
+ 
+7 
+ 
+ 
+9 
+ 
+ 
+ 
+11 
+ 
+ 
+ 
+ 
+6 
+ 
+9 
+ 
+ 
+ 
+11 
+ 
+8 
+ 
+10 
+ 
+ 
+9 
+ 
+ 
+ 
+6 
+ 
+ 
+ 
+ 
+11 
+ 
+6 
+ 
+ 
+ 
+6 
+ 
+6.39 
+ 
+6.50 
+ 
+ 
+6.50 
+ 
+ 
+ 
+6.28 
+ 
+ 
+ 
+ 
+6.56 
+ 
+6.11 
+ 
+ 
+ 
+6.22 
+ 
+
+===== PDF PAGE 101 =====
+
+    
+ 
+              
+16 
+ 
+ 
+ 
+17 
+ 
+ 
+ 
+18 
+ 
+ 
+ 
+19 
+I do not notice 
+inconsistencies as 
+I use it. 
+ 
+Both occasional and 
+regular users would 
+like it. 
+ 
+I can recover from 
+mistakes quickly 
+and easily. 
+ 
+I can use it 
+successfully every 
+time. 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+1 
+ 
+ 
+0 
+ 
+ 
+ 
+0 
+ 
+ 
+ 
+ 
+0 
+ 
+4 
+ 
+ 
+3 
+ 
+ 
+ 
+3 
+ 
+ 
+ 
+ 
+1 
+ 
+9 
+ 
+ 
+9 
+ 
+ 
+ 
+10 
+ 
+ 
+ 
+ 
+11 
+ 
+4 
+ 
+ 
+6 
+ 
+ 
+ 
+5 
+ 
+ 
+ 
+ 
+6 
+ 
+5.89 
+ 
+ 
+6.17 
+ 
+ 
+ 
+6.11 
+ 
+ 
+ 
+ 
+6.28 
+ Mean        6.27 
+ The Ease of Use dimension obtained a mean of 6.27, which is 
+interpreted as Strongly Agree. This result indicates that the DA 
+Administrators found the administrative side of Harviana easy to 
+operate. The highest-rated item was “It is flexible,” with a 
+weighted mean of 6.56, while “It is simple to use” and “It is 
+user-friendly” both received weighted means of 6.50. These 
+results suggest that the administrative dashboard, map, forecast, 
+and reporting features were generally easy to navigate and use. 
+ The lowest-rated item under this dimension was “I do not 
+notice inconsistencies as I use it,” with a weighted mean of 
+5.89. Although this still falls within the Agree range, it 
+suggests that some minor inconsistencies or areas for interface 
+improvement may still be present. Overall, the results show that 
+Harviana’s administrative interface provides a positive user 
+experience in terms of ease of use. 
+ Table 11 presents the usability testing result for the Ease 
+of Learning dimension. 
+
+===== PDF PAGE 102 =====
+
+    
+ 
+              
+Table 11 
+Ease of Learning: Usability Testing Result for DA Administrators 
+No. Statement 1 2 3 4 5 6 7 Weighted 
+Mean 
+20 
+ 
+ 
+21 
+ 
+ 
+22 
+ 
+ 
+23 
+ 
+I learned to use it 
+quickly. 
+ 
+I easily remember 
+how to use it. 
+ 
+It is easy to learn 
+to use it. 
+ 
+I quickly became 
+skillful with it. 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+7 
+ 
+ 
+7 
+ 
+ 
+5 
+ 
+ 
+8 
+ 
+11 
+ 
+ 
+11 
+ 
+ 
+13 
+ 
+ 
+9 
+ 
+6.61 
+ 
+ 
+6.61 
+ 
+ 
+6.72 
+ 
+ 
+6.39 
+ 
+ Mean        6.58 
+ As presented in Table 11, the Ease of Learning dimension 
+obtained a mean of 6.58, interpreted as Strongly Agree. This was 
+the highest among the four USE dimensions. The result indicates 
+that DA Administrators were able to understand and learn the 
+administrative features of Harviana quickly. The highest-rated 
+item was “It is easy to learn to use it,” with a weighted mean of 
+6.72. 
+ This finding suggests that the system’s administrative 
+interface was understandable even for users who may be using the 
+platform for the first time. The dashboard layout, map filters, 
+forecast display, and report functions appear to be structured in 
+a way that allows users to learn the system with minimal 
+difficulty. This is important because DA Administrators need to 
+access and interpret agricultural information efficiently. 
+ Table 12 presents the usability testing result for the 
+Satisfaction dimension. 
+
+===== PDF PAGE 103 =====
+
+    
+ 
+              
+Table 12 
+Satisfaction: Usability Testing Result for DA Administrators 
+No. Statement 1 2 3 4 5 6 7 Weighted 
+Mean 
+24 
+ 
+ 
+25 
+ 
+ 
+26 
+ 
+ 
+27 
+ 
+ 
+28 
+ 
+29 
+ 
+ 
+30 
+I am satisfied with 
+it. 
+ 
+I would recommend 
+it to a colleague. 
+ 
+It is pleasant to 
+use. 
+ 
+It works the way I 
+want it to work. 
+ 
+It is wonderful. 
+ 
+I feel I need to 
+have it. 
+ 
+It meets my needs. 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+0 
+ 
+ 
+1 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+ 
+0 
+ 
+0 
+ 
+ 
+0 
+2 
+ 
+ 
+1 
+ 
+ 
+2 
+ 
+ 
+3 
+ 
+ 
+1 
+ 
+4 
+ 
+ 
+2 
+9 
+ 
+ 
+7 
+ 
+ 
+9 
+ 
+ 
+9 
+ 
+ 
+8 
+ 
+6 
+ 
+ 
+8 
+7 
+ 
+ 
+9 
+ 
+ 
+7 
+ 
+ 
+6 
+ 
+ 
+9 
+ 
+8 
+ 
+ 
+8 
+6.28 
+ 
+ 
+6.33 
+ 
+ 
+6.28 
+ 
+ 
+6.17 
+ 
+ 
+6.44 
+ 
+6.22 
+ 
+ 
+6.33 
+ Mean        6.29 
+ As shown in Table 12, the Satisfaction dimension obtained a 
+mean of 6.29, interpreted as Strongly Agree. This indicates that 
+the DA Administrators were highly satisfied with the 
+administrative features of Harviana. The highest-rated item was 
+“It is wonderful,” with a weighted mean of 6.44, while the 
+lowest-rated item was “It works the way I want it to work,” with 
+a weighted mean of 6.17. Since even the lowest-rated item still 
+falls within the Strongly Agree range, the results show a 
+consistently positive satisfaction level. 
+ The satisfaction results suggest that the DA Administrators 
+found Harviana beneficial and acceptable for their work. The 
+system’s ability to present dashboards, map-based agricultural 
+
+===== PDF PAGE 104 =====
+
+    
+ 
+              
+information, supply forecasts, and exportable reports contributed 
+to a positive administrative user experience. These findings 
+support the system’s purpose of helping DA Administrators access 
+and review agricultural records in a more organized and useful 
+manner. 
+ Table 13 presents the overall USE questionnaire result for 
+DA Administrators. 
+Table 13 
+Overall USE Questionnaire Result for DA Administrators 
+Use Dimension Mean  Verbal Interpretation 
+Usefulness 
+Ease of Use 
+Ease of Learning 
+Satisfaction 
+6.12 
+6.27 
+6.58 
+6.29 
+Agree 
+Strongly Agree 
+Strongly Agree 
+Strongly Agree 
+Overall Result 6.32 Strongly Agree 
+ Table 13 shows that the DA Administrator side of Harviana 
+obtained an overall USE result of 6.32, interpreted as Strongly 
+Agree. The overall result was computed from the mean scores of 
+the four USE dimensions. The highest dimension was Ease of 
+Learning, followed by Satisfaction, Ease of Use, and Usefulness. 
+These findings indicate that the administrative side of Harviana 
+was positively evaluated by the DA Administrator respondents. 
+ The results show that Harviana was perceived as useful for 
+administrative monitoring and reporting, easy to use when 
+navigating system features, easy to learn for users interacting 
+with the platform, and satisfactory in supporting administrative 
+
+===== PDF PAGE 105 =====
+
+    
+ 
+              
+tasks. This confirms that the DA Administrator-side features of 
+Harviana were able to support agricultural monitoring, map-based 
+visualization, supply forecast review, and report generation in a 
+usable manner. 
+ Table 14 presents the overall usability summary of Harviana 
+based on the two user groups. 
+Table 14 
+Overall Usability Summary of Harviana 
+User Group Usability Valid 
+Respondents 
+Overall 
+Result 
+Interpretati
+on 
+Farmers 
+ 
+ 
+DA 
+Administra
+tors 
+System Usability 
+Scale (SUS) 
+ 
+ 
+USE 
+Questionnaire 
+ 
+132 
+ 
+ 
+18 
+ 
+71.55/100 
+ 
+ 
+6.32/7 
+OK to Good / 
+Marginal to 
+Acceptable 
+ 
+Strongly 
+Agree 
+ As presented in Table 14, Harviana received positive 
+usability results from both participating user groups. The 
+farmer-side features obtained a SUS score of 71.55, interpreted 
+as OK to Good and Marginal to Acceptable. This means that the 
+farmer-side features were generally usable, but may still be 
+improved to provide a smoother experience for all farmer users. 
+The result suggests that farmers can use Harviana for crop 
+planning, farmer calendar monitoring, damage report submission, 
+and actual harvest recording. 
+ The DA Administrator-side features obtained an overall USE 
+result of 6.32, interpreted as Strongly Agree. This indicates 
+that DA Administrators found the system useful, easy to use, easy 
+to learn, and satisfactory. The result supports the role of 
+Harviana as a decision-support system that helps DA 
+
+===== PDF PAGE 106 =====
+
+    
+ 
+              
+Administrators monitor agricultural data, view map-based 
+information, review supply forecasts, and generate reports. 
+ Overall, the usability findings show that Harviana was able 
+to meet the usability needs of its evaluated users. The farmer-
+side features demonstrated a usable and acceptable foundation, 
+while the DA Administrator-side features received a strong 
+positive evaluation. These results suggest that Harviana can 
+support agricultural data collection, validation-based reporting, 
+map-based visualization, supply forecasting, and administrative 
+decision-making through a usable web-based platform. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 107 =====
+
+    
+ 
+              
+REFERENCES 
+Agricultural Training Institute. (2023). Philippine 
+Agriculture and Fisheries Extension Strategic Plan 
+2023-2028. Agricultural Training Institute. 
+https://ati2.da.gov.ph/ati-
+main/content/sites/default/files/2023-
+08/AFE%20Strat%20Plan%202023-2028.pdf 
+Agricultural Training Institute. (n.d.). e-Extension 
+Program for Agriculture and Fisheries. Retrieved July 
+8, 2026, from https://www.e-extension.gov.ph/ 
+Alemán-Montes, B., Serra, P., Zabala, A., Masó, J., & Pons, 
+X. (2025). A near real-time spatial decision support 
+system for improving sugarcane monitoring through a 
+satellite mapping web browser. Smart Agricultural 
+Technology, Article 101084. 
+https://doi.org/10.1016/j.atech.2025.101084 
+Ali, A. M., Abouelghar, M., Belal, A. A., Saleh, N., Yones, 
+M., Selim, A. I., Amin, M. E. S., Elwesemy, A., 
+Kucher, D. E., Maginan, S., & Savin, I. (2022). Crop 
+yield prediction using multi sensors remote sensing: 
+Review article. The Egyptian Journal of Remote Sensing 
+and Space Science, 25(3), 711–716. 
+https://doi.org/10.1016/j.ejrs.2022.04.006 
+
+===== PDF PAGE 108 =====
+
+    
+ 
+              
+Aquino, L. L. M., Delos Reyes, J. A., & Catelo, M. A. O. 
+(2025). Mapping and understanding food value chain 
+networks of Benguet-sourced vegetables: The lens of 
+the households. University of the Philippines Center 
+for Integrative and Development Studies. 
+https://cids.up.edu.ph/wp-
+content/uploads/2025/03/Mapping-and-Understanding-
+Food-Value-Chain-Networks-of-Benguet-Sourced-
+Vegetables.pdf 
+Briones, R. M., Galang, I. M. R., & Latigar, J. S. (2023). 
+Transforming Philippine agri-food systems with digital 
+technology: Extent, prospects, and inclusiveness (PIDS 
+Discussion Paper Series No. 2023-29). Philippine 
+Institute for Development Studies. 
+https://doi.org/10.62986/dp2023.29 
+Brooke, J. (1996). SUS: A quick and dirty usability scale. 
+In P. W. Jordan, B. Thomas, B. A. Weerdmeester, & I. 
+L. McClelland (Eds.), Usability evaluation in 
+industry. Taylor & Francis. 
+https://doi.org/10.1201/9781498710411-35 
+CGIAR. (2024). In the Philippines, stakeholders are 
+charting the future of digital agriculture. 
+https://www.cgiar.org/news-events/news/in-the-
+
+===== PDF PAGE 109 =====
+
+    
+ 
+              
+philippines-stakeholders-are-charting-the-future-of-
+digital-agriculture 
+Cui, L., Li, W., Wang, X., & Niu, X. (2022). Design and 
+implementation of open-source WebGIS system for 
+orchard land management. Advances in Computer, Signals 
+and Systems, 6, 26–34. 
+https://doi.org/10.23977/acss.2022.060304 
+Department of Agriculture. (2022). National Agriculture and 
+Fisheries Modernization and Industrialization Plan 
+2021-2030: Transforming the Philippine food system 
+together. Department of Agriculture. 
+https://www.bswm.da.gov.ph/download/national-
+agriculture-and-fisheries-modernization-and-
+industrialization-plan-2021-2030/ 
+Food and Agriculture Organization of the United Nations. 
+(2022). The State of Food and Agriculture 2022: 
+Leveraging automation in agriculture for transforming 
+agrifood systems. FAO. 
+https://doi.org/10.4060/cb9479en 
+Food and Agriculture Organization of the United Nations, & 
+International Telecommunication Union. (2016). E-
+agriculture strategy guide: Piloted in Asia-Pacific 
+countries. FAO and ITU. 
+
+===== PDF PAGE 110 =====
+
+    
+ 
+              
+https://www.itu.int/dms_pub/itu-d/opb/str/D-STR-
+E_AGRICULT.01-2016-PDF-E.pdf 
+Jabed, M. A., & Azmi Murad, M. A. (2024). Crop yield 
+prediction in agriculture: A comprehensive review of 
+machine learning and deep learning approaches, with 
+insights for future research and sustainability. 
+Heliyon, 10, Article e40836. 
+https://doi.org/10.1016/j.heliyon.2024.e40836 
+Lund, A. M. (2001). Measuring usability with the USE 
+questionnaire. Usability Interface, 8(2), 3–6. 
+https://garyperlman.com/quest/quest.cgi?form=USE 
+National Economic and Development Authority. (2023). 
+Philippine Development Plan 2023-2028. 
+https://pdp.depdev.gov.ph/philippine-development-plan-
+2023-2028/ 
+Organisation for Economic Co-operation and Development. 
+(2019). Digital opportunities for better agricultural 
+policies. OECD Publishing. 
+https://doi.org/10.1787/571a0812-en 
+PAGASA. (n.d.). Climate of the Philippines. Retrieved July 
+8, 2026, from 
+https://www.pagasa.dost.gov.ph/information/climate-
+philippines 
+
+===== PDF PAGE 111 =====
+
+    
+ 
+              
+Patel, S., Kaur, B., Verma, S., Sood, A., Litoria, P. K., & 
+Pateriya, B. (2023). Web GIS based decision support 
+system for agriculture monitoring and management. 
+Geoinformatics & Geostatistics: An Overview, 11(1). 
+https://www.scitechnol.com/peer-review/web-gis-based-
+decision-support-system-for-agriculture-monitoring-
+and-management-3yKT.php?article_id=21228 
+Philippine Statistics Authority RSSO-CAR. (2025, March 27). 
+CY 2024 Cordillera vegetables situationer (Reference 
+No. SSR 2025-12). 
+https://rssocar.psa.gov.ph/content/cy-2024-cordillera-
+vegetables-situationer 
+Pilay, J. G., & Werdenberg, A. J. M. (2024). Forecasting 
+vegetable production in Benguet, Philippines using 
+SARIMA process with mathematical transformations. AIP 
+Conference Proceedings, 3016(1), Article 070009. 
+https://doi.org/10.1063/5.0192466 
+Quitaleg, A. R., & Dumlao, M. (2023). A decision support 
+system for Benguet’s upland vegetable crop prediction 
+using machine learning techniques. European Chemical 
+Bulletin, 12(Special Issue 6). 
+https://doi.org/10.48047/ecb/2023.12.si6.655 
+
+===== PDF PAGE 112 =====
+
+    
+ 
+              
+Raihan, A. (2024). A systematic review of Geographic 
+Information Systems (GIS) in agriculture for evidence-
+based decision making and sustainability. Global 
+Sustainability Research, 3(1), 1–24. 
+https://doi.org/10.56556/gssr.v3i1.636 
+Schwaber, K., & Sutherland, J. (2020). The Scrum Guide: The 
+definitive guide to Scrum—The rules of the game. 
+https://scrumguides.org/docs/scrumguide/v2020/2020-
+Scrum-Guide-US.pdf 
+Stephenson, J., Chellew, T., von Köckritz, L., Rose, A., & 
+Dinesh, D. (2021). Digital agriculture to enable 
+adaptation: A supplement to the UNFCCC NAP Technical 
+Guidelines (CCAFS Working Paper No. 372). CGIAR 
+Research Program on Climate Change, Agriculture and 
+Food Security. 
+https://unfccc.int/sites/default/files/resource/CCAFS_
+NAP_Agriculture_Supplement.pdf 
+World Bank. (2020). Transforming Philippine agriculture: 
+During COVID-19 and beyond. World Bank. 
+https://doi.org/10.1596/34012 
+World Bank, Gates Foundation, & Boston Consulting Group. 
+(2025). Digital Agriculture Roadmap Playbook. World 
+Bank. 
+
+===== PDF PAGE 113 =====
+
+    
+ 
+              
+https://documents1.worldbank.org/curated/en/0990530250
+63021993/pdf/P508004-f943a09b-c45f-4c93-b554-
+9dd1decd1e7c.pdf 
+Wu, B., Zhang, M., Zeng, H., Tian, F., Potgieter, A. B., Qin, X., 
+Yan, N., Chang, S., Zhao, Y., Dong, Q., Boken, V., Plotnikov, D., 
+Guo, H., Wu, F., Zhao, H., Deronde, B., Tits, L., & Loupian, E. 
+(2023). Challenges and opportunities in remote sensing-based crop 
+monitoring: A review. National Science Review, 10(4), Article 
+nwac290. https://doi.org/10.1093/nsr/nwac290 
+Bangor, A., Kortum, P., & Miller, J. (2009). Determining what 
+individual SUS scores mean: Adding an adjective rating scale. 
+Journal of Usability Studies, 4(3), 114–123. 
+https://dl.acm.org/doi/10.5555/2835587.2835589 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+APPENDICES 
+Appendix A 
+Communication Letter 
+
+===== PDF PAGE 114 =====
+
+      
+ 
+Appendices 114 
+Appendix B 
+Endorsement Letter 
+ 
+ 
+ 
+
+
+===== PDF PAGE 115 =====
+
+      
+ 
+Appendices 115 
+Appendix C 
+Business Model Canvas  
+Figure 20 
+Business Model Canvas  
+ 
+Figure 20, showing the Business Model Canvas for the 
+Harviana system, identifies Customer Segments as the 
+Farmers and DA Administrators/Agricultural Officers as part 
+of a Multi-sided Platform. The primary Value Propositions 
+include an accessible, user-friendly visual map and a 
+decision support system that provides long-term forecasting 
+(2025 to 2030), helping administrators design targeted 
+actions to reduce waste and loss. The system is deployed 
+via Channels that include browsers and a Progressive Web 
+App using open-source web-mapping tools to maximize 
+
+
+===== PDF PAGE 116 =====
+
+      
+ 
+Appendices 116 
+accessibility. Customer Relationships are built and 
+maintained through features like the Historical Analysis 
+validation mode, which helps establish user trust by 
+comparing predictions against known historical yields. 
+Revenue Streams are projected to come from Subscription 
+Fees, Licensing, Usage fees, and Grants, following a Value-
+Driven pricing strategy. Key Resources include the human 
+development team, intellectual property, and physical 
+infrastructure, while Key Activities focus on Production 
+(development), Problem Solving (insights/forecasting), and 
+maintaining the platform. Key Partners are sought to 
+acquire necessary resources and activities, specifically 
+the DA for historical production data.  
+
+===== PDF PAGE 117 =====
+
+      
+ 
+Appendices 117 
+Appendix D 
+Invitation Letter 
+ 
+
+
+===== PDF PAGE 118 =====
+
+      
+ 
+Appendices 118 
+ 
+
+
+===== PDF PAGE 119 =====
+
+      
+ 
+Appendices 119 
+ 
+
+
+===== PDF PAGE 120 =====
+
+      
+ 
+Appendices 120 
+Appendix E 
+Documentation 
+ 
+ 

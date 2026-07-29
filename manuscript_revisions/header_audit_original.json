@@ -1,0 +1,3511 @@
+{
+  "docx": {
+    "docx": "C:\\Users\\JDnStefs\\Downloads\\Capstone 2\\Harviana Maam nats.docx",
+    "section_count": 16,
+    "sections": [
+      {
+        "index": 1,
+        "start_block_index": 0,
+        "block_index": 43,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "July 2026",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "even",
+            "rid": "rId8",
+            "target": "header1.xml"
+          },
+          {
+            "type": "default",
+            "rid": "rId9",
+            "target": "header2.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId12",
+            "target": "header3.xml"
+          }
+        ],
+        "start_texts": [
+          "HARVIANA: A GIS-INTEGRATED DECISION SUPPORT SYSTEM FOR VISUALIZING VEGETABLE PRODUCTION TRENDS IN BENGUET",
+          "A Capstone Project Presented to the Faculty of the",
+          "College of Information Technology and Computer Sciences",
+          "University of the Cordilleras",
+          "In Partial Fulfillment",
+          "of the Requirements for the Degree",
+          "BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY",
+          "by"
+        ]
+      },
+      {
+        "index": 2,
+        "start_block_index": 44,
+        "block_index": 78,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId14",
+            "target": "header4.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId15",
+            "target": "header5.xml"
+          }
+        ],
+        "start_texts": [
+          "APPROVAL SHEET",
+          "This project study entitled HARVIANA: A GIS-INTEGRATED DECISION SUPPORT SYSTEM FOR VISUALIZING VEGETABLE PRODUCTION TRENDS IN BENGUET prepared and submitted by LORD ALFREY T. BATERINA, JOHNDOE AMIEL I. DELA CRUZ, and JOJEMAY M. TAGALOG in partial fulfillment of the requirements for the degree BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY, has been examined and is recommended for acceptance and approval for oral examination.",
+          "ANNA RHODORA M. QUITALEG, MIT",
+          "Adviser",
+          "Project Study Committee",
+          "ANNA RHODORA M. QUITALEG, MIT   RAZIELLE JEYNA MAE F. BERNALDEZ, BSCS",
+          "Member  Member",
+          "GEM A. BALAY-ODAO, BSCS"
+        ]
+      },
+      {
+        "index": 3,
+        "start_block_index": 79,
+        "block_index": 130,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "Include LGU Validators and participants from other Benguet municipalities in future usability evaluations to improve the interface and validation workflow.",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId17",
+            "target": "header6.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId18",
+            "target": "header7.xml"
+          }
+        ],
+        "start_texts": [
+          "ABSTRACT",
+          "Title: HARVIANA: A GIS-INTEGRATED DECISION SUPPORT       SYSTEM FOR VISUALIZING VEGETABLE PRODUCTION",
+          "TRENDS IN BENGUET",
+          "Total No. of Pages: 165",
+          "1.2. Text No. of Pages: 120",
+          "Authors: BATERINA, LORD AFLREY T.",
+          "DELA CRUZ, JOHNDOE AMIEL I.",
+          "TAGALOG, JOJEMAY M."
+        ]
+      },
+      {
+        "index": 4,
+        "start_block_index": 131,
+        "block_index": 142,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId20",
+            "target": "header8.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId21",
+            "target": "header9.xml"
+          }
+        ],
+        "start_texts": [
+          "ACKNOWLEDGEMENT",
+          "The researchers would like to express their sincere gratitude to the individuals and organizations whose guidance, cooperation, and support contributed to the completion of this capstone project.",
+          "The researchers also extend their appreciation to Ms. Anna Rhodora M. Quitaleg, Adviser, Ms. Gem A. Balay-Odao, Chairperson, and Ms. Razielle Jeyna Mae F. Bernaldez, Committee Member, for sharing their time and expertise during the evaluation of the project. Their comments and recommendations helped the researchers address important concerns and improve both the system and the manuscript.",
+          "Sincere appreciation is extended to the faculty and staff of the College of Information Technology and Computer Sciences of the University of the Cordilleras for providing the knowledge, guidance, and academic environment needed to complete the study. The researchers also thank the Department of Agriculture\u2013Cordillera Administrative Region, the participating DA Administrators, and the Farmers who shared their time, knowledge, and responses during the conduct and evaluation of the study. Their participation provided valuable information that contributed to the development and assessment of Harviana.",
+          "The researchers would also like to thank their families and friends for their patience, understanding, encouragement, and support throughout the completion of the capstone project. Their motivation helped the researchers continue despite the difficulties encountered during system development and manuscript preparation.",
+          "The researchers also acknowledge one another for the cooperation, commitment, and perseverance demonstrated throughout the project. Each member\u2019s willingness to share responsibilities, exchange ideas, and work through challenges contributed greatly to the completion of Harviana.",
+          "Above all, the researchers give thanks to Almighty God for the wisdom, strength, guidance, and blessings that sustained them throughout this journey. To everyone who contributed directly or indirectly to the completion of this study, the researchers offer their heartfelt appreciation.",
+          "L.A.T.B"
+        ]
+      },
+      {
+        "index": 5,
+        "start_block_index": 143,
+        "block_index": 154,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId23",
+            "target": "header10.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId24",
+            "target": "header11.xml"
+          }
+        ],
+        "start_texts": [
+          "DEDICATION",
+          "This capstone project is lovingly dedicated to our families and loved ones, whose patience, understanding, encouragement, and sacrifices gave us the strength to continue throughout every stage of this journey.",
+          "To our adviser, teachers, and mentors, whose guidance and wisdom encouraged us to improve our ideas, overcome challenges, and complete this study with determination.",
+          "To the participating Farmers and DA personnel who shared their time, experiences, and insights, your contributions helped make Harviana relevant to agricultural monitoring and decision-making in Benguet.",
+          "To one another, for the cooperation, trust, patience, and perseverance that enabled us to face difficulties and complete this project as a team.",
+          "Above all, we dedicate this accomplishment to Almighty God, whose wisdom, guidance, and blessings sustained us throughout the completion of this study.",
+          "Alfrey",
+          "Johndoe"
+        ]
+      },
+      {
+        "index": 6,
+        "start_block_index": 155,
+        "block_index": 244,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId26",
+            "target": "header12.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId27",
+            "target": "header13.xml"
+          }
+        ],
+        "start_texts": [
+          "TABLE OF CONTENTS",
+          "Page",
+          "TITLE PAGE . . . . . . . . . . . . . . . . . . . . . .1",
+          "APPROVAL SHEET . . . . . . . . . . . . . . . . . . . .2",
+          "ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . 3",
+          "ACKNOWLEDGEMENT . . . . . . . . . . . . . . . . . . .  6",
+          "DEDICATION . . . . . . . . . . . . . . . . . . . . . . 8",
+          "TABLE OF CONTENTS . . . . . . . . . . . . . . . . . .  9"
+        ]
+      },
+      {
+        "index": 7,
+        "start_block_index": 245,
+        "block_index": 268,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId29",
+            "target": "header14.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId30",
+            "target": "header15.xml"
+          }
+        ],
+        "start_texts": [
+          "LIST OF TABLES",
+          "Table No. Table Title Page",
+          "1 Farmer Information . . . . . . . . . . . . .  84",
+          "2LGU Validator Information . . . . . . . . . . 84",
+          "3DA-Admin Information  . . . . . . . . . . . . 84",
+          "4 System Requirements . . . . . . . .  . . . .  85",
+          "5SUS Score Interpretation Scale . . . . . . .  111",
+          "6Farmers\u2019 SUS Questionnaire Results . . . . .  112"
+        ]
+      },
+      {
+        "index": 8,
+        "start_block_index": 269,
+        "block_index": 332,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId32",
+            "target": "header16.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId33",
+            "target": "header17.xml"
+          }
+        ],
+        "start_texts": [
+          "Chapter 1",
+          "INTRODUCTION",
+          "Background of the Study",
+          "Agriculture remains a fundamental component of global food systems because it supports food production, livelihoods, employment, and economic activity. However, agricultural production is increasingly affected by climate variability, extreme weather events, environmental pressures, and disruptions in the movement and availability of food. The Intergovernmental Panel on Climate Change (IPCC, 2022) reported that climate-related extremes have already affected the productivity of agricultural, forestry, and fishery sectors, with consequences for food availability, prices, nutrition, and the livelihoods of affected communities. These conditions increase the need for timely and reliable agricultural information that can support production planning, risk monitoring, and coordinated responses to agricultural problems.",
+          "Food security also remains a significant global concern as agricultural producers attempt to meet increasing demand while responding to environmental and economic pressures. The Food and Agriculture Organization of the United Nations and its partner organizations reported that, despite recent progress, global hunger and food insecurity remain above pre-pandemic levels and the world is still far from achieving the targets of ending hunger and food insecurity by 2030 (FAO et al., 2025). The report also emphasized the importance of better data systems and sustained investments in resilient agrifood systems. This demonstrates that agricultural planning requires reliable information on production conditions, crop losses, market disruptions, and supply availability.",
+          "The continuing development of digital technologies has created opportunities to improve the collection, organization, and interpretation of agricultural information. The Food and Agriculture Organization of the United Nations explained that digital technologies and agricultural automation can improve productivity, resource-use efficiency, environmental sustainability, and the resilience of agrifood systems when they are appropriately implemented (FAO, 2022). Geographic Information Systems(GIS), web-based applications, and machine learning technologies can also assist agricultural stakeholders in visualizing production patterns, estimating crop output, monitoring location-based conditions, and identifying changes in agricultural supply. The Digital Agriculture Roadmap Playbook further emphasizes the importance of connecting user-facing applications, agricultural databases, system integration components, and decision-support tools within an organized digital environment (World Bank, Gates Foundation, & Boston Consulting Group, 2025).",
+          "Despite the potential of digital agriculture, its benefits are not automatically available to all agricultural stakeholders. Small-scale producers and rural communities may experience limitations related to internet connectivity, digital literacy, access to appropriate devices, infrastructure, and the cost of adopting new technologies. FAO (2022) identified low digital literacy, inadequate connectivity, limited access to electricity, and financial constraints as barriers to the inclusive adoption of digital agricultural technologies. The E-Agriculture Strategy Guide also emphasized that digital agricultural initiatives require a clear vision, coordinated implementation, and monitoring mechanisms that respond to the conditions of their intended users (FAO & ITU, 2016). These issues highlight the need for agricultural information systems that are accessible, user-friendly, and capable of transforming fragmented records into validated and meaningful information for decision-making.",
+          "In the Philippine setting, the need for digital agricultural support is connected to the broader modernization of the country\u2019s agricultural sector. The World Bank (2020) emphasized that transforming Philippine agriculture into a more dynamic, competitive, and diversified sector is important for food security and the welfare of rural communities. Achieving this transformation requires agricultural systems that can organize production data, improve the coordination of stakeholders, and provide information that supports farmers and government decision-makers."
+        ]
+      },
+      {
+        "index": 9,
+        "start_block_index": 333,
+        "block_index": 471,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "Railway. Railway was used to deploy Harviana and connect its web application, database, and machine-learning service for online testing and demonstration.",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId51",
+            "target": "header18.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId52",
+            "target": "header19.xml"
+          }
+        ],
+        "start_texts": [
+          "Chapter 2",
+          "METHODOLOGY",
+          "This chapter presents the methodology used in the development of Harviana. It discusses the software development methodology, design thinking process, scope and delimitation, data gathering techniques, sources of data, and software development tools used by the researchers. These methods served as the guide in identifying the needs of the users, designing the system features, developing the web-based platform, and evaluating the usability of Harviana.",
+          "Software Development Methodology",
+          "The researchers employed Scrum as the Agile framework for developing Harviana. Scrum is a lightweight framework in which development work is organized into fixed-length Sprints of one month or less. During each Sprint, selected Product Backlog items are developed and integrated into a usable Increment, while regular inspection, stakeholder feedback, and adaptation guide subsequent work (Schwaber & Sutherland, 2020). Scrum was appropriate for Harviana because its interconnected Farmer, LGU Validator, and DA Administrator modules required iterative development, integration, testing, feedback, and revision throughout the project.",
+          "Scrum Team Accountabilities. The Scrum Team consisted of the three researchers. One designated researcher assumed the Product Owner accountability and communicated the Product Goal, ordered the Product Backlog, and represented stakeholder priorities. Another designated researcher assumed the Scrum Master accountability and facilitated the Scrum events, supported the proper use of Scrum, and helped the team address development impediments. All three researchers served as Developers and collaboratively designed, programmed, integrated, tested, and documented the Harviana Increments.",
+          "Scrum Artifacts and Commitments. The Product Goal was to develop Harviana as a GIS-integrated decision-support system that connects agricultural record submission, validation, monitoring, forecasting, visualization, and reporting. Initial requirements gathering established the first Product Backlog, which remained the ordered and continuously refined source of development work. During Sprint Planning, selected Product Backlog items, the Sprint Goal, and the implementation plan formed the Sprint Backlog. Every Sprint produced an Increment that was added to the previously completed Harviana functions.",
+          "The Definition of Done required a Product Backlog item to be implemented, integrated with the existing system, functionally tested, verified against the applicable role and access requirements, checked on the intended screen sizes, documented, and free from known critical defects. Work that did not satisfy these quality conditions was not treated as part of the Increment and was returned to the Product Backlog for further completion."
+        ]
+      },
+      {
+        "index": 10,
+        "start_block_index": 472,
+        "block_index": 735,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId75",
+            "target": "header20.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId76",
+            "target": "header21.xml"
+          }
+        ],
+        "start_texts": [
+          "Chapter 3",
+          "FINDINGS OF THE STUDY",
+          "This chapter presents the findings of the study based on the development and evaluation of Harviana, a GIS-integrated decision-support system for visualizing vegetable production trends in Benguet. The findings are organized according to the objectives of the study, beginning with the identified information requirements, followed by the architectural framework, system features, and extent of usability of the system. This chapter also discusses how Harviana supports crop planning, report validation, map-based monitoring, supply forecasting, and report generation through its web-based platform. Lastly, it presents the usability evaluation results gathered from the participating farmers and DA administrators.",
+          "Information Requirements for Harviana",
+          "This section presents the information requirements necessary for the operation of Harviana as a GIS-integrated decision support system for vegetable production in Benguet. These requirements consist of user account information, agricultural production records, farmer crop-planning data, and validation information. The system also requires technical resources that support its forecasting, mapping, monitoring, and reporting functions. Defining these requirements ensures that the information collected and processed by Harviana is accurate, organized, secure, and suitable for the needs of farmers, LGU validators, and Department of Agriculture administrators.",
+          "User Information. Harviana has three primary user groups: farmers, LGU validators, and DA administrators. Each user is required to provide specific account and location information according to their assigned role. These details allow the system to authenticate users, control access to features, personalize the information displayed, and associate agricultural records with the appropriate farmer and municipality.",
+          "Farmer information consists of the farmer\u2019s full name, email address, password, preferred municipality, cooperative, and selected crops. During registration, farmers provide their name, email address, and password. After signing in, they complete the onboarding process by selecting their municipality and cooperative. This location information allows Harviana to display crop recommendations, municipal production information, weather conditions, and agricultural insights that are relevant to the farmer\u2019s area.",
+          "Farmers also provide operational information through the crop-planning and farmer-calendar features. This information includes the selected crop, intended planting area, water source, planting material, planning date, estimated harvest date, and other details required to organize scheduled farm activities. During the production cycle, farmers may submit damage reports containing the affected crop plan, damaged area, cause and date of damage, supporting description, and optional photographic evidence. These reports are forwarded to the assigned LGU Validator for review, approval, or return for correction."
+        ]
+      },
+      {
+        "index": 11,
+        "start_block_index": 736,
+        "block_index": 772,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId78",
+            "target": "header22.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId79",
+            "target": "header23.xml"
+          }
+        ],
+        "start_texts": [
+          "REFERENCES",
+          "Agricultural Training Institute. (2023). Philippine Agriculture and Fisheries Extension Strategic Plan 2023-2028. Agricultural Training Institute. https://ati2.da.gov.ph/ati-main/content/sites/default/files/2023-08/AFE%20Strat%20Plan%202023-2028.pdf",
+          "Alem\u00e1n-Montes, B., Serra, P., Zabala, A., Mas\u00f3, J., & Pons, X. (2025). A near real-time spatial decision support system for improving sugarcane monitoring through a satellite mapping web browser. Smart Agricultural Technology, Article 101084. https://doi.org/10.1016/j.atech.2025.101084",
+          "Ali, A. M., Abouelghar, M., Belal, A. A., Saleh, N., Yones, M., Selim, A. I., Amin, M. E. S., Elwesemy, A., Kucher, D. E., Maginan, S., & Savin, I. (2022). Crop yield prediction using multi sensors remote sensing: Review article. The Egyptian Journal of Remote Sensing and Space Science, 25(3), 711\u2013716. https://doi.org/10.1016/j.ejrs.2022.04.006",
+          "Aquino, L. L. M., Delos Reyes, J. A., & Catelo, M. A. O. (2025). Mapping and understanding food value chain networks of Benguet-sourced vegetables: The lens of the households. University of the Philippines Center for Integrative and Development Studies. https://cids.up.edu.ph/wp-content/uploads/2025/03/Mapping-and-Understanding-Food-Value-Chain-Networks-of-Benguet-Sourced-Vegetables.pdf",
+          "Bangor, A., Kortum, P., & Miller, J. (2009). Determining what",
+          "individual SUS scores mean: Adding an adjective rating scale. Journal of Usability Studies, 4(3), 114\u2013123. https://dl.acm.org/doi/10.5555/2835587.2835589",
+          "Blattgerste, J. (2024). System Usability Scale analysis toolkit. Mixed Reality and Visualization Lab, University of Applied Sciences Emden/Leer. https://sus.tools"
+        ]
+      },
+      {
+        "index": 12,
+        "start_block_index": 773,
+        "block_index": 775,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "Communication Letter",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId81",
+            "target": "header24.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId83",
+            "target": "header25.xml"
+          }
+        ],
+        "start_texts": [
+          "APPENDICES",
+          "Appendix A",
+          "Communication Letter"
+        ]
+      },
+      {
+        "index": 13,
+        "start_block_index": 776,
+        "block_index": 781,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId87",
+            "target": "header26.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId89",
+            "target": "header27.xml"
+          }
+        ],
+        "start_texts": [
+          "Appendix B",
+          "Endorsement Letter"
+        ]
+      },
+      {
+        "index": 14,
+        "start_block_index": 782,
+        "block_index": 790,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId92",
+            "target": "header28.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId93",
+            "target": "header29.xml"
+          }
+        ],
+        "start_texts": [
+          "Appendix C",
+          "Business Model Canvas",
+          "Figure 36 presents the Business Model Canvas of Harviana, summarizing its customer segments, value propositions, key activities, resources, partners, channels, cost structure, and potential revenue streams.",
+          "Figure 36",
+          "Business Model Canvas",
+          "Figure 36, showing the Business Model Canvas for the Harviana system, identifies Customer Segments as the Farmers and DA Administrators/Agricultural Officers as part of a Multi-sided Platform. The primary Value Propositions include an accessible, user-friendly visual map and a decision support system that provides long-term forecasting (2025 to 2030), helping administrators design targeted actions to reduce waste and loss. The system is deployed via Channels that include browsers and a Progressive Web App using open-source web-mapping tools to maximize",
+          "accessibility. Customer Relationships are built and maintained through features like the Historical Analysis validation mode, which helps establish user trust by comparing predictions against known historical yields. Revenue Streams are projected to come from Subscription Fees, Licensing, Usage fees, and Grants, following a Value-Driven pricing strategy. Key Resources include the human development team, intellectual property, and physical infrastructure, while Key Activities focus on Production (development), Problem Solving (insights/forecasting), and maintaining the platform. Key Partners are sought to acquire necessary resources and activities, specifically the DA for historical production data."
+        ]
+      },
+      {
+        "index": 15,
+        "start_block_index": 791,
+        "block_index": 819,
+        "endpoint_type": "paragraph",
+        "endpoint_text": "",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId98",
+            "target": "header30.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId99",
+            "target": "header31.xml"
+          }
+        ],
+        "start_texts": [
+          "Appendix D",
+          "Invitation Letter (Adviser)",
+          "Invitation Letter (Chairperson)",
+          "Invitation Letter (Member)"
+        ]
+      },
+      {
+        "index": 16,
+        "start_block_index": 820,
+        "block_index": 908,
+        "endpoint_type": "body-final",
+        "endpoint_text": "(end of document)",
+        "title_page": true,
+        "section_break_type": "(default nextPage)",
+        "page_number_start": null,
+        "page_number_format": null,
+        "header_distance_twips": "187",
+        "top_margin_twips": "1440",
+        "headers": [
+          {
+            "type": "default",
+            "rid": "rId126",
+            "target": "header32.xml"
+          },
+          {
+            "type": "first",
+            "rid": "rId127",
+            "target": "header33.xml"
+          }
+        ],
+        "start_texts": [
+          "Appendix E",
+          "TBI Assessment Certificate",
+          "Appendix F",
+          "Sample Usability Test Survey",
+          "Appendix GTechnology Brief",
+          "Appendix H",
+          "Documentation",
+          "Overall, the documented activities supported requirements gathering, system development, usability evaluation, and presentation of Harviana. The feedback gathered also helped the researchers assess and improve the system."
+        ]
+      }
+    ],
+    "headers": {
+      "header1.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [],
+        "table_count": 0
+      },
+      "header2.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "6045"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [],
+        "table_count": 0
+      },
+      "header3.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [],
+        "table_count": 0
+      },
+      "header4.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header5.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header6.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Abstract 1Abstract 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "Abstract 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "Abstract 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header7.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header8.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Acknowledgement 1Acknowledgement 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "Acknowledgement 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "Acknowledgement 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header9.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header10.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Dedication 1Dedication 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "Dedication 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "Dedication 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header11.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header12.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "List of Figures 12",
+            "alignment": "right",
+            "fields": [
+              "IF",
+              "PAGE",
+              "12",
+              "= 10 \"Table of Contents",
+              "PAGE",
+              "10",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "12",
+              "= 12 \"List of Figures",
+              "PAGE",
+              "12",
+              "\" \"\""
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header13.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header14.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "List of Tables 1List of Tables 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "List of Tables 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "List of Tables 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header15.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header16.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Introduction 1Introduction 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "Introduction 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "Introduction 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header17.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header18.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Methodology 1Methodology 1",
+            "alignment": "(inherited)",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT",
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "Methodology 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 3,
+            "text": "Methodology 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE  \\* MERGEFORMAT"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "2184400",
+            "cy": "139700",
+            "pos_h_relative": "column",
+            "pos_h_offset": null,
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "558800"
+          },
+          {
+            "index": 2,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 3,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header19.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header20.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Findings of the Study 105",
+            "alignment": "right",
+            "fields": [
+              "IF",
+              "PAGE",
+              "105",
+              "= 83 \"Findings of the Study",
+              "PAGE",
+              "83",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 84 \"Findings of the Study",
+              "PAGE",
+              "84",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 85 \"Findings of the Study",
+              "PAGE",
+              "85",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 86 \"Findings of the Study",
+              "PAGE",
+              "86",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 87 \"Findings of the Study",
+              "PAGE",
+              "87",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 88 \"Findings of the Study",
+              "PAGE",
+              "88",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 89 \"Findings of the Study",
+              "PAGE",
+              "89",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 90 \"Findings of the Study",
+              "PAGE",
+              "90",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 91 \"Findings of the Study",
+              "PAGE",
+              "91",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 92 \"Findings of the Study",
+              "PAGE",
+              "92",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 93 \"Findings of the Study",
+              "PAGE",
+              "93",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 94 \"Findings of the Study",
+              "PAGE",
+              "94",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 95 \"Findings of the Study",
+              "PAGE",
+              "95",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 96 \"Findings of the Study",
+              "PAGE",
+              "96",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 97 \"Findings of the Study",
+              "PAGE",
+              "97",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 98 \"Findings of the Study",
+              "PAGE",
+              "98",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 99 \"Findings of the Study",
+              "PAGE",
+              "99",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 100 \"Findings of the Study",
+              "PAGE",
+              "100",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 101 \"Findings of the Study",
+              "PAGE",
+              "101",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 102 \"Findings of the Study",
+              "PAGE",
+              "102",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 103 \"Findings of the Study",
+              "PAGE",
+              "103",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 104 \"Findings of the Study",
+              "PAGE",
+              "104",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 105 \"Findings of the Study",
+              "PAGE",
+              "105",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 106 \"Findings of the Study",
+              "PAGE",
+              "106",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 107 \"Findings of the Study",
+              "PAGE",
+              "107",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 108 \"Findings of the Study",
+              "PAGE",
+              "108",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 109 \"Findings of the Study",
+              "PAGE",
+              "109",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 110 \"Findings of the Study",
+              "PAGE",
+              "110",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 111 \"Findings of the Study",
+              "PAGE",
+              "111",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 112 \"Findings of the Study",
+              "PAGE",
+              "112",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 113 \"Findings of the Study",
+              "PAGE",
+              "113",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 114 \"Findings of the Study",
+              "PAGE",
+              "114",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 115 \"Findings of the Study",
+              "PAGE",
+              "115",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 116 \"Findings of the Study",
+              "PAGE",
+              "116",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 117 \"Findings of the Study",
+              "PAGE",
+              "117",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 118 \"Findings of the Study",
+              "PAGE",
+              "118",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 119 \"Findings of the Study",
+              "PAGE",
+              "119",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 120 \"Findings of the Study",
+              "PAGE",
+              "120",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 121 \"Findings of the Study",
+              "PAGE",
+              "121",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 122 \"Findings of the Study",
+              "PAGE",
+              "122",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 123 \"Findings of the Study",
+              "PAGE",
+              "123",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 124 \"Findings of the Study",
+              "PAGE",
+              "124",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 125 \"Findings of the Study",
+              "PAGE",
+              "125",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 127 \"Conclusions and Recommendations",
+              "PAGE",
+              "127",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 128 \"Conclusions and Recommendations",
+              "PAGE",
+              "128",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "105",
+              "= 129 \"Conclusions and Recommendations",
+              "PAGE",
+              "129",
+              "\" \"\""
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header21.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header22.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "References 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header23.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header24.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Appendices 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header25.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header26.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Appendices 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header27.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header28.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Appendices 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header29.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header30.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "Appendices 1",
+            "alignment": "right",
+            "fields": [
+              "PAGE"
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header31.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header32.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "right",
+            "fields": [
+              "IF",
+              "PAGE",
+              "166",
+              "= 150 \"Appendices",
+              "PAGE",
+              "150",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 152 \"Appendices",
+              "PAGE",
+              "152",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 153 \"Appendices",
+              "PAGE",
+              "153",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 154 \"Appendices",
+              "PAGE",
+              "154",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 155 \"Appendices",
+              "PAGE",
+              "155",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 157 \"Appendices",
+              "PAGE",
+              "157",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 158 \"Appendices",
+              "PAGE",
+              "158",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 160 \"Curriculum Vitae",
+              "PAGE",
+              "160",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 162 \"Curriculum Vitae",
+              "PAGE",
+              "162",
+              "\" \"\"",
+              "IF",
+              "PAGE",
+              "166",
+              "= 164 \"Curriculum Vitae",
+              "PAGE",
+              "164",
+              "\" \"\""
+            ],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      },
+      "header33.xml": {
+        "paragraphs": [
+          {
+            "index": 1,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [],
+            "indent_left": null,
+            "indent_right": null,
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          },
+          {
+            "index": 2,
+            "text": "",
+            "alignment": "(inherited)",
+            "fields": [],
+            "tabs": [
+              {
+                "val": "clear",
+                "pos": "4320"
+              },
+              {
+                "val": "clear",
+                "pos": "8640"
+              },
+              {
+                "val": "left",
+                "pos": "4605"
+              },
+              {
+                "val": "left",
+                "pos": "4830"
+              },
+              {
+                "val": "left",
+                "pos": "5100"
+              },
+              {
+                "val": "left",
+                "pos": "6090"
+              },
+              {
+                "val": "left",
+                "pos": "6540"
+              }
+            ],
+            "indent_left": null,
+            "indent_right": "360",
+            "first_line": null,
+            "hanging": null,
+            "space_before": null,
+            "space_after": null,
+            "line": null
+          }
+        ],
+        "drawings": [
+          {
+            "index": 1,
+            "kind": "anchor",
+            "cx": "4914900",
+            "cy": "0",
+            "pos_h_relative": "column",
+            "pos_h_offset": "571500",
+            "pos_v_relative": "paragraph",
+            "pos_v_offset": "795655"
+          },
+          {
+            "index": 2,
+            "kind": "inline",
+            "cx": "528320",
+            "cy": "914400",
+            "pos_h_relative": null,
+            "pos_h_offset": null,
+            "pos_v_relative": null,
+            "pos_v_offset": null
+          }
+        ],
+        "table_count": 0
+      }
+    }
+  }
+}

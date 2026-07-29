@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1180" viewBox="0 0 1800 1180" role="img" aria-labelledby="diagramTitle diagramDesc">
+  <title id="diagramTitle">Harviana Use Case Diagram</title>
+  <desc id="diagramDesc">Use case diagram showing the role-based functions of the Farmer, LGU Validator, and DA Administrator in Harviana.</desc>
+
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="openArrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#64748b" stroke-width="1.6"/>
+    </marker>
+    <style>
+      .title { font: 700 38px Arial, sans-serif; fill: #163b2b; }
+      .subtitle { font: 400 20px Arial, sans-serif; fill: #53635a; }
+      .boundary-title { font: 700 24px Arial, sans-serif; fill: #234a36; }
+      .group-title { font: 700 20px Arial, sans-serif; fill: #334155; letter-spacing: 0.3px; }
+      .usecase { font: 600 17px Arial, sans-serif; fill: #1f2937; }
+      .actor-label { font: 700 20px Arial, sans-serif; fill: #18362a; }
+      .relation-label { font: italic 15px Arial, sans-serif; fill: #58677a; }
+      .caption { font: italic 18px Arial, sans-serif; fill: #4b5d52; }
+      .association { fill: none; stroke: #52645a; stroke-width: 2.2; }
+      .dependency { fill: none; stroke: #64748b; stroke-width: 2; stroke-dasharray: 8 7; marker-end: url(#openArrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1180" fill="#ffffff"/>
+  <text x="900" y="62" text-anchor="middle" class="title">Harviana Use Case Diagram</text>
+  <text x="900" y="96" text-anchor="middle" class="subtitle">Core role-based functions of the Farmer, LGU Validator, and DA Administrator</text>
+
+  <!-- System boundary and functional group backgrounds -->
+  <rect x="250" y="128" width="1300" height="1010" rx="12" fill="#fcfdfc" stroke="#355f47" stroke-width="3"/>
+  <text x="280" y="165" class="boundary-title">Harviana System</text>
+
+  <rect x="292" y="224" width="416" height="840" rx="18" fill="#f4f9fd" stroke="#91b8d8" stroke-width="2"/>
+  <rect x="732" y="224" width="336" height="840" rx="18" fill="#f2fbf9" stroke="#83bdb4" stroke-width="2"/>
+  <rect x="1092" y="224" width="416" height="840" rx="18" fill="#f8f5fc" stroke="#b6a2d2" stroke-width="2"/>
+  <text x="500" y="260" text-anchor="middle" class="group-title">Farmer Functions</text>
+  <text x="900" y="260" text-anchor="middle" class="group-title">LGU Validation</text>
+  <text x="1300" y="260" text-anchor="middle" class="group-title">DA Administration</text>
+
+  <!-- Actor associations. Drawn first to keep lines behind use cases. -->
+  <!-- Farmer -->
+  <path d="M 145 392 L 482 190" class="association"/>
+  <path d="M 145 410 L 435 312" class="association"/>
+  <path d="M 145 418 L 435 400" class="association"/>
+  <path d="M 145 426 L 435 488" class="association"/>
+  <path d="M 145 434 L 435 576" class="association"/>
+  <path d="M 145 442 L 435 664" class="association"/>
+  <path d="M 145 450 L 435 752" class="association"/>
+  <path d="M 145 458 L 435 840" class="association"/>
+  <path d="M 145 466 L 435 928" class="association"/>
+  <!-- LGU Validator -->
+  <path d="M 145 790 L 970 190" class="association"/>
+  <path d="M 145 806 L 762 356" class="association"/>
+  <!-- DA Administrator -->
+  <path d="M 1655 392 L 1230 190" class="association"/>
+  <path d="M 1655 410 L 1365 312" class="association"/>
+  <path d="M 1655 420 L 1365 400" class="association"/>
+  <path d="M 1655 430 L 1365 488" class="association"/>
+  <path d="M 1655 440 L 1365 576" class="association"/>
+  <path d="M 1655 450 L 1365 664" class="association"/>
+  <path d="M 1655 460 L 1365 752" class="association"/>
+  <path d="M 1655 470 L 1365 840" class="association"/>
+
+  <!-- Shared use cases -->
+  <g filter="url(#softShadow)">
+    <ellipse cx="1100" cy="190" rx="130" ry="42" fill="#e8f5eb" stroke="#4a8a61" stroke-width="2.5"/>
+    <ellipse cx="600" cy="190" rx="118" ry="42" fill="#e8f5eb" stroke="#4a8a61" stroke-width="2.5"/>
+  </g>
+  <text x="1100" y="196" text-anchor="middle" class="usecase">Login / Authenticate</text>
+  <text x="600" y="196" text-anchor="middle" class="usecase">Register Account</text>
+
+  <!-- Farmer use cases -->
+  <g filter="url(#softShadow)" fill="#eaf4fb" stroke="#4e91c5" stroke-width="2.2">
+    <ellipse cx="500" cy="312" rx="150" ry="37"/>
+    <ellipse cx="500" cy="400" rx="150" ry="37"/>
+    <ellipse cx="500" cy="488" rx="150" ry="37"/>
+    <ellipse cx="500" cy="576" rx="150" ry="37"/>
+    <ellipse cx="500" cy="664" rx="150" ry="37"/>
+    <ellipse cx="500" cy="752" rx="150" ry="37"/>
+    <ellipse cx="500" cy="840" rx="150" ry="37"/>
+    <ellipse cx="500" cy="928" rx="150" ry="37"/>
+  </g>
+  <text x="500" y="307" text-anchor="middle" class="usecase"><tspan x="500">Manage Profile and</tspan><tspan x="500" dy="21">Onboarding</tspan></text>
+  <text x="500" y="395" text-anchor="middle" class="usecase"><tspan x="500">View Dashboard and</tspan><tspan x="500" dy="21">Recommendations</tspan></text>
+  <text x="500" y="494" text-anchor="middle" class="usecase">Create Crop Plan</text>
+  <text x="500" y="571" text-anchor="middle" class="usecase"><tspan x="500">View ML Production</tspan><tspan x="500" dy="21">Estimate</tspan></text>
+  <text x="500" y="670" text-anchor="middle" class="usecase">Manage Farmer Calendar</text>
+  <text x="500" y="758" text-anchor="middle" class="usecase">Submit Damage Report</text>
+  <text x="500" y="846" text-anchor="middle" class="usecase">Record Actual Harvest</text>
+  <text x="500" y="923" text-anchor="middle" class="usecase"><tspan x="500">View Interactive Map</tspan><tspan x="500" dy="21">and Weather</tspan></text>
+
+  <!-- LGU use cases -->
+  <g filter="url(#softShadow)" fill="#e8f7f4" stroke="#3b8b7f" stroke-width="2.2">
+    <ellipse cx="900" cy="356" rx="138" ry="39"/>
+    <ellipse cx="900" cy="500" rx="138" ry="39"/>
+    <ellipse cx="900" cy="644" rx="138" ry="39"/>
+    <ellipse cx="900" cy="788" rx="138" ry="39"/>
+  </g>
+  <text x="900" y="351" text-anchor="middle" class="usecase"><tspan x="900">View Assigned</tspan><tspan x="900" dy="21">Submissions</tspan></text>
+  <text x="900" y="506" text-anchor="middle" class="usecase">Review Evidence</text>
+  <text x="900" y="639" text-anchor="middle" class="usecase"><tspan x="900">Approve or Return</tspan><tspan x="900" dy="21">Report</tspan></text>
+  <text x="900" y="794" text-anchor="middle" class="usecase">Add Validation Notes</text>
+
+  <!-- DA Administrator use cases -->
+  <g filter="url(#softShadow)" fill="#f1ebf8" stroke="#7558a2" stroke-width="2.2">
+    <ellipse cx="1300" cy="312" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="400" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="488" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="576" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="664" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="752" rx="158" ry="37"/>
+    <ellipse cx="1300" cy="840" rx="158" ry="37"/>
+  </g>
+  <text x="1300" y="318" text-anchor="middle" class="usecase">Manage Users and Roles</text>
+  <text x="1300" y="406" text-anchor="middle" class="usecase">Manage Crop Data</text>
+  <text x="1300" y="483" text-anchor="middle" class="usecase"><tspan x="1300">Monitor Administrative</tspan><tspan x="1300" dy="21">Dashboard</tspan></text>
+  <text x="1300" y="571" text-anchor="middle" class="usecase"><tspan x="1300">View Real-time</tspan><tspan x="1300" dy="21">Supply Forecast</tspan></text>
+  <text x="1300" y="659" text-anchor="middle" class="usecase"><tspan x="1300">View Interactive Map</tspan><tspan x="1300" dy="21">and Weather</tspan></text>
+  <text x="1300" y="758" text-anchor="middle" class="usecase">Generate Reports</text>
+  <text x="1300" y="835" text-anchor="middle" class="usecase"><tspan x="1300">Review Prediction</tspan><tspan x="1300" dy="21">Analytics</tspan></text>
+
+  <!-- UML include relationships -->
+  <path d="M 500 525 L 500 535" class="dependency"/>
+  <text x="520" y="535" class="relation-label">&lt;&lt;include&gt;&gt;</text>
+  <path d="M 900 395 L 900 455" class="dependency"/>
+  <text x="916" y="430" class="relation-label">&lt;&lt;include&gt;&gt;</text>
+  <path d="M 900 539 L 900 599" class="dependency"/>
+  <text x="916" y="574" class="relation-label">&lt;&lt;include&gt;&gt;</text>
+  <path d="M 900 683 L 900 743" class="dependency"/>
+  <text x="916" y="718" class="relation-label">&lt;&lt;include&gt;&gt;</text>
+
+  <!-- Farmer actor -->
+  <g stroke="#263b31" stroke-width="3" fill="none">
+    <circle cx="125" cy="337" r="18"/>
+    <path d="M 125 355 L 125 405 M 91 371 L 159 371 M 125 405 L 94 446 M 125 405 L 156 446"/>
+  </g>
+  <text x="125" y="478" text-anchor="middle" class="actor-label">Farmer</text>
+
+  <!-- LGU Validator actor -->
+  <g stroke="#263b31" stroke-width="3" fill="none">
+    <circle cx="125" cy="735" r="18"/>
+    <path d="M 125 753 L 125 803 M 91 769 L 159 769 M 125 803 L 94 844 M 125 803 L 156 844"/>
+  </g>
+  <text x="125" y="876" text-anchor="middle" class="actor-label">LGU Validator</text>
+
+  <!-- DA Administrator actor -->
+  <g stroke="#263b31" stroke-width="3" fill="none">
+    <circle cx="1675" cy="337" r="18"/>
+    <path d="M 1675 355 L 1675 405 M 1641 371 L 1709 371 M 1675 405 L 1644 446 M 1675 405 L 1706 446"/>
+  </g>
+  <text x="1675" y="478" text-anchor="middle" class="actor-label">DA Administrator</text>
+
+</svg>

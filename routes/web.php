@@ -150,6 +150,7 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
         Route::prefix('farmer')->name('farmer.')->group(function () {
             Route::post('/preferences', [FarmerDashboardController::class, 'savePreferences'])->name('preferences.save');
             Route::get('/recommendations', [FarmerDashboardController::class, 'getRecommendations'])->name('recommendations');
+            Route::get('/crop-signals', [FarmerDashboardController::class, 'getCropSignals'])->name('crop-signals');
             Route::get('/compare-crops', [FarmerDashboardController::class, 'compareCrops'])->name('compare');
             Route::get('/calendar', [FarmerDashboardController::class, 'getCalendarData'])->name('calendar');
             Route::get('/scenario', [FarmerDashboardController::class, 'calculateScenario'])->name('scenario');

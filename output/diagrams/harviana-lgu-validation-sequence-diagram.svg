@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1630" viewBox="0 0 2000 1630">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#263238"/></marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#173b2c}.subtitle{font:18px Arial,sans-serif;fill:#54635c}.head{font:700 18px Arial,sans-serif;fill:#18352a}.msg{font:16.5px Arial,sans-serif;fill:#263238}.small{font:15px Arial,sans-serif;fill:#455a64}.phase{font:700 18px Arial,sans-serif;fill:#315846}
+      .life{stroke:#789187;stroke-width:2;stroke-dasharray:9 8}.call{stroke:#263238;stroke-width:2.3;fill:none;marker-end:url(#arrow)}.return{stroke:#52665d;stroke-width:2.1;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="2000" height="1580" fill="#fff"/>
+  <text x="1000" y="54" text-anchor="middle" class="title">Harviana Farmer Report and LGU Validation Sequence Diagram</text>
+  <text x="1000" y="84" text-anchor="middle" class="subtitle">Submission, municipality-scoped review, validation decision, and audit recording</text>
+
+  <g>
+    <rect x="35" y="120" width="175" height="72" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/><text x="123" y="163" text-anchor="middle" class="head">Farmer</text>
+    <rect x="265" y="120" width="205" height="72" rx="10" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/><text x="368" y="163" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="525" y="120" width="245" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/><text x="648" y="151" text-anchor="middle" class="head">FarmerCalendar</text><text x="648" y="175" text-anchor="middle" class="head">Controller</text>
+    <rect x="825" y="120" width="220" height="72" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/><text x="935" y="151" text-anchor="middle" class="head">LGU</text><text x="935" y="175" text-anchor="middle" class="head">Validator</text>
+    <rect x="1100" y="120" width="235" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/><text x="1218" y="151" text-anchor="middle" class="head">LguValidation</text><text x="1218" y="175" text-anchor="middle" class="head">Controller</text>
+    <rect x="1390" y="120" width="245" height="72" rx="10" fill="#f3e5f5" stroke="#7e57a1" stroke-width="2"/><text x="1513" y="151" text-anchor="middle" class="head">EventAuthenticity</text><text x="1513" y="175" text-anchor="middle" class="head">Service</text>
+    <rect x="1690" y="120" width="270" height="72" rx="10" fill="#fff3e0" stroke="#b27624" stroke-width="2"/><text x="1825" y="151" text-anchor="middle" class="head">Railway</text><text x="1825" y="175" text-anchor="middle" class="head">PostgreSQL</text>
+  </g>
+  <line x1="123" y1="192" x2="123" y2="1515" class="life"/><line x1="368" y1="192" x2="368" y2="1515" class="life"/><line x1="648" y1="192" x2="648" y2="1515" class="life"/><line x1="935" y1="192" x2="935" y2="1515" class="life"/><line x1="1218" y1="192" x2="1218" y2="1515" class="life"/><line x1="1513" y1="192" x2="1513" y2="1515" class="life"/><line x1="1825" y1="192" x2="1825" y2="1515" class="life"/>
+
+  <rect x="20" y="225" width="1960" height="470" rx="8" fill="#f8fbf9" stroke="#afc1b8" stroke-width="2"/><text x="50" y="258" class="phase">Farmer report submission</text>
+  <line x1="123" y1="340" x2="368" y2="340" class="call"/><text x="246" y="302" text-anchor="middle" class="msg">1. Enter damage or</text><text x="246" y="324" text-anchor="middle" class="small">actual-harvest details</text>
+  <line x1="368" y1="395" x2="648" y2="395" class="call"/><text x="508" y="382" text-anchor="middle" class="msg">2. Submit report and evidence</text>
+  <line x1="648" y1="475" x2="1825" y2="475" class="call"/><text x="1237" y="462" text-anchor="middle" class="msg">3. Store report with pending LGU validation status</text>
+  <line x1="1825" y1="545" x2="648" y2="545" class="return"/><text x="1237" y="532" text-anchor="middle" class="msg">4. Return saved record</text>
+  <line x1="648" y1="610" x2="368" y2="610" class="return"/><text x="508" y="597" text-anchor="middle" class="msg">5. Return submission status</text>
+  <line x1="368" y1="665" x2="123" y2="665" class="return"/><text x="246" y="652" text-anchor="middle" class="msg">6. Show pending validation</text>
+
+  <rect x="20" y="720" width="1960" height="840" rx="8" fill="#fffdf7" stroke="#d3bd8a" stroke-width="2"/><text x="50" y="753" class="phase">LGU review and decision</text>
+  <line x1="935" y1="810" x2="368" y2="810" class="call"/><text x="652" y="797" text-anchor="middle" class="msg">7. Open validation dashboard</text>
+  <line x1="368" y1="880" x2="1218" y2="880" class="call"/><text x="793" y="867" text-anchor="middle" class="msg">8. Request municipality-scoped submissions</text>
+  <line x1="1218" y1="950" x2="1825" y2="950" class="call"/><text x="1522" y="937" text-anchor="middle" class="msg">9. Query pending damage and harvest reports</text>
+  <line x1="1825" y1="1015" x2="1218" y2="1015" class="return"/><text x="1522" y="1002" text-anchor="middle" class="msg">10. Return matching records</text>
+  <line x1="1218" y1="1075" x2="368" y2="1075" class="return"/><text x="793" y="1062" text-anchor="middle" class="msg">11. Display submissions and authenticity indicators</text>
+  <line x1="935" y1="1145" x2="368" y2="1145" class="call"/><text x="652" y="1132" text-anchor="middle" class="msg">12. Approve or return with notes</text>
+  <line x1="368" y1="1210" x2="1218" y2="1210" class="call"/><text x="793" y="1197" text-anchor="middle" class="msg">13. Submit validation decision</text>
+  <line x1="1218" y1="1275" x2="1825" y2="1275" class="call"/><text x="1522" y="1262" text-anchor="middle" class="msg">14. Update status, validator, time, and notes</text>
+  <line x1="1218" y1="1340" x2="1513" y2="1340" class="call"/><text x="1366" y="1327" text-anchor="middle" class="msg">15. Record validation audit</text>
+  <line x1="1513" y1="1400" x2="1825" y2="1400" class="call"/><text x="1669" y="1387" text-anchor="middle" class="msg">16. Store audit entry</text>
+  <line x1="1218" y1="1460" x2="368" y2="1460" class="return"/><text x="793" y="1447" text-anchor="middle" class="msg">17. Return updated validation result</text>
+  <line x1="368" y1="1515" x2="935" y2="1515" class="return"/><text x="652" y="1502" text-anchor="middle" class="msg">18. Show updated status</text>
+</svg>

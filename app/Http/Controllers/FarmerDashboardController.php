@@ -70,6 +70,29 @@ class FarmerDashboardController extends Controller
         ));
     }
 
+    /**
+     * Return the current farmer's grouped municipal crop-plan signals.
+     */
+    public function getCropSignals()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user()->fresh();
+        $pulse = $this->getSafeCropBalancePulse($user, $user->preferred_municipality);
+        $available = (bool) ($pulse['available'] ?? true);
+
+        return response()->json([
+            'success' => $available,
+            'available' => $available,
+            'has_location' => $pulse['has_location'],
+            'has_data' => $pulse['has_data'],
+            'municipality' => $pulse['municipality'],
+            'window_label' => $pulse['window_label'],
+            'items' => collect($pulse['signals'] ?? $pulse['items'] ?? [])->values(),
+            'message' => $pulse['message'],
+            'updated_at' => now()->toIso8601String(),
+        ], $available ? 200 : 503);
+    }
+
     private function getSafeHarvestProgress(int $userId): array
     {
         if (! $this->supportsCalendarColumns([
@@ -95,11 +118,17 @@ class FarmerDashboardController extends Controller
     private function getSafeCropBalancePulse($user, ?string $preferredMunicipality): array
     {
         try {
-            return app(CommunityCropSignalService::class)->dashboardPulse($user);
+            return [
+                ...app(CommunityCropSignalService::class)->dashboardPulse($user),
+                'available' => true,
+            ];
         } catch (\Throwable $exception) {
             report($exception);
 
-            return $this->emptyCropBalancePulse($preferredMunicipality);
+            return [
+                ...$this->emptyCropBalancePulse($preferredMunicipality),
+                'available' => false,
+            ];
         }
     }
 
@@ -124,6 +153,7 @@ class FarmerDashboardController extends Controller
             'municipality' => $hasLocation ? ucwords(strtolower($preferredMunicipality)) : null,
             'window_label' => 'Next 180 days',
             'items' => collect(),
+            'signals' => collect(),
             'alternatives' => collect(),
             'message' => $hasLocation
                 ? 'Local crop balance is temporarily unavailable.'

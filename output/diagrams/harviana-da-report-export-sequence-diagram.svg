@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1750" height="1470" viewBox="0 0 1750 1470">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#263238"/></marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#173b2c}.subtitle{font:18px Arial,sans-serif;fill:#54635c}.head{font:700 19px Arial,sans-serif;fill:#18352a}.msg{font:17px Arial,sans-serif;fill:#263238}.small{font:15px Arial,sans-serif;fill:#455a64}.phase{font:700 18px Arial,sans-serif;fill:#315846}
+      .life{stroke:#789187;stroke-width:2;stroke-dasharray:9 8}.call{stroke:#263238;stroke-width:2.3;fill:none;marker-end:url(#arrow)}.return{stroke:#52665d;stroke-width:2.1;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1750" height="1420" fill="#ffffff"/>
+  <text x="875" y="54" text-anchor="middle" class="title">Harviana DA Report Generation and Export Sequence Diagram</text>
+  <text x="875" y="84" text-anchor="middle" class="subtitle">Filtered report preparation and PDF or CSV export</text>
+
+  <g>
+    <rect x="45" y="120" width="230" height="72" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/><text x="160" y="151" text-anchor="middle" class="head">DA</text><text x="160" y="175" text-anchor="middle" class="head">Administrator</text>
+    <rect x="365" y="120" width="230" height="72" rx="10" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/><text x="480" y="163" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="685" y="120" width="250" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/><text x="810" y="163" text-anchor="middle" class="head">ReportController</text>
+    <rect x="1025" y="120" width="285" height="72" rx="10" fill="#fff3e0" stroke="#b27624" stroke-width="2"/><text x="1168" y="151" text-anchor="middle" class="head">Railway</text><text x="1168" y="175" text-anchor="middle" class="head">PostgreSQL</text>
+    <rect x="1400" y="120" width="295" height="72" rx="10" fill="#f3e5f5" stroke="#7e57a1" stroke-width="2"/><text x="1548" y="151" text-anchor="middle" class="head">Report Exporter</text><text x="1548" y="175" text-anchor="middle" class="small">DomPDF or CSV stream</text>
+  </g>
+  <line x1="160" y1="192" x2="160" y2="1415" class="life"/><line x1="480" y1="192" x2="480" y2="1415" class="life"/><line x1="810" y1="192" x2="810" y2="1415" class="life"/><line x1="1168" y1="192" x2="1168" y2="1415" class="life"/><line x1="1548" y1="192" x2="1548" y2="1415" class="life"/>
+
+  <rect x="25" y="225" width="1700" height="600" rx="8" fill="#f8fbf9" stroke="#afc1b8" stroke-width="2"/><text x="55" y="258" class="phase">Report generation</text>
+  <line x1="160" y1="325" x2="480" y2="325" class="call"/><text x="320" y="312" text-anchor="middle" class="msg">1. Select report and filters</text>
+  <line x1="480" y1="405" x2="810" y2="405" class="call"/><text x="645" y="392" text-anchor="middle" class="msg">2. Request filtered report</text><text x="645" y="416" text-anchor="middle" class="small">report type and filter values</text>
+  <line x1="810" y1="485" x2="1168" y2="485" class="call"/><text x="989" y="472" text-anchor="middle" class="msg">3. Query report records</text>
+  <line x1="1168" y1="555" x2="810" y2="555" class="return"/><text x="989" y="542" text-anchor="middle" class="msg">4. Return filtered data</text>
+  <path d="M810 610 h120 v62 h-120" class="call"/><text x="945" y="632" class="msg">5. Build summaries</text><text x="945" y="656" class="msg">and analytics</text>
+  <line x1="810" y1="725" x2="480" y2="725" class="return"/><text x="645" y="712" text-anchor="middle" class="msg">6. Return report page</text>
+  <line x1="480" y1="790" x2="160" y2="790" class="return"/><text x="320" y="777" text-anchor="middle" class="msg">7. Display generated report</text>
+
+  <rect x="25" y="850" width="1700" height="540" rx="8" fill="#fffdf7" stroke="#d3bd8a" stroke-width="2"/><text x="55" y="883" class="phase">PDF or CSV export</text>
+  <line x1="160" y1="950" x2="480" y2="950" class="call"/><text x="320" y="937" text-anchor="middle" class="msg">8. Choose PDF or CSV</text>
+  <line x1="480" y1="1020" x2="810" y2="1020" class="call"/><text x="645" y="1007" text-anchor="middle" class="msg">9. Request report export</text>
+  <line x1="810" y1="1085" x2="1168" y2="1085" class="call"/><text x="989" y="1072" text-anchor="middle" class="msg">10. Retrieve filtered records</text>
+  <line x1="1168" y1="1145" x2="810" y2="1145" class="return"/><text x="989" y="1132" text-anchor="middle" class="msg">11. Return export data</text>
+  <line x1="810" y1="1205" x2="1548" y2="1205" class="call"/><text x="1179" y="1192" text-anchor="middle" class="msg">12. Generate PDF or stream CSV</text>
+  <line x1="1548" y1="1260" x2="810" y2="1260" class="return"/><text x="1179" y="1247" text-anchor="middle" class="msg">13. Return export file</text>
+  <line x1="810" y1="1310" x2="480" y2="1310" class="return"/><text x="645" y="1297" text-anchor="middle" class="msg">14. Send file download</text>
+  <line x1="480" y1="1355" x2="160" y2="1355" class="return"/><text x="320" y="1342" text-anchor="middle" class="msg">15. Save exported report</text>
+</svg>

@@ -35,21 +35,6 @@
             border-color: #cbd5e1;
             box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
         }
-        .insight-heading > .text-xl {
-            display: none;
-        }
-        .insight-heading::before {
-            content: '#';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.25rem;
-            height: 2.25rem;
-            border-radius: 0.75rem;
-            background: #f1f5f9;
-            color: #355872;
-            font-weight: 700;
-        }
         .farmer-action-grid > a:nth-child(1) .text-3xl,
         .farmer-action-grid > a:nth-child(2) .text-2xl,
         .farmer-action-grid > a:nth-child(3) .text-2xl,
@@ -382,7 +367,11 @@
                     </span>
                 </div>
 
-                @if($cropBalancePulse['has_data'])
+                @if(!($cropBalancePulse['available'] ?? true))
+                    <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-4 text-sm text-slate-600">
+                        Nearby plan data is temporarily unavailable.
+                    </div>
+                @elseif($cropBalancePulse['has_data'])
                     <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-4">
                         @foreach($cropBalancePulse['items'] as $item)
                             <div class="rounded-xl border border-gray-100 bg-gray-50 p-3">
@@ -414,7 +403,7 @@
                             <div class="mt-2 flex flex-wrap gap-1.5">
                                 @foreach($cropBalancePulse['alternatives'] as $alternative)
                                     <span class="rounded-full bg-white px-2.5 py-1 text-xs font-medium text-emerald-700">
-                                        {{ $alternative['crop'] }} · {{ $alternative['label'] }}
+                                        {{ $alternative['crop'] }} - {{ $alternative['label'] }}
                                     </span>
                                 @endforeach
                             </div>
@@ -422,7 +411,7 @@
                     @endif
                 @elseif($cropBalancePulse['has_location'])
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
-                        You will see crowded crops here when nearby plans come in.
+                        No nearby crop plans are recorded in Harviana yet. This does not confirm low supply.
                     </div>
                 @else
                     <div class="mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-sm text-gray-600">
@@ -438,39 +427,47 @@
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                     <div class="space-y-3">
                         <div class="insight-heading flex items-center gap-2">
-                            <span class="text-xl">📊</span>
+                            <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sm font-bold text-sky-700" aria-hidden="true">#</span>
                             <div>
                                 <h2 class="text-lg font-semibold text-gray-900" x-text="t('top_5_crops')"></h2>
-                                <p class="text-sm text-gray-600">Quick crop outlook from past data.</p>
+                                <p class="text-sm text-gray-600">Compare past results with recorded nearby plans.</p>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-gray-600">
-                                <span class="font-medium uppercase tracking-wide text-gray-500">Area</span>
+                                <span class="font-medium uppercase text-gray-500">Area</span>
                                 <span class="font-semibold text-gray-900" x-text="municipalityLabel || 'your saved farm location'"></span>
                             </div>
-                            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">
-                                Check nearby plans first
+                            <span class="inline-flex rounded-full bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700 ring-1 ring-sky-100" x-text="pressureWindowLabel">
+                                Next 180 days
                             </span>
                         </div>
                     </div>
 
-                    <div x-show="municipality && insightText" class="w-full lg:max-w-xl">
-                        <div class="flex items-center relative w-full lg:max-w-xl">
-                            <div class="shrink-0 relative z-20 w-[110px] sm:w-[140px]">
-                                <div class="overflow-hidden">
-                                    <div x-ref="insightAvatar" class="w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]" aria-hidden="true"></div>
+                    <div x-show="municipality && insightText" class="w-full lg:max-w-2xl">
+                        <div class="flex items-center relative w-full lg:max-w-2xl">
+                            <div class="shrink-0 relative z-20 w-14 sm:w-24 lg:w-28">
+                                <div class="relative h-14 w-14 overflow-hidden sm:h-24 sm:w-24 lg:h-28 lg:w-28">
+                                    <img
+                                        x-show="!avatarReady"
+                                        src="{{ asset('images/HarvianaLogo.png') }}"
+                                        alt=""
+                                        class="absolute inset-0 h-full w-full object-contain p-1"
+                                        aria-hidden="true"
+                                    >
+                                    <div x-ref="insightAvatar" class="absolute inset-0 h-full w-full" aria-hidden="true"></div>
                                 </div>
                             </div>
-                            <div class="min-w-0 flex-1 relative z-10 ml-5 sm:ml-8">
+                            <div class="min-w-0 flex-1 relative z-10 ml-3 sm:ml-5">
                                 {{-- Thought Bubble Tails --}}
-                                <div class="absolute top-[60%] -left-4 sm:-left-6 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
-                                <div class="absolute top-[35%] -left-2 sm:-left-3 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[60%] -left-3 sm:-left-5 h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-gray-800 border border-white/10 z-0"></div>
+                                <div class="absolute top-[35%] -left-1.5 sm:-left-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-gray-800 border border-white/10 z-0"></div>
 
                                 {{-- Main Cloud Box --}}
-                                <div class="relative rounded-[2rem] bg-gray-800 p-4 sm:px-6 sm:py-5 shadow-xl border border-white/10 z-10">
-                                    <p class="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-[#a1a1aa] mb-1">Quick insight</p>
-                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-live="polite"></p>
+                                <div class="relative rounded-2xl bg-gray-800 px-4 py-3 sm:px-5 sm:py-4 shadow-lg border border-white/10 z-10">
+                                    <p class="mb-1 text-xs font-semibold uppercase text-[#a1a1aa]">Quick insight</p>
+                                    <p class="text-xs sm:text-sm leading-relaxed text-gray-200" x-text="insightDisplayText" aria-hidden="true"></p>
+                                    <p class="sr-only" x-text="insightText" aria-live="polite"></p>
                                 </div>
                             </div>
                         </div>
@@ -492,20 +489,31 @@
                 </div>
 
                 <div x-show="error && municipality" class="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-600">
-                    <p class="text-sm font-medium" x-text="timedOut ? 'This is taking long.' : t('load_error')"></p>
-                    <p class="mt-1 text-xs text-red-500">Check nearby plans above.</p>
+                    <p class="text-sm font-medium" x-text="timedOut ? 'Past production is taking too long to load.' : t('load_error')"></p>
+                    <p class="mt-1 text-xs text-red-500">Review the nearby-plan status above, or try again later.</p>
                 </div>
 
                 <div x-show="!loading && !error && municipality" class="space-y-3">
-                    <template x-for="row in visibleCropRows" :key="row.rank + '-' + row.crop">
+                    <div x-show="historyLoadFailed" class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+                        Past production is temporarily unavailable. Recorded nearby plans are still shown.
+                    </div>
+                    <div x-show="pressureLoadFailed" class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-600">
+                        Nearby plan data is temporarily unavailable. Past production is still shown.
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                        <span class="font-semibold uppercase">Two signals</span>
+                        <span class="rounded-full bg-sky-50 px-2.5 py-1 font-medium text-sky-700 ring-1 ring-sky-100">Past production</span>
+                        <span class="rounded-full bg-amber-50 px-2.5 py-1 font-medium text-amber-700 ring-1 ring-amber-100">Recorded planting pressure</span>
+                    </div>
+
+                    <template x-for="row in visibleCropRows" :key="row.crop">
                         <div
-                            class="rounded-2xl border p-3.5 sm:p-4 transition-all duration-200"
-                            :class="row.rank === 1
-                                ? 'border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-sky-50 shadow-sm'
-                                : 'border-gray-200 bg-white shadow-sm'"
+                            class="rounded-xl border p-3.5 sm:p-4 shadow-sm"
+                            :class="cropGuidanceCardClass(row)"
                         >
-                            <div class="flex items-start gap-3">
-                                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-slate-100">
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-slate-100 sm:h-16 sm:w-16">
                                     <template x-if="row.image && !isCropImageMissing(row.crop)">
                                         <img
                                             :src="row.image"
@@ -516,7 +524,7 @@
                                     </template>
                                     <template x-if="!row.image || isCropImageMissing(row.crop)">
                                         <div
-                                            class="flex h-full w-full items-center justify-center bg-slate-100 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"
+                                            class="flex h-full w-full items-center justify-center bg-slate-100 text-xs font-semibold uppercase text-slate-400"
                                         >
                                             Crop
                                         </div>
@@ -524,32 +532,59 @@
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
-                                        <span
-                                            class="rounded-full px-2.5 py-1 text-[11px] font-medium ring-1"
-                                            :class="cropOutlookClass(row)"
-                                            x-text="cropOutlookLabel(row)"
-                                        ></span>
+                                    <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                                        <div class="min-w-0">
+                                            <h3 class="truncate text-base font-semibold text-gray-900 sm:text-lg" x-text="row.crop"></h3>
+                                            <p class="mt-1 text-xs leading-relaxed text-gray-600" x-text="cropGuidanceDescription(row)"></p>
+                                        </div>
+
+                                        <div class="grid shrink-0 grid-cols-2 gap-2 text-xs sm:min-w-[270px]">
+                                            <div class="rounded-lg bg-slate-50 px-3 py-2">
+                                                <span class="block text-xs font-semibold uppercase text-gray-500">Nearby plans</span>
+                                                <span class="mt-0.5 block font-semibold text-gray-900" x-text="nearbyPlanCountLabel(row)"></span>
+                                            </div>
+                                            <div class="rounded-lg px-3 py-2" :class="nearbySupplyMetricClass(row)">
+                                                <span class="block text-xs font-semibold uppercase text-gray-500">Nearby expected supply</span>
+                                                <span class="mt-0.5 block font-semibold" x-text="nearbySupplyLabel(row)"></span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <p class="mt-1 text-xs leading-relaxed text-gray-500" x-text="cropOutlookDescription(row)"></p>
+
                                     <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
-                                        <span class="rounded-full bg-slate-100 px-2.5 py-1 font-medium" x-text="'Rank ' + row.rank"></span>
-                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="cropOutlookSource(row)"></span>
-                                        <span class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100">Compare nearby plans</span>
+                                        <span class="rounded-full px-2.5 py-1 font-medium ring-1" :class="productionHistoryClass(row)" x-text="productionHistoryLabel(row)"></span>
+                                        <span class="rounded-full px-2.5 py-1 font-medium ring-1" :class="recordedPressureClass(row)" x-text="recordedPressureLabel(row)"></span>
+                                        <span x-show="row.signal && row.signal.harvest_window" class="rounded-full bg-white px-2.5 py-1 ring-1 ring-gray-100" x-text="'Harvest: ' + row.signal.harvest_window"></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
+                    <div x-show="visibleCropRows.length === 0" class="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center">
+                        <p class="text-sm font-medium text-gray-700">No planting guidance is available yet.</p>
+                        <p class="mt-1 text-xs text-gray-500">Try again later or check nearby plans on the map.</p>
+                    </div>
+
                     <div x-show="hasExtraCropRows" class="pt-1 text-center">
                         <button
                             type="button"
-                            class="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
+                            class="inline-flex min-h-11 items-center justify-center rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary hover:text-primary-dark"
                             x-on:click="showAllRows = !showAllRows"
                             x-text="showAllRows ? 'Show top 3 only' : 'See all'"
                         ></button>
+                    </div>
+
+                    <div class="flex flex-col gap-3 rounded-xl bg-slate-50 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0 text-[11px] leading-relaxed text-gray-500">
+                            <p class="font-semibold text-gray-700">Planning guidance, not a guaranteed market result.</p>
+                            <p>Uses past production and active plans recorded by other Harviana farmers nearby. Your own plans, buyer demand, and market prices are not included.</p>
+                        </div>
+                        <a
+                            href="{{ route('map.index') }}"
+                            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                        >
+                            Compare nearby plans
+                        </a>
                     </div>
                 </div>
             </div>
@@ -938,7 +973,7 @@
                 month_dec: 'December',
 
                 // Chart
-                top_5_crops: 'Crop Outlook',
+                top_5_crops: 'Planting Guidance',
                 location: 'Location',
                 loading: 'Loading...',
                 load_error: 'Could not load. Try again.',
@@ -1053,7 +1088,7 @@
                 month_dec: 'Disyembre',
 
                 // Chart
-                top_5_crops: 'Crop Outlook',
+                top_5_crops: 'Gabay sa Pagtatanim',
                 location: 'Lugar',
                 loading: 'Nag-loload...',
                 load_error: 'Hindi ma-load. Ulitin.',
@@ -1297,14 +1332,17 @@
                 loading: false,
                 error: false,
                 timedOut: false,
+                historyLoadFailed: false,
+                pressureLoadFailed: @json(!($cropBalancePulse['available'] ?? true)),
                 showAllRows: false,
                 insightText: '',
                 insightDisplayText: '',
-                recommendedCrop: '',
-                recommendationMonth: '',
                 chartCrops: [],
                 chartHistoricalData: [],
-                chartPredictedData: [],
+                pressureSignals: @json(collect($cropBalancePulse['signals'] ?? $cropBalancePulse['items'] ?? [])->values()),
+                pressureHasData: @json((bool) ($cropBalancePulse['has_data'] ?? false)),
+                pressureWindowLabel: @json($cropBalancePulse['window_label'] ?? 'Next 180 days'),
+                pressureMessage: @json($cropBalancePulse['message'] ?? ''),
                 cropImageErrors: {},
                 cropImageMap: {
                     'CABBAGE': @json(asset('images/crops/cabbage.png')),
@@ -1321,8 +1359,12 @@
                 insightTypingTimer: null,
                 isTypingInsight: false,
                 insightToken: 0,
+                avatarReady: false,
                 animationInstance: null,
                 insightObserver: null,
+                loadController: null,
+                pressureLoadController: null,
+                loadToken: 0,
 
                 init() {
                     this.$nextTick(() => {
@@ -1335,13 +1377,10 @@
 
                     window.addEventListener('farm-preferences-updated', (event) => {
                         this.municipality = event.detail.municipality || '';
+                        this.pressureSignals = [];
+                        this.pressureHasData = false;
+                        this.pressureMessage = '';
                         this.loadChart();
-                    });
-
-                    window.addEventListener('farmer-recommendations-updated', (event) => {
-                        this.recommendedCrop = event.detail.topCrop || '';
-                        this.recommendationMonth = event.detail.monthLabel || '';
-                        this.refreshInsightText();
                     });
                 },
 
@@ -1349,22 +1388,68 @@
                     return formatMunicipalityName(this.municipality);
                 },
 
-                get rankedCropRows() {
-                    return this.chartCrops.map((crop, index) => ({
-                        rank: index + 1,
-                        crop,
-                        historical: Number(this.chartHistoricalData[index] || 0),
-                        predicted: Number(this.chartPredictedData[index] || 0),
-                        image: this.getCropImage(crop),
-                    }));
+                get cropGuidanceRows() {
+                    const pressureOrder = {
+                        low: 0,
+                        balanced: 1,
+                        none: 2,
+                        high: 3,
+                    };
+
+                    return this.chartCrops
+                        .map((crop, index) => {
+                            const signal = this.getPressureSignal(crop);
+
+                            return {
+                                crop,
+                                historical: Number(this.chartHistoricalData[index] || 0),
+                                image: this.getCropImage(crop),
+                                signal,
+                                originalOrder: index,
+                            };
+                        })
+                        .sort((a, b) => {
+                            const aPressure = pressureOrder[a.signal?.pressure_key || 'none'];
+                            const bPressure = pressureOrder[b.signal?.pressure_key || 'none'];
+
+                            if (aPressure !== bPressure) {
+                                return aPressure - bPressure;
+                            }
+
+                            return a.originalOrder - b.originalOrder;
+                        });
                 },
 
                 get visibleCropRows() {
-                    return this.showAllRows ? this.rankedCropRows : this.rankedCropRows.slice(0, 3);
+                    if (this.showAllRows || this.cropGuidanceRows.length <= 3) {
+                        return this.cropGuidanceRows;
+                    }
+
+                    const visible = this.cropGuidanceRows.slice(0, 3);
+                    const highPressure = this.cropGuidanceRows.find((row) => row.signal?.pressure_key === 'high');
+
+                    if (highPressure && !visible.some((row) => row.crop === highPressure.crop)) {
+                        visible[2] = highPressure;
+                    }
+
+                    return visible;
                 },
 
                 get hasExtraCropRows() {
-                    return this.rankedCropRows.length > 3;
+                    return this.cropGuidanceRows.length > 3;
+                },
+
+                normalizeCropKey(crop) {
+                    return String(crop || '').trim().toUpperCase();
+                },
+
+                getPressureSignal(crop) {
+                    const cropKey = this.normalizeCropKey(crop);
+
+                    return this.pressureSignals.find((signal) => {
+                        const signalKey = signal?.crop_key || signal?.crop;
+                        return this.normalizeCropKey(signalKey) === cropKey;
+                    }) || null;
                 },
 
                 getCropImage(crop) {
@@ -1394,60 +1479,104 @@
                     }).format(number);
                 },
 
-                cropOutlookLabel(row) {
-                    if (row.rank === 1) {
-                        return 'Good option';
+                productionHistoryKey(row) {
+                    if (this.historyLoadFailed) {
+                        return 'unavailable';
                     }
 
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'Looks better';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'Usually performs well';
-                    }
-
-                    return 'Check this';
+                    return Number(row.historical || 0) > 0 ? 'available' : 'limited';
                 },
 
-                cropOutlookClass(row) {
-                    if (row.rank === 1) {
-                        return 'bg-emerald-50 text-emerald-700 ring-emerald-100';
-                    }
+                productionHistoryLabel(row) {
+                    const key = this.productionHistoryKey(row);
 
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'bg-sky-50 text-sky-700 ring-sky-100';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'bg-amber-50 text-amber-700 ring-amber-100';
-                    }
-
-                    return 'bg-slate-50 text-slate-700 ring-slate-100';
+                    if (key === 'unavailable') return 'Past production unavailable';
+                    if (key === 'limited') return 'No past average available';
+                    return `Past average: ${this.formatCropValue(row.historical)} mt`;
                 },
 
-                cropOutlookDescription(row) {
-                    if (row.rank === 1) {
-                        return 'Good option here. Check nearby plans first.';
-                    }
+                productionHistoryClass(row) {
+                    const key = this.productionHistoryKey(row);
 
-                    if (Number(row.predicted || 0) > 0 && Number(row.predicted || 0) >= Number(row.historical || 0)) {
-                        return 'Looks good. Compare nearby plans.';
-                    }
-
-                    if (Number(row.historical || 0) > 0 && Number(row.predicted || 0) <= 0) {
-                        return 'Past records look okay. Check live supply.';
-                    }
-
-                    return 'Worth checking. Look at nearby planting first.';
+                    if (key === 'available') return 'bg-sky-50 text-sky-700 ring-sky-100';
+                    if (key === 'unavailable') return 'bg-amber-50 text-amber-700 ring-amber-100';
+                    return 'bg-slate-50 text-slate-600 ring-slate-200';
                 },
 
-                cropOutlookSource(row) {
-                    if (Number(row.predicted || 0) > 0) {
-                        return 'Forecast plus past records';
+                recordedPressureLabel(row) {
+                    const pressure = row.signal?.pressure_key;
+
+                    if (pressure === 'high') return 'High nearby pressure';
+                    if (pressure === 'balanced') return 'Moderate nearby pressure';
+                    if (pressure === 'low') return 'Low nearby pressure';
+                    if (this.pressureLoadFailed) return 'Nearby plan data unavailable';
+                    return 'No nearby plans recorded';
+                },
+
+                recordedPressureClass(row) {
+                    const pressure = row.signal?.pressure_key;
+
+                    if (pressure === 'high') return 'bg-red-50 text-red-700 ring-red-100';
+                    if (pressure === 'balanced') return 'bg-amber-50 text-amber-700 ring-amber-100';
+                    if (pressure === 'low') return 'bg-emerald-50 text-emerald-700 ring-emerald-100';
+                    return 'bg-slate-50 text-slate-600 ring-slate-200';
+                },
+
+                cropGuidanceCardClass(row) {
+                    const pressure = row.signal?.pressure_key;
+
+                    if (pressure === 'high') return 'border-amber-200 bg-amber-50/40';
+                    if (pressure === 'balanced') return 'border-sky-200 bg-sky-50/30';
+                    if (pressure === 'low') return 'border-emerald-200 bg-emerald-50/30';
+                    return 'border-gray-200 bg-white';
+                },
+
+                cropGuidanceDescription(row) {
+                    const pressure = row.signal?.pressure_key;
+
+                    if (pressure === 'high') {
+                        return `${row.crop} has high nearby planting pressure. Compare other crops first.`;
                     }
 
-                    return 'Past records baseline';
+                    if (pressure === 'balanced') {
+                        return `${row.crop} has moderate nearby planting pressure. Compare your options.`;
+                    }
+
+                    if (pressure === 'low') {
+                        return `${row.crop} has low nearby planting pressure. Check your farm estimate.`;
+                    }
+
+                    if (this.pressureLoadFailed) {
+                        return 'Nearby plan data is temporarily unavailable. Use past production carefully.';
+                    }
+
+                    return 'No nearby plans are recorded yet. This does not confirm low supply.';
+                },
+
+                nearbyPlanCountLabel(row) {
+                    if (!row.signal) {
+                        return this.pressureLoadFailed ? 'Unavailable' : 'None recorded';
+                    }
+
+                    const count = Number(row.signal.plan_count || 0);
+                    return `${count} ${count === 1 ? 'plan' : 'plans'}`;
+                },
+
+                nearbySupplyLabel(row) {
+                    if (!row.signal) {
+                        return this.pressureLoadFailed ? 'Unavailable' : 'None recorded';
+                    }
+
+                    return `${this.formatCropValue(row.signal.expected_production_mt)} mt`;
+                },
+
+                nearbySupplyMetricClass(row) {
+                    const pressure = row.signal?.pressure_key;
+
+                    if (pressure === 'high') return 'bg-red-50 text-red-700';
+                    if (pressure === 'balanced') return 'bg-amber-50 text-amber-700';
+                    if (pressure === 'low') return 'bg-emerald-50 text-emerald-700';
+                    return 'bg-slate-50 text-slate-600';
                 },
 
                 prefersReducedMotion() {
@@ -1480,8 +1609,9 @@
                             container: this.$refs.insightAvatar,
                             ...lottieOpts
                         });
-                        desktopInstance.addEventListener('DOMLoaded', function() {
+                        desktopInstance.addEventListener('DOMLoaded', () => {
                             applySimpleInsightAvatarTrim(desktopInstance);
+                            this.avatarReady = true;
                         });
                         this.animationInstance = desktopInstance;
                     }
@@ -1516,6 +1646,8 @@
                         this.animationInstance.destroy();
                         this.animationInstance = null;
                     }
+
+                    this.avatarReady = false;
                 },
 
                 cancelInsightNarration() {
@@ -1543,7 +1675,10 @@
 
                     this.insightText = safeText;
 
-                    if (this.prefersReducedMotion()) {
+                    const compactScreen = typeof window.matchMedia === 'function'
+                        && window.matchMedia('(max-width: 639px)').matches;
+
+                    if (this.prefersReducedMotion() || compactScreen) {
                         this.insightDisplayText = safeText;
                         this.stopInsightAnimation();
                         return;
@@ -1615,61 +1750,130 @@
                 },
 
                 refreshInsightText() {
-                    this.narrateInsightText(
-                        this.buildTakeaway(this.chartCrops, this.chartPredictedData, this.chartHistoricalData)
-                    );
+                    this.narrateInsightText(this.buildTakeaway());
                 },
 
-                buildTakeaway(crops, predictedData, historicalData) {
-                    if (!crops.length) {
+                buildTakeaway() {
+                    const rows = this.cropGuidanceRows;
+
+                    if (!rows.length) {
                         return '';
                     }
 
-                    const highestPredicted = Math.max(...predictedData);
-                    const highestHistorical = Math.max(...historicalData);
-                    const predictedIndex = highestPredicted > 0 ? predictedData.indexOf(highestPredicted) : -1;
-                    const historicalIndex = historicalData.indexOf(highestHistorical);
-                    const bestIndex = predictedIndex >= 0 ? predictedIndex : historicalIndex;
-                    const bestCrop = crops[bestIndex] || crops[0];
-                    const municipalityLabel = this.municipalityLabel || 'your area';
-                    const normalizedBestCrop = String(bestCrop || '').trim().toUpperCase();
-                    const normalizedRecommendedCrop = String(this.recommendedCrop || '').trim().toUpperCase();
-
-                    if (normalizedRecommendedCrop && this.recommendationMonth) {
-                        if (normalizedBestCrop === normalizedRecommendedCrop) {
-                            return `${bestCrop} looks good for ${this.recommendationMonth}. It may also do well this year.`;
-                        }
-
-                        return `${this.recommendedCrop} looks good for ${this.recommendationMonth}. ${bestCrop} may do well this year.`;
+                    const highPressureCrop = rows.find((row) => row.signal?.pressure_key === 'high');
+                    if (highPressureCrop) {
+                        return `${highPressureCrop.crop} has high nearby planting pressure. Past production alone does not show buyer demand. Compare other crops first.`;
                     }
 
-                    return `${bestCrop} looks strongest this year. Based on past records.`;
+                    const balancedCrop = rows.find((row) => row.signal?.pressure_key === 'balanced');
+                    if (balancedCrop) {
+                        return `${balancedCrop.crop} has moderate nearby planting pressure. Compare your options before planting.`;
+                    }
+
+                    const lowPressureCrop = rows.find((row) => row.signal?.pressure_key === 'low');
+                    if (lowPressureCrop) {
+                        return `${lowPressureCrop.crop} has low nearby planting pressure. Check your farm estimate before planting.`;
+                    }
+
+                    if (this.pressureLoadFailed) {
+                        return 'Nearby plan data is temporarily unavailable. Use past production carefully.';
+                    }
+
+                    return 'No nearby crop plans are recorded yet. This does not confirm low supply.';
+                },
+
+                applyPressurePayload(data) {
+                    this.pressureSignals = Array.isArray(data?.items) ? data.items : [];
+                    this.pressureHasData = Boolean(data?.has_data);
+                    this.pressureWindowLabel = data?.window_label || 'Next 180 days';
+                    this.pressureMessage = data?.message || '';
+                },
+
+                async loadPressureSignals(signal, requestToken) {
+                    try {
+                        const response = await fetch('{{ route('farmer.crop-signals') }}', {
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            signal,
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch crop-plan signals');
+                        }
+
+                        const data = await response.json();
+
+                        if (requestToken !== this.loadToken) {
+                            return false;
+                        }
+
+                        this.applyPressurePayload(data);
+                        this.pressureLoadFailed = false;
+                        return true;
+                    } catch (error) {
+                        if (requestToken === this.loadToken) {
+                            this.pressureLoadFailed = true;
+                        }
+
+                        if (error?.name !== 'AbortError') {
+                            console.warn('Nearby crop-plan signals are temporarily unavailable:', error);
+                        }
+
+                        return false;
+                    }
                 },
 
                 async loadChart() {
+                    if (this.loadController) {
+                        this.loadController.abort();
+                        this.loadController = null;
+                    }
+
+                    if (this.pressureLoadController) {
+                        this.pressureLoadController.abort();
+                        this.pressureLoadController = null;
+                    }
+
+                    const requestToken = ++this.loadToken;
                     this.cancelInsightNarration();
                     this.error = false;
                     this.timedOut = false;
+                    this.historyLoadFailed = false;
+                    this.pressureLoadFailed = false;
                     this.showAllRows = false;
                     this.insightText = '';
                     this.insightDisplayText = '';
                     this.stopInsightAnimation();
                     this.chartCrops = [];
                     this.chartHistoricalData = [];
-                    this.chartPredictedData = [];
                     this.cropImageErrors = {};
 
                     if (!this.municipality) {
                         this.loading = false;
+                        this.loadController = null;
+                        this.pressureLoadController = null;
                         return;
                     }
 
                     this.loading = true;
 
-                    const controller = new AbortController();
-                    const timeoutId = window.setTimeout(() => {
-                        this.timedOut = true;
-                        controller.abort();
+                    const historyController = new AbortController();
+                    const pressureController = new AbortController();
+                    this.loadController = historyController;
+                    this.pressureLoadController = pressureController;
+
+                    const pressureTimeoutId = window.setTimeout(() => {
+                        pressureController.abort();
+                    }, 7000);
+                    const pressureRequest = this.loadPressureSignals(pressureController.signal, requestToken)
+                        .finally(() => window.clearTimeout(pressureTimeoutId));
+                    const historyTimeoutId = window.setTimeout(() => {
+                        if (requestToken === this.loadToken) {
+                            this.timedOut = true;
+                        }
+
+                        historyController.abort();
                     }, 9000);
 
                     try {
@@ -1677,7 +1881,7 @@
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ MUNICIPALITY: normalizeMunicipalityForApi(this.municipality) }),
-                            signal: controller.signal,
+                            signal: historyController.signal,
                         });
 
                         if (!response.ok) {
@@ -1690,7 +1894,12 @@
                             throw new Error('API returned error');
                         }
 
-                        const currentYear = new Date().getFullYear();
+                        await pressureRequest;
+
+                        if (requestToken !== this.loadToken) {
+                            return;
+                        }
+
                         const merged = new Map();
 
                         (data.historical_top5?.crops || []).forEach((crop) => {
@@ -1700,76 +1909,72 @@
                                 merged.set(key, {
                                     crop: crop.crop,
                                     historical: Number(crop.yearly_data?.average || 0),
-                                    predicted: 0,
                                 });
                             }
                         });
 
-                        (data.predicted_top5?.crops || []).forEach((crop) => {
-                            const key = String(crop.crop || '').toUpperCase();
-                            const currentYearForecast = (crop.forecasts || []).find((forecast) => Number(forecast.year) === currentYear);
-                            const predictedValue = Number(currentYearForecast?.production || 0);
+                        this.pressureSignals.forEach((signal) => {
+                            const key = this.normalizeCropKey(signal?.crop_key || signal?.crop);
 
-                            if (!merged.has(key)) {
+                            if (key && !merged.has(key)) {
                                 merged.set(key, {
-                                    crop: crop.crop,
+                                    crop: signal.crop,
                                     historical: 0,
-                                    predicted: predictedValue,
                                 });
-                                return;
                             }
-
-                            merged.get(key).predicted = predictedValue;
                         });
 
                         const rows = Array.from(merged.values())
                             .map((row) => ({
                                 crop: row.crop,
                                 historical: Number(row.historical || 0),
-                                predicted: Number(row.predicted || 0),
                             }))
                             .sort((a, b) => {
-                                const aRankValue = a.predicted > 0 ? a.predicted : a.historical;
-                                const bRankValue = b.predicted > 0 ? b.predicted : b.historical;
-
-                                if (bRankValue !== aRankValue) {
-                                    return bRankValue - aRankValue;
-                                }
-
-                                if (b.predicted !== a.predicted) {
-                                    return b.predicted - a.predicted;
-                                }
-
                                 if (b.historical !== a.historical) {
                                     return b.historical - a.historical;
                                 }
-
                                 return String(a.crop || '').localeCompare(String(b.crop || ''));
-                            })
-                            .slice(0, 5);
+                            });
                         const crops = rows.map((row) => row.crop);
                         const historicalData = rows.map((row) => row.historical);
-                        const predictedData = rows.map((row) => row.predicted);
 
                         if (!rows.length) {
-                            throw new Error('No crop ranking data available');
+                            throw new Error('No crop production data available');
                         }
 
                         this.chartCrops = crops;
                         this.chartHistoricalData = historicalData;
-                        this.chartPredictedData = predictedData;
                         this.refreshInsightText();
-                        this.loading = false;
                     } catch (error) {
-                        console.error('Error loading crop ranking:', error);
+                        await pressureRequest;
+
+                        if (requestToken !== this.loadToken) {
+                            return;
+                        }
+
+                        console.error('Error loading crop production history:', error);
                         this.timedOut = error?.name === 'AbortError' || this.timedOut;
-                        this.error = true;
-                        this.chartCrops = [];
-                        this.chartHistoricalData = [];
-                        this.chartPredictedData = [];
-                        this.loading = false;
+                        this.historyLoadFailed = true;
+
+                        if (this.pressureSignals.length) {
+                            const pressureOnlyRows = this.pressureSignals;
+                            this.chartCrops = pressureOnlyRows.map((row) => row.crop);
+                            this.chartHistoricalData = pressureOnlyRows.map(() => 0);
+                            this.error = false;
+                            this.refreshInsightText();
+                        } else {
+                            this.error = true;
+                            this.chartCrops = [];
+                            this.chartHistoricalData = [];
+                        }
                     } finally {
-                        window.clearTimeout(timeoutId);
+                        window.clearTimeout(historyTimeoutId);
+
+                        if (requestToken === this.loadToken) {
+                            this.loading = false;
+                            this.loadController = null;
+                            this.pressureLoadController = null;
+                        }
                     }
                 }
             }

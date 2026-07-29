@@ -1,0 +1,4246 @@
+
+===== PDF PAGE 1 =====
+
+   
+ 
+   
+ 
+SMARTHARVEST: A DECISION SUPPORT SYSTEM FOR OPTIMIZING 
+PLANTING SCHEDULE BASED ON HISTORICAL 
+YIELD AND CLIMATE PATTERNS 
+ 
+ 
+A Capstone Proposal 
+Presented to the Faculty of the 
+College of Information Technology and Computer Science 
+University of the Cordilleras 
+ 
+ 
+ 
+In Partial Fulfillment 
+of the Requirements for the Degree 
+BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY 
+ 
+by 
+MARY KEIRSTIN MARZIEL ITLIONG ANTE 
+JATNIEL REI DEL ROSARIO CARBONELL 
+JOHN PAUL ABAD SORIANO 
+ 
+ 
+July 2026
+
+===== PDF PAGE 2 =====
+
+ 
+ 
+ 
+APPROVAL SHEET 
+ 
+ This capstone project proposal entitled SMARTHARVEST: 
+A DECISION SUPPORT SYSTEM FOR OPTIMIZING PLANTING SCHEDULES 
+BASED ON HISTORICAL YIELD AND CLIMATE PATTERNS prepared and 
+submitted by MARY KEIRSTIN MARZIEL I. ANTE, JATHNIEL REI D. 
+CARBONELL, and JOHN PAUL A. SORIANO in partial fulfillment 
+of the requirements for the degree BACHELOR OF SCIENCE IN 
+INFORMATION TECHNOLOGY, has been examined and is 
+recommended for acceptance and approval for oral 
+examination. 
+ 
+        ANNA RHODORA M. QUITALEG, MIT 
+                     Adviser 
+ 
+CAPSTONE PROJECT COMMITTEE 
+ 
+MC CAULAY M. TABIOS, BSIT VENN EDWARD P. NICOLAS, BSIT 
+             Member                   Chairperson  
+ 
+ 
+PANEL OF EXAMINERS 
+APPROVED by the Committee on Oral Examination on 
+ _______________     with a grade of         _. 
+ 
+ANNA RHODORA M. QUITALEG, MIT 
+Adviser 
+ 
+ 
+MC CAULAY M. TABIOS, BSIT VENN EDWARD P. NICOLAS, BSIT 
+Member       Chairperson 
+ 
+ 
+ACCEPTED AND APPROVED in partial fulfillment of the 
+requirements for the degree BACHELOR OF SCIENCE IN 
+INFORMATION TECHNOLOGY. 
+ 
+ 
+MELINDA A. BENINSIG, MIT  
+IT Program Chair 
+College of Information 
+Technology and Computer 
+Science 
+JEFFREY S. INGOSAN, DIT 
+Dean 
+College of Information 
+Technology and Computer 
+Science
+
+===== PDF PAGE 3 =====
+
+ 
+ 
+ 
+ABSTRACT 
+1. Title: SMARTHARVEST: A DECISION SUPPORT SYSTEM FOR 
+OPTIMIZING PLANTING SCHEDULE BASED ON HISTORICAL 
+YIELD AND CLIMATE PATTERNS 
+1.1. Total No. of Pages: 
+1.2.  Text No. of Pages: 
+ 
+2. Authors:  ANTE, MARY KEIRSTIN MARZIEL I. 
+CARBONELL, JATNIEL REI D. 
+ SORIANO, JOHN PAUL A. 
+3. Type of Document: Capstone Project 
+ 
+4. Type of Publication: Unpublished 
+5. Accrediting Institution: University of the 
+Cordilleras, Gov. Pack Rd. 
+Baguio City 
+ 
+6. Keywords: Decision Support System (DSS), Machine 
+Learning, Random Forest Algorithm, Predictive 
+Analytics, Historical Crop Yields 
+7. Abstracts: 
+7.1 Rationale/Background of the Study 
+The agricultural sector in the Cordillera 
+Administrative Region, particularly in Benguet, is highly 
+vulnerable to erratic climate patterns, rendering 
+traditional, intuition-based farming methods increasingly 
+inadequate and prone to suboptimal yields. To address the 
+critical need for data-driven agricultural management, 
+the researchers developed PASYA, a unified Decision 
+Support System (DSS) that integrates regional crop 
+mapping with the SmartHarvest predictive engine. By 
+leveraging the Random Forest machine learning algorithm 
+to analyze historical crop yields alongside shifting 
+
+===== PDF PAGE 4 =====
+
+ 
+ 
+ ABSTRACT 4 
+ 
+ 
+ 
+ 
+climate variables, the system forecasts optimal planting 
+schedules, empowering local farmers and the Department of 
+Agriculture (DA-CAR) to proactively mitigate risks, 
+maximize resource efficiency, and modernize the regional 
+agricultural supply chain. 
+7.2 Summary 
+This proposed study aims to design and develop 
+PASYA: SmartHarvest, a dual-platform decision support 
+system (DSS) aimed at optimizing agricultural 
+productivity by connecting local farmers with data-driven 
+crop planting schedules while providing the Department of 
+Agriculture (DA-CAR) with regional supply monitoring 
+tools. Specifically, the researchers aimed to achieve the 
+following objectives: 
+1. to identify the information requirements of the 
+proposed system; 
+2.  to determine the architectural framework of the 
+proposed system; 
+3. to identify the features of the proposed system; 
+and 
+4. to measure the extent of usability of the 
+proposed system. 
+The researchers selected the Agile Development 
+methodology due to its iterative nature, flexibility, and 
+strong emphasis on continuous stakeholder feedback. It 
+consists of six main phases—requirements gathering, 
+design, development, testing, deployment, and review—
+allowing the team to simultaneously build the mobile 
+application for the farmers and the web dashboard for 
+administrators. Its collaborative framework ensured that 
+complex adjustments to the machine learning forecasting 
+models could be tested and refined in real-time alongside 
+user interface improvements. 
+ 
+7.3 Findings  
+Based on the data gathered from the study’s 
+objectives and overall analysis, the researchers 
+identified the following findings: 
+1.  The system’s requirements included key 
+agricultural information such as farmer profiles, 
+historical crop yields, and climate variables and 
+technical specifications like a PHP (Laravel) framework, 
+
+===== PDF PAGE 5 =====
+
+ 
+ 
+ ABSTRACT 5 
+ 
+ 
+ 
+ 
+Python machine learning engine, MySQL database, and 
+internet connectivity. 
+2.  The study utilized the 4+1 architectural 
+framework to define the system’s structure, employing UML 
+diagrams such as logical, development, process, physical 
+views, and scenarios to clearly represent system 
+components, user roles, and interactions. 
+3.  The key features of SmartHarvest include Random 
+Forest-Based Crop Schedule Forecasting, Regional Harvest 
+Mapping, Farmer Production Logging, and the 
+Administrative Monitoring Dashboard. 
+4.  The application’s average SUS score of 71.55 for 
+the farmer group falls within the ‘C’ grade range, 
+indicating a ‘Good’ usability rating, while the USE 
+Questionnaire mean of 6.32 for the DA-CAR staff indicates 
+a ‘Strongly Agree’ rating. These scores place the mobile 
+application in the 60th percentile, suggesting it 
+performs better than over half of the systems evaluated 
+using the same method. 
+ 
+7.4. Conclusions 
+Based on the data gathered, system development, and 
+the overall findings of the study, the researchers have 
+drawn the following conclusions: 
+1.  The information requirements of the system were 
+successfully identified and categorized into three main 
+parts: farmers, DA administrators, and super 
+administrators. Farmers must provide their full name, 
+contact details, and a valid RSBSA number, while 
+administrators need official credentials and contact 
+details. Additionally, essential system requirements such 
+as RAM, storage, OS version, and internet connectivity 
+were successfully specified. 
+2.  The structural design of the system was 
+effectively guided by the 4+1 architectural framework. By 
+utilizing this framework supported by UML diagrams, the 
+researchers facilitated a smooth transition from the 
+planning stages directly into system development. 
+3.  The study successfully identified the core 
+features necessary for the system to function as a 
+decision support tool. These features include Random 
+Forest-based crop schedule forecasting, comprehensive 
+
+===== PDF PAGE 6 =====
+
+ 
+ 
+ ABSTRACT 6 
+ 
+ 
+ 
+ 
+yield analysis, agricultural weather forecasts, and a 
+provincial monitoring dashboard. 
+4. The SmartHarvest system is highly effective 
+overall, though minor areas can still be improved. 
+Usability testing showed that the admin dashboard earned 
+a “Strongly Agree” rating from DA Staff with an overall 
+weighted mean of 6.32 on the USE scale. Furthermore, the 
+system placed within the ‘C- to C+’ (“OK-Good” / 
+Marginal-Acceptable) grade range when evaluated by 
+farmers utilizing the System Usability Scale (SUS). 
+ 
+ 
+7.5 Recommendations 
+From the conclusions drawn from the evaluation of 
+the SmartHarvest system, the researchers propose the 
+following recommendations: 
+1. The administrators should clearly define and 
+enforce the RSBSA number verification process. 
+This will actively support accurate and secure 
+agricultural data reporting within the system.  
+2.  It is recommended to establish partnerships with 
+local agricultural cooperatives located in Benguet. This 
+strategic partnership will help expand system access and 
+build platform credibility among the architectural user 
+base.  
+3.  Developers should enable offline access to the 
+planting schedule for recommendations. Adding this 
+feature will significantly increase usability for farmers 
+working in rural areas that suffer from low connectivity. 
+4. The developers should conduct regular usability 
+testing with actual farmers. Continuous evaluation will 
+help identify specific pain points and further optimize 
+the user experience in future updates. 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 7 =====
+
+ 
+ 
+ 
+ACKNOWLEDGEMENT 
+The researchers would like to express their sincere 
+gratitude to the following individuals for their invaluable 
+support throughout the development of this study. 
+Heartfelt appreciation is extended to the 
+administration and staff of the Department of Agriculture - 
+Cordillera Administrative Region (DA-CAR) for their 
+valuable guidance, generous time, and unwavering support. 
+The expertise, professional insights, and thoughtful 
+feedback provided by these agricultural professionals 
+significantly helped shape the direction and enhance the 
+quality of this research. 
+The researchers are also deeply grateful to their 
+adviser, Ma’am Anna Rhodora M. Quitaleg; the Chairperson, 
+Sir Venn Edward P. Nicolas; the panel member, Sir Mac 
+Caulay M. Tabios; and their teacher-in-charge, Ma’am 
+Melinda A. Beninsig. Their insightful feedback, expert 
+guidance, and meaningful suggestions played a vital role in 
+the successful completion of this capstone project. 
+Special thanks are extended to the researchers' 
+families and friends for their constant encouragement. 
+Their unwavering support, compassion, and motivation gave 
+
+===== PDF PAGE 8 =====
+
+ 
+ 
+ ACKNOWLEDGEMENT 8 
+ 
+ 
+ 
+ 
+the researchers the strength to persevere through every 
+challenge encountered during this journey. 
+Above all, the researchers offer their deepest 
+gratitude to the Almighty Father for His boundless 
+blessings, guidance, and unending love. His divine wisdom 
+and strength sustained them mentally, physically, and 
+spiritually throughout the development of this study. 
+To everyone who contributed, directly or indirectly, 
+to the completion of this paper, the researchers express 
+their profound gratitude. 
+M.K.M.I.A 
+J.R.D.R.C 
+J.P.A.S 
+        
+
+===== PDF PAGE 9 =====
+
+ 
+ 
+ 
+TABLE OF CONTENTS 
+           Page 
+TITLE PAGE . . . . . . . . . . . . . . . . . . . . . 1 
+APPROVAL SHEET . . . . . . . . . . . . . . . . . . . 2 
+ABSTRACT . . . . . . . . . . . . . . . . . . . . . . 3 
+ACKNOWLEDGEMENT. . . . . . . . . . . . . . . . . . .   8 
+DEDICATION . . . . . . . . . . . . . . . . . . . . .   9 
+TABLE OF CONTENTS. . . . . . . . . . . . . . . . . .   10 
+LIST OF FIGURES. . . . . . . . . . . . . . . . . . .   13  
+LIST OF TABLES . . . . . . . . . . . . . . . . . . .   14 
+CHAPTER  
+1 INTRODUCTION   
+Background of the Study . . . . . . . . .    15 
+Importance of the Study . . . . . . . . .    25 
+Objectives of the Study . . . . . . . . .    27 
+Definition of Terms . . . . . . . . . . .    28 
+2 METHODOLOGY  
+Software Development Methodology. . . . .    35 
+Design Thinking . . . . . . . . . . . . .    39 
+Scope and Delimitation. . . . . . . . . .    63 
+Data Gathering Techniques . . . . . . . .    64 
+Sources of Data . . . . . . . . . . . . .    66 
+Software Development Tools. . . . . . . .  68 
+
+===== PDF PAGE 10 =====
+
+ 
+ 
+ TABLE OF CONTENTS 10 
+ 
+ 
+ 
+ 
+3 FINDINGS OF THE STUDY  
+Information Requirements for SmartHarvest. 72 
+System Requirements. . . . . . . . . . .   77 
+Architecture Framework of SmartHarvest .   78 
+Extent of Usability of SmartHarvest. . .   114 
+4 CONCLUSIONS AND RECOMMENDATIONS  
+Conclusions. . . . . . . . . . . . . . . . . 134 
+Recommendations. . . . . . . . . . . . . . . 135 
+REFERENCES . . . . . . . . . . . . . . . . . . . . . .  137 
+APPENDICES 
+ A Signed Invitation Form (Adviser). . . . . . . .    
+149 
+ B Signed Invitation Form (Chairperson). . . . . .    
+150 
+ C Signed Invitation Form (Member). . . . . . . .     
+151 
+ D Signed Endorsement Form. . . . . . . . . . . .     
+152 
+Signed Communication Letter. . . . . . .      153 
+ 
+CURRICULUM VITAE . . . . . . . . . . . . . . . . .      157 
+ 
+
+===== PDF PAGE 11 =====
+
+ 
+ 
+ 
+LIST OF FIGURES 
+ 
+Figure No.     Figure Title        Page 
+ 
+ 1  . . . . . . . .  36 
+ 
+ 2 Design Thinking. . . . . . . . . . . . . . . . . 
+. 39 
+ 
+ 3 Empathy Map. . . . . . . . . . . . . . . . . . . 
+. 40 
+ 
+ 4   . 45 
+ 
+5 SmartHarvest Landing Page Overview  . . . . . . .  47 
+6 Farmer’s Main Dashboard  . . . . . . . . . . . . . 49 
+7 Farmer’s Analytics and Planning System  . . . . .  51 
+8 Admin Dashboard . . . . . . . . . . . . . . . . .  55 
+9 Admin’s Data & System Management . . . . . . . . . 57
+
+===== PDF PAGE 12 =====
+
+ 
+ 
+ 
+LIST OF TABLES 
+Table No.    Table Title    Page 
+1   . . . . . . . . . . . . . . . . .   42 
+ 2  . . . . . . . . .   76 
+ 3  . . . . . . . . . . .   76 
+4 SuperAdmin Information Types  .. . . . . . . . .   76 
+ 
+
+===== PDF PAGE 13 =====
+
+ 
+ 
+ 
+Chapter 1 
+INTRODUCTION 
+Background of the Study 
+The agricultural sector serves as the backbone of many 
+national economies, yet it remains highly vulnerable to the 
+increasing unpredictability of weather patterns. This 
+creates a significant challenge for farmers: accurately 
+predicting crop yields. In their study on this issue, 
+Kalpana et al. (2023) highlight that Indian farmers have 
+traditionally relied on yield data from previous years to 
+make forecasts, a method that is no longer reliable in the 
+face of modern climate change. This problem is made worse 
+by a lack of knowledge among modern farmers about the best 
+time to plant, leading to poor resource use and food 
+insecurity. The study suggests using modern data mining and 
+machine learning methods, like the Random Forest algorithm, 
+to analyze agricultural data and improve yield prediction. 
+For agriculture to survive, farming must shift from 
+guesswork to data-driven decision-making. Quitaleg and 
+Dumlao (2025) emphasize that analyzing past crop production 
+is the key to predicting future trends, especially for 
+highland vegetables. Understanding how historical yield 
+reacts to specific weather patterns allows farmers to 
+
+===== PDF PAGE 14 =====
+
+ 
+ 
+ INTRODUCTION 14 
+ 
+ 
+ 
+ 
+anticipate risks and reduce their losses. Instead of 
+relying on trial and error, looking at historical data 
+helps farmers make informed decisions about what and when 
+to plant to ensure a good harvest. 
+Moreover, the challenge of keeping a stable food 
+supply is not only a safety concern but also a major 
+economic issue. Agriculture is a key part of the economy of 
+India, providing 17–18% of its GDP and jobs for more than 
+half of its population. Because of this, Sharma et al. 
+(2023) note that accurate crop production estimation is 
+essential for protecting both food security and financial 
+stability. They explain that relying only on past data is 
+no longer enough, and modern methods are now crucial. This 
+shift is not just about stability but also about increasing 
+profit. Farmers today aim to “earn more with fewer 
+expenses,” moving away from traditional forecasting based 
+on personal experience. Since this old method is often 
+ineffective, especially when farmers are “unaware of the 
+profits they get after cultivation” and need to choose the 
+right crops, new decision-support tools have been 
+developed. These systems recommend the “best feasible” and 
+most profitable crop for specific environmental conditions 
+of Indian farmers (Agarwal & Tarar, 2021). 
+
+===== PDF PAGE 15 =====
+
+ 
+ 
+ INTRODUCTION 15 
+ 
+ 
+ 
+ 
+According to Kumari et al. (2025), this situation is 
+felt across South Asian countries, where crops like rice 
+serve as a vital commodity for the sustenance and 
+livelihood of resource-poor farmers. Unfortunately, 
+management malpractices have vastly impacted productivity 
+in these regions. To counter this, experts emphasize the 
+need to improve the adaptive capacity of farmers by 
+deploying resource-efficient technologies. These 
+innovations are crucial not only for increasing yield but 
+also for reducing the cost of cultivation, finally making 
+production systems more profitable and sustainable for 
+those who depend on them for survival.  
+Akther et al. (2024) support this trend in their study 
+in Sylhet, Bangladesh—an area with similar agricultural 
+challenges. Their research focused on improving the 
+limitations of traditional methods and the lack of accurate 
+tools. Using the “EcoRiceDynamics (1971–2021)” dataset, 
+they tested several machine learning models like Linear 
+Regression, K-Nearest Neighbors, and Gradient Boosted. 
+Their results showed that machine learning can be very 
+accurate: the Gradient Boosted model explained about 95% of 
+rice yield changes, and the Random Forest model greatly 
+reduced prediction errors. Validating this approach for the 
+
+===== PDF PAGE 16 =====
+
+ 
+ 
+ INTRODUCTION 16 
+ 
+ 
+ 
+ 
+local context, the researchers conducted two distinct 
+comparative analyses to determine the optimal tool for the 
+system. 
+First, for the Crop Yield Prediction module, Random 
+Forest was tested against Linear Regression and Ridge 
+Regression, where it successfully achieved the lowest Root 
+Mean Squared Error (RMSE), meaning the machine learning 
+model is more accurate. Second, for the Seasonal 
+Forecasting module, Random Forest Time-Series model was 
+evaluated against Time Series forecasting algorithms, 
+including ARIMA, Prophet, LSTM, and XGBoost. In both tests, 
+the Random Forest consistently outperformed all, which 
+shows superior accuracy in handling both the non-linear 
+variables of crop growth and the complex seasonal trends of 
+the province.  
+This national and global problem is felt at the local 
+level as well. Across the Philippines, farmers are moving 
+away from traditional planting to grow high-value crops in 
+hopes of earning a better living. However, this shift 
+creates a difficult situation. While farmers try to meet 
+modern market demands, they are forced to rely on outdated 
+methods that cannot cope with the unpredictable weather 
+today. This mismatch between their goals and their tools 
+
+===== PDF PAGE 17 =====
+
+ 
+ 
+ INTRODUCTION 17 
+ 
+ 
+ 
+ 
+puts them at serious risk. Without access to modern 
+technology, they face financial instability, threatening 
+both their livelihoods and the food supply of the country. 
+This national problem is felt deeply at the local 
+level. In highland areas like Ifugao, farmers are 
+converting ancestral rice fields into commercial vegetable 
+farms to reach city markets and increase their income. 
+Similarly, farmers in Benguet are facing a crisis because 
+their traditional ways of observing the weather are no 
+longer accurate. Relying on guesswork instead of data leads 
+to poor harvests and wasted resources. Importantly, these 
+communities are not against using technology. In fact, they 
+are eager for modern tools that can help them plan better, 
+replace unreliable methods, and finally secure their 
+financial future. 
+An analysis of the target end users, the farmers of 
+Benguet, shows that they are facing serious challenges. 
+They often depend on traditional planting methods and 
+simple weather observation, which are becoming unreliable 
+due to changing weather patterns. This leads to frustration 
+and financial stress caused by unpredictable harvests and 
+unstable income. As will be explained in Chapter 2, these 
+farmers are not against using technology. In fact, they are 
+
+===== PDF PAGE 18 =====
+
+ 
+ 
+ INTRODUCTION 18 
+ 
+ 
+ 
+ 
+hopeful for a data-based tool that can help them plan 
+better and secure their livelihood. 
+The landscape in Ifugao has faced a rapid shift toward 
+temperate vegetable production. In this high-altitude 
+province, rice farming is primarily productive and 
+cultural, as the temperature creates a prime agricultural 
+land for high-value vegetables. Farmers have progressively 
+given up on traditional rice fields and swidden farms as 
+roads have improved and linked these formerly isolated 
+communities with urban markets. These areas have been 
+converted into commercial "vegetable terraces" to take 
+advantage of the higher potential income from agricultural 
+land (Albano, 2025). 
+The intentional abandonment of youth from the 
+agriculture industry causes an aging problem. The 
+opportunity cost of labor has changed due to rapid 
+urbanization and the growth of the services sector. Young 
+Filipinos are choosing to migrate to urban areas or 
+overseas labor markets after witnessing their parents' 
+physical hardships and financial instability. 
+This phenomenon is motivated by rational economic 
+behavior; the returns on labor in agriculture are 
+substantially lower than in industry or services, and the 
+
+===== PDF PAGE 19 =====
+
+ 
+ 
+ INTRODUCTION 19 
+ 
+ 
+ 
+ 
+relationship between education and income is weaker in 
+farming than in other sectors. Small farm sizes create a 
+structural barrier to efficiency. They limit the 
+application of economies of scale, making the per-unit cost 
+of mechanization prohibitively high. Collecting produce 
+from hundreds of small farms to fill the market requires a 
+complex and costly aggregation of infrastructures by 
+middlemen that keeps an amount of the value.  
+An effective case study of this vulnerability is the 
+El Niño event of 2023–2024. Long-lasting dry periods 
+brought on by the phenomenon significantly harmed crops 
+throughout the region.  
+Water stress was predicted to cause a 3.63% decrease 
+in unmilled rice (palay) production in 2024. Over 163,000 
+hectares of cropland suffered losses of PHP 9.50 billion, 
+according to the Department of Agriculture (DA). This 
+creates a critical need for low-cost digital interventions 
+that can improve efficiency without requiring heavy capital 
+investment. By introducing a data-driven Decision Support 
+System, the project not only aids the aging workforce in 
+making easier, more accurate decisions but also introduces 
+a level of technological modernization that is essential 
+for retaining the next generation of farmers. 
+
+===== PDF PAGE 20 =====
+
+ 
+ 
+ INTRODUCTION 20 
+ 
+ 
+ 
+ 
+The perseverance of the Filipino farmers has kept the 
+industry together up to this point, but depending entirely 
+on their determination without the required technical 
+support is a strategy with limited results. The ability of 
+the public and private sectors to carry out these 
+structural changes quickly and precisely will determine the 
+food security of the country in the future. 
+The partner organization, the Department of 
+Agriculture - Cordillera Administrative Region (DA-CAR), 
+also recognizes this problem. The DA-CAR is a data-rich 
+agency that manages agricultural programs and collects 
+regional reports. The agency feels pressure to modernize 
+and use its large amount of data to create useful insights 
+for farmers. However, there is a major challenge in 
+connecting their data collection efforts with their goal of 
+providing practical, digital tools that can help increase 
+productivity in the region. This creates an opportunity to 
+develop a system that benefits both groups: a tool that 
+helps farmers make better planting decisions and a platform 
+that helps DA-CAR turn data into useful information. 
+The challenges and opportunities found in both the 
+literature review and the stakeholder analysis are directly 
+connected to several United Nations Sustainable Development 
+
+===== PDF PAGE 21 =====
+
+ 
+ 
+ INTRODUCTION 21 
+ 
+ 
+ 
+ 
+Goals (SDGs). The problems of unstable income and possible 
+crop failure relate to SDG 8 (Decent Work and Economic 
+Growth), since this project aims to help farmers achieve 
+stable income and support sustainable economic growth. It 
+also supports SDG 9 (Industry, Innovation, and 
+Infrastructure) by creating a digital system that 
+“modernizes agriculture with technology,” which aligns with 
+the goals of DA-CAR. By improving planting schedules to 
+reduce crop loss, the project also supports SDG 12 
+(Responsible Consumption and Production), ensuring that the 
+crops will not be wasted and will be consumed rather than 
+destroyed by the unpredictable weather. Lastly, the system 
+contributes to SDG 13 (Climate Action) by helping farmers 
+adapt to climate change through predictive data that 
+addresses “unpredictable weather patterns.” 
+ 
+ 
+Importance of the Study 
+ This study provides a technology-driven solution to 
+improve agricultural data management and decision-making 
+within the Cordillera Administrative Region. By making a 
+bridge between past harvests with climate trends, 
+SmartHarvest utilizes data mining techniques to transform 
+
+===== PDF PAGE 22 =====
+
+ 
+ 
+ INTRODUCTION 22 
+ 
+ 
+ 
+ 
+historical records into accurate forecasts. This allows for 
+the identification of hidden patterns, such as optimal 
+planting windows and potential yield risks, which are often 
+missed in manual analysis. 
+To the Department of Agriculture - CAR. This research 
+provides a platform that automates the disorganized 
+municipal crop records, significantly reducing the 
+administrative burden of manual data gathering. It empowers 
+agricultural officers with predictive insights and 
+visualization tools, enabling more precise resource 
+allocation and the development of targeted provincial 
+programs.  
+To the Local Farmers of Benguet. This study offers a 
+practical, data-backed guide for optimizing on-farm 
+decisions, specifically regarding planting schedules and 
+variety selection. By providing insights, the system helps 
+farmers align their farming activities with favorable 
+climate patterns. This leads to improved yield consistency, 
+minimized crops and investment loss due to environmental 
+risks, and enhanced livelihood stability for the farming 
+community. 
+To the Researchers. This study demonstrates how 
+advanced tools, such as recursive machine learning and 
+
+===== PDF PAGE 23 =====
+
+ 
+ 
+ INTRODUCTION 23 
+ 
+ 
+ 
+ 
+full-stack development, can be applied to solve real-world 
+problems. It allows the researchers to test the accuracy of 
+Random Forest models in agriculture while improving their 
+skills in designing user-friendly systems and working 
+directly with stakeholders. 
+To Future Researchers. This study creates a solid 
+starting point for agritech development that can be easily 
+expanded to other regions or upgraded with new features, 
+like IoT soil sensors. It serves as a clear technical 
+reference and performance baseline for the next generation 
+of agricultural decision support systems. 
+ 
+Objectives of the Study 
+The main objective of this study is to design and 
+develop “SmartHarvest: A Decision Support System for 
+Optimizing Planting Schedule Based on Historical Yield and 
+Climate Patterns,” a web-based tool that utilizes 
+historical agricultural and climate data and machine 
+learning to help farmers in Benguet adapt to climate 
+changes, improve crop productivity, and modernize 
+traditional farming methods. This helps farmers make better 
+decisions ahead of time instead of just reacting to 
+
+===== PDF PAGE 24 =====
+
+ 
+ 
+ INTRODUCTION 24 
+ 
+ 
+ 
+ 
+problems when they happen. Specifically, it aims to answer 
+the following: 
+1. to identify the information requirements of the 
+proposed system; 
+2. to determine the architecture framework of the 
+proposed system; 
+3. to identify the features of the proposed system; 
+and 
+4. to measure the extent of usability of the proposed 
+system. 
+Definition of Terms 
+To ensure clarity and consistency throughout this 
+study, the following terms are defined as they are used 
+within the context of the research and system development. 
+These definitions aim to provide a common understanding of 
+key concepts and functionalities relevant. 
+Agricultural Technologist. Refers to the government 
+officers or field agents under the Department of 
+Agriculture (DA-CAR) who monitor regional crop performance 
+and provide technical assistance to farmers. In this study, 
+they are the secondary users of the system who utilize the 
+Admin Dashboard for monitoring and reporting. 
+
+===== PDF PAGE 25 =====
+
+ 
+ 
+ INTRODUCTION 25 
+ 
+ 
+ 
+ 
+API (Application Programming Interface). A software 
+bridge that allows two different applications to talk to 
+each other. In this study, it refers to the technology used 
+to connect SmartHarvest with external weather providers 
+like OpenWeather and Open-Meteo to fetch real-time climate 
+data automatically. 
+Data Mining. The process of analyzing large datasets 
+to discover hidden patterns and relationships. In this 
+research, it refers to the technique used to extract 
+insights from historical agricultural records and climate 
+data to forecast future trends. 
+Decision Support System (DSS). A computerized system 
+designed to aid in determining judgments and courses of 
+action. In this study, it refers to "SmartHarvest," the 
+web-based platform that analyzes data to provide farmers 
+with recommendations on planting schedules and crop 
+selection. 
+Food Security. The state of having reliable access to 
+affordable, nutritious food. This is identified as a 
+primary economic and safety concern in India and the 
+Philippines that the proposed system aims to address by 
+stabilizing crop production. 
+
+===== PDF PAGE 26 =====
+
+ 
+ 
+ INTRODUCTION 26 
+ 
+ 
+ 
+ 
+Internet of Things (IoT). A network of physical 
+objects that are embedded with sensors, software, and other 
+technologies for the purpose of connecting and exchanging 
+data with other devices and systems over the internet. In 
+this study, it refers to the hardware component of the 
+system, specifically the interconnected sensors and 
+microcontrollers that automate irrigation to crops. 
+Machine Learning. A subset of artificial intelligence 
+that enables systems to learn from data and improve from 
+experience without being explicitly programmed. In this 
+study, it refers to the computational approach used to 
+train the system to predict crop yields based on 
+environmental variables. 
+Planting Window. The ideal time frame recommended by 
+the system for planting a specific crop to ensure the 
+highest probability of a good harvest based on weather 
+forecasts. 
+Random Forest Algorithm. A machine learning technique 
+that operates by constructing a multitude of decision trees 
+during training. In this study, it is the specific 
+algorithm chosen for the "Predictive Engine" because it 
+demonstrated the lowest Root Mean Squared Error (RMSE) and 
+
+===== PDF PAGE 27 =====
+
+ 
+ 
+ INTRODUCTION 27 
+ 
+ 
+ 
+ 
+superior accuracy in handling non-linear variables compared 
+to other models like Linear Regression. 
+Role-Based Access Control (RBAC). A security mechanism 
+that restricts system access based on the roles of 
+individual users. 
+Root Mean Squared Error (RMSE). A standard statistical 
+metric used to measure the accuracy of the predictions of a 
+model. In this research, it is the benchmark used to 
+validate that the Random Forest model is the most effective 
+tool for crop yield prediction. 
+SmartHarvest. The specific name of the decision 
+support system developed in this capstone project. It is a 
+web-based tool designed to help Benguet farmers optimize 
+planting schedules using historical yield and climate 
+patterns. 
+UI/UX (User Interface/User Experience). Refers to the 
+design of the system in terms of looks (UI) and how easy it 
+is to use (UX). In this study, the goal was to create a 
+"farmer-friendly" UI/UX that makes complex data easy to 
+understand for non-technical users. 
+Proposed Solution 
+In the agricultural sector of Benguet, decision-making 
+has traditionally relied on generational knowledge and 
+
+===== PDF PAGE 28 =====
+
+ 
+ 
+ INTRODUCTION 28 
+ 
+ 
+ 
+ 
+generalized weather forecasts. These traditional methods 
+often struggle to take accountability for rapid climate 
+variability and complex market dynamics, leading to 
+inefficiencies in production and potential economic loss. 
+This study proposes the development of a decision support 
+system that leverages historical data and advanced 
+computational techniques. By integrating modern web 
+technologies with data analytics, the researchers aim to 
+transform how agricultural planning is approached, moving 
+from reactive measures to predictive, data-driven 
+strategies. 
+SmartHarvest is designed to be an accessible and 
+responsive web-based system that provides clear, timely, 
+and recommendations. Instead of relying on generalized 
+forecasts, the system will use data specific to Benguet, 
+including historical climate patterns and past yield 
+reports managed by DA-CAR. By utilizing machine learning, 
+researchers aim to create a website designed to optimize 
+agricultural income through cost reduction and increased 
+efficiency. This system serves the purpose of empowering 
+farmers and providing DA-CAR with an effective platform to 
+operationalize its data for municipal benefit. 
+
+===== PDF PAGE 29 =====
+
+ 
+ 
+ INTRODUCTION 29 
+ 
+ 
+ 
+ 
+One of the primary features of SmartHarvest is the 
+Machine Learning Predictive Engine. This is the core of the 
+system. This feature involves developing and training a 
+machine learning model, such as the Random Forest algorithm 
+to analyze complex data sets. The engine will process years 
+of historical climate data from DA-CAR and other sources, 
+correlating it with historical yield data for the primary 
+crops of Benguet. The output will not be a simple weather 
+forecast, but a specific yield prediction and risk 
+assessment tied to a proposed planting schedule. 
+Together with the accessibility of the User Interface, 
+the design will prioritize clarity, presenting complex data 
+as easy-to-understand recommendations. Outputs may be shown 
+as a color-coded planting calendar (green for optimal, 
+yellow for moderate risk, red for high risk) or a simple 
+graph showing potential yield/profit. This approach ensures 
+that farmers, who may not be technology experts, can easily 
+interpret the data and make confident decisions. 
+The development of SmartHarvest represents a 
+significant advancement in the application of information 
+technology within the agriculture of CAR. By successfully 
+creating a seamless integration between the Random Forest 
+algorithm and a user-centric interface, the researchers 
+
+===== PDF PAGE 30 =====
+
+ 
+ 
+ INTRODUCTION 30 
+ 
+ 
+ 
+ 
+provide a solution that is both technically robust and 
+practically accessible. Furthermore, SmartHarvest fulfills 
+a dual role: it equips DA-CAR with a mechanism to maximize 
+the utility of their raw data, while simultaneously giving 
+the local farmers of Benguet the predictive forecasts 
+needed to mitigate risk and enhance economic feasibility. 
+Through this capstone project, the researchers demonstrate 
+that machine learning models, such as Random Forest, can be 
+effectively adapted to serve as the needs of the 
+agricultural community.
+
+===== PDF PAGE 31 =====
+
+ 
+ 
+Chapter 2 
+METHODOLOGY 
+This chapter presents the procedures on how this study 
+obtained the data from various sources. 
+Software Development Methodology 
+ The researchers adopted the Agile Software Development 
+Methodology to build SmartHarvest: A Decision Support System for 
+Optimizing Planting Schedule Based on Historical Yield and 
+Climate Patterns. According to Guerrero-Ulloa et al. (2023), 
+adopting an iterative methodology, specifically agile 
+methodology, allows developers to continuously refine the 
+architecture of the system through repeated testing cycles, 
+ensuring that components such as predictive accuracy and user 
+interface meet the standards required for deployment. 
+ The researchers selected agile methodology because of the 
+complexity of the project requirement to integrate a dynamic 
+Machine Learning model with a user-friendly web interface. 
+Developing a predictive engine using the Random Forest algorithm 
+requires constant tuning and retraining to achieve high 
+accuracy. The Agile framework allows the researchers to revisit 
+and improve the algorithm without disrupting the development of 
+the web platform, ensuring that the final system is both 
+
+===== PDF PAGE 32 =====
+
+ 
+ 
+technically healthy and aligned with the practical needs of the 
+farmers in Benguet and officers of the DA-CAR. 
+ Figure 1 shows the diagram of agile methodology and its 
+different phases. 
+Figure 1. 
+Agile Methodology Diagram 
+ 
+ The system was developed through the following 7 phases of 
+the Agile Methodology: 
+ Analyze. The cycle began with a deep analysis of the 
+problem. The researchers conducted interviews with local farmers 
+in Benguet and agricultural technologists from the DA-CAR to 
+understand the specific "pain points" regarding crop production. 
+This phase revealed that unpredictable weather patterns and a 
+lack of data-driven information were the primary causes of yield 
+loss. The researchers analyzed the current manual processes to 
+
+
+===== PDF PAGE 33 =====
+
+ 
+ 
+identify where automation and predictive analytics could provide 
+the most value. 
+ Plan. Based on the analysis, the researchers formulated a 
+development plan. This involved assessing the feasibility of the 
+available datasets, specifically historical yield records and 
+climate data, to determine if they were sufficient for training 
+a Random Forest model. The researchers created a prioritized 
+list of features such as the Planting Schedule Recommender and 
+Admin Dashboard, and defined the technical stack, selecting PHP 
+(Laravel) for the web framework and Python for the machine 
+learning engine. 
+ Design. In this phase, the researchers created the 
+architectural and visuals of the system. Figma was utilized to 
+produce high-fidelity prototypes of the user interface, ensuring 
+that the system was presented in a simple, visual format for 
+farmers. Moreover, the database structure was designed using 
+MySQL within the XAMPP environment to ensure it could 
+efficiently store and retrieve chronological agricultural data 
+required for the predictive analysis. 
+ Build. This phase involved the actual coding and 
+construction of the SmartHarvest system, with development 
+executed in parallel streams to maximize efficiency. The 
+researchers built the web application using PHP with the Laravel 
+
+===== PDF PAGE 34 =====
+
+ 
+ 
+framework, ensuring a secure and scalable foundation for the 
+platform. Simultaneously, the Predictive Engine was coded in 
+Python, where the Random Forest algorithm was systematically 
+trained using cleaned historical agricultural and climate data. 
+ Test. Multiple testing was conducted to ensure system 
+stability and accuracy. Further, Model Validation was performed 
+on the predictive engine. The team calculated statistical 
+metrics, specifically the Root Mean Squared Error (RMSE), to 
+verify that the yield forecasts met the acceptable accuracy 
+before the system was presented to stakeholders. 
+ Review. This phase distinguished the Agile approach. The 
+researchers presented the working prototype and preliminary 
+forecasts to selected farmers and DA-CAR officers. This allowed 
+the users to validate the recommendations against their on-
+ground experience. Insights gathered during this review resulted 
+in the refinement of the dashboard layout to improve readability 
+and usability overall. 
+ Launch. The final phase involved the deployment of the 
+SmartHarvest system to a live server environment, making it 
+accessible to the end-users. The researchers conducted a final 
+system handover, providing DA-CAR administrators with the 
+necessary credentials and a maintenance protocol. This protocol 
+included instructions on how to upload new yield datasets, 
+
+===== PDF PAGE 35 =====
+
+ 
+ 
+ensuring the machine learning model remains updated and accurate 
+for future agricultural cycles. 
+Design Thinking 
+Design thinking is a creative problem-solving process that 
+focuses on understanding and meeting people’s needs. It’s a 
+solution-based process created with the intent to help and 
+please the users. The researchers use design thinking to create 
+products and services to better meet core human needs. Involving 
+five phases empathize, define, ideate, prototype, and test.  
+Figure 2 shows the design thinking process where the 
+researchers follow the guide to generate their thinking to 
+create their project. 
+Figure 2 
+Design Thinking 
+ 
+Empathize. In this first stage, the researchers observe 
+consumers to gain a deeper understanding of how they interact 
+
+
+===== PDF PAGE 36 =====
+
+ 
+ 
+with or are affected by a product or issue. The observations 
+must happen with empathy, which means withholding judgment and 
+not imparting preconceived notions of what the consumer needs. 
+Observing with empathy is powerful because it can uncover issues 
+the consumer didn’t even know they had or that they could not 
+themselves verbalize. From this point, it’s easier to understand 
+the human need for which they are designing. 
+ Figure 3 presents an Empathy Map that illustrates the 
+thoughts, feelings, behaviors, and needs of two key user: the 
+farmers and the DA-CAR Admins. 
+Figure 3 
+Empathy Map 
+Define. In this second stage, you gather your observations 
+from the first stage to define the problem you’re trying to 
+
+
+===== PDF PAGE 37 =====
+
+ 
+ 
+solve. Think about the difficulties your consumers are brushing 
+up against, what they repeatedly struggle with, and what you’ve 
+gleaned from how they’re affected by the issue. Once you 
+synthesize your findings, you can define the problem they face. 
+The researchers utilized the 5 Why Analysis tool to 
+identify the root causes of a major agricultural challenge. 
+Understanding these root causes allows the researchers to 
+formulate an appropriate solution in a more focused and targeted 
+manner. The primary issue identified is that local farmers 
+consistently suffer from low crop yields due to unpredictable 
+climate conditions. 
+The root causes identified from the data collected are as 
+follows: (1) farmers lack access to reliable, data-driven tools 
+that can align their planting schedules with shifting weather 
+patterns, leaving them dependent on traditional guesswork, and 
+(2) existing agricultural technologies are designed for large-
+scale agribusinesses, making them too expensive, complex, and 
+impractical for everyday local farmers to adopt. 
+Table 1 presents the 5 Why Analysis, which maps out the 
+root causes of low agricultural productivity and directly 
+informs the development of SmartHarvest’s machine learning 
+predictive engine as an accessible, targeted solution. 
+Table 1 
+
+===== PDF PAGE 38 =====
+
+ 
+ 
+5 Why Analysis of Agricultural Productivity Challenges   
+Why 1  Why are farmers 
+experiencing low 
+yields?  
+Because their planting 
+schedules are disrupted 
+by unpredictable climate 
+conditions.  
+Why 2  Why are planting 
+schedules disrupted by 
+climate conditions?  
+Because farmers do not 
+have access to reliable 
+data-driven tools that 
+align planting with 
+weather patterns.  
+Why 3  Why don’t farmers have 
+access to such tools?  
+Because existing 
+solutions are either too 
+costly, too complex, or 
+not designed for 
+widespread agricultural 
+use.  
+Why 4  Why are existing 
+solutions costly or 
+complex?  
+Because they are often 
+developed for large-scale 
+agribusiness and not 
+adapted for everyday 
+farmers.  
+Why 5  Why are everyday 
+farmers not 
+considered?  
+Because most tools are 
+not made simple and 
+affordable enough 
+for general use.  
+Root 
+Causes  
+Because farmers do not have access to reliable 
+data-driven tools that align planting with 
+weather patterns.  
+Solutions  SmartHarvest is a web-based system that will 
+aggregate historical climate and yield data from 
+DA-CAR and PAGASA, with the use of machine 
+learning, specifically Random Forest or RF and 
+Time Series Random Forest or TSRF, to generate 
+predictions for planting schedules. This 
+provides farmers with a reliable tool to guide 
+their agricultural decisions.  
+ Table 1 breaks down the step-by-step investigation into why 
+local farmers consistently suffer from low crop yields. On the 
+
+===== PDF PAGE 39 =====
+
+ 
+ 
+surface, the immediate cause is unpredictable weather disrupting 
+their traditional planting schedules. However, digging deeper 
+reveals that the real issue is a lack of accessible technology. 
+Farmers are forced to rely on pure guesswork because they do not 
+have data-driven forecasting tools to guide them. 
+ As the analysis moves into the third, fourth, and fifth 
+Whys, it exposes a major gap in the software market. While 
+advanced predictive farming software exists, it is almost 
+entirely built for wealthy, large-scale agribusinesses. Everyday 
+local farmers are completely left behind because these existing 
+platforms are far too expensive, complicated, and impractical 
+for small-scale community use. 
+ The final root cause directly justifies the exact design of 
+SmartHarvest. Rather than building another complicated, 
+expensive system, the researchers built a simplified web 
+platform tailored specifically for the everyday farmer. By 
+taking verified historical records from DA-CAR and PAGASA and 
+processing them through a Random Forest machine learning model, 
+SmartHarvest automatically translates complex climate and yield 
+data into free, easy-to-read planting schedules.  
+Ideate. The next step is to brainstorm ideas about how to 
+solve the problem you’ve identified. These ideas could be in a 
+group, where your team gathers in an office space that 
+
+===== PDF PAGE 40 =====
+
+ 
+ 
+encourages creativity and collaboration, an innovation lab, or 
+can be done solo. The important part is to generate a bunch of 
+different ideas. At the end of this process, you’ll come up with 
+a few ideas with which to move forward.  
+ To organize these ideas and establish a clear development 
+plan, the researchers used an Impact-Effort Matrix. This 
+framework allowed the researchers to evaluate each potential 
+feature based on two key criteria: Impact and Effort. 
+This analysis segmented concepts into four categories, 
+creating a logical roadmap. This process prioritized the "Quick 
+Wins" for immediate implementation and identified the 
+foundational "Major Projects” necessary for the long-term 
+success of the system, while simultaneously allowing the 
+researchers to de-prioritize "Fill-Ins" and avoid "Time 
+Wasters", ensuring resources were focused on delivering maximum 
+core value. 
+Figure 8 presents the Feature Prioritization Matrix, which 
+serves as a vital strategic planning tool used to classify 
+proposed SmartHarvest features based on their anticipated Impact 
+and required Development Effort. 
+Figure 4 
+Impact-Effort Matrix for Feature Prioritization 
+
+===== PDF PAGE 41 =====
+
+ 
+ 
+ 
+This structured approach guides resource allocation, 
+ensuring focus on high-value features. The quadrant of Quick 
+Wins, which includes the yield projection dashboard and local 
+language or dialect support, is prioritized for immediate 
+implementation to deliver rapid value. Conversely, Major 
+Projects, such as comprehensive weather and climate data 
+integration and automated planting schedule recommendations, 
+require significant investment but are deemed crucial for long-
+term viability.  
+Furthermore, the matrix categorizes lower priority items: 
+Fill-Ins like the crop variety information library and user 
+profile customization may be addressed later as supplementary 
+features. Finally, Time Wasters, such as visual effects or 
+animations, are deferred or avoided entirely to ensure 
+development resources are efficiently utilized toward maximizing 
+core user benefits. 
+Prototype. This is the stage that turns ideas into an 
+
+
+===== PDF PAGE 42 =====
+
+ 
+ 
+actual solution. Prototypes are not meant to be perfect. The 
+point of a prototype is to come out quickly with a concrete 
+version of the idea to see how it is accepted by consumers. 
+Examples of prototypes include a landing page to test consumer 
+desire for a product or a video that demonstrates streamlined 
+logistic processes. 
+The researchers are now moving into the high-fidelity 
+prototyping phase for SmartHarvest, utilizing Figma, a 
+collaborative design tool primarily used for creating user 
+interfaces (UI) and user experiences (UX), to transform their 
+validated concepts into a polished, interactive model ready for 
+testing. The goal is to create a realistic and functional user 
+interface to gather critical feedback on user interaction.  
+The researchers will build detailed prototypes covering 
+both the farmer and administrative flows. This includes the 
+farmer experience from the Landing Page and Main Command Center, 
+through the analytical tools like Planting Schedules and Yield 
+Analysis, and the Weather Forecast. 
+Moreover, the researchers will also develop a dedicated 
+Admin Dashboard prototype for Local Government Units (LGUs) and 
+agricultural officers, focusing on systemic monitoring tools, 
+dataset viewing, and features that ensures the entire solution 
+effectively meets the needs of all stakeholders. This complete 
+
+===== PDF PAGE 43 =====
+
+ 
+ 
+visual design acts as a guide for building the system. It makes 
+sure that the complex backend processes are hidden behind a 
+simple and easy-to-use interface, so farmers can access, 
+understand, and use predictions without needing technical skills 
+or relying on any external assistance for interpretation. 
+Figure 9 presents the SmartHarvest interface with an 
+accessible onboarding page that transitions directly into the 
+localized primary workspace. Figure 9pitch of the platform. 
+Figure 5 
+SmartHarvest Landing Page Overview 
+ 
+ 
+Figure 9 presents the SmartHarvest Landing Page, which 
+serves as the primary entry point and digital storefront for 
+the agricultural decision support system. The interface 
+immediately highlights its highly localized, user-centric 
+
+
+===== PDF PAGE 44 =====
+
+ 
+ 
+approach through a prominent language selection tool—offering 
+English, Tagalog, and Ilocano, ensuring the platform is fully 
+inclusive and easily navigated by farming communities across 
+the Cordillera Administrative Region. Beyond its 
+accessibility features, the page is meticulously designed to 
+welcome users and establish immediate trust. It clearly 
+communicates the system's core mission of replacing 
+traditional agricultural guesswork with precise 
+
+===== PDF PAGE 45 =====
+
+ 
+ 
+machine-learning-driven yield predictions and actionable 
+insights. By pairing clear, value-driven messaging with 
+intuitive navigation and prominent calls-to-action for 
+registration and secure login, the landing page provides a 
+frictionless onboarding experience, effectively setting the tone 
+for the robust, data-driven ecosystem inside. 
+Figure 6 
+Farmer’s Main Dashboard 
+ 
+Figure 10 displays the Farmer’s Main Dashboard, 
+functioning as a proactive, daily command center designed to 
+immediately present actionable insights tailored to the 
+user's specific micro-climate—demonstrated here with Baguio 
+City. By translating complex machine learning computations 
+into an accessible visual layout, the dashboard leads with
+
+
+===== PDF PAGE 46 =====
+
+ 
+ 
+critical, top-level summaries: real-time weather conditions, 
+the algorithmically predicted optimal planting window, and 
+the single highest-confidence crop recommendation for 
+immediate action. The central panel expands on this strategic 
+foresight with a localized ranking of the "Top 5 Recommended 
+Crops" (featuring regional staples like Cabbage, Carrots, 
+Lettuce, Broccoli, and Sweet Pepper). To effectively guide 
+decision-making and reduce agricultural guesswork, each 
+interactive crop card is packed with specific, easy-to-digest 
+data points, including projected yield volumes, precise 
+planting and harvest timelines, and intuitive color-coded 
+confidence tags. Finally, the lower section seamlessly 
+integrates a dynamic 7-day weather forecast, ensuring that 
+farmers across the Cordillera Administrative Region possess 
+the short-term meteorological visibility required to 
+confidently adjust their daily operations, optimize resource 
+allocation, and protect their investments from sudden climate 
+shifts. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 47 =====
+
+ 
+ 
+Figure 7 
+Farmer’s Analytics and Planning System 
+
+
+===== PDF PAGE 48 =====
+
+Introduction 34 
+ 
+ 
+ 
+ 
+
+
+===== PDF PAGE 49 =====
+
+Introduction 34 
+ 
+ 
+ 
+ 
+Figure 11 serves as the strategic core of the platform 
+by seamlessly merging environmental data with economic 
+realities. To support long-term decision-making, the system 
+integrates a dynamic schedule optimization tool that allows 
+users to actively balance upcoming weather patterns and 
+machine-learning-driven production forecasts against
+
+===== PDF PAGE 50 =====
+
+Introduction 36 
+ 
+ 
+real-time market pricing and demand trends specifically 
+sourced from the La Trinidad Trading Post. This ensures that 
+planting decisions are not only agriculturally viable but 
+economically optimized for the highest return on investment. 
+Furthermore, this actively mitigates operational risk 
+through the inclusion of comprehensive, multi-horizon PAGASA 
+weather forecasts—ranging from hourly updates to monthly 
+rainfall projections with prominent emergency hazard alerts 
+to protect vulnerable crops. 
+Completing the agricultural cycle is the retrospective 
+Yield Analysis feature, which graphically tracks actual 
+harvest outputs against initial algorithmic predictions. By 
+providing this transparent performance audit, the system 
+empowers farmers to understand outcome variances, 
+continuously refine their field operations, and ultimately 
+maximize their future yields.
+
+===== PDF PAGE 51 =====
+
+Introduction 36 
+ 
+ 
+Figure 8 
+AdminDashboard 
+ 
+Figure 15 displays the Admin Dashboard, which serves 
+as the centralized command center and operational oversight 
+tool for agricultural officers and system administrators. 
+The upper section immediately presents a top-level summary 
+through four key status cards—Total Users, Data Records, 
+Pending Actions, and System Health, which is enabling a 
+rapid assessment of the platform's operational scope, user 
+engagement, and technical stability without the need to 
+generate complex reports. The dashboard provides granular 
+operational tracking through a dynamic "Recent Activity" 
+feed that logs real-time system events, user interactions, 
+and role modifications. A critical component of this
+
+
+===== PDF PAGE 52 =====
+
+Introduction 38 
+ 
+ 
+interface is the "Data Validation Alerts" panel, designed to 
+safeguard the integrity of the machine learning models. This 
+panel proactively identifies specific dataset anomalies, 
+formatting errors, or import failures, prompting immediate 
+manual review and correction by administrators to ensure that 
+the predictive data serving the Cordillera Administrative 
+Region remains consistently accurate and reliable. 
+Figure 9 
+Admin’s Data & System Management 
+
+
+===== PDF PAGE 53 =====
+
+Introduction 39 
+ 
+ 
+ 
+ 
+
+
+===== PDF PAGE 54 =====
+
+Introduction 39 
+ 
+ 
+ 
+ 
+ 
+Figure 13 illustrates the centralized management 
+interface, which streamlines data handling through a 
+structured, five-step Data Import Flow, encompassing 
+dataset selection, template downloading, file uploading, 
+automated validation, and final execution. By enforcing the 
+use of these standardized templates and conducting rigorous 
+validation checks before any data is committed, the system 
+minimizes human error and ensures the high-level data 
+integrity required to maintain accurate machine learning 
+predictions.  
+This clean data feeds directly into a card-based 
+Dataset Library Management repository, which displays 
+critical metadata such as last update timestamps and record 
+
+
+===== PDF PAGE 55 =====
+
+Introduction 39 
+ 
+ 
+volumes, facilitating the efficient auditing, viewing, and 
+exporting of Benguet's historical agricultural
+
+===== PDF PAGE 56 =====
+
+ 
+ 
+ METHODOLOGY 56 
+ 
+ 
+ 
+records. For continuous operational oversight, a Real-
+time Provincial Monitoring Dashboard tracks active 
+climate conditions and agricultural operations. It 
+utilizes intuitive visual risk tags (e.g., Medium Risk) 
+and stacked card layouts to prioritize Climate Hazard 
+Alerts, allowing administrators to swiftly assess hazard 
+types across affected provinces and coordinate rapid 
+responses.  
+Finally, a comprehensive User Management interface 
+provides granular, role-based control over system access 
+to maintain platform security. Featuring top-level 
+status snapshots—categorizing accounts into Active, 
+Pending Approval, and Suspended—alongside detailed 
+search and filtering capabilities, it empowers 
+administrators to efficiently manage the accounts, 
+geographic locations, and access permissions of a 
+diverse user base, including local farmers, admin, and 
+superadmin. 
+ 
+Test. Once you give a prototyped solution to 
+consumers, you must observe how they interact with it. This 
+testing stage is the one in which you collect feedback on 
+your work.  
+
+===== PDF PAGE 57 =====
+
+ 
+ 
+ METHODOLOGY 57 
+ 
+ 
+ 
+ A formal usability test is conducted with two distinct 
+user groups: the farmers from Benguet and DA-CAR officers. 
+Participants will be given a series of realistic, scenario-
+based tasks, such as determining the optimal planting date, 
+interpreting climate data, and accessing historical yield 
+information. Researchers will observe these interactions, 
+employing a "think-aloud" protocol where participants 
+verbalize their thought processes, supplemented by 
+quantitative metrics such as task completion time and error 
+rates. 
+ Following the observation, semi-structured interviews 
+and standardized usability questionnaires will be 
+administered to capture qualitative feedback on the 
+system's perceived utility, ease of use, and specific 
+suggestions for refinement, such as the necessity for 
+simpler terminology. 
+Scope and Delimitation 
+The scope of this study focuses exclusively on the 
+agricultural sector within the province of Benguet, 
+Philippines. The system is designed to assist vegetable 
+farmers who are actively cultivating high-value crops and 
+Agricultural Technologists from the DA-CAR. As such, the 
+yield predictions and planting schedules are geographically 
+
+===== PDF PAGE 58 =====
+
+ 
+ 
+ METHODOLOGY 58 
+ 
+ 
+ 
+limited to the specific municipalities of Benguet 
+municipalities and are not applicable to lowland farming 
+regions. 
+The system is trained to analyze and predict outcomes 
+for key commodities including Cabbage, Carrots, White 
+Potato, Chinese Cabbage, and more. These crops were 
+selected based on the availability of historical yield data 
+provided by DA-CAR and their economic importance to the 
+region. The system does not currently support cut flowers, 
+fruits, or organic rice production. 
+Moreover, the application is developed as a responsive 
+web-based system utilizing the Laravel (PHP) framework. 
+This ensures that the platform is accessible on any device 
+with a web browser, including Android smartphones, tablets, 
+and desktop computers. This cross-platform accessibility is 
+necessary as it allows farmers to access decision support 
+tools directly from the field without requiring high-end 
+hardware. 
+The core functionality of the system is powered by a 
+Machine Learning Predictive Engine developed in Python 
+using the Random Forest Regression algorithm. This model 
+processes historical yield data and climate records to 
+generate optimal planting windows. The system relies 
+
+===== PDF PAGE 59 =====
+
+ 
+ 
+ METHODOLOGY 59 
+ 
+ 
+ 
+entirely on the accuracy of the historical datasets 
+provided by DA-CAR; therefore, the system’s predictions are 
+delimited by the quality and completeness of these existing 
+records. 
+Furthermore, the system serves strictly as a DSS. It 
+provides recommendations and data visualization to guide 
+farmers but does not include Internet of Things (IoT) 
+hardware for automated irrigation or climate control. 
+Data Gathering Techniques 
+ The researchers utilized various techniques to collect 
+the necessary information for designing, developing, and 
+validating the proposed system. These methods were 
+essential in ensuring that the machine learning model was 
+accurate and that the web interface met the practical needs 
+of the farmers and the DA officers of Benguet. 
+Interview. The researchers conducted interviews with 
+Agricultural Technologists from DA-CAR and selected 
+farmers. The session was essential in understanding the 
+current manual methods used for crop planning and 
+identifying the specific variables that affect yield. 
+Furthermore, the interviews allowed the team to determine 
+the necessary features and requirements needed for the 
+
+===== PDF PAGE 60 =====
+
+ 
+ 
+ METHODOLOGY 60 
+ 
+ 
+ 
+SmartHarvest system, ensuring it addressed the actual pain 
+points of the users. 
+Survey. To measure the system’s usability and 
+acceptability, the researchers utilized the standard 10-
+item System Usability Scale (SUS) developed by John Brooke 
+(1996). This instrument was distributed to the 132 
+purposively selected farmer respondents after they 
+performed the test tasks. The questionnaire gathered 
+quantitative data to calculate a global usability score, 
+reflecting the users' subjective assessment of the system. 
+The responses were statistically analyzed to determine the 
+extent to which SmartHarvest met the needs of the 
+agricultural community and effectively supported their 
+decision-making processes. 
+Sources of Data 
+The researchers gathered information from key 
+stakeholders involved in the agricultural sector to ensure 
+the system addresses the real and practical needs of the 
+local farming community. Primary data was collected from 
+local farmers operating within Benguet in the Cordillera 
+region. These individuals shared their firsthand 
+experiences and common struggles, such as the 
+unpredictability of weather patterns, difficulty in 
+
+===== PDF PAGE 61 =====
+
+ 
+ 
+ METHODOLOGY 61 
+ 
+ 
+ 
+determining optimal planting schedules, and lack of real-
+time access to market prices. Their feedback played a 
+significant role in shaping the system’s Farmer Dashboard, 
+particularly the crop management and yield prediction 
+functionalities. 
+Moreover, the researchers consulted with agricultural 
+experts and administrators from the DA-CAR. The insights 
+provided by these professionals helped the team understand 
+how provincial crop production is monitored, how 
+agricultural datasets are managed, and how climate 
+advisories are distributed. This consultation directly 
+guided the development of the Admin Dashboard, the dataset 
+import module, and the system overview analytics. 
+As part of the observation method, the researchers 
+monitored how farmers typically make agricultural 
+decisions, which heavily relied on traditional knowledge, 
+manual record-keeping on paper ledgers, and word-of-mouth 
+for market price updates. This allowed the team to assess 
+the limitations, data silos, and inefficiencies of 
+traditional farming practices, identifying clear 
+opportunities for digital enhancement and data-driven 
+decision-making through the SmartHarvest application. 
+
+===== PDF PAGE 62 =====
+
+ 
+ 
+ METHODOLOGY 62 
+ 
+ 
+ 
+For the development of the predictive modeling and 
+data libraries, the researchers sourced secondary data from 
+official government units. Historical crop yield records 
+and agricultural datasets were gathered from the DA-CAR and 
+DOST. Furthermore, current market price references were 
+based on the DA-CAR's daily price updates. These datasets 
+served as the foundational training data for the system's 
+Random Forest yield prediction and the market price 
+monitoring features. 
+Software Development Tools 
+This section enumerates and describes the software 
+development tools used by the researchers to facilitate the 
+design and development of the proposed system.  
+ 
+Figma. A web-based design tool used to utilize the 
+primary UI/UX design and visualization tools to map user 
+journeys, build interactive prototypes, wireframe complex 
+system views, and design responsive layouts before any code 
+is written.  
+PHP. A server-side scripting language used to develop 
+core backend logic, manage database interactions, and 
+handle API requests. The researchers used PHP to process 
+
+===== PDF PAGE 63 =====
+
+ 
+ 
+ METHODOLOGY 63 
+ 
+ 
+ 
+data validation rules, enforce security protocols, and 
+manage user authentication pipelines. 
+Laravel. A web application framework used to provide a 
+structural foundation and pre-built utilities for the 
+backend system. The researchers utilized Laravel to handle 
+routing, enforce object-relational mapping for data 
+tracking, and manage background processing queues. 
+Python. A high-level programming language used to 
+execute analytical computations, handle data aggregation, 
+and run predictive machine learning tasks. The researchers 
+utilized Python to process complex background datasets and 
+serve analytical results back to the main system. 
+Flask. A micro-framework used to build lightweight, 
+isolated backend services and API endpoints. The 
+researchers utilized Flask to handle communications for the 
+analytical engine, ensuring computations run efficiently 
+without impacting the main web server. 
+Composer. A dependency manager for PHP used to manage, 
+install and update external libraires required by the 
+backend ecosystem. It enforces framework versioning and 
+seamlessly integrates vital utility packages into the 
+application lifecycle. 
+
+===== PDF PAGE 64 =====
+
+ 
+ 
+ METHODOLOGY 64 
+ 
+ 
+ 
+Docker. A containerization platform used to package 
+the application and its dependencies into isolated virtual 
+environments. The researchers utilized Docker to create 
+consistent runtime spaces, ensuring the system operates 
+identically across development and deployment setups. 
+Railway. A cloud platform-as-a-service (PaaS) used to 
+handle cloud hosting and automate development integration 
+loops. The researchers utilized Railway to host the 
+application services, manage active project environment 
+variables, and deploy live system instances directly from 
+repository branches.  
+PostgreSQL. A relational database management system 
+used to store and organize structured digital assets. The 
+researchers utilized these databases to enforce 
+transactional integrity, link data profiles through unique 
+identifiers, and maintain historical data records. 
+Axios. A promise-based HTTP client used to send 
+asynchronous requests between the browser and backend 
+servers. The researchers utilized Axios to transmit user 
+inputs and fetch real-time telemetry updates smoothly 
+without triggering full browser page reloads. 
+Vite. A modern frontend build tool used to compile and 
+bundle asset files rapidly during development. The 
+
+===== PDF PAGE 65 =====
+
+ 
+ 
+ METHODOLOGY 65 
+ 
+ 
+ 
+researchers utilized Vite to orchestrate fast hot-module 
+replacement and optimize client-side assets for production 
+deployment. 
+Visual Studio Code. A lightweight source code editor 
+used as the primary integrated development environment 
+(IDE) for writing and debugging the system's codebase. 
+Google Colab. A cloud-based Jupyter notebook 
+environment used to experiment with, document, and execute 
+Python code. The researchers utilized Google Colab to 
+perform exploratory data analysis, test data aggregation 
+scripts, and prototype machine learning models before 
+deploying them to the local system environment. 
+
+===== PDF PAGE 66 =====
+
+ 
+ 
+ FINDINGS OF THE STUDY 66 
+ 
+ 
+ 
+CHAPTER 3 
+FINDINGS OF THE STUDY 
+ This chapter presents the findings and discussions 
+derived from the investigation conducted to achieve the 
+objectives in Chapter 1. Specifically, it details the 
+development and evaluation of the SmartHarvest system by 
+first identifying its necessary information requirements, 
+the proposed system's architectural framework, determines 
+its key features and functionalities, and evaluates the 
+extent of its usability based on the responses of the 
+target users. 
+Information Requirements for SmartHarvest 
+This section details the information requirements for 
+the SmartHarvest system, which are composed of user account 
+data and the specific agricultural parameters, such as 
+historical yield. Furthermore, it addresses the software 
+and hardware requirements necessary for the application’s 
+successful operation. By establishing these prerequisites, 
+this section outlines the essential components that must be 
+in place to ensure the system's compatibility, usability, 
+and overall efficiency. 
+User Information. For the system’s users to use and 
+access the features of the system, crucial information 
+
+===== PDF PAGE 67 =====
+
+ 
+ 
+ 
+about the three user groups is required. The farmer information 
+consists of the farmer’s full name, email address, phone number, 
+municipality, and a Registry System for Basic Sectors in 
+Agriculture (RSBSA) number. Upon registration, farmers are 
+required to provide their name, email, contact number, and 
+location details, which are used to identify and authenticate 
+them within the system. 
+To cater to user accessibility and varying technical 
+backgrounds in the field, farmers are provided with two distinct 
+options to log into their accounts, they may use either their 
+registered email address or the unique RSBSA number officially 
+issued to them by the DA CAR. Providing the RSBSA number as an 
+alternative login credential specifically accommodates farmers 
+with lower digital literacy who may face challenges managing 
+traditional email accounts, thereby ensuring inclusive access to 
+the platform without technical barriers. A unique, valid RSBSA 
+number remains a strict prerequisite for farmers wishing to 
+access the system's core functional modules. This mechanism 
+ensures that their identity as a registered agricultural worker 
+is authenticated, which helps prevent fraudulent reporting, 
+facilitates government data matching, and maintains overall 
+system integrity. To ensure security and data validity within 
+the platform, the current registration workflow mandates that 
+
+===== PDF PAGE 68 =====
+
+ 
+ 
+ 
+all newly registered farmer accounts must be manually reviewed 
+and verified by a DA Administrator before full access is 
+granted. 
+On the other hand, the Department of Agriculture (DA) 
+Administrator information consists of the administrator's name, 
+official email address, and phone number. Once registered and 
+verified, both farmers and DA administrators can access their 
+respective dashboards, where they can manage their profiles, 
+track active agricultural cycles, manage market prices and 
+others. 
+Lastly, the Super Administrator information comprises the 
+super admin’s account credentials and a mandatory Two-Factor 
+Authentication (2FA) security key. The Super Administrator holds 
+top-tier system privileges, fundamentally responsible for system 
+configurations and institutional management, which includes 
+provisioning and adding authorized personnel into the system 
+under the DA Administrator role. Due to the high-level system 
+permissions attached to this role, the Super Administrator 
+cannot bypass security with a standard password. The system 
+strictly mandates that the Super Admin can only log in by 
+verifying their identity through a time-based 2FA authenticator 
+application. 
+
+===== PDF PAGE 69 =====
+
+ 
+ 
+ 
+Tables x, x, and x show farmers, DA administrator, and super 
+administrator data along with its types for storing purposes. 
+Table 2 
+Farmer Information Types 
+Field Data Type Length/Format 
+USER_ID String 36 
+RSBSA_NUMBER String 20 
+FULL_NAME String 100 
+EMAIL_ADDRESS String 254 
+CONTACT_NO String 30 
+FARM_SIZE Decimal 10 
+MUNICIPALITY String 100 
+ 
+Table 3 
+DA-Admin Information Types 
+Field Data Type Length/Format 
+ADMIN_ID String 36 
+OFFICIAL_EMAIL String 254 
+FULL_NAME String 100 
+VERIFICATION_STATUS String 20 
+REPORT_STATUS String 30 
+MARKET_PRICES Decimal 10 
+VALIDATION_NOTES String Unlimited 
+CONTACT_NUMBER String 20 
+PASSWORD String 60 
+ 
+Table 4 
+SuperAdmin Information Types 
+Field Data Type Length/Format 
+SUPER_ADMIN_ID String 36 
+FULL_NAME String 254 
+SYSTEM_EMAIL String 100 
+PASSWORD String 20 
+
+===== PDF PAGE 70 =====
+
+ 
+ 
+ 
+2F_AUTHENTICATION String 32 
+ 
+System Requirements. The minimum operating system 
+requirement for the application is Android 7.0 Nougat that 
+corresponds to API level 24. For stable performance and a modern 
+user interface, it is recommended to use Android 9.0 Pie with 
+API level 28 or higher, ensuring broader compatibility with 
+affordable devices. The application requires a minimum RAM of 
+2GB. However, to prevent crashes and ensure smooth user 
+interface navigation, and local data caching, 3–4GB of RAM is 
+recommended. 
+The application requires a minimum device storage of 16GB, 
+with at least 100MB of free space reserved for installation. To 
+accommodate growing field datasets, offline logs, and 
+agricultural imagery, a device with 32GB of storage and at least 
+2GB of free space is highly recommended. Because the application 
+features an offline-first architecture, a constant connection is 
+not required; however, a 3G mobile data or Wi-Fi connection is 
+needed for periodic data syncing. 
+ 
+Table 3 presents the software and hardware requirements for 
+the application. 
+ 
+Table 5 
+
+===== PDF PAGE 71 =====
+
+ 
+ 
+ 
+System Requirements 
+System Requirement Minimum System 
+Requirement 
+Recommended System 
+Requirement 
+Operating System Android 7.0 
+(Nougat) 
+Android 9.0 (Pie) 
+or higher 
+Android API 24 28+ 
+Processor (CPU) Dual-core 1.2 
+GHz 
+Quad-core 1.5 GHz+ 
+RAM 2GB 3GB-4GB 
+Storage 16GB Storage  32GB Storage 
+Connectivity 3G / Wi-Fi 
+(Offline-first 
+supported) 
+4G/LTE or Wi-Fi 
+   
+   
+ 
+ 
+ 
+Architecture Framework of SmartHarvest 
+The architectural framework serves as a foundational 
+blueprint for system development. It showcases the various 
+components of SmartHarvest to provide a clear visualization of 
+the software before coding commences. Additionally, it creates a 
+standardized language that allows stakeholders to better 
+understand the different processes, tasks, and technical 
+components. By defining the structure in detail, this framework 
+ensures that the system design aligns perfectly with the 
+agricultural and technical goals of the project. 
+
+===== PDF PAGE 72 =====
+
+ 
+ 
+ 
+Figure # presents the “4+1” view model by Kruchten employed 
+as the architecture framework of SmartHarvest. 
+Figure # 
+The “4+1” View Model by Kruchten 
+ 
+ To present this architecture, the researchers employed 
+Kruchten's “4+1” View Model. This framework is specifically 
+designed for software-intensive systems and addresses the 
+concerns of different stakeholders by utilizing multiple 
+concurrent perspectives. The model includes four primary views: 
+the Logical View, the Development View, the Process View, and 
+the Physical View, which are all tied together by the fifth view 
+known as the Scenarios. Through the Unified Modeling Language 
+(UML) diagrams, which are the use case, class, sequence, 
+package, and deployment diagrams, discussed in this section, 
+these views illustrate the relationships between system 
+
+
+===== PDF PAGE 73 =====
+
+ 
+ 
+ 
+components, specifically the SmartHarvest's structure, behavior, 
+deployment, and overall functionality. 
+ Scenarios. The Scenarios view, also known as the Use Case 
+view, captures the key use cases that describe the behavior of 
+the SmartHarvest system from the perspective of its end-users 
+and stakeholders. To identify the most critical components and 
+functionalities, the researchers utilized a use case diagram as 
+a visual representation of how different actors engage with the 
+platform. This diagram outlines the specific actions users can 
+perform based on their assigned roles, providing a clear 
+illustration of the overall structure and flow of interactions. 
+By mapping out these meaningful interactions between the actors 
+and the system processes, the scenarios serve to validate and 
+link the other four architectural views. This helps both 
+stakeholders and developers gain a clearer understanding of how 
+the system responds to user actions, ensuring that the final 
+design aligns with the intended user experience and functional 
+requirements of the agricultural community. 
+ Figure # shows the core functionalities of SmartHarvest for 
+the three primary actors: Farmers, Admins, and Super Admins. 
+Figure # 
+SmartHarevst’s Use Case Diagram 
+
+===== PDF PAGE 74 =====
+
+ 
+ 
+ 
+ 
+The use case diagram illustrates the core functionalities 
+of the SmartHarvest System designed for three primary actors: 
+the Farmer, the Admin, and the Super Admin. All actors must 
+initially interact with the system through the "Login / 
+Authenticate" process, which is a mandatory requirement 
+(indicated by the <<includes>> relationship) for accessing any 
+system features. New users also have the option to execute the 
+"Register Account" process, which extends the main login 
+functionality. Once authenticated, the Farmer gains access to a 
+suite of agricultural decision-support tools. These key 
+functions include managing their personal profile, maintaining 
+their crop records, viewing current market prices, and checking 
+
+
+===== PDF PAGE 75 =====
+
+ 
+ 
+ 
+the weather outlook. Furthermore, farmers can analyze their crop 
+yield and generate optimized planting schedules, providing them 
+with data-driven insights to improve their farming outcomes. 
+The system features a tiered administrative structure. Upon 
+logging in, standard Admins are tasked with overseeing 
+provincial-level agricultural data. Their core capabilities 
+include managing agricultural datasets, monitoring the 
+provincial dashboard, and updating market prices to ensure 
+farmers receive accurate, real-time information. The Super Admin 
+role inherits all the privileges of a standard Admin 
+(represented by the generalized hollow arrow) but is granted 
+additional, high-level system controls. Specifically, Super 
+Admins are responsible for managing user accounts and roles, as 
+well as monitoring system audit logs to maintain platform 
+security and integrity. 
+The diagram details several optional, extended 
+functionalities (<<extends>>) that streamline specific tasks for 
+the users. For instance, while managing crop records, farmers 
+have the specific option to "Add Crop," and when generating a 
+planting schedule, they can choose to "Export Schedule" for 
+offline reference. On the administrative side, the dataset 
+management module is extended by an "Import Dataset" function 
+
+===== PDF PAGE 76 =====
+
+ 
+ 
+ 
+for bulk data entry, and the account management module allows 
+Super Admins to seamlessly "Add New User. 
+ Logical View. This view demonstrates the functional 
+structure of the SmartHarvest system by representing the 
+essential abstractions and relationships that support user 
+requirements. It provides a clear visualization of the main 
+functionalities by defining the key classes, objects, and how 
+they collaborate to execute core operations like managing 
+agricultural datasets and generating yield predictions. To 
+illustrate this structure, the researchers utilized a class 
+diagram. This diagram details the system's classes, attributes, 
+methods, and relationships, allowing developers to ensure the 
+software design effectively addresses the practical needs of the 
+farming community. 
+Figure # Illustrates the Logical View of the SmartHarvest 
+system, showing key classes and their relationships. 
+Figure # 
+SmartHarvest’s Class Diagram 
+
+===== PDF PAGE 77 =====
+
+ 
+ 
+ 
+ 
+The diagram highlights the Farmer's strict ownership of 
+data through composition links, showing that CropRecord and 
+YieldPrediction instances are directly bound to the user and 
+cannot exist independently. To calculate forecasts, the 
+YieldPrediction class relies on aggregation relationships, 
+pulling necessary context from independent AgriculturalDataset 
+and WeatherData records. 
+Finally, standard association links map out the data 
+management responsibilities of the platform. These links depict 
+the Admin actively uploading AgriculturalDataset entries and 
+updating MarketPrice records to maintain the foundational data 
+required for the system's predictive models. 
+
+
+===== PDF PAGE 78 =====
+
+ 
+ 
+ 
+Process View. This details the dynamic behavior and runtime 
+operations of the SmartHarvest system. This architectural 
+perspective focuses on how various software components 
+communicate, execute, and synchronize to fulfill specific 
+functional requirements. By mapping out the step-by-step flow of 
+logic, it provides developers and stakeholders with a 
+comprehensive understanding of the system's internal performance 
+during active use. To effectively illustrate these dynamic 
+interactions, the researchers utilized sequence diagrams. These 
+diagrams visually document the chronological exchange of 
+messages between the system actors, web interfaces, backend 
+controllers, and databases during core operations, such as user 
+authentication, yield prediction requests, and dataset 
+management. 
+Figure # shows the sequence diagram of a user’s login 
+process. 
+Figure # 
+User Login Sequence Diagram 
+
+===== PDF PAGE 79 =====
+
+ 
+ 
+ 
+ 
+The sequence diagram illustrates the interactions between 
+the User, the Web Browser interface, the Laravel AuthController, 
+and the MySQL Database during the system authentication process. 
+In the first part, the process begins when the user inputs their 
+email and password into the web browser. This action triggers a 
+login request that is sent directly to the backend 
+AuthController. 
+In the second part, the controller queries the MySQL 
+Database to retrieve the specific user's stored credentials. The 
+database then returns the encrypted password to the controller. 
+
+
+===== PDF PAGE 80 =====
+
+ 
+ 
+ 
+Following this, the controller executes an internal process to 
+verify if the password provided by the user matches the 
+retrieved hash. 
+The third part of the diagram depicts an alternative 
+conditional block based on the result of the password 
+verification. If the credentials are valid, the controller 
+generates a secure session token and sends an authentication 
+success signal to the web browser, which redirects the user to 
+the main dashboard. On the contrary, if the credentials are 
+invalid, the controller returns an unauthorized status, 
+prompting the web browser to display an "Invalid Credentials" 
+error message to the user. 
+Figure # presents the sequence diagram of the Random Forest 
+Yield Prediction process. 
+Figure # 
+Random Forest Yield Prediction Sequence Diagram 
+
+===== PDF PAGE 81 =====
+
+ 
+ 
+ 
+ 
+ The diagram illustrates the interactions between the 
+system's components to generate a crop yield forecast. The 
+process begins when the Farmer inputs specific crop data, such 
+as crop type, into the Web Browser interface. This action 
+triggers a request to the backend Prediction-Controller to 
+initiate the yield prediction. 
+Upon receiving the request, the PredictionController 
+validates the input data before querying the MySQL Database to 
+retrieve relevant historical yield and climate patterns. Once 
+the necessary historical datasets are returned, the 
+PredictionController executes a Python script, passing both the 
+current inputs and historical data to the Python ML Engine. This 
+engine runs the Random Forest Regression Model to calculate the 
+
+
+===== PDF PAGE 82 =====
+
+ 
+ 
+ 
+expected yield and returns this predicted value to the 
+controller. 
+Finally, the PredictionController logs the prediction 
+request in the MySQL Database for auditing purposes. After 
+receiving confirmation that the log is saved, the controller 
+communicates the success back to the Web Browser, which displays 
+the final yield prediction and actionable insights to the 
+Farmer. 
+ Figure # shows the sequence diagram of the agricultural 
+dataset upload process. 
+Figure # 
+Agricultural Data Management Sequence Diagram 
+
+===== PDF PAGE 83 =====
+
+ 
+ 
+ 
+ 
+The sequence diagram illustrates the interactions between 
+the DA-CAR Admin, the Web Browser interface, the Laravel 
+DatasetController, and the MySQL Database during the data 
+management process. In the first part, the process begins when 
+the Admin uploads an agricultural dataset in CSV format through 
+the web browser. This action triggers an upload request to the 
+backend DatasetController. Upon receiving the file, the 
+controller immediately executes an internal validation to verify 
+the file's format and size. 
+The second part of the diagram depicts an alternative 
+conditional block based on the validation results. If the 
+
+
+===== PDF PAGE 84 =====
+
+ 
+ 
+ 
+uploaded file is invalid, such as being corrupted or not in the 
+required CSV format, the controller returns an unprocessable 
+entity status. Consequently, the web browser displays an 
+"Invalid File Format" error to the Admin, halting the data entry 
+process. 
+On the other hand, if the file is valid, the controller 
+proceeds to internally parse the CSV rows, carefully extracting 
+the relevant climate and yield data. Following this extraction, 
+the controller executes an insert or update of the records into 
+the MySQL Database. Once the database confirms a successful 
+commit of the new data, the controller sends a success response 
+back to the web browser. Finally, the browser displays a 
+"Dataset Uploaded Successfully" alert to the Admin, completing 
+the transaction. 
+Development View. This focuses on the internal software 
+organization of the SmartHarvest system from the perspective of 
+the programmers. This architectural perspective is essential for 
+understanding how the various source code modules, frameworks, 
+and libraries are structured and how they depend on one another 
+to function correctly. To visually represent this software 
+architecture, the researchers utilized a package diagram. This 
+diagram maps out the core system subsystems, including the 
+Laravel backend controllers, the Python machine learning 
+
+===== PDF PAGE 85 =====
+
+ 
+ 
+ 
+environment, and the web interface frontend. By clearly 
+illustrating these technical relationships and module 
+dependencies, the Development View provides a comprehensive 
+blueprint to guide the developers in building, maintaining, and 
+scaling the application over time. 
+Figure # shows the package diagram... 
+Figure # 
+Title ng Package Diagram 
+ Description ng Package Diagram 
+ Physical View. This view illustrates how software 
+components are distributed across the system's hardware 
+infrastructure. It maps the real-world deployment and network 
+topology essential for evaluating system scalability, 
+reliability, and security. To represent this architecture, the 
+researchers utilized a deployment diagram. This diagram details 
+the physical network connections and secure communication 
+protocols established among the user devices, the central 
+Laravel application server, the dedicated Python machine 
+learning server, and the MySQL database. 
+Figure # shows the deployment diagram of the SmartHarvest 
+system. 
+Figure # 
+Deployment Diagram of SmartHarvest 
+
+===== PDF PAGE 86 =====
+
+ 
+ 
+ 
+ 
+The deployment diagram of the system illustrates the 
+physical distribution of its software components. The User 
+Device accesses the web interface and securely communicates via 
+HTTPS with the central Application Server. Powered by Laravel 
+PHP, this main server handles user authentication and core 
+dashboard functionalities. 
+To process heavy computational tasks efficiently, the 
+Application Server connects via API to a dedicated Machine 
+Learning Server running a Python Flask interface and the Random 
+Forest Model for yield predictions. Finally, the Application 
+Server maintains a direct connection to the MySQL Database 
+Server, which securely stores user accounts, agricultural 
+datasets, and system logs. 
+Features of SmartHarvest 
+
+
+===== PDF PAGE 87 =====
+
+ 
+ 
+ 
+The main tasks of SmartHarvest’s system are carried out 
+through its features, which are the tools users need to reach 
+the goal. This section explains the different parts of the 
+SmartHarvest system. It highlights the main functions designed 
+to make the platform easy to use, help farmers make better 
+planting choices, and simply organize farming data. The features 
+of the system are listed below: 
+SmartHarvest Landing Page. The SmartHarvest landing 
+ 
+page serves as the main welcome screen for the website. To 
+ensure the site is easy for local farmers to use, a 
+drop-down menu at the top right allows users to switch the 
+language between English, Tagalog, and Ilocano.
+
+===== PDF PAGE 88 =====
+
+ 
+ 
+ 
+Figure 22 
+Landing Page 
+ 
+ Figure 22 shows the SmartHarvest landing page that 
+serves as the main welcome screen for the website. This 
+explains that the system uses past harvest records and 
+weather information to help farmers make better choices 
+about what and when to plant for better crop production. To 
+ensure the site is easy for local farmers to use, a 
+drop-down menu at the top right allows users to switch the 
+language between English, Tagalog, and Ilocano. 
+Additionally, users can easily access the platform by 
+clicking the bright green "Get Started" button in the 
+center to begin, or by using the "LOGIN" button at the top 
+right if they already have an existing account.
+
+
+===== PDF PAGE 89 =====
+
+ 
+ 
+ 
+Farmer’s Main Dashboard. The Main Dashboard is 
+ 
+engineered to immediately deliver tailored insights based 
+on the farmer’s specific location. The page is structured 
+with summaries including the current weather conditions, 
+machine learning, predicted optimal planting window, and 
+highest-confidence crop recommendations. 
+Figure 23 
+Farmer’s Main Dashboard 
+ 
+  
+Figure 23 shows the main Dashboard screen for a user 
+ 
+in the SmartHarvest system, currently customized for Baguio 
+City. The top of the page provides a quick summary of 
+important details, showing that the current weather 
+ 
+prediction is "Good Rain," the best machine-predicted 
+
+
+===== PDF PAGE 90 =====
+
+ 
+ 
+ 
+ 
+planting window is from October 1 to December 15, 2026, and
+
+===== PDF PAGE 91 =====
+
+ 
+ 
+ 
+the top recommended crop variety is Cabbage. In the middle 
+of the screen, a "Top 5 Recommended Crops" section ranks 
+Cabbage and Carrots as the best choices, followed by 
+Lettuce, Broccoli, and Sweet Pepper, while also giving the 
+expected yield and the best months to plant and harvest 
+each one. Below this, there is a simple 7-day weather 
+ 
+forecast showing the daily temperatures and conditions for 
+the upcoming week to help farmers plan ahead. Finally, a 
+menu on the left side of the screen allows the user to 
+easily navigate to other helpful tools like planting 
+schedules, market prices, and announcements. 
+ 
+ Planting Schedule Optimization Analysis. This page acts as 
+a critical planning tool focused on mitigating risks and 
+maximizing harvest volume through timing optimization. It 
+centers on a comprehensive recommendation table that allows 
+farmers to strategically weigh diverse planting options against 
+specific weather patterns and production forecasts before 
+committing a plan. 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 92 =====
+
+ 
+ 
+ 
+Figure 24 
+Planting Schedule Optimization Analysis 
+ 
+Figure 24 shows the "Planting Schedule Optimizer" page 
+in the SmartHarvest system, currently set for Baguio City. 
+The top section highlights the most important advice, 
+showing that the best upcoming time to plant is between 
+October 1 and December 15, 2026, and that Cabbage is the 
+top recommended crop with a high-confidence expected yield 
+of 22.5 metric tons per hectare. Below this, there is a 
+detailed table called the "Recommended Planting Schedule". 
+This table lists several crops like Cabbage, Carrots, 
+Lettuce, Broccoli, and Sweet Pepper, along with the 
+ 
+specific months to plant and harvest them, how many days 
+ 
+they take to grow, and their predicted harvest amounts. The
+
+
+===== PDF PAGE 93 =====
+
+ 
+ 
+ 
+table also uses status labels like "Recommended" or 
+ 
+"Consider" to guide farmers' choices, and features an 
+ 
+"Export Schedule" button that allows users to easily save 
+or download this plan. 
+Comprehensive Yield Performance Report. This page functions 
+as a retrospective performance audit for completed harvest 
+cycles. The top section presents four high-impact metrics to 
+quickly gauge seasonal success, the average yield, best 
+performing crops, total production, and prediction accuracy. 
+Figure 25 
+Comprehensive Yield Performance Report 
+ 
+
+
+===== PDF PAGE 94 =====
+
+ 
+ 
+ 
+ Figure 25 shows the "Yield Analysis" page in the 
+ 
+SmartHarvest system, currently showing information for La 
+Trinidad. The top of the page provides a quick look at the 
+farm's past performance for the year 2025, displaying an 
+average yield of 5.8 metric tons per hectare, a total 
+harvest of 29,875 metric tons, and identifying Cabbage as 
+the best growing crop. It also shows that the system's 
+past predictions were very accurate at 95.8%. The middle 
+section, called "Key Insights," highlights positive 
+trends, pointing out how consistent rainfall and planting 
+in the 
+right season helped improve the overall harvest. At the 
+bottom, the page goes into more detail with a "Crop-Specific 
+Performance Analysis" that explains exactly why certain crops 
+like Highland Cabbage and Tinawon Rice did well. Next to 
+this, an "Effective Management Practices" section breaks down 
+how good farming habits—such as proper fertilizer use, 
+following the recommended planting schedules, and safe pest 
+control—contributed to the farm's overall success. 
+The Agricultural Weather and Climate Forecast. This feature 
+transforms raw meteorological data from PAGASA into 
+agriculturally relevant insights across three distinct planning 
+horizons. For immediate, day-to-day on-field action, the system 
+
+===== PDF PAGE 95 =====
+
+ 
+ 
+ 
+provides real-time updates on current conditions. It further 
+supports short-term operational farming choices through detailed 
+hourly and 7-day forecasts. 
+Figure 26 
+Agricultural Weather and Climate Forecast 
+ 
+ Figure 26 shows the "Weather Forecast & 
+Predictions" page in the SmartHarvest system, currently set 
+for Baguio City. The top section displays the "Current 
+Conditions," letting farmers quickly see that it is 21°C 
+and partly 
+cloudy with zero rainfall for the day. In the middle of the 
+screen, a "7-Day Temperature Forecast" line graph tracks 
+the expected high and low temperatures for the week, while 
+a "Monthly Rainfall Prediction" bar chart estimates how
+
+
+===== PDF PAGE 96 =====
+
+ 
+ 
+ 
+much rain will fall over the next four weeks to help with 
+long-term water planning. Both of these charts include 
+small analysis boxes that give helpful farming advice, 
+such as reminding users to keep watering their crops 
+during warmer days. At the bottom, an "Hourly Forecast" 
+shows the temperature and weather hour-by-hour, helping 
+farmers decide the best times to safely work out in the 
+fields. 
+ 
+ Current Market Prices. This page provides farmers with 
+crucial economic data to inform their planting and selling 
+strategies. The interface centers on a searchable data table 
+tracking major regional crops contextualized specifically for 
+the La Trinidad Trading Post. It details specific crop 
+varieties, current pricing per kilogram, percentage-based price 
+trends, and overall market demand indicators.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+===== PDF PAGE 97 =====
+
+ 
+ 
+ 
+Figure 27 
+Market Prices Interface 
+ 
+ Figure 27 shows the "Current Market Prices" page in 
+ 
+the SmartHarvest system. It provides farmers with the most 
+up-to-date selling prices for major crops in the region. The 
+center of the screen features a large list of vegetables, 
+such as Broccoli, Cabbage, and Carrots, detailing their 
+specific variety and current price per kilogram. The table 
+also indicates whether the price is trending up or down, the 
+current buyer demand, and notes that these specific prices 
+are from the La Trinidad Trading Post. At the bottom of the 
+page, a "Price Insights" box offers a helpful summary, such 
+as warning the user that
+
+
+===== PDF PAGE 98 =====
+
+ 
+ 
+ 
+broccoli prices are dropping, so farmers can adjust their 
+planting plans to make the most money. 
+ 
+ Admin Dashboard. The Admin Dashboard serves as the 
+centralized oversight hub for agricultural officers and system 
+administrators. The interface provides a rapid assessment of 
+operational scope via four key status cards: Total Users, Data 
+Records, Pending Actions, and System Health. It features a 
+"Recent Activity" feed alongside a critical "Data Validation 
+Alerts" panel that flags specific data anomalies or system 
+errors requiring manual review. 
+Figure 28 
+Admin Dashboard 
+  
+Figure 28 shows the "DA Officer Dashboard" in the 
+ 
+
+
+===== PDF PAGE 99 =====
+
+ 
+ 
+ 
+SmartHarvest system, currently set to show information for
+
+===== PDF PAGE 100 =====
+
+ 
+ 
+ 
+the municipality of La Trinidad. The main feature of this 
+page is a large chart called "Yield & Planting Schedule 
+Analysis," which tracks past harvest records, rainfall, and 
+temperature trends across the months of the year to help 
+agricultural officials understand the best times for farming. 
+Below the chart, simple summary boxes highlight key 
+takeaways, pointing out that May and June are the peak yield 
+periods and recommending that farmers plant between May 15 
+and June 15 for the best results. At the bottom of the 
+screen, there is a "Data Validation Alerts" section that 
+lists pending farm records that the officer needs to review 
+and approve, which helps keep the system's information clean 
+and accurate. 
+ Dataset Library Management. This management page functions 
+as the central repository for Benguet’s regional agricultural 
+records. Using a clean, card-based grid, it displays distinct 
+data categories with details such as record volume and the last 
+update timestamp. Administrators can execute direct "View" and 
+"Export" actions to facilitate external reporting and maintain 
+data portability. 
+  
+ 
+Figure 29 
+
+===== PDF PAGE 101 =====
+
+ 
+ 
+ 
+Dataset Library Management 
+  
+Figure 29 shows the "Datasets" page designed 
+ 
+specifically for a DA Officer in the SmartHarvest system. 
+ 
+It acts as the main digital library for organizing and 
+ 
+storing farming records for the Cordillera region. The top 
+of the screen provides a quick summary, showing that there 
+is currently 1 dataset saved in the system, which contains 
+30,968 individual records and takes up 1.46 MB of storage 
+space. Below this summary, the main area displays a card 
+for this specific dataset, named "Crop Production 
+ 
+Statistics (Monthly)," and shows exactly when it was last 
+updated. The card also features simple buttons that allow 
+the officer to easily "View" the details or "Export" the
+
+
+===== PDF PAGE 102 =====
+
+ 
+ 
+ 
+file to download it, making it very easy to manage and 
+share important agricultural data. 
+ Data Import Flow. The Data Import interface features a 
+structured, five-step progress indicator designed to minimize 
+human error when updating the system's database. The guided 
+workflow enforces standardization through the following 
+sequential steps: Select Dataset →Download Template →
+Upload File →Validation →Import 
+Automated validation checks are run instantly before data 
+is permanently committed to the system. 
+Figure 30 
+Data Import Flow 
+  
+Figure 30 shows the "Data Import" page for a DA 
+ 
+Officer in the SmartHarvest system. This screen is designed
+
+
+===== PDF PAGE 103 =====
+
+ 
+ 
+ 
+to make it easy for administrators to add new farming 
+ 
+records into the main database. In the center of the page, 
+the officer can select the specific type of information they 
+are adding from a drop-down menu, and then simply drag and 
+drop their data file, such as an Excel spreadsheet or CSV 
+file, directly into the large upload box. At the bottom of 
+this section, there is a "Reset" button to quickly clear the 
+form if a mistake is made, and an "Upload Dataset" button to 
+finalize the addition once the file is ready. On the right 
+side of the screen, a handy "Recent Uploads" panel helps the 
+officer keep track of their work by displaying a history 
+list of files that have recently been submitted to the 
+system. 
+ Real-time Provincial Monitoring Dashboard. This dashboard 
+acts as the primary oversight hub for broad climate conditions 
+and agricultural operations across the province. It organizes 
+Climate Hazard Alerts into a stacked card layout that displays 
+active advisories alongside critical details like hazard type 
+and affected areas. Visual risk tags (e.g., Medium Risk) are 
+integrated to support quick administrative prioritization and 
+response coordination. 
+  
+Figure 31 
+
+===== PDF PAGE 104 =====
+
+ 
+ 
+ 
+Real-time Provincial Monitoring Dashboard 
+ 
+ Figure 31 shows the "Provincial Monitoring 
+Dashboard" for a DA Officer in the SmartHarvest system. 
+This page allows officials to keep a close eye on the 
+weather and farming conditions across an entire province 
+in real-time. At the top, quick summary boxes show that 
+the system is tracking 14 municipalities, noting that 4 
+currently have "Favorable" conditions and zero areas are 
+"Under Watch" for problems. On the left side, a "Climate & 
+Weather" section lets the officer check specific towns, 
+such as Bakun, to see if there are any active "Climate 
+Hazard Alerts" and to look at a simple bar chart showing 
+the "7-Day Rainfall Forecast". On the right side, the 
+"Provincial Climate Status" panel displays small cards for 
+each individual
+
+
+===== PDF PAGE 105 =====
+
+ 
+ 
+ FINDINGS OF THE STUDY 39 
+ 
+ 
+ 
+town, like Bokod and Itogon, which show their current 
+ 
+rainfall, temperature, and humidity. A handy color-
+coded legend at the bottom helps the officer quickly 
+understand if a town's growing conditions are optimal, 
+normal, or if they need special attention. 
+ User Management Interface. This interface grants 
+administrators’ total control over user access privileges 
+and system roles. A top status panel categorizes accounts 
+into Total, Active, Pending Approval, and Suspended. A 
+comprehensive data table lists all registered users with 
+sorting and filtering options, allowing administrators to 
+manage specific roles such as Farmers, Field Agents, or 
+Researchers along with their designated locations. 
+ Figure 40 shows the interface where the DA-CAR admins 
+can edit, add, and delete users on the farmer side. 
+Figure 32 
+User Management Interface 
+
+===== PDF PAGE 106 =====
+
+ 
+ 
+ 
+ 
+  
+Figure 32 shows the "User Management" page in the 
+ 
+SmartHarvest system, designed for a DA Officer to 
+easily organize and control who has access to the 
+platform. The top section provides a quick summary, 
+showing that there are 9 total users registered on the 
+site, which consists of 5 Farmers and 4 DA Admins, and 
+that all 9 accounts are currently active. The main part 
+of the screen features a detailed list of all these 
+users. For each person, the table displays their name 
+and email address, their specific role (such as Farmer 
+or Admin), their location (like Baguio City or La 
+Trinidad), their current account status, and the date 
+they joined the system. There is also a search bar and 
+a filter menu at the top right of the list, making it 
+
+
+===== PDF PAGE 107 =====
+
+ 
+ 
+ 
+ 
+simple for the administrator to quickly find a 
+specific person or view users based on their assigned 
+roles. 
+ 
+Extent of Usability of SmartHarvest  
+To comprehensively evaluate the usability and field-
+readiness of the system, the researchers conducted a dual-
+framework usability testing approach targeting two distinct 
+user groups. The system's primary front-end mobile 
+interface was evaluated by local farmers using the System 
+Usability Scale (SUS), a globally recognized standard for 
+measuring software usability. Simultaneously, the web-based 
+administrative backend dashboard was evaluated by the DA-
+CAR personnel utilizing the Usefulness, Satisfaction, and 
+Ease of Use (USE) questionnaire. 
+By employing both the SUS and USE instruments, the 
+researchers were able to capture detailed, quantitative 
+user experience data from both the field-level agricultural 
+producers and the institutional administrative managers. 
+This comprehensive multi-perspective assessment ensures the 
+platform is both technically reliable for office 
+administrators and accessible for rural community users. 
+
+===== PDF PAGE 108 =====
+
+ 
+ 
+ 
+According to Brooke. (1996), the System Usability 
+Scale (SUS) is a questionnaire to evaluate the usability of 
+products and services using a 5-Likert scale ranging from 
+"I strongly agree" to "I strongly disagree." It serves as a 
+quantitative method to assess the usability of various 
+systems. To determine the appropriate respondents for the 
+usability testing, the researchers used purposive sampling. 
+According to Etikan et al. (2016), purposive sampling is a 
+non-probability sampling technique where participants are 
+deliberately chosen based on the judgment of the 
+researchers or experts, focusing on individuals who possess 
+the specific characteristics required for the study. 
+In this context, the selection of the 132 farmer 
+respondents was directly facilitated by the project’s 
+partner organization, the DA-CAR. Rather than using a 
+randomized population formula, the researchers relied on 
+DA-CAR to identify, contact, and gather the available local 
+farmers who best fit the target demographic to accurately 
+test and evaluate the SmartHarvest system.  
+Moreover, to evaluate the system’s usability from the 
+target users' perspectives, 132 purposively selected 
+farmers, facilitated through the partnership with DA-CAR, 
+participated in the usability testing. The researchers 
+
+===== PDF PAGE 109 =====
+
+ 
+ 
+ 
+distributed printed questionnaires to the respondents 
+during in-person testing sessions.  
+Upon collecting the printed SUS questionnaire 
+responses, each individual response is converted into 
+corresponding scores. For the odd-numbered questions (1, 3, 
+5, 7, and 9), the number 1 is subtracted from the 
+participant’s original response. For the even-numbered 
+questions (2, 4, 6, 8, and 10), the participant’s response 
+is subtracted from the number 5. 
+All of the adjusted scores from the questionnaire are 
+then summed together, and this total is subsequently 
+multiplied by 2.5 to obtain the final overall SUS score per 
+respondent.  
+To calculate the average SUS score from the collected 
+responses, the following formula is used by the 
+researchers: 
+Average SUS Score = (Σ SUS Scores) / n 
+Where: 
+• Σ SUS Scores represents the total sum of the 
+individual SUS scores from all participants. 
+• n represents the total number of respondents. 
+
+===== PDF PAGE 110 =====
+
+ 
+ 
+ 
+To interpret the SUS scores, Table # presents the 
+interpretation of the SUS scores by assigning a “Grade” 
+Table # 
+SUS Scores Interpretation 
+Grade 
+Range 
+SUS Score 
+Range 
+Adjective Rating Acceptability 
+A- to A+ 78.9 – 100 Excellent – Best 
+Imaginable 
+Acceptable 
+B- to B+ 72.6 – 
+78.8 
+Good – Excellent Acceptable 
+C- to C+ 62.7 – 
+72.5 
+OK – Good Marginal – 
+Acceptable 
+D 51.7 – 
+62.6 
+OK Marginal 
+F 0.0 – 51.6 Worst Imaginable 
+– Poor 
+Not Acceptable 
+The table illustrates how the numerical SUS scores are 
+categorized into distinct grading ranges to evaluate the 
+overall user experience of the system. Scores between 78.9 
+and 100 receive an A- to A+ grade, earning an adjective 
+rating of Excellent to Best Imaginable, which indicates 
+that the system is highly acceptable to users. Following 
+this, the B- to B+ range, falling between 72.6 and 78.8, is 
+rated as Good to Excellent and is also deemed fully 
+acceptable.  
+For scores ranging from 62.7 to 72.5, the system earns 
+a C- to C+ grade, representing an OK to Good experience 
+that borders between marginal and acceptable. A grade of D, 
+
+===== PDF PAGE 111 =====
+
+ 
+ 
+ 
+covering the 51.7 to 62.6 range, indicates an OK but 
+entirely marginal performance, suggesting noticeable 
+usability issues exist. Finally, any score from 0.0 to 51.6 
+results in a failing F grade, classified as Worst 
+Imaginable to Poor, meaning the system's usability is not 
+acceptable and requires significant revisions. 
+Applying the given dataset to the evaluation formula 
+produced the following calculation: 
+Average SUS Score = (Σ SUS Scores) / n 
+Average SUS Score = (9,445) / 132 
+Average SUS Score = 71.55 ≈ 71.6 
+Table # summarizes the distribution of responses 
+gathered from the target agricultural users, alongside the 
+final computed SUS score for the SmartHarvest system. 
+Table # 
+No. Statement 1 2 3 4 5 Avg 
+1 I think that I would 
+like to use the system 
+frequently. 
+3 4 15 46 64 26.4 
+2 I found the system 
+unnecessarily complex. 
+44 39 25 13 11 26.4 
+3 I thought the system 
+was easy to use. 
+2 3 24 53 50 26.4 
+
+===== PDF PAGE 112 =====
+
+ 
+ 
+ 
+4 I think that I would 
+need assistance to use 
+the system. 
+34 37 31 20 10 26.4 
+5 I found the various 
+features of the system 
+were well integrated. 
+2 6 18 52 54 26.4 
+6 I thought there was too 
+much inconsistency in 
+the system. 
+50 33 31 14 4 26.4 
+7 I would imagine that 
+most users would learn 
+to use the system very 
+quickly. 
+3 8 22 48 51 26.4 
+8 I found the system very 
+difficult to use. 
+45 38 34 13 2 26.4 
+9 I felt very confident 
+using the system. 
+4 10 33 42 43 26.4 
+10 I needed to learn many 
+things before I could 
+get started with the 
+system. 
+32 37 30 18 15 26.4 
+ SUS Score      71.6 
+Table # presents how the 132 participants responded to 
+the ten questions of the SUS. Overall, the data points to a 
+clear, positive agreement regarding the usability of the 
+SmartHarvest system. 
+To better visualize the raw sentiment of the 132 
+farmer respondents across the ten usability items, their 
+Likert-scale selections were aggregated into a 100% stacked 
+horizontal bar chart. This illustrates the percentage 
+
+===== PDF PAGE 113 =====
+
+ 
+ 
+ 
+breakdown of how the 132 local farmers answered the ten 
+usability questions for the mobile application. 
+Figure # 
+Visual of Percentage Distribution of the SUS Responses 
+ 
+Figure # visualizes that the positive statements (the 
+odd-numbered questions, most respondents answered with 4s 
+and 5s (Agree and Strongly Agree). This tells us that the 
+farmers generally found the system easy to use, felt 
+confident navigating it, and thought the features were put 
+together well. Moreover, most agreed that new users could 
+pick it up quickly, suggesting that the application is 
+welcoming and not overly intimidating to first-time users. 
+Looking at the negative statements (the even-numbered 
+questions), the answers were heavily concentrated in the 1 
+
+
+===== PDF PAGE 114 =====
+
+ 
+ 
+ 
+and 2 ratings (Strongly Disagree and Disagree). The users 
+firmly rejected the idea that the application was 
+complicated, inconsistent, or frustrating to use. This 
+backs up the intuitive design of the system, showing that 
+the farmers felt they could comfortably use the core 
+features to plan their crops without needing someone to 
+hold their hand through the process. 
+Lastly, these findings indicate that the software 
+provides an "OK–Good" and acceptable user experience, 
+demonstrating its effectiveness as a practical and 
+accessible decision-support tool for the local agricultural 
+community, with an overall acceptability rating of 
+Marginal–Acceptable. 
+Having established the system's usability for the 
+farmer respondents through the SUS evaluation, the 
+researchers proceeded to evaluate the system's 
+administrative web interface. To assess how effectively the 
+Department of Agriculture (DA) staffs can manage the 
+platform, monitor agricultural data, and oversee user 
+accounts, the researchers employed the USE (Usefulness, 
+Satisfaction, and Ease of Use) questionnaire. 
+The USE questionnaire measures four key dimensions of 
+the admin experience: system usefulness, ease of use, ease 
+
+===== PDF PAGE 115 =====
+
+ 
+ 
+ 
+of learning, and overall satisfaction. The instrument 
+consists of thirty statements that capture the 
+administrative users’ perceptions when interacting with the 
+dashboard. Each statement was rated using a seven-point 
+Likert scale, allowing the DA staffs to express their 
+precise level of agreement ranging from strongly disagree 
+to strongly agree.  
+Presented in Table # are the corresponding point 
+values, mean ranges, and interpretations used to analyze 
+the administrators' responses. 
+Table # 
+Seven-point Likert-Scale Interpretation 
+Point Mean Range Interpretation 
+1 1.00 – 1.86 Strongly Disagree 
+2 1.87 – 2.72 Disagree 
+3 2.73 – 3.58 Somewhat Disagree 
+4 3.59 – 4.44 Neutral 
+5 4.45 – 5.30 Somewhat Agree 
+6 5.31 – 6.16 Agree 
+7 6.17 – 7.00 Strongly Agree 
+ 
+Table # presents the seven-point Likert scale utilized 
+to interpret the responses of the DA staffs in the USE 
+
+===== PDF PAGE 116 =====
+
+ 
+ 
+ 
+questionnaire. Each point value corresponds to a specific 
+level of agreement, where 1 represents “Strongly Disagree” 
+and 7 represents “Strongly Agree.” The mean ranges 
+associated with each point serve as the statistical basis 
+for interpreting the computed average scores. Lower mean 
+values indicate disagreement with the positive usability 
+statements, while higher mean values reflect stronger 
+agreement. This standardized interpretation enables the 
+researchers to accurately determine the overall usability 
+level of the admin dashboard based on the DA staffs' 
+ratings. 
+Moreover, to determine the appropriate participants 
+for the administrative usability evaluation, the 
+researchers utilized purposive sampling. Specifically, to 
+evaluate the system’s backend interface, 18 personnel from 
+the Department of Agriculture - Cordillera Administrative 
+Region (DA-CAR) were purposively selected to participate in 
+the testing. As the primary intended end-users of the 
+administrative dashboard, these specific personnel were 
+deliberately chosen because they possess the operational 
+knowledge required to effectively assess the platform's 
+data management and monitoring functionalities. 
+
+===== PDF PAGE 117 =====
+
+ 
+ 
+ 
+To present the overall usability of the system from 
+the administrative perspective, the researchers summarized 
+the weighted means across all four dimensions of the USE 
+questionnaire. 
+The analyzed responses to the first eight questions of 
+the USE questionnaire which focus on how effectively the 
+system supports users in completing tasks, enhancing 
+productivity, and meeting operational needs are provided in 
+Table #. 
+Table # 
+Usefulness: Usability Testing Result – DA Staffs 
+Questions 1 2 3 4 5 6 7 Weighted 
+Mean 
+1. It helps me be more 
+effective. 
+0 0 0 1 4 7 6 6.00 
+2. It helps me be more 
+productive. 
+0 0 0 1 4 6 7 6.06 
+3. It is useful. 0 0 0 0 1 6 11 6.56 
+4. It gives me more 
+control over the 
+activities in my life. 
+0 0 0 2 4 7 5 5.83 
+5. It makes the things I 
+want to accomplish 
+easier to get done. 
+0 0 0 0 1 11 6 6.28 
+6. It saves me time when 
+I use it. 
+0 0 0 0 1 10 7 6.33 
+7. It meets my needs. 0 0 0 1 2 10 5 6.06 
+
+===== PDF PAGE 118 =====
+
+ 
+ 
+ 
+8. It does everything I 
+would expect it to do. 
+0 0 0 2 3 9 4 5.83 
+Mean 
+       
+6.12 
+The results in Table # show that the DA Staffs rated 
+the SmartHarvest system as useful, with an overall mean of 
+6.12 in the “Agree” range. Question 3 "It is useful" had 
+the highest mean of 6.56, while Question 4 "It gives me 
+more control over the activities in my life" and Question 8 
+"It does everything I would expect it to do" shared the 
+lowest mean at 5.83, still indicating strong agreement. 
+These findings suggest the system is highly effective, 
+productive, and successfully meets the users' needs.  
+To better visualize the raw sentiment of the 18 DA-CAR 
+staff respondents across the eight usefulness items, their 
+Likert-scale selections were aggregated into a horizontal 
+bar chart. This illustrates the average rating breakdown of 
+how the 18 personnel answered the usefulness questions for 
+the web application. 
+Figure # 
+
+===== PDF PAGE 119 =====
+
+ 
+ 
+ 
+Visual of Perceived Usefulness Ratings 
+ 
+To assess ease of use, the researchers analyzed 
+responses on the SmartHarvest system’s simplicity, user-
+friendliness, and flexibility for the DA Staffs, summarized 
+in Table #. 
+Table # 
+Ease of Use: Usability Testing Result – DA Staffs 
+Questions 1 2 3 4 5 6 7 
+Weighted 
+Mean 
+9. It is easy to use. 0 0 0 0 1 9 8 6.39 
+10. It is simple to use. 0 0 0 0 1 7 10 6.50 
+11. It is user-friendly. 0 0 0 0 0 9 9 6.50 
+12. It requires the 
+fewest steps possible to 
+accomplish what I want 
+to do with it. 
+0 0 0 0 1 11 6 6.28 
+13. It is flexible. 0 0 0 0 1 6 11 6.56 
+
+
+===== PDF PAGE 120 =====
+
+ 
+ 
+ 
+14. Using it is 
+effortless. 
+0 0 0 0 2 9 6 6.11 
+15. I can use it without 
+written instructions. 
+0 0 0 1 0 11 6 6.22 
+16. I don’t notice 
+inconsistencies as I use 
+it. 
+0 0 0 1 4 9 4 5.89 
+17. Both occasional and 
+regular users would like 
+it. 
+0 0 0 0 3 9 6 6.17 
+18. I can recover from 
+mistakes quickly and 
+easily.  
+0 0 0 0 3 10 5 6.11 
+19. I can use it 
+successfully every time. 
+0 0 0 0 1 11 6 6.28 
+Mean        6.27 
+As shown in Table #, respondents rated the system as 
+exceptionally easy to use, with an overall mean of 6.27. 
+The highest mean of 6.56 was for Question 13 "It is 
+flexible." The lowest mean of 5.89 was for Question 16 "I 
+don’t notice inconsistencies as I use it," which still 
+firmly indicates agreement. These results suggest that the 
+DA staffs find the SmartHarvest system highly 
+straightforward, adaptable, and user-friendly.  
+To better visualize the raw sentiment of the 18 DA-CAR 
+staff respondents across the eleven ease of use items, 
+their Likert-scale selections were aggregated into a 
+horizontal bar chart. This illustrates the average rating 
+
+===== PDF PAGE 121 =====
+
+ 
+ 
+ 
+breakdown of how the 18 personnel answered the ease of use 
+questions for the administrative dashboard. 
+Figure # 
+Visual of Perceived Ease of Use Ratings 
+ 
+The SmartHarvest system’s ease of learning was 
+evaluated by how quickly DA Staffs learn its functions, as 
+shown in Table #. 
+Table # 
+Ease of Learning: Usability Testing Result – DA Staffs 
+Questions 1 2 3 4 5 6 7 
+Weighted 
+Mean 
+20. I learned to use it 
+quickly. 
+0 0 0 0 0 7 11 6.61 
+21. I easily remember 
+how to use it. 
+0 0 0 0 0 7 11 6.61 
+22. It is easy to learn 
+to use it. 
+0 0 0 0 0 5 13 6.72 
+
+
+===== PDF PAGE 122 =====
+
+ 
+ 
+ 
+23. I quickly became 
+skillful with it. 
+0 0 0 1 0 8 9 6.39 
+Mean        6.58 
+The results in Table # show that the system was 
+incredibly easy to learn, with an overall mean of 6.58, 
+placing it in the “Strongly Agree” range. Users most 
+strongly agreed with Question 22 "It is easy to learn to 
+use it" with a weighted mean of 6.72, demonstrating rapid 
+comprehension. The lowest mean was for Question 23 "I 
+quickly became skillful with it" at 6.39, though it still 
+indicates strong agreement. Overall, these findings suggest 
+that the DA Staffs can intuitively grasp and retain how to 
+operate the SmartHarvest system with very minimal effort. 
+To better visualize the raw sentiment of the 18 DA-CAR 
+staff respondents across the four ease of learning items, 
+their Likert-scale selections were aggregated into a 
+horizontal bar chart. This illustrates the average rating 
+breakdown of how the 18 personnel answered the ease of 
+learning questions for the administrative dashboard. 
+Figure # 
+Visual of Perceived Ease of Learning Ratings 
+
+===== PDF PAGE 123 =====
+
+ 
+ 
+ 
+ 
+User satisfaction among the DA Staffs was assessed 
+using the final USE questionnaire items, with results 
+summarized in Table #. 
+Table # 
+Satisfaction: Usability Testing Result – DA Staffs 
+Questions 1 2 3 4 5 6 7 
+Weighted 
+Mean 
+24. I am satisfied with 
+it. 
+0 0 0 0 2 9 7 6.28 
+25. I would recommend it 
+to a friend. 
+0 0 0 1 1 7 9 6.33 
+26. It is fun to use. 0 0 0 0 2 9 7 6.28 
+27. It works the way I 
+want it to work. 
+0 0 0 0 3 9 6 6.17 
+28. It is wonderful. 0 0 0 0 1 8 9 6.44 
+29. I feel I need to 
+have it. 
+0 0 0 0 4 6 8 6.22 
+30. It is pleasant to 
+use. 
+0 0 0 0 2 8 8 6.33 
+Mean        6.29 
+
+
+===== PDF PAGE 124 =====
+
+ 
+ 
+ 
+In terms of user satisfaction, Table # shows an 
+overall mean of 6.29, falling firmly into the “Strongly 
+Agree” range. The highest-rated item was Question 28 "It is 
+wonderful" (6.44), demonstrating strong appreciation and 
+enjoyment of the platform. The lowest was Question 27 "It 
+works the way I want it to work" (6.17), still reflecting 
+clear agreement. These results indicate that the DA Staffs 
+are highly satisfied with the SmartHarvest system’s 
+performance, find it pleasant to operate, and would 
+confidently recommend it. 
+To better visualize the raw sentiment of the 18 DA-CAR 
+staff respondents across the seven satisfaction items, 
+their Likert-scale selections were aggregated into a 
+horizontal bar chart. This illustrates the average rating 
+breakdown of how the 18 personnel answered the satisfaction 
+questions for the administrative dashboard. 
+Figure # 
+Visual of Perceived Satisfaction Ratings 
+
+===== PDF PAGE 125 =====
+
+ 
+ 
+ 
+ 
+To present the overall usability of the SmartHarvest 
+system from the DA Staffs' perspective, the researchers 
+summarized the weighted means for all dimensions of the USE 
+questionnaire. The results are shown in Table #. 
+Table # 
+Usability Testing Overall Result 
+Dimensions Mean Interpretation 
+Usefulness 6.12 Agree 
+Ease of Use 6.27 Strongly Agree 
+Ease of Learning 6.58 Strongly Agree 
+Satisfaction 6.29 Strongly Agree 
+Overall Result 6.32 Strongly Agree 
+Table # presents the overall results of the usability 
+testing across the four USE dimensions for the DA Staffs: 
+Usefulness, Ease of Use, Ease of Learning, and 
+Satisfaction. The SmartHarvest system achieved an excellent 
+overall weighted mean of 6.32, which corresponds to 
+
+
+===== PDF PAGE 126 =====
+
+ 
+ 
+ 
+“Strongly Agree” on the Likert Scale. The survey responses 
+indicate that the DA Staffs perceive the system as highly 
+effective, remarkably easy to operate, exceptionally quick 
+to learn, and highly satisfying. The results confirm 
+remarkably consistent and positive feedback across all 
+dimensions, highlighting SmartHarvest’s strong overall 
+usability and widespread acceptance by the staff. 
+Table # shows the comparison between the two used 
+evaluation instruments, the SUS and USE. 
+Table # 
+User 
+Group 
+Evaluation 
+Instrument 
+Rating Interpretation 
+Farmers System Usability 
+Scale (SUS) 
+71.55 Good / Acceptable 
+Expert USE Questionnaire 6.32 Strongly Agree 
+ Table # presents the combined results of the SUS and 
+USE evaluations. The findings show that the system was 
+successful in meeting the needs of both farmers and 
+administrators. It provides an easy-to-use and complete 
+platform that supports decision-making from data collection 
+to monitoring and analysis. 
+  
+ 
+ 
+Chapter 4 
+
+===== PDF PAGE 127 =====
+
+ 
+ 
+ 
+CONCLUSIONS AND RECOMMENDATIONS 
+This chapter provides a summary of the conclusions 
+drawn from the results and findings of the study. It 
+presents the key interpretations which reflect how the 
+objectives of the research were addressed. In addition, it 
+presents the researchers' recommendations, which are 
+intended to guide future researchers and developers who may 
+undertake similar studies. 
+Conclusions 
+1. The information requirements of the system were 
+successfully identified and categorized into three main 
+parts: farmers, DA administrators, and super 
+administrators. Farmers are required to provide full name, 
+contact details, and a valid RSBSA number for verification. 
+Administrators are required to provide official 
+credentials, contact details, and 2FA authentication. 
+System requirements such as RAM, storage, OS version, and 
+internet connectivity were also specified. 
+2. The 4+1 architectural framework, supported by UML 
+diagrams, effectively guided the system’s structural design 
+and facilitated a smooth transition from planning to 
+development. 
+
+===== PDF PAGE 128 =====
+
+ 
+ 
+ 
+3. The study identified core features of the system, 
+including Random Forest-based crop schedule forecasting, 
+comprehensive yield analysis, agricultural weather 
+forecasts, and a provincial monitoring dashboard. 
+4. The SmartHarvest system was evaluated by DA Staff 
+across four USE dimensions: Usefulness, Ease of Use, Ease 
+of Learning, and Satisfaction. The system achieved an 
+overall weighted mean of 6.32, corresponding to "Strongly 
+Agree" on the Likert Scale. Overall, the admin dashboard 
+earned a "Strongly Agree" rating, reflecting highly 
+effective usability, while the system placed within the ‘C- 
+to C+’ ("OK–Good" / Marginal–Acceptable) grade range 
+utilizing the SUS instrument. This indicates that while the 
+system is highly effective overall, the system has minor 
+areas that can be improved. 
+Recommendations 
+1. Clearly define and enforce the RSBSA number 
+verification process to support accurate and secure 
+agricultural data reporting. 
+2. Establish partnerships with local agricultural 
+cooperatives in Benguet to expand system access and 
+build platform credibility. 
+
+===== PDF PAGE 129 =====
+
+ 
+ 
+ 
+3. Enable offline access to the planting schedule 
+recommendations to increase usability for farmers in 
+low-connectivity rural areas. 
+4. Conduct regular usability testing with actual 
+farmers to continuously identify pain points and 
+optimize user experience in future updates. 
+
+===== PDF PAGE 130 =====
+
+ 
+ 
+ References 64 
+ 
+ 
+ 
+ 
+REFERENCES 
+Abdul-Majid, M., Zahari, S. A., Othman, N., & Nadzri, S. 
+(2024). Influence of technology adoption on farmers’ 
+well-being: Systematic literature review and 
+bibliometric analysis. Heliyon, 10(2), e24316. 
+https://doi.org/10.1016/j.heliyon.2024.e24316 
+ADB Independent Evaluation Department. (2025). Philippines : 
+Competitive and Inclusive Agriculture Development 
+Program (Subprograms 1 and 2). Asian Development Bank. 
+https://www.adb.org/documents/philippines-competitive-
+and-inclusive-agriculture-development-program-
+subprograms-1-and-2 
+Agarwal, S., & Tarar, S. (2021). A HYBRID APPROACH FOR CROP 
+YIELD PREDICTION USING MACHINE LEARNING AND DEEP 
+LEARNING ALGORITHMS. Journal of Physics Conference 
+Series, 1714(1), 012012. https://doi.org/10.1088/1742-
+6596/1714/1/012012 
+Akther, S. G., Islam, A., Muna, E. J., & Tasmi, J. J. 
+(2024). AI Meets Agriculture: Advanced Rice Yield 
+Forecasting Based on Historical Data using Machine 
+Learning Approaches. IEEE Xplore, 2570–2575. 
+https://doi.org/10.1109/iccit64611.2024.11021921 
+
+===== PDF PAGE 131 =====
+
+ 
+ 
+ 
+Albano, A. (2025). From rice to Vegetable Terraces: 
+Agricultural transition and sustainability in western 
+Ifugao, Philippines. 2025 Center for Southeast Asian 
+Studies, Kyoto University. 
+https://doi.org/10.20495/seas.14.1_37 
+Alfonso, G. P. (2021). Assessing the climate change 
+adaptations of upland farmers: a case of La Trinidad, 
+Benguet, Philippines. Indonesian Journal of Social and 
+Environmental Issues (IJSEI), 2(2), 129–142. 
+https://doi.org/10.47540/ijsei.v2i2.214 
+Apdohan, A. G., Varela, R. P., & Balanay, R. M. (2021). 
+CLIMATE RISK VULNERABILITY ASSESSMENT OF THE MAJOR 
+CROPS IN THE PROVINCE OF AGUSAN DEL NORTE, 
+PHILIPPINES. the International Archives of the 
+Photogrammetry, Remote Sensing and Spatial Information 
+Sciences/International Archives of the Photogrammetry, 
+Remote Sensing and Spatial Information Sciences, XLVI-
+4/W6-2021, 27–33. https://doi.org/10.5194/isprs-
+archives-xlvi-4-w6-2021-27-2021 
+Big Data Analytics in Agriculture – IJSREM. (n.d.). 
+https://ijsrem.com/download/big-data-analytics-in-
+agriculture/ 
+Briones, R. (2021). Philippine agriculture: current state, 
+
+===== PDF PAGE 132 =====
+
+ 
+ 
+ 
+challenges, and ways forward. 
+https://doi.org/10.62986/pn2021.12 
+Chakraborty, S., Kumar, S., Tripathi, B., & Saini, M. L. 
+(2024). AI Explainable for Forecasting Crop Production 
+Affected by Weather. IEEE Xplore, 1–6. 
+https://doi.org/10.1109/ic3se62002.2024.10593021 
+Damaševičius, R., Mozgeris, G., Kurti, A., & Maskeliūnas, 
+R. (2024). Digital transformation of the future of 
+forestry: an exploration of key concepts in the 
+principles behind Forest 4.0. Frontiers in Forests and 
+Global Change, 7. 
+https://doi.org/10.3389/ffgc.2024.1424327 
+Das, G., Lufeng, L., Xiaohong, Y., Hailian, Z., Tunio, R. 
+A., & Khan, N. (2025). Land fragmentation and green 
+farming: livelihood strategies and resource endowment 
+in sustainable agriculture. Frontiers in Sustainable 
+Food Systems, 9. 
+https://doi.org/10.3389/fsufs.2025.1533063 
+De Leon, T. J. P., & Manalo, J. A., IV. (2024). Affordances 
+in crop diversification: Three cases from the 
+Philippines. AgEcon Search. 
+https://doi.org/10.22004/ag.econ.348849 
+
+===== PDF PAGE 133 =====
+
+ 
+ 
+ 
+Department of Agriculture. (2022). Facing the big 
+challenges in Philippine Agriculture. Official Portal 
+of the Department of Agriculture. 
+https://www.da.gov.ph/facing-the-big-challenges-in-
+philippine-agriculture/ 
+Desicion support systems in Smart Climate Agriculture. 
+(n.d.). ResearchGate. 
+https://www.researchgate.net/publication/389948293_Des
+icion_support_systems_in_Smart_Climate_Agriculture 
+Dolom, P., Calimag, C., Nicmic, J., Eleazar, P. J., Casin, 
+M. C., Villanueva, M. M., Garcia, D. M., & Buot, M. K. 
+(2023, October 16). Assessment of climate change 
+vulnerabilities of upland vegetable farmers in 
+selected areas in Benguet, Philippines. 
+https://ovcre.uplb.edu.ph/journals-
+uplb/index.php/EDJ/article/view/954 
+Etikan, I. (2016). Comparison of convenience sampling and 
+purposive sampling. American Journal of Theoretical 
+and Applied Statistics, 5(1), 1. 
+https://doi.org/10.11648/j.ajtas.20160501.11 
+GeeksforGeeks. (2025). Random Forest algorithm in machine 
+learning. GeeksforGeeks. 
+
+===== PDF PAGE 134 =====
+
+ 
+ 
+ 
+https://www.geeksforgeeks.org/machine-learning/random-
+forest-algorithm-in-machine-learning/ 
+Guerrero-Ulloa, G., Rodríguez-Domínguez, C., & Hornos, M. 
+J. (2023). Agile Methodologies Applied to the 
+Development of Internet of Things (IoT)-Based Systems: 
+A review. Sensors, 23(2), 790. 
+https://doi.org/10.3390/s23020790 
+ 
+Ilanga, A., & Senkondo, Y. H. (2025). Adapting to 
+Unpredictability: Exploring the effects of shifting 
+weather and farming systems. Asian Journal of 
+Environment & Ecology, 24(5), 128–139. 
+https://doi.org/10.9734/ajee/2025/v24i5699 
+Irfan Samsyudin. (2025). AI-Driven IoT Framework for 
+Sustainable Corn Precision Farming in Northern 
+Philippines. https://doi.org/10.2139/ssrn.5596630 
+ISAAA Inc. launches the study on public perception of 
+agricultural biotechnology in the Philippines. (n.d.). 
+Crop Biotech Update. 
+https://www.isaaa.org/kc/cropbiotechupdate/article/def
+ault.asp?ID=20449 
+Kalpana, P., Prem, I. A., Mary, S. J. R., & Rani, A. 
+(2023). Crop yield prediction using machine learning. 
+
+===== PDF PAGE 135 =====
+
+ 
+ 
+ 
+REST Publisher, 2(1), 16–20. 
+https://doi.org/10.46632/jdaai/2/1/3 
+Kingan, M. S., Pablo, J. P., & Sebiano, B. P. (2024). 
+Climate Risk Profiles for a Climate-Resilient 
+agriculture on selected crops in the Cordillera 
+Administrative Region. Mountain Journal of Science and 
+Interdisciplinary Research (Formerly Benguet State 
+University Research Journal), 84(2), 26–58. 
+https://doi.org/10.70884/mjsir.v84i2.423 
+Kumari, V., Nath, D., Bhowmick, M. K., Kumar, S., 
+Peramaiyan, P., Singh, S., Pramanick, B., & Laik, R. 
+(2025). Climate-Smart rice production technologies for 
+improving productivity and resilience. In 
+Sustainability Sciences in Asia and Africa (pp. 161–
+181). https://doi.org/10.1007/978-981-96-7699-6_8, 
+84(2), 26–58.  
+Laureta, R. P., Regalado, R. R. H., & De La Cruz, E. B. 
+(2021). Climate vulnerability scenario of the 
+agricultural sector in the Bicol River Basin, 
+Philippines. Climatic Change, 168(1–2). 
+https://doi.org/10.1007/s10584-021-03208-8 
+Brooke, J. (1996). SUS -- a quick and dirty usability 
+scale. 
+
+===== PDF PAGE 136 =====
+
+ 
+ 
+ 
+Mahesh, P., & Soundrapandiyan, R. (2024). Yield prediction 
+for crops by gradient-based algorithms. PLoS ONE, 
+19(8), e0291928. 
+https://doi.org/10.1371/journal.pone.0291928 
+Mössinger, J., Troost, C., & Berger, T. (2021). Bridging 
+the gap between models and users: A lightweight mobile 
+interface for optimized farming decisions in 
+interactive modeling sessions. Agricultural Systems, 
+195, 103315. 
+https://doi.org/10.1016/j.agsy.2021.103315 
+Oecd. (2025). Agricultural Policy Monitoring and Evaluation 
+2025. In Agricultural policy monitoring and 
+evaluation. https://doi.org/10.1787/a80ac398-en 
+Oikonomidis, A., Catal, C., & Kassahun, A. (2022). Deep 
+learning for crop yield prediction: a systematic 
+literature review. New Zealand Journal of Crop and 
+Horticultural Science, 51(1), 1–26. 
+https://doi.org/10.1080/01140671.2022.2032213 
+Picpican, J. K. (2024). Accessibility of Agricultural 
+Credit and its perceived Effects among the High-Value 
+Crop Farmers of Atok, Benguet, Philippines. Mountain 
+Journal of Science and Interdisciplinary Research 
+
+===== PDF PAGE 137 =====
+
+ 
+ 
+ 
+(Formerly Benguet State University Research Journal), 
+84(2), 59–71. https://doi.org/10.70884/mjsir.v84i2.424 
+Quitaleg, A. R., & Dumlao, M. (2025). The Analysis of Crop 
+production data for Predicting Future Trends of 
+Highland Vegetables in Benguet. Journal of 
+Interdisciplinary Perspectives, 3(8), 616–624. 
+https://doi.org/10.69569/jip.2025.422 
+Rashid, M., Bari, B. S., Yusup, Y., Kamaruddin, M. A., & 
+Khan, N. (2021). A comprehensive review of crop yield 
+prediction using machine learning approaches with 
+special emphasis on palm oil yield prediction. IEEE 
+Access, 9, 63406–63439. 
+https://doi.org/10.1109/access.2021.3075159 
+Rashmi, B. T., Anitha, G. J. H. M., & Ashwini, J. (2025). 
+Predicting agricultural yields based on machine 
+learning using regression and deep learning. IJARCCE, 
+14(9). https://doi.org/10.17148/ijarcce.2025.14941 
+Reddy, D., & Kumar, M. R. (2021). Crop Yield Prediction 
+using Machine Learning Algorithm. IEEE Xplore, 1466–
+1470. https://doi.org/10.1109/iciccs51141.2021.9432236 
+Ridon, M. V. K., Domingo-Palaoag, T., & Palileng, R. 
+(2024). Design and Architecture of BenguetFresh: an 
+IoT-Enabled Data-Driven system for sustainable 
+
+===== PDF PAGE 138 =====
+
+ 
+ 
+ 
+agriculture. Journal of Electrical Systems, 20(4s), 
+736–742. https://doi.org/10.52783/jes.2095 
+Rose, D. P. M., Gamaliel, G. G., Jay, P. I. H., Amadito, B. 
+P., Jr, Rhey, M. D. V., Emmanuel, M. S., & Marlon, M. 
+D. (2025). Factors influencing pneumatic precision 
+corn planter adoption in the Philippines: An empirical 
+study using the Technology Acceptance Model (TAM) and 
+Partial Least Squares Structural Equation Modeling 
+(PLS-SEM). Ho Chi Minh City Open University Journal of 
+Science- Economics and Business Administration, 15(5), 
+23–49. 
+https://doi.org/10.46223/hcmcoujs.econ.en.15.5.3964.20
+25 
+Samaniego, A. L., & Gallego, M. (2024). Farm Soil Testing 
+Techniques, Soil Health, and Potential Impact of 
+Artificial Intelligence as Factors of Small-Scale 
+Farming Soil Management. E3S Web of Conferences, 595, 
+03001–03001. 
+https://doi.org/10.1051/e3sconf/202459503001 
+Schierhorn, F., Hofmann, M., Gagalyuk, T., Ostapchuk, I., & 
+Müller, D. (2021). Machine learning reveals complex 
+effects of climatic means and weather extremes on 
+wheat yields during different plant developmental 
+
+===== PDF PAGE 139 =====
+
+ 
+ 
+ 
+stages. Climatic Change, 169(3–4). 
+https://doi.org/10.1007/s10584-021-03272-0 
+Searca, & Searca. (2023). Aging farmers could add to food 
+insecurity - SEARCA. 
+https://www.searca.org/press/aging-farmers-could-add-
+food-insecurity 
+SERD Personnel Editor. (2025). A farmer’s legacy and the 
+future of Philippine agriculture. Industry Strategic 
+Science and Technology Plans (ISPs) Platform. 
+https://ispweb.pcaarrd.dost.gov.ph/a-farmers-legacy-
+and-the-future-of-philippine-agriculture/ 
+Shanmugam, N. M. V., Sriteja, N. I., Dathu, N. K. S., Raju, 
+N. K., Kumar, N. S. S., & Karun, N. G. (2024). Crop 
+Yield Prediction using Machine Learning. International 
+Journal of Advanced Research in Science Communication 
+and Technology, 568–576. 
+https://doi.org/10.48175/ijarsct-18185 
+Sharma, P., Dadheech, P., Aneja, N., & Aneja, S. (2023). 
+Predicting agriculture yields based on machine 
+learning using regression and deep learning. IEEE 
+Access, 11, 111255–111264. 
+https://doi.org/10.1109/access.2023.3321861 
+
+===== PDF PAGE 140 =====
+
+ 
+ 
+ 
+Sidchogan-Fuchigami, C. G. B., & Napudo, F. B. (2023). 
+Upscaling Organic Agriculture System of La Trinidad, 
+Benguet Farmers. Mountain Journal of Science and 
+Interdisciplinary Research (Formerly Benguet State 
+University Research Journal), 82(2), 53–72. 
+https://doi.org/10.70884/mjsir.v82i2.332 
+Supangco, E. E., Pablo, J. P., Lumbres, R. I. C., 
+Tolentino-Neric, C. M., Daipan, L. E. O., Inciong, G. 
+K., & Gonzales, R. (2022). Climate-Resilient 
+Agriculture Assessment, Targeting and Prioritization 
+for the Adaptation, and Mitigation Initiative in 
+Agriculture (AMIA) in the Cordillera Administrative 
+Region, Philippines. In New frontiers in regional 
+science: Asian perspectives (pp. 303–336). 
+https://doi.org/10.1007/978-981-19-0213-0_11 
+Taer, E., & Taer, A. (2024). Cultivating Tomorrow: A 
+Comprehensive review of Agricultural innovations in 
+the Philippines (2018–2023). Agricultural Research, 
+13(4), 623–635. https://doi.org/10.1007/s40003-024-
+00803-w 
+Team, M. (n.d.). Frontiers in sustainable food systems. 
+Frontiers. 
+
+===== PDF PAGE 141 =====
+
+ 
+ 
+ 
+https://www.frontiersin.org/journals/sustainable-food-
+systems 
+Vitug, E. G. (2023). Developing the coconut value chain in 
+central Luzon, Philippines: A case study of coco 
+geonets in aurora. AgEcon Search. 
+https://doi.org/10.22004/ag.econ.342409 
+Zhang, Y. (2024). A review of the impact of extreme weather 
+on agricultural economics. International Journal of 
+Social Sciences and Public Administration, 4(2), 282–
+287. https://doi.org/10.62051/ijsspa.v4n2.38 
+Zhou, Y., Li, Y., & Xiao, Y. (2025). Crop planting 
+optimization Decision-Making based on goal. Highlights 
+in Business Economics and Management, 53, 255–262. 
+https://doi.org/10.54097/ehrcrw41 
+ 
+
+===== PDF PAGE 142 =====
+
+ 
+ 
+ 
+APPENDICES 
+Appendix A 
+Signed Invitation Form (Adviser) 
+ 
+ 
+
+
+===== PDF PAGE 143 =====
+
+ 
+ 
+ 
+Appendix B 
+Signed Invitation Form (Chairperson) 
+ 
+ 
+ 
+
+
+===== PDF PAGE 144 =====
+
+ 
+ 
+ 
+Appendix C 
+Signed Invitation Form (Member) 
+ 
+ 
+ 
+
+
+===== PDF PAGE 145 =====
+
+ 
+ 
+ 
+Appendix D 
+Signed Endorsement Form 
+ 
+ 
+Appendix E 
+Signed Communication Letter 
+
+
+===== PDF PAGE 146 =====
+
+ 
+ 
+ 
+ 
+
+
+===== PDF PAGE 147 =====
+
+ 
+ 
+ 
+ 
+TBI Assessment Certification  
+
+
+===== PDF PAGE 148 =====
+
+ 
+ 
+ 
+ 
+ 
+
+
+===== PDF PAGE 149 =====
+
+ 
+ 
+ 
+Appendix 
+
+
+===== PDF PAGE 150 =====
+
+ 
+ 
+ 
+CURRICULUM VITAE 
+JATHNIEL REI D. CARBONELL  
+ #360 Purok 5, Ananey Street, Dontogan, 
+Baguio City 
+ +63.956.087.8368 
+ jath.carbonell@gmail.com 
+ 
+ 
+EDUCATIONAL ATTAINMENT 
+Tertiary  : Bachelor of Science in Information 
+Technology  
+: Network & Security Track 
+: University of the Cordilleras 
+: Gov. Pack Rd., Baguio City 
+: Expected Date of Graduation: September 
+2026 
+Secondary : Science, Technology, Engineering, and 
+Mathematics (STEM) Strand 
+: Baguio City National High School  
+: Governor Pack Road, Baguio City 
+: March 2023 
+: With High Honors 
+Primary : Dontogan Elementary School 
+: 9HMC+PG9, Santo Tomas Rd., Baguio City 
+: March 2016 
+: Salutatorian 
+ 
+SKILLS AND QUALIFICATIONS 
+
+
+===== PDF PAGE 151 =====
+
+ 
+ 
+ 
+• Adaptable, quick to learn, and able to work under minimal 
+supervision 
+• Proficiency in using computers and various operating systems 
+• Troubleshooting and configuring hardware, software, and 
+network 
+• Experienced in managing project and workflow tools 
+• Knowledgeable in computer programming 
+• Web development 
+• Knowledgeable in creative tools (Adobe Photoshop, Canva, 
+etc.) 
+• Proficient in Microsoft Office Suite 
+• Graphic design and photo/video editing 
+SEMINARS and TRAININGS ATTENDED  
+• Cisco NetRiders 2026 Competition - Cisco Networking Academy , 
+2026 
+• Hack4Gov Regionals Competition – Department of Information 
+and Communications Technology – Cordillera Administrative 
+Region, 2025 
+• CCNA: Enterprise Networking, Security, and Automation - Cisco 
+Networking Academy, 2025 
+• Cisco NetRiders 2025 Competition - Cisco Networking Academy , 
+2025 
+• Computer Hardware Basics - Cisco Networking Academy, 2024 
+• Digital Awareness - Cisco Networking Academy, 2024 
+• Python Essentials 1 - Cisco Networking Academy, 2024 
+• Google Developers Group DevFest Baguio - Google, 2023 
+PERSONAL INFORMATION 
+Date of Birth : July 09, 2005 
+Age : 20 years old 
+Height : 5’9” 
+Weight : 77 kgs. 
+
+===== PDF PAGE 152 =====
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+JOHN PAUL A. SORIANO  
+
+
+===== PDF PAGE 153 =====
+
+ 
+ 
+ 
+ #101-A San Carlos Proper, Baguio City 
++63.961.616.5831 
+ jpsoriano.a@gmail.com 
+ 
+ 
+ 
+EDUCATIONAL ATTAINMENT 
+Tertiary  : Bachelor of Science in Information Technology 
+: Network & Security Track 
+: University of the Cordilleras 
+: Gov. Pack Rd., Baguio City 
+: Expected Date of Graduation: September 2026 
+Secondary : Science, Technology, Engineering, and 
+Mathematics (STEM) Strand 
+: University of Baguio 
+: General Luna Road, Baguio City 
+: June 2023 
+ : With Honors 
+Primary : Barretto II Elementary School 
+: Rizal Street, Olongapo City 
+: April 2017 
+SKILLS AND QUALIFICATIONS 
+• Knowledgeable in Cisco network infrastructure and security 
+configurations 
+• Proficient in UI/UX design and prototyping using Figma and 
+Canva 
+• Knowledgeable in Machine Learning applications, predictive 
+modeling, and time-series forecasting 
+• Familiar with fundamental data analytics processes, including 
+data cleaning, interpretation, and visualization using Excel  
+
+===== PDF PAGE 154 =====
+
+ 
+ 
+ 
+• Strong verbal and communication skills 
+• Capable of performing effectively and delivering high-quality 
+results under pressure 
+SEMINARS and TRAININGS ATTENDED  
+• GDG DevFest Baguio 2023 
+November 11, 2023 
+University of the Cordilleras, Baguio City 
+• basePH 2025 
+October 02, 2025 
+University of the Cordilleras, Baguio City 
+• GDG DevFest Baguio 2025 
+October 18, 2025 
+University of the Cordilleras, Baguio City 
+• Sui 2025 
+October 23, 2025 
+University of the Cordilleras, Baguio City 
+• AI & Machine Learning: Powering Intelligent Systems 
+March 07, 2026 
+via Zoom 
+• Practical Data Analytics using Python and Data Visualization 
+March 14, 2026 
+via Zoom 
+PERSONAL INFORMATION 
+Date of Birth : October 20, 2005 
+Age : 20 years old 
+Height : 5’6” 
+Weight : 57 kgs. 
+ 
+ 
+
+===== PDF PAGE 155 =====
+
+ 
+ 
+ 
+Creative Strategist : Freelance 
+: Baguio City 
+: August 2025 – January 2026 
+ 
+Content Creation : Freelance 
+: Baguio City 
+: 2022 - Present 
+ 
+Social Media Marketing : Freelance 
+: Baguio City 
+: May 2025 – January 2026 
+ 
+Web Designer  
+& Site Manager    : STI College Baguio (Internship) 
+: New Lucban, Baguio City 
+: May 2023 – July 2023 
+ 
+ 
+ 
+ 
+
+
+===== PDF PAGE 156 =====
+
+ 
+ 
+ 
+Tertiary  : Bachelor of Science in Information Technology 
+Network and Security Track 
+    : University of the Cordilleras 
+: Governor Pack Road, Baguio City 
+: Expected Date of Graduation: September 2027 
+ 
+ 
+Secondary      : Science, Technology, Engineering, and Mathematics 
+(STEM) Strand 
+: STI College Baguio 
+: Governor Pack Road, Baguio City 
+: July 2023 
+: With Honors 
+Primary : Baguio City National High School 
+: Governor Pack Road, Baguio City 
+ 
+: March 2016 
+: With Honors, Special Program in the Arts - Dance 
+ 
+ 
+● Ad Creative Execution 
+● Creative Iteration 
+● Brand Adaptation 
+● Content Planning 
+● Graphic Design 
+● Video Editing 
+● Content Creation 
+● Shorts/Reel Editor 
+
+
+===== PDF PAGE 157 =====
+
+ 
+ 
+ 
+● Real Estate Marketing 
+● E-commerce Marketing 
+● UI/UX Design 
+● Localization 
+● UGC Creation 
+ 
+ 
+● DevFest Baguio 
+2023 November 
+11, 2023 
+Gov. Pack Rd, Baguio City 
+● Base Build 
+Gov. Pack Rd, Baguio City 
+September 30, 2025 
+● DevFest Baguio 
+2025 October 18, 
+2025 
+Baguio Convention Center, Baguio City 
+● Sui Move in Campus 
+Gov. Pack Rd, Baguio City 
+October 23, 2025 
+ 
+Date of Birth : December 3, 
+2004 Age : 21 years old 
+Height : 5'1" 
+Weight : 48 kgs 
+ 
+● Available upon request. 
+ 

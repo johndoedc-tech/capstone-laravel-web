@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1380" viewBox="0 0 1900 1380">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10z" fill="#263238"/>
+    </marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#173b2c}.subtitle{font:18px Arial,sans-serif;fill:#54635c}
+      .head{font:700 19px Arial,sans-serif;fill:#18352a}.msg{font:17px Arial,sans-serif;fill:#263238}.small{font:15px Arial,sans-serif;fill:#455a64}.phase{font:700 18px Arial,sans-serif;fill:#315846}
+      .life{stroke:#789187;stroke-width:2;stroke-dasharray:9 8}.call{stroke:#263238;stroke-width:2.3;fill:none;marker-end:url(#arrow)}.return{stroke:#52665d;stroke-width:2.1;stroke-dasharray:8 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1900" height="1380" fill="#ffffff"/>
+  <text x="950" y="54" text-anchor="middle" class="title">Harviana DA Administrator Supply Forecast Sequence Diagram</text>
+  <text x="950" y="84" text-anchor="middle" class="subtitle">Retrieval and calculation of municipality-level agricultural supply forecasts</text>
+
+  <g>
+    <rect x="35" y="120" width="220" height="72" rx="10" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/>
+    <text x="145" y="151" text-anchor="middle" class="head">DA</text><text x="145" y="175" text-anchor="middle" class="head">Administrator</text>
+    <rect x="315" y="120" width="220" height="72" rx="10" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/>
+    <text x="425" y="163" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="595" y="120" width="220" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/>
+    <text x="705" y="163" text-anchor="middle" class="head">MapController</text>
+    <rect x="875" y="120" width="245" height="72" rx="10" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/>
+    <text x="998" y="151" text-anchor="middle" class="head">MapData</text><text x="998" y="175" text-anchor="middle" class="head">Controller</text>
+    <rect x="1180" y="120" width="330" height="72" rx="10" fill="#f3e5f5" stroke="#7e57a1" stroke-width="2"/>
+    <text x="1345" y="151" text-anchor="middle" class="head">MunicipalSupplyForecast</text><text x="1345" y="175" text-anchor="middle" class="head">Service</text>
+    <rect x="1570" y="120" width="285" height="72" rx="10" fill="#fff3e0" stroke="#b27624" stroke-width="2"/>
+    <text x="1713" y="151" text-anchor="middle" class="head">Railway</text><text x="1713" y="175" text-anchor="middle" class="head">PostgreSQL</text>
+  </g>
+
+  <line x1="145" y1="192" x2="145" y2="1300" class="life"/>
+  <line x1="425" y1="192" x2="425" y2="1300" class="life"/>
+  <line x1="705" y1="192" x2="705" y2="1300" class="life"/>
+  <line x1="998" y1="192" x2="998" y2="1300" class="life"/>
+  <line x1="1345" y1="192" x2="1345" y2="1300" class="life"/>
+  <line x1="1713" y1="192" x2="1713" y2="1300" class="life"/>
+
+  <rect x="20" y="225" width="1860" height="325" rx="8" fill="#f8fbf9" stroke="#afc1b8" stroke-width="2"/>
+  <text x="50" y="258" class="phase">Admin map access</text>
+  <line x1="145" y1="325" x2="425" y2="325" class="call"/>
+  <text x="285" y="312" text-anchor="middle" class="msg">1. Open interactive map</text>
+  <line x1="425" y1="400" x2="705" y2="400" class="call"/>
+  <text x="565" y="387" text-anchor="middle" class="msg">2. Request admin map</text>
+  <text x="565" y="411" text-anchor="middle" class="small">GET /admin/map</text>
+  <line x1="705" y1="480" x2="425" y2="480" class="return"/>
+  <text x="565" y="467" text-anchor="middle" class="msg">3. Return admin map interface</text>
+  <line x1="425" y1="530" x2="145" y2="530" class="return"/>
+  <text x="285" y="517" text-anchor="middle" class="msg">4. Display map and filters</text>
+
+  <rect x="20" y="575" width="1860" height="690" rx="8" fill="#fffdf7" stroke="#d3bd8a" stroke-width="2"/>
+  <text x="50" y="608" class="phase">Supply forecast retrieval and calculation</text>
+  <line x1="145" y1="680" x2="425" y2="680" class="call"/>
+  <text x="285" y="667" text-anchor="middle" class="msg">5. Select forecast filters</text>
+  <line x1="425" y1="755" x2="998" y2="755" class="call"/>
+  <text x="712" y="742" text-anchor="middle" class="msg">6. Request municipal supply forecast</text>
+  <text x="712" y="766" text-anchor="middle" class="small">municipality, crop, year, and farm type</text>
+  <line x1="998" y1="835" x2="1345" y2="835" class="call"/>
+  <text x="1172" y="822" text-anchor="middle" class="msg">7. Get forecast summaries</text>
+  <line x1="1345" y1="915" x2="1713" y2="915" class="call"/>
+  <text x="1529" y="890" text-anchor="middle" class="msg">8. Query crop plans and</text>
+  <text x="1529" y="912" text-anchor="middle" class="small">approved damage and harvest data</text>
+  <line x1="1713" y1="990" x2="1345" y2="990" class="return"/>
+  <text x="1529" y="977" text-anchor="middle" class="msg">9. Return agricultural records</text>
+  <path d="M1345 1045 h125 v62 h-125" class="call"/>
+  <text x="1485" y="1066" class="msg">10. Calculate adjusted</text>
+  <text x="1485" y="1090" class="msg">municipal supply</text>
+  <line x1="1345" y1="1150" x2="998" y2="1150" class="return"/>
+  <text x="1172" y="1137" text-anchor="middle" class="msg">11. Return forecast summary</text>
+  <line x1="998" y1="1205" x2="425" y2="1205" class="return"/>
+  <text x="712" y="1192" text-anchor="middle" class="msg">12. Return forecast data</text>
+  <line x1="425" y1="1255" x2="145" y2="1255" class="return"/>
+  <text x="285" y="1242" text-anchor="middle" class="msg">13. Display municipal forecast</text>
+
+  <g transform="translate(0,1110)">
+    <rect x="35" y="192" width="220" height="52" rx="8" fill="#e8f5e9" stroke="#3f7d58" stroke-width="2"/><text x="145" y="225" text-anchor="middle" class="head">DA Administrator</text>
+    <rect x="315" y="192" width="220" height="52" rx="8" fill="#e3f2fd" stroke="#4179a5" stroke-width="2"/><text x="425" y="225" text-anchor="middle" class="head">Web Browser</text>
+    <rect x="595" y="192" width="220" height="52" rx="8" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/><text x="705" y="225" text-anchor="middle" class="head">MapController</text>
+    <rect x="875" y="192" width="245" height="52" rx="8" fill="#eef7ee" stroke="#4c8b5f" stroke-width="2"/><text x="998" y="225" text-anchor="middle" class="head">MapDataController</text>
+    <rect x="1180" y="192" width="330" height="52" rx="8" fill="#f3e5f5" stroke="#7e57a1" stroke-width="2"/><text x="1345" y="225" text-anchor="middle" class="head">Supply Forecast Service</text>
+    <rect x="1570" y="192" width="285" height="52" rx="8" fill="#fff3e0" stroke="#b27624" stroke-width="2"/><text x="1713" y="225" text-anchor="middle" class="head">Railway PostgreSQL</text>
+  </g>
+</svg>
