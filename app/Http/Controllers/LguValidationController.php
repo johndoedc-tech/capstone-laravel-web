@@ -15,7 +15,6 @@ class LguValidationController extends Controller
     public function index(Request $request): View
     {
         $validator = Auth::user();
-        $status = $request->query('status', FarmerCalendarEvent::VALIDATION_PENDING);
         $type = $request->query('type', 'all');
         $search = trim((string) $request->query('search', ''));
 
@@ -24,13 +23,10 @@ class LguValidationController extends Controller
             ->where(function (Builder $query) {
                 $query->where('category', 'damage_report')
                     ->orWhereNotNull('actual_harvest_recorded_at');
-            });
+            })
+            ->where('lgu_validation_status', FarmerCalendarEvent::VALIDATION_PENDING);
 
         $this->scopeToValidator($query, $validator);
-
-        if ($status !== 'all') {
-            $query->where('lgu_validation_status', $status);
-        }
 
         if ($type === 'damage') {
             $query->where('category', 'damage_report');
@@ -51,22 +47,13 @@ class LguValidationController extends Controller
         }
 
         $items = $query
-            ->orderByRaw("CASE WHEN lgu_validation_status = 'pending' THEN 0 ELSE 1 END")
             ->orderByDesc('submitted_to_lgu_at')
             ->orderByDesc('created_at')
             ->paginate(12)
             ->withQueryString();
 
-        $stats = [
-            'pending' => $this->countByStatus(FarmerCalendarEvent::VALIDATION_PENDING),
-            'approved' => $this->countByStatus(FarmerCalendarEvent::VALIDATION_APPROVED),
-            'rejected' => $this->countByStatus(FarmerCalendarEvent::VALIDATION_REJECTED),
-        ];
-
         return view('lgu.dashboard', [
             'items' => $items,
-            'stats' => $stats,
-            'status' => $status,
             'type' => $type,
             'search' => $search,
             'validator' => $validator,
@@ -181,20 +168,6 @@ class LguValidationController extends Controller
         ]);
 
         return back()->with('success', 'Report returned to the farmer for correction.');
-    }
-
-    private function countByStatus(string $status): int
-    {
-        $query = FarmerCalendarEvent::query()
-            ->where(function (Builder $query) {
-                $query->where('category', 'damage_report')
-                    ->orWhereNotNull('actual_harvest_recorded_at');
-            })
-            ->where('lgu_validation_status', $status);
-
-        $this->scopeToValidator($query, Auth::user());
-
-        return $query->count();
     }
 
     private function authorizeEvent(FarmerCalendarEvent $event): void

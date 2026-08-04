@@ -78,6 +78,12 @@ class LguValidationTest extends TestCase
             'lgu_validated_by' => $validator->id,
             'lgu_validation_notes' => 'Verified with farmer.',
         ]);
+
+        $this->actingAs($validator)
+            ->get(route('lgu.dashboard', ['status' => FarmerCalendarEvent::VALIDATION_APPROVED]))
+            ->assertOk()
+            ->assertDontSee('Typhoon damage - Cabbage')
+            ->assertSee('No pending applications found for this queue.');
     }
 
     public function test_lgu_validator_can_view_finalized_records_from_their_municipality(): void

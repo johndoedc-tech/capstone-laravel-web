@@ -47,39 +47,17 @@
         </header>
 
         <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:py-8">
-            <section class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div class="rounded-2xl border border-amber-100 bg-white p-4 shadow-sm">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Pending</p>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">{{ number_format($stats['pending']) }}</p>
-                </div>
-                <div class="rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Approved</p>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">{{ number_format($stats['approved']) }}</p>
-                </div>
-                <div class="rounded-2xl border border-red-100 bg-white p-4 shadow-sm">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-red-600">Needs correction</p>
-                    <p class="mt-1 text-2xl font-bold text-gray-900">{{ number_format($stats['rejected']) }}</p>
-                </div>
-            </section>
-
             <section class="mb-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                <div class="mb-3 flex justify-end">
-                    <a href="{{ route('lgu.records') }}" class="inline-flex w-fit rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100">
-                        View decision records
-                    </a>
+                <div class="mb-3">
+                    <p class="text-sm font-semibold text-gray-900">Pending validation queue</p>
+                    <p class="mt-1 text-xs text-gray-500">Completed decisions are available in Records.</p>
                 </div>
-                <form method="GET" action="{{ route('lgu.dashboard') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_auto]">
+                <form method="GET" action="{{ route('lgu.dashboard') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_auto]">
                     <input type="search" name="search" value="{{ $search }}" placeholder="Search farmer, crop, title..." class="rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">
                     <select name="type" class="rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">
                         <option value="all" @selected($type === 'all')>All reports</option>
                         <option value="damage" @selected($type === 'damage')>Damage reports</option>
                         <option value="harvest" @selected($type === 'harvest')>Actual harvest</option>
-                    </select>
-                    <select name="status" class="rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">
-                        <option value="pending" @selected($status === 'pending')>Pending</option>
-                        <option value="approved" @selected($status === 'approved')>Approved</option>
-                        <option value="rejected" @selected($status === 'rejected')>Needs correction</option>
-                        <option value="all" @selected($status === 'all')>All statuses</option>
                     </select>
                     <button type="submit" class="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark">
                         Filter
@@ -91,11 +69,6 @@
                 @forelse($items as $item)
                     @php
                         $isDamage = $item->category === 'damage_report';
-                        $statusClass = match ($item->lgu_validation_status) {
-                            'approved' => 'bg-emerald-50 text-emerald-700 ring-emerald-100',
-                            'rejected' => 'bg-red-50 text-red-700 ring-red-100',
-                            default => 'bg-amber-50 text-amber-700 ring-amber-100',
-                        };
                         $authFlags = collect($item->authenticity_flags ?? [])->filter();
                         $authStatus = $item->authenticity_status ?: 'unchecked';
                         $authClass = match ($authStatus) {
@@ -114,9 +87,6 @@
                                 <div class="flex flex-wrap items-center gap-2">
                                     <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $isDamage ? 'bg-red-50 text-red-700 ring-red-100' : 'bg-sky-50 text-sky-700 ring-sky-100' }}">
                                         {{ $isDamage ? 'Damage report' : 'Actual harvest' }}
-                                    </span>
-                                    <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $statusClass }}">
-                                        {{ $item->lgu_validation_status_label }}
                                     </span>
                                     <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 {{ $authClass }}">
                                         {{ $item->authenticity_status_label ?: 'Evidence not checked' }}
@@ -215,7 +185,7 @@
                     </article>
                 @empty
                     <div class="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500">
-                        No reports found for this queue.
+                        No pending applications found for this queue.
                     </div>
                 @endforelse
 
