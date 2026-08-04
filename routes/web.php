@@ -224,6 +224,7 @@ Route::middleware(['auth', 'force-password-change'])->group(function () {
 
 Route::middleware(['auth', 'force-password-change', 'lgu'])->prefix('lgu')->name('lgu.')->group(function () {
     Route::get('/dashboard', [LguValidationController::class, 'index'])->name('dashboard');
+    Route::get('/records', [LguValidationController::class, 'records'])->name('records');
     Route::post('/validation/{event}/approve', [LguValidationController::class, 'approve'])->name('validation.approve');
     Route::post('/validation/{event}/reject', [LguValidationController::class, 'reject'])->name('validation.reject');
 });

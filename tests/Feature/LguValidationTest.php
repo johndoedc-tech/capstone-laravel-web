@@ -80,6 +80,80 @@ class LguValidationTest extends TestCase
         ]);
     }
 
+    public function test_lgu_validator_can_view_finalized_records_from_their_municipality(): void
+    {
+        $validator = User::factory()->create([
+            'role' => User::ROLE_LGU_VALIDATOR,
+            'lgu_municipality' => 'BUGUIAS',
+            'is_active' => true,
+        ]);
+
+        $localFarmer = User::factory()->create([
+            'role' => User::ROLE_FARMER,
+            'preferred_municipality' => 'BUGUIAS',
+        ]);
+
+        $outsideFarmer = User::factory()->create([
+            'role' => User::ROLE_FARMER,
+            'preferred_municipality' => 'MANKAYAN',
+        ]);
+
+        $recordAttributes = [
+            'event_date' => now()->toDateString(),
+            'event_type' => 'note',
+            'category' => 'damage_report',
+            'crop' => 'Cabbage',
+            'desired_area_sqm' => 500,
+            'damage_area_sqm' => 50,
+            'submitted_to_lgu_at' => now()->subDay(),
+        ];
+
+        FarmerCalendarEvent::create(array_merge($recordAttributes, [
+            'user_id' => $localFarmer->id,
+            'title' => 'Approved local report',
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_APPROVED,
+            'lgu_validated_by' => $validator->id,
+            'lgu_validated_at' => now(),
+        ]));
+
+        FarmerCalendarEvent::create(array_merge($recordAttributes, [
+            'user_id' => $localFarmer->id,
+            'title' => 'Declined local report',
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_REJECTED,
+            'lgu_validated_by' => $validator->id,
+            'lgu_validated_at' => now(),
+            'lgu_validation_notes' => 'Please provide a clearer photo.',
+        ]));
+
+        FarmerCalendarEvent::create(array_merge($recordAttributes, [
+            'user_id' => $localFarmer->id,
+            'title' => 'Pending local report',
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_PENDING,
+        ]));
+
+        FarmerCalendarEvent::create(array_merge($recordAttributes, [
+            'user_id' => $outsideFarmer->id,
+            'title' => 'Outside municipality report',
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_APPROVED,
+            'lgu_validated_at' => now(),
+        ]));
+
+        $this->actingAs($validator)
+            ->get(route('lgu.records'))
+            ->assertOk()
+            ->assertSee('Decision Records')
+            ->assertSee('Approved local report')
+            ->assertSee('Declined local report')
+            ->assertDontSee('Pending local report')
+            ->assertDontSee('Outside municipality report');
+
+        $this->actingAs($validator)
+            ->get(route('lgu.records', ['status' => FarmerCalendarEvent::VALIDATION_APPROVED]))
+            ->assertOk()
+            ->assertSee('Approved local report')
+            ->assertDontSee('Declined local report');
+    }
+
     public function test_farmer_calendar_hides_approved_harvest_activities_but_keeps_history_payload(): void
     {
         $farmer = User::factory()->create([

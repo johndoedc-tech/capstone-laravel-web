@@ -15,7 +15,7 @@
     </head>
     <body class="bg-cream font-sans antialiased text-gray-900">
         <header class="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
-            <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
                 <a href="{{ route('lgu.dashboard') }}" class="flex min-w-0 items-center gap-3">
                     <img src="{{ asset('images/HarvianaLogo.png') }}" alt="Harviana" class="h-10 w-10 rounded-full object-contain">
                     <div class="min-w-0">
@@ -23,7 +23,15 @@
                         <p class="text-xs text-gray-500">LGU Validation</p>
                     </div>
                 </a>
-                <div class="flex items-center gap-3">
+                <nav class="order-3 flex w-full items-center gap-1 sm:order-2 sm:w-auto" aria-label="LGU dashboard">
+                    <a href="{{ route('lgu.dashboard') }}" aria-current="page" class="flex-1 rounded-lg bg-primary px-3 py-2 text-center text-xs font-semibold text-white sm:flex-none">
+                        Validation queue
+                    </a>
+                    <a href="{{ route('lgu.records') }}" class="flex-1 rounded-lg px-3 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-gray-100 sm:flex-none">
+                        Records
+                    </a>
+                </nav>
+                <div class="order-2 flex items-center gap-3 sm:order-3">
                     <div class="hidden text-right sm:block">
                         <p class="text-sm font-semibold text-gray-900">{{ $validator->name }}</p>
                         <p class="text-xs text-gray-500">{{ ucwords(strtolower($validator->lgu_municipality ?? 'Unassigned')) }}</p>
@@ -56,8 +64,8 @@
 
             <section class="mb-5 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                 <div class="mb-3 flex justify-end">
-                    <a href="{{ route('lgu.dashboard', ['status' => 'pending']) }}" class="inline-flex w-fit rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-100">
-                        Pending queue
+                    <a href="{{ route('lgu.records') }}" class="inline-flex w-fit rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100">
+                        View decision records
                     </a>
                 </div>
                 <form method="GET" action="{{ route('lgu.dashboard') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_180px_180px_auto]">

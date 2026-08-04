@@ -73,6 +73,68 @@ class LguValidationController extends Controller
         ]);
     }
 
+    public function records(Request $request): View
+    {
+        $validator = Auth::user();
+        $status = (string) $request->query('status', 'all');
+        $type = (string) $request->query('type', 'all');
+        $search = trim((string) $request->query('search', ''));
+
+        if (! in_array($status, ['all', FarmerCalendarEvent::VALIDATION_APPROVED, FarmerCalendarEvent::VALIDATION_REJECTED], true)) {
+            $status = 'all';
+        }
+
+        $query = FarmerCalendarEvent::query()
+            ->with(['user', 'lguValidator', 'audits.user'])
+            ->where(function (Builder $query) {
+                $query->where('category', 'damage_report')
+                    ->orWhereNotNull('actual_harvest_recorded_at');
+            })
+            ->whereIn('lgu_validation_status', [
+                FarmerCalendarEvent::VALIDATION_APPROVED,
+                FarmerCalendarEvent::VALIDATION_REJECTED,
+            ]);
+
+        $this->scopeToValidator($query, $validator);
+
+        if ($status !== 'all') {
+            $query->where('lgu_validation_status', $status);
+        }
+
+        if ($type === 'damage') {
+            $query->where('category', 'damage_report');
+        } elseif ($type === 'harvest') {
+            $query->whereNotNull('actual_harvest_recorded_at');
+        }
+
+        if ($search !== '') {
+            $searchLike = '%' . strtolower($search) . '%';
+            $query->where(function (Builder $query) use ($searchLike) {
+                $query->whereRaw('LOWER(title) LIKE ?', [$searchLike])
+                    ->orWhereRaw('LOWER(crop) LIKE ?', [$searchLike])
+                    ->orWhereHas('user', function (Builder $userQuery) use ($searchLike) {
+                        $userQuery->whereRaw('LOWER(name) LIKE ?', [$searchLike])
+                            ->orWhereRaw('LOWER(email) LIKE ?', [$searchLike]);
+                    });
+            });
+        }
+
+        $items = $query
+            ->orderByDesc('lgu_validated_at')
+            ->orderByDesc('submitted_to_lgu_at')
+            ->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('lgu.records', [
+            'items' => $items,
+            'status' => $status,
+            'type' => $type,
+            'search' => $search,
+            'validator' => $validator,
+        ]);
+    }
+
     public function approve(Request $request, FarmerCalendarEvent $event): RedirectResponse
     {
         $this->authorizeEvent($event);
