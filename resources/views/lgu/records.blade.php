@@ -14,37 +14,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-cream font-sans antialiased text-gray-900">
-        <header class="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
-            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-                <a href="{{ route('lgu.dashboard') }}" class="flex min-w-0 items-center gap-3">
-                    <img src="{{ asset('images/HarvianaLogo.png') }}" alt="Harviana" class="h-10 w-10 rounded-full object-contain">
-                    <div class="min-w-0">
-                        <p class="text-base font-bold leading-tight text-primary-dark">Harviana</p>
-                        <p class="text-xs text-gray-500">LGU Validation</p>
-                    </div>
-                </a>
-                <nav class="order-3 flex w-full items-center gap-1 sm:order-2 sm:w-auto" aria-label="LGU dashboard">
-                    <a href="{{ route('lgu.dashboard') }}" class="flex-1 rounded-lg px-3 py-2 text-center text-xs font-semibold text-gray-600 hover:bg-gray-100 sm:flex-none">
-                        Validation queue
-                    </a>
-                    <a href="{{ route('lgu.records') }}" aria-current="page" class="flex-1 rounded-lg bg-primary px-3 py-2 text-center text-xs font-semibold text-white sm:flex-none">
-                        Records
-                    </a>
-                </nav>
-                <div class="order-2 flex items-center gap-3 sm:order-3">
-                    <div class="hidden text-right sm:block">
-                        <p class="text-sm font-semibold text-gray-900">{{ $validator->name }}</p>
-                        <p class="text-xs text-gray-500">{{ ucwords(strtolower($validator->lgu_municipality ?? 'Unassigned')) }}</p>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">
-                            Log out
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </header>
+        @include('layouts.lgu-header', ['activePage' => 'records'])
 
         <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:py-8">
             <section class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
