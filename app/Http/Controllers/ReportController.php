@@ -390,6 +390,7 @@ class ReportController extends Controller
             ->from('farmer_calendar_events as plans')
             ->join('users', 'users.id', '=', 'plans.user_id')
             ->leftJoin('farmer_calendar_events as harvests', 'harvests.id', '=', 'plans.harvest_event_id')
+            ->leftJoin('users as harvest_validators', 'harvest_validators.id', '=', 'harvests.lgu_validated_by')
             ->leftJoinSub($damageTotals, 'damage_totals', function ($join) {
                 $join->on('damage_totals.crop_plan_event_id', '=', 'plans.id');
             })
@@ -420,6 +421,10 @@ class ReportController extends Controller
                 DB::raw('COALESCE(harvests.actual_harvest_notes, plans.actual_harvest_notes) as actual_harvest_notes'),
                 DB::raw("COALESCE(harvests.lgu_validation_status, plans.lgu_validation_status, 'approved') as actual_harvest_validation_status"),
                 DB::raw('COALESCE(harvests.lgu_validation_notes, plans.lgu_validation_notes) as actual_harvest_validation_notes'),
+                'harvest_validators.name as actual_harvest_lgu_approver_name',
+                'harvest_validators.lgu_municipality as actual_harvest_lgu_municipality',
+                'harvest_validators.lgu_barangay as actual_harvest_lgu_barangay',
+                'harvests.lgu_validated_at as actual_harvest_lgu_validated_at',
                 'users.name as farmer_name',
                 'users.email as farmer_email',
                 'users.preferred_municipality',
@@ -489,6 +494,7 @@ class ReportController extends Controller
         $damageReports = $planIds->isNotEmpty()
             ? FarmerCalendarEvent::whereIn('crop_plan_event_id', $planIds)
                 ->where('category', 'damage_report')
+                ->with('lguValidator:id,name,lgu_municipality,lgu_barangay')
                 ->orderByDesc('event_date')
                 ->orderByDesc('created_at')
                 ->get()
@@ -512,6 +518,23 @@ class ReportController extends Controller
             $hasActualHarvestRecord = $row->actual_harvest_date !== null
                 || $row->actual_harvest_amount !== null
                 || $actualHarvestProduction !== null;
+            $actualHarvestLguApproval = $hasActualHarvestRecord
+                && $row->actual_harvest_validation_status === FarmerCalendarEvent::VALIDATION_APPROVED
+                ? $this->buildLguApprovalDetails(
+                    $row->actual_harvest_lgu_approver_name,
+                    $row->actual_harvest_lgu_municipality,
+                    $row->actual_harvest_lgu_barangay,
+                    $row->actual_harvest_lgu_validated_at,
+                )
+                : null;
+            $damageLguApproval = $latestDamage?->lgu_validation_status === FarmerCalendarEvent::VALIDATION_APPROVED
+                ? $this->buildLguApprovalDetails(
+                    $latestDamage->lguValidator?->name,
+                    $latestDamage->lguValidator?->lgu_municipality,
+                    $latestDamage->lguValidator?->lgu_barangay,
+                    $latestDamage->lgu_validated_at,
+                )
+                : null;
             $predictionError = $actualHarvestProduction !== null
                 ? round($adjustedProduction - $actualHarvestProduction, 2)
                 : null;
@@ -556,6 +579,7 @@ class ReportController extends Controller
                 'actual_harvest_validation_status' => $row->actual_harvest_validation_status ?: 'approved',
                 'actual_harvest_validation_label' => $this->formatValidationStatus($row->actual_harvest_validation_status ?: 'approved'),
                 'actual_harvest_validation_notes' => $row->actual_harvest_validation_notes,
+                'actual_harvest_lgu_approval' => $actualHarvestLguApproval,
                 'actual_harvest_authenticity_status' => $supportsAuthenticity && $hasActualHarvestRecord
                     ? ($row->actual_harvest_authenticity_status ?: FarmerCalendarEvent::AUTHENTICITY_UNCHECKED)
                     : null,
@@ -580,6 +604,7 @@ class ReportController extends Controller
                 'damage_reported_at' => $latestDamage?->created_at ? Carbon::parse($latestDamage->created_at) : null,
                 'damage_validation_status' => $latestDamage?->lgu_validation_status,
                 'damage_validation_label' => $latestDamage ? $this->formatValidationStatus($latestDamage->lgu_validation_status) : null,
+                'damage_lgu_approval' => $damageLguApproval,
                 'damage_photo_path' => $latestDamage?->damage_photo_path,
                 'damage_authenticity_status' => $supportsAuthenticity ? $latestDamage?->authenticity_status : null,
                 'damage_authenticity_label' => $supportsAuthenticity && $latestDamage ? $this->formatAuthenticityStatus($latestDamage->authenticity_status) : null,
@@ -829,6 +854,41 @@ class ReportController extends Controller
         return $value === '' ? '-' : ucwords(strtolower(str_replace('_', ' ', $value)));
     }
 
+    private function buildLguApprovalDetails(?string $name, ?string $municipality, ?string $barangay, $validatedAt): ?array
+    {
+        $name = trim((string) $name);
+
+        if ($name === '') {
+            return null;
+        }
+
+        $location = collect([
+            filled($barangay) ? 'Brgy. ' . $this->formatReportLabel($barangay) : null,
+            filled($municipality) ? $this->formatReportLabel($municipality) : null,
+        ])->filter()->implode(', ');
+
+        return [
+            'name' => $name,
+            'location' => $location !== '' ? $location : null,
+            'validated_at' => $validatedAt ? Carbon::parse($validatedAt) : null,
+        ];
+    }
+
+    private function formatLguApprovalForExport(?array $approval): string
+    {
+        if (! $approval) {
+            return '';
+        }
+
+        $validatedAt = $approval['validated_at'] ?? null;
+
+        return collect([
+            $approval['name'] ?? null,
+            $approval['location'] ?? null,
+            $validatedAt?->format('Y-m-d H:i'),
+        ])->filter()->implode(' | ');
+    }
+
     private function formatValidationStatus(?string $status): string
     {
         return FarmerCalendarEvent::VALIDATION_STATUS_LABELS[$status]
@@ -932,6 +992,8 @@ class ReportController extends Controller
                 'Farm Type',
                 'Seed Type',
                 'Status',
+                'Actual Harvest LGU Approval',
+                'Damage Report LGU Approval',
                 'Actual Harvest (MT)',
                 'Prediction Error (MT)',
                 'Accuracy (%)',
@@ -956,6 +1018,8 @@ class ReportController extends Controller
                     $record['farm_type'],
                     $record['seed_type'],
                     $record['status_label'],
+                    $this->formatLguApprovalForExport($record['actual_harvest_lgu_approval']),
+                    $this->formatLguApprovalForExport($record['damage_lgu_approval']),
                     $record['actual_harvest_production_mt'] !== null ? number_format($record['actual_harvest_production_mt'], 2) : '',
                     $record['prediction_error_mt'] !== null ? number_format($record['prediction_error_mt'], 2) : '',
                     $record['accuracy_percent'] !== null ? number_format($record['accuracy_percent'], 1) : '',

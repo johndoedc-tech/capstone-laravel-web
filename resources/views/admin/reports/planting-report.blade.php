@@ -374,6 +374,21 @@
                                                 Actual harvest: {{ $record['actual_harvest_validation_label'] }}
                                             </p>
                                         @endif
+                                        @if($record['actual_harvest_lgu_approval'])
+                                            @php
+                                                $approval = $record['actual_harvest_lgu_approval'];
+                                            @endphp
+                                            <div class="mt-2 border-t border-emerald-100 pt-2 text-[11px] leading-5">
+                                                <p class="font-semibold text-emerald-700">LGU verified by {{ $approval['name'] }}</p>
+                                                @if($approval['location'] || $approval['validated_at'])
+                                                    <p class="text-gray-500">
+                                                        @if($approval['location']){{ $approval['location'] }}@endif
+                                                        @if($approval['location'] && $approval['validated_at'])<span aria-hidden="true"> &middot; </span>@endif
+                                                        @if($approval['validated_at']){{ $approval['validated_at']->format('M d, Y h:i A') }}@endif
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        @endif
                                         @if($record['actual_harvest_authenticity_label'] ?? null)
                                             @php
                                                 $actualEvidenceClass = ($record['actual_harvest_authenticity_status'] ?? null) === 'needs_review'
@@ -420,6 +435,21 @@
                                                     <p class="font-semibold {{ $record['damage_validation_status'] === 'approved' ? 'text-green-700' : 'text-amber-700' }}">
                                                         {{ $record['damage_validation_label'] }}
                                                     </p>
+                                                @endif
+                                                @if($record['damage_lgu_approval'])
+                                                    @php
+                                                        $approval = $record['damage_lgu_approval'];
+                                                    @endphp
+                                                    <div class="border-t border-emerald-100 pt-2 text-[11px] leading-5">
+                                                        <p class="font-semibold text-emerald-700">LGU verified by {{ $approval['name'] }}</p>
+                                                        @if($approval['location'] || $approval['validated_at'])
+                                                            <p class="text-gray-500">
+                                                                @if($approval['location']){{ $approval['location'] }}@endif
+                                                                @if($approval['location'] && $approval['validated_at'])<span aria-hidden="true"> &middot; </span>@endif
+                                                                @if($approval['validated_at']){{ $approval['validated_at']->format('M d, Y h:i A') }}@endif
+                                                            </p>
+                                                        @endif
+                                                    </div>
                                                 @endif
                                                 @if($record['damage_authenticity_label'] ?? null)
                                                     <p class="font-semibold {{ $record['damage_authenticity_status'] === 'needs_review' ? 'text-amber-700' : 'text-green-700' }}">

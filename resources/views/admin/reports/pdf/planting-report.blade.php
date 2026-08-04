@@ -20,6 +20,7 @@
         .damaged { color: #c2410c; }
         .planted { color: #1d4ed8; }
         .harvested { color: #047857; }
+        .verified { color: #047857; font-size: 9px; }
     </style>
 </head>
 <body>
@@ -123,6 +124,17 @@
                                 @endif
                             @endif
                         @endif
+                        @if($record['actual_harvest_lgu_approval'])
+                            <br><span class="verified">
+                                LGU verified: {{ $record['actual_harvest_lgu_approval']['name'] }}
+                                @if($record['actual_harvest_lgu_approval']['location'])
+                                    ({{ $record['actual_harvest_lgu_approval']['location'] }})
+                                @endif
+                                @if($record['actual_harvest_lgu_approval']['validated_at'])
+                                    on {{ $record['actual_harvest_lgu_approval']['validated_at']->format('M d, Y h:i A') }}
+                                @endif
+                            </span>
+                        @endif
                         @if($record['damage_sqm'] > 0)
                             <br><span class="damaged">
                                 Damage:
@@ -141,6 +153,17 @@
                         @if($record['status'] === 'damaged')
                             <br>{{ $record['damage_title'] ?: 'Damage report' }}
                             <br>Date damaged: {{ $record['damage_date']?->format('M d, Y') ?? '-' }}
+                            @if($record['damage_lgu_approval'])
+                                <br><span class="verified">
+                                    LGU verified: {{ $record['damage_lgu_approval']['name'] }}
+                                    @if($record['damage_lgu_approval']['location'])
+                                        ({{ $record['damage_lgu_approval']['location'] }})
+                                    @endif
+                                    @if($record['damage_lgu_approval']['validated_at'])
+                                        on {{ $record['damage_lgu_approval']['validated_at']->format('M d, Y h:i A') }}
+                                    @endif
+                                </span>
+                            @endif
                         @endif
                     </td>
                     <td>{{ $record['recorded_at']?->format('M d, Y h:i A') ?? '-' }}</td>
