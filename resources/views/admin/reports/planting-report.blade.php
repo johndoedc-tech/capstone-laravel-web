@@ -5,6 +5,12 @@
         $pdfUrl = route('admin.reports.planting-report', array_merge($query, ['format' => 'pdf']));
         $plantedPercent = $summary['total_records'] > 0 ? round(($summary['planted_records'] / $summary['total_records']) * 100, 1) : 0;
         $damagedPercent = $summary['total_records'] > 0 ? round(($summary['damaged_records'] / $summary['total_records']) * 100, 1) : 0;
+        $harvestedPercent = $summary['total_records'] > 0 ? round(($summary['harvested_records'] / $summary['total_records']) * 100, 1) : 0;
+        $plantedEnd = $plantedPercent;
+        $damagedEnd = $plantedPercent + $damagedPercent;
+        $statusChartBackground = $summary['total_records'] > 0
+            ? "conic-gradient(#60a5fa 0 {$plantedEnd}%, #fb923c {$plantedEnd}% {$damagedEnd}%, #10b981 {$damagedEnd}% 100%)"
+            : '#f3f4f6';
         $statusClasses = [
             'planted' => 'bg-blue-100 text-blue-700',
             'damaged' => 'bg-orange-100 text-orange-700',
@@ -26,27 +32,34 @@
                     </div>
 
                     <div class="mt-6 grid grid-cols-1 sm:grid-cols-[9rem_1fr] gap-5 items-center">
-                        <div class="mx-auto flex h-32 w-32 items-center justify-center rounded-full" style="background: conic-gradient(#10b981 0 {{ $plantedPercent }}%, #fb923c {{ $plantedPercent }}% 100%);">
+                        <div class="mx-auto flex h-32 w-32 items-center justify-center rounded-full" style="background: {{ $statusChartBackground }};">
                             <div class="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-white">
                                 <span class="text-2xl font-bold text-gray-900">{{ number_format($summary['total_records']) }}</span>
                                 <span class="text-[10px] uppercase text-gray-500">records</span>
                             </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <div class="rounded-lg bg-emerald-50 px-3 py-2">
+                        <div class="space-y-2">
+                            <div class="rounded-lg bg-blue-50 px-3 py-2" aria-label="Planted: {{ $summary['planted_records'] }} {{ $summary['planted_records'] === 1 ? 'record' : 'records' }}">
                                 <div class="flex items-center justify-between gap-3">
-                                    <span class="flex items-center gap-2 text-sm font-medium text-emerald-800"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Planted</span>
+                                    <span class="flex items-center gap-2 text-sm font-medium text-blue-800"><span class="h-2 w-2 rounded-full bg-blue-400"></span>Planted</span>
                                     <span class="text-sm font-semibold text-gray-900">{{ number_format($summary['planted_records']) }}</span>
                                 </div>
                                 <p class="mt-1 text-right text-[11px] text-gray-500">{{ number_format($plantedPercent, 1) }}%</p>
                             </div>
-                            <div class="rounded-lg bg-orange-50 px-3 py-2">
+                            <div class="rounded-lg bg-orange-50 px-3 py-2" aria-label="Damaged: {{ $summary['damaged_records'] }} {{ $summary['damaged_records'] === 1 ? 'record' : 'records' }}">
                                 <div class="flex items-center justify-between gap-3">
                                     <span class="flex items-center gap-2 text-sm font-medium text-orange-800"><span class="h-2 w-2 rounded-full bg-orange-400"></span>Damaged</span>
                                     <span class="text-sm font-semibold text-gray-900">{{ number_format($summary['damaged_records']) }}</span>
                                 </div>
                                 <p class="mt-1 text-right text-[11px] text-gray-500">{{ number_format($damagedPercent, 1) }}%</p>
+                            </div>
+                            <div class="rounded-lg bg-emerald-50 px-3 py-2" aria-label="Harvested: {{ $summary['harvested_records'] }} {{ $summary['harvested_records'] === 1 ? 'record' : 'records' }}">
+                                <div class="flex items-center justify-between gap-3">
+                                    <span class="flex items-center gap-2 text-sm font-medium text-emerald-800"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Harvested</span>
+                                    <span class="text-sm font-semibold text-gray-900">{{ number_format($summary['harvested_records']) }}</span>
+                                </div>
+                                <p class="mt-1 text-right text-[11px] text-gray-500">{{ number_format($harvestedPercent, 1) }}%</p>
                             </div>
                         </div>
                     </div>

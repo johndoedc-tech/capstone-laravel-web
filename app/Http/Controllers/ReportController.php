@@ -667,7 +667,7 @@ class ReportController extends Controller
 
         return [
             'total_records' => $records->count(),
-            'planted_records' => $records->where('status', 'planted')->count() + $records->where('status', 'harvested')->count(),
+            'planted_records' => $records->where('status', 'planted')->count(),
             'damaged_records' => $records->where('status', 'damaged')->count(),
             'harvested_records' => $records->where('status', 'harvested')->count(),
             'total_area_ha' => $totalAreaHa,

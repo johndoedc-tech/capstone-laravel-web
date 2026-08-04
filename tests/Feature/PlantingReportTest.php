@@ -102,6 +102,56 @@ class PlantingReportTest extends TestCase
         $this->assertStringContainsString('Maria LGU Approver', $csvResponse->streamedContent());
     }
 
+    public function test_planting_report_separates_planted_damaged_and_harvested_statuses(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $farmer = User::factory()->create([
+            'role' => User::ROLE_FARMER,
+            'preferred_municipality' => 'BUGUIAS',
+        ]);
+
+        $plantedPlan = $this->createCropPlan($farmer, 'Planted crop plan');
+        $damagedPlan = $this->createCropPlan($farmer, 'Damaged crop plan');
+        $harvestedPlan = $this->createCropPlan($farmer, 'Harvested crop plan');
+
+        FarmerCalendarEvent::create([
+            'user_id' => $farmer->id,
+            'event_date' => now()->toDateString(),
+            'event_type' => 'note',
+            'title' => 'Approved damage report',
+            'category' => 'damage_report',
+            'crop' => 'Cabbage',
+            'damage_area_sqm' => 100,
+            'crop_plan_event_id' => $damagedPlan->id,
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_APPROVED,
+        ]);
+
+        $harvest = FarmerCalendarEvent::create([
+            'user_id' => $farmer->id,
+            'event_date' => now()->toDateString(),
+            'event_type' => 'note',
+            'title' => 'Approved harvest record',
+            'category' => 'harvest',
+            'crop' => 'Cabbage',
+            'actual_harvest_date' => now()->toDateString(),
+            'actual_harvest_production_mt' => 0.25,
+            'actual_harvest_recorded_at' => now(),
+            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_APPROVED,
+        ]);
+
+        $harvestedPlan->update(['harvest_event_id' => $harvest->id]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.reports.planting-report'))
+            ->assertOk()
+            ->assertSee('aria-label="Planted: 1 record"', false)
+            ->assertSee('aria-label="Damaged: 1 record"', false)
+            ->assertSee('aria-label="Harvested: 1 record"', false);
+    }
+
     private function createCropPlan(User $farmer, string $title): FarmerCalendarEvent
     {
         return FarmerCalendarEvent::create([
