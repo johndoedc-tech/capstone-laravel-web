@@ -96,6 +96,7 @@ class FarmerCalendarEvent extends Model
         'reminder_sent' => 'boolean',
         'is_completed' => 'boolean',
         'lgu_validated_at' => 'datetime',
+        'lgu_validation_revision' => 'integer',
         'submitted_to_lgu_at' => 'datetime',
         'evidence_latitude' => 'decimal:7',
         'evidence_longitude' => 'decimal:7',

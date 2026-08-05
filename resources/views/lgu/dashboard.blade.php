@@ -134,16 +134,18 @@
                             </div>
 
                             <div class="w-full space-y-2 lg:w-80">
-                                <form method="POST" action="{{ route('lgu.validation.approve', $item) }}" class="rounded-xl border border-emerald-100 bg-emerald-50 p-3">
+                                <form method="POST" action="{{ route('lgu.validation.approve', $item) }}" class="rounded-xl border border-emerald-100 bg-emerald-50 p-3" data-no-page-loader data-offline-operation="lgu.validation.approve" data-record-id="{{ $item->id }}" data-record-title="{{ $item->title }}" data-record-status="{{ $item->lgu_validation_status }}">
                                     @csrf
+                                    <input type="hidden" name="expected_revision" value="{{ (int) $item->lgu_validation_revision }}">
                                     <label class="block text-xs font-semibold text-emerald-800">Approve note</label>
                                     <textarea name="notes" rows="2" class="mt-1 w-full rounded-lg border-emerald-200 text-sm focus:border-emerald-500 focus:ring-emerald-500" placeholder="Optional"></textarea>
                                     <button type="submit" class="mt-2 w-full rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
                                         Approve
                                     </button>
                                 </form>
-                                <form method="POST" action="{{ route('lgu.validation.reject', $item) }}" class="rounded-xl border border-red-100 bg-red-50 p-3">
+                                <form method="POST" action="{{ route('lgu.validation.reject', $item) }}" class="rounded-xl border border-red-100 bg-red-50 p-3" data-no-page-loader data-offline-operation="lgu.validation.reject" data-record-id="{{ $item->id }}" data-record-title="{{ $item->title }}" data-record-status="{{ $item->lgu_validation_status }}">
                                     @csrf
+                                    <input type="hidden" name="expected_revision" value="{{ (int) $item->lgu_validation_revision }}">
                                     <label class="block text-xs font-semibold text-red-800">Correction note *</label>
                                     <textarea name="notes" rows="2" required class="mt-1 w-full rounded-lg border-red-200 text-sm focus:border-red-500 focus:ring-red-500" placeholder="Tell the farmer what to correct"></textarea>
                                     <button type="submit" class="mt-2 w-full rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700">
@@ -165,5 +167,6 @@
 
         @include('layouts.page-loader')
         @include('layouts.toast')
+        @include('layouts.offline-sync')
     </body>
 </html>

@@ -47,6 +47,10 @@ class CalendarEvidenceController extends Controller
         abort_unless($canView, 403);
         abort_unless(Storage::disk('public')->exists($path), 404);
 
-        return Storage::disk('public')->response($path, $originalName);
+        $response = Storage::disk('public')->response($path, $originalName);
+        $response->headers->set('Cache-Control', 'private, no-store, no-cache, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+
+        return $response;
     }
 }

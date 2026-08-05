@@ -61,11 +61,20 @@ class PwaTest extends TestCase
 
         $contents = file_get_contents($path);
 
-        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.29'", $contents);
+        $this->assertStringContainsString("CACHE_VERSION = 'v1.15.30'", $contents);
         $this->assertStringContainsString("const OFFLINE_URL = '/offline'", $contents);
         $this->assertStringContainsString("'/app'", $contents);
         $this->assertStringContainsString('CLEAR_RUNTIME_CACHES', $contents);
         $this->assertStringContainsString('handleNavigationRequest', $contents);
+        $this->assertStringContainsString("event.tag !== 'harviana-offline-sync'", $contents);
+        $this->assertStringContainsString("importScripts('/offline-sync-worker.js')", $contents);
+        $this->assertStringContainsString('PROTECTED_PATH_PREFIXES', $contents);
+        $this->assertStringContainsString("'/calendar-events'", $contents);
+
+        $workerSync = file_get_contents(public_path('offline-sync-worker.js'));
+        $this->assertStringContainsString('harvianaSyncQueuedOperations', $workerSync);
+        $this->assertStringContainsString("'/offline-sync/context'", $workerSync);
+        $this->assertStringContainsString("'Idempotency-Key'", $workerSync);
     }
 
     public function test_pwa_launch_route_redirects_by_session_state(): void
@@ -110,5 +119,18 @@ class PwaTest extends TestCase
         $this->assertStringContainsString('syncViewportHeight', $js);
         $this->assertStringContainsString('syncThemeColor', $js);
         $this->assertStringContainsString('window.visualViewport', $js);
+        $this->assertStringContainsString('initializeOfflineSync', $js);
+
+        $queue = file_get_contents(resource_path('js/offline-queue.js'));
+        $this->assertStringContainsString("'harviana-offline-queue'", $queue);
+        $this->assertStringContainsString("'authentication_required'", $queue);
+        $this->assertStringContainsString("'conflict'", $queue);
+        $this->assertStringContainsString('schemaVersion', $queue);
+
+        $sync = file_get_contents(resource_path('js/offline-sync.js'));
+        $this->assertStringContainsString('Idempotency-Key', $sync);
+        $this->assertStringContainsString("response.status === 401 || response.status === 419", $sync);
+        $this->assertStringContainsString("response.status === 409", $sync);
+        $this->assertStringContainsString("response.status === 422", $sync);
     }
 }

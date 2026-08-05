@@ -1,4 +1,6 @@
-const CACHE_VERSION = 'v1.15.29';
+importScripts('/offline-sync-worker.js');
+
+const CACHE_VERSION = 'v1.15.30';
 const PRECACHE = `harviana-precache-${CACHE_VERSION}`;
 const STATIC_CACHE = `harviana-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `harviana-pages-${CACHE_VERSION}`;
@@ -39,11 +41,27 @@ const AUTH_PATHS = [
     '/auth/google/callback',
 ];
 
+const PROTECTED_PATH_PREFIXES = [
+    '/dashboard',
+    '/farmer',
+    '/lgu',
+    '/admin',
+    '/profile',
+    '/settings',
+    '/forum',
+    '/predictions',
+    '/map',
+    '/reports',
+    '/calendar-events',
+    '/offline-sync',
+];
+
 const isSameOrigin = (url) => url.origin === self.location.origin;
 const isGetRequest = (request) => request.method === 'GET';
 const isNavigationRequest = (request) => request.mode === 'navigate' || request.destination === 'document';
 const isSuccessfulBasicResponse = (response) => response?.ok && response.type === 'basic' && !response.redirected;
-const shouldBypassRuntimeCache = (url) => AUTH_PATHS.some((path) => url.pathname === path || url.pathname.startsWith(`${path}/`));
+const shouldBypassRuntimeCache = (url) => AUTH_PATHS.some((path) => url.pathname === path || url.pathname.startsWith(`${path}/`))
+    || PROTECTED_PATH_PREFIXES.some((path) => url.pathname === path || url.pathname.startsWith(`${path}/`));
 const isStaticAsset = (url) => STATIC_PATH_PREFIXES.some((prefix) => url.pathname.startsWith(prefix));
 
 const trimPageCache = async () => {
@@ -111,6 +129,14 @@ self.addEventListener('fetch', (event) => {
     if (isStaticAsset(url)) {
         event.respondWith(handleStaticAssetRequest(request));
     }
+});
+
+self.addEventListener('sync', (event) => {
+    if (event.tag !== 'harviana-offline-sync') {
+        return;
+    }
+
+    event.waitUntil(self.harvianaSyncQueuedOperations());
 });
 
 const handleNavigationRequest = async (request) => {

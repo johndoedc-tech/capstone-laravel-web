@@ -10,6 +10,18 @@
 	--harviana-viewport-height: 100dvh;
 }
 
+#harviana-offline-sync[data-state="offline"] [data-sync-dot] {
+	background-color: #9ca3af;
+}
+
+#harviana-offline-sync[data-state="attention"] [data-sync-dot] {
+	background-color: #f59e0b;
+}
+
+#harviana-offline-sync[data-state="syncing"] [data-sync-dot] {
+	animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 @supports not (height: 100dvh) {
 	:root {
 		--harviana-viewport-height: 100vh;

@@ -1,3 +1,5 @@
+import { initializeOfflineSync } from './offline-sync.js';
+
 const isSecureContextForServiceWorker = () => {
     const { hostname, protocol } = window.location;
 
@@ -176,3 +178,13 @@ syncViewportHeight();
 window.addEventListener('resize', syncViewportHeight, { passive: true });
 window.visualViewport?.addEventListener('resize', syncViewportHeight, { passive: true });
 window.visualViewport?.addEventListener('scroll', syncViewportHeight, { passive: true });
+
+const bootOfflineSync = () => initializeOfflineSync().catch((error) => {
+    console.info('Harviana offline sync is unavailable.', error);
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootOfflineSync, { once: true });
+} else {
+    bootOfflineSync();
+}

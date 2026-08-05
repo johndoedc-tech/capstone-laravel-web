@@ -50,5 +50,6 @@
 
         @include('layouts.page-loader')
         @include('layouts.toast')
+        @include('layouts.offline-sync')
     </body>
 </html>

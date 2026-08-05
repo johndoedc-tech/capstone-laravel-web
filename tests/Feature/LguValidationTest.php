@@ -64,11 +64,12 @@ class LguValidationTest extends TestCase
             ->get(route('lgu.dashboard'))
             ->assertOk()
             ->assertSee('Typhoon damage - Cabbage')
-            ->assertSee('Pending LGU validation');
+            ->assertSee('Pending validation queue');
 
         $this->actingAs($validator)
             ->post(route('lgu.validation.approve', $damage), [
                 'notes' => 'Verified with farmer.',
+                'expected_revision' => 0,
             ])
             ->assertRedirect();
 
@@ -165,6 +166,7 @@ class LguValidationTest extends TestCase
         $farmer = User::factory()->create([
             'role' => User::ROLE_FARMER,
             'preferred_municipality' => 'BUGUIAS',
+            'cooperative' => 'Test Cooperative',
         ]);
 
         $planDate = now()->startOfMonth()->addDays(3);

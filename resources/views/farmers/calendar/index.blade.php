@@ -109,6 +109,7 @@
                                                         <span x-show="event.crop" class="calendar-chip rounded bg-green-50 px-1.5 py-0.5 text-[11px] text-green-700" x-text="event.crop"></span>
                                                         <span x-show="event.category === 'crop_plan'" class="calendar-chip rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700">Crop Plan</span>
                                                         <span x-show="event.category === 'damage_report'" class="calendar-chip rounded bg-red-50 px-1.5 py-0.5 text-[11px] text-red-700">Damage</span>
+                                                        <span x-show="event.pending_sync" class="calendar-chip rounded px-1.5 py-0.5 text-[11px] font-semibold" :class="offlineQueueStatusClasses(event.sync_status)" x-text="event.sync_status_label || 'Pending sync'"></span>
                                                         <span x-show="event.actual_harvest_production_mt" class="calendar-chip rounded bg-emerald-50 px-1.5 py-0.5 text-[11px] text-emerald-700" x-text="'Actual: ' + formatMetricTons(event.actual_harvest_production_mt)"></span>
                                                         <span x-show="event.reminder_time" class="calendar-chip rounded bg-orange-50 px-1.5 py-0.5 text-[11px] text-orange-700" x-text="event.reminder_time"></span>
                                                     </div>
@@ -314,7 +315,7 @@
                                                 'bg-yellow-100 text-yellow-700': event.category === 'weather',
                                                 'bg-gray-100 text-gray-700': event.category === 'other'
                                             }"
-                                            x-text="event.title">
+                                            x-text="event.pending_sync ? (['needs_attention', 'conflict', 'failed'].includes(event.sync_status) ? 'Review: ' : 'Pending: ') + event.title : event.title">
                                         </div>
                                     </template>
                                     <div x-show="(eventsByDay[day.date] || []).length > 2" class="text-[10px] text-gray-400">
@@ -537,6 +538,7 @@
                                                 <div class="flex min-w-0 items-center gap-2 text-xs text-gray-700">
                                                     <span class="h-1.5 w-1.5 shrink-0 rounded-full" :class="event.category === 'crop_plan' ? 'bg-emerald-500' : (event.category === 'fertilizer' ? 'bg-sky-500' : 'bg-orange-400')"></span>
                                                     <span class="calendar-event-title truncate" x-text="event.title"></span>
+                                                    <span x-show="event.pending_sync" class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold" :class="offlineQueueStatusClasses(event.sync_status)" x-text="event.sync_status_label || 'Pending sync'"></span>
                                                 </div>
                                             </template>
                                             <p x-show="group.hiddenCount > 0" class="text-xs font-medium text-emerald-700">
@@ -703,6 +705,7 @@
                                                 <span class="calendar-event-title min-w-0 max-w-full font-medium text-gray-900 text-sm leading-snug" :class="calEvent.is_completed ? 'line-through text-gray-400' : ''" x-text="calEvent.title"></span>
                                                 <span x-show="calEvent.category === 'crop_plan'" class="calendar-chip inline-flex text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded">Crop Plan</span>
                                                 <span x-show="calEvent.category === 'damage_report'" class="calendar-chip inline-flex text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded">Damage Report</span>
+                                                <span x-show="calEvent.pending_sync" class="calendar-chip inline-flex rounded px-1.5 py-0.5 text-xs font-semibold" :class="offlineQueueStatusClasses(calEvent.sync_status)" x-text="calEvent.sync_status_label || 'Pending sync'"></span>
                                                 <span x-show="calEvent.type === 'reminder'" class="calendar-chip inline-flex text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">🔔</span>
                                             </div>
                                             <p x-show="calEvent.description" class="calendar-event-description text-xs text-gray-500 mt-1 leading-relaxed" x-text="calEvent.description"></p>
@@ -1014,8 +1017,8 @@
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Damaged Area (sqm) *</label>
                                         <input type="number" min="0.01" :max="selectedDamageCropPlan ? selectedDamageCropPlan.remaining_damage_sqm : null" step="0.01" inputmode="decimal" x-model="eventForm.damage_area_sqm" class="w-full border-gray-300 rounded-md text-sm py-1.5 focus:ring-red-500 focus:border-red-500" placeholder="e.g., 50">
                                         <p x-show="selectedDamageCropPlan" class="text-[11px] text-gray-500 mt-1">
-                                            <span x-text="'Remaining reportable area: ' + formatSquareMeters(selectedDamageCropPlan.remaining_damage_sqm)"></span>
-                                            <span x-text="' of ' + formatSquareMeters(selectedDamageCropPlan.planted_area_sqm)"></span>
+                                            <span x-text="'Remaining reportable area: ' + formatSquareMeters(selectedDamageCropPlan?.remaining_damage_sqm || 0)"></span>
+                                            <span x-text="' of ' + formatSquareMeters(selectedDamageCropPlan?.planted_area_sqm || 0)"></span>
                                         </p>
                                     </div>
 
@@ -1161,6 +1164,7 @@
                 activeCropPlanId: null,
                 showHarvestModal: false,
                 harvestTarget: null,
+                editingOfflineOperation: null,
                 savingHarvest: false,
                 showModal: false,
                 modalType: 'note',
@@ -1301,6 +1305,12 @@
                     });
                     ['crop', 'water_source', 'planting_material', 'planning_date'].forEach((field) => {
                         this.$watch(`eventForm.${field}`, () => this.scheduleCommunityCropSignal());
+                    });
+                    window.addEventListener('harviana-offline-queue-updated', () => this.mergePendingOfflineRecords());
+                    window.addEventListener('harviana-offline-edit-requested', (event) => this.editOfflineOperation(event.detail?.operation));
+                    window.addEventListener('harviana-offline-sync-complete', (event) => {
+                        if (!event.detail?.background && !String(event.detail?.operation?.operationType || '').startsWith('farmer.')) return;
+                        Promise.all([this.loadEvents(), this.loadCropPlans()]);
                     });
                 },
 
@@ -1531,6 +1541,22 @@
                         && this.harvestForm.actual_harvest_date <= this.todayDate
                         && Number(this.harvestForm.actual_harvest_amount) > 0
                         && ['kg', 'mt'].includes(this.harvestForm.actual_harvest_unit);
+                },
+
+                validateEvidencePhoto(file) {
+                    if (!file) return true;
+
+                    if (!String(file.type || '').startsWith('image/')) {
+                        this.showToast('Photo not supported', 'Choose an image file for your evidence.', 'error');
+                        return false;
+                    }
+
+                    if (Number(file.size || 0) > 5 * 1024 * 1024) {
+                        this.showToast('Photo is too large', 'Choose an image smaller than 5 MB.', 'error');
+                        return false;
+                    }
+
+                    return true;
                 },
 
                 formatSquareMeters(value) {
@@ -1836,18 +1862,36 @@
                 },
 
                 harvestStatusLabel(record) {
+                    if (record?.pending_sync && record.sync_status_label) return record.sync_status_label;
                     if (!this.hasActualHarvest(record)) return 'Crop Plan';
 
                     const status = this.harvestValidationStatus(record);
+                    if (status === 'pending_sync') return 'Pending Sync';
                     if (status === 'approved') return 'Harvest Approved';
                     if (status === 'rejected') return 'Needs Correction';
                     return 'Pending LGU Validation';
+                },
+
+                offlineQueueStatusLabel(status) {
+                    if (status === 'syncing') return 'Syncing';
+                    if (status === 'authentication_required') return 'Sign in to sync';
+                    if (status === 'conflict') return 'Conflict';
+                    if (['needs_attention', 'failed'].includes(status)) return 'Review required';
+                    return 'Pending sync';
+                },
+
+                offlineQueueStatusClasses(status) {
+                    if (status === 'authentication_required') return 'bg-amber-50 text-amber-700';
+                    if (['needs_attention', 'conflict', 'failed'].includes(status)) return 'bg-red-50 text-red-700';
+                    if (status === 'syncing') return 'bg-sky-50 text-sky-700';
+                    return 'bg-gray-100 text-gray-700';
                 },
 
                 harvestStatusClasses(record) {
                     const status = this.harvestValidationStatus(record);
 
                     if (!this.hasActualHarvest(record)) return 'bg-white text-emerald-700 border-emerald-100';
+                    if (status === 'pending_sync') return 'bg-gray-50 text-gray-700 border-gray-200';
                     if (status === 'approved') return 'bg-emerald-50 text-emerald-700 border-emerald-100';
                     if (status === 'rejected') return 'bg-red-50 text-red-700 border-red-100';
                     return 'bg-amber-50 text-amber-700 border-amber-100';
@@ -1856,6 +1900,7 @@
                 harvestStatusTextClasses(record) {
                     const status = this.harvestValidationStatus(record);
 
+                    if (status === 'pending_sync') return 'text-gray-700';
                     if (status === 'approved') return 'text-emerald-700';
                     if (status === 'rejected') return 'text-red-700';
                     return 'text-amber-700';
@@ -1865,6 +1910,7 @@
                     if (!this.hasActualHarvest(record)) return 'Record Actual Harvest';
 
                     const status = this.harvestValidationStatus(record);
+                    if (status === 'pending_sync') return 'View Pending Harvest';
                     if (status === 'approved') return 'View Harvest Record';
                     if (status === 'rejected') return 'Fix Harvest Record';
                     return 'Edit Harvest Submission';
@@ -2201,6 +2247,12 @@
                         return;
                     }
 
+                    if (!navigator.onLine) {
+                        this.resetProductionPrediction();
+                        this.productionPrediction.error = 'Estimate available after sync.';
+                        return;
+                    }
+
                     if (this.productionPredictionTimer) {
                         clearTimeout(this.productionPredictionTimer);
                     }
@@ -2214,6 +2266,12 @@
                 async loadProductionPrediction() {
                     if (!this.canRequestProductionPrediction) {
                         this.resetProductionPrediction();
+                        return;
+                    }
+
+                    if (!navigator.onLine) {
+                        this.resetProductionPrediction();
+                        this.productionPrediction.error = 'Estimate available after sync.';
                         return;
                     }
 
@@ -2271,6 +2329,12 @@
                         return;
                     }
 
+                    if (!navigator.onLine) {
+                        this.resetCommunityCropSignal();
+                        this.communityCropSignal.error = 'Nearby plans available after sync.';
+                        return;
+                    }
+
                     if (this.communityCropSignalTimer) {
                         clearTimeout(this.communityCropSignalTimer);
                     }
@@ -2283,6 +2347,12 @@
                 async loadCommunityCropSignal() {
                     if (!this.canRequestCommunityCropSignal) {
                         this.resetCommunityCropSignal();
+                        return;
+                    }
+
+                    if (!navigator.onLine) {
+                        this.resetCommunityCropSignal();
+                        this.communityCropSignal.error = 'Nearby plans available after sync.';
                         return;
                     }
 
@@ -2392,6 +2462,7 @@
                 openHarvestModal(record) {
                     if (!record) return;
 
+                    this.editingOfflineOperation = null;
                     this.harvestTarget = record;
                     const actualAmount = record.actual_harvest_amount;
                     const actualUnit = record.actual_harvest_unit || 'kg';
@@ -2414,6 +2485,7 @@
                 closeHarvestModal() {
                     this.showHarvestModal = false;
                     this.harvestTarget = null;
+                    this.editingOfflineOperation = null;
                     this.savingHarvest = false;
                 },
 
@@ -2490,8 +2562,10 @@
                                 this.closeEventGroupModal();
                             }
                         }
+                        await this.mergePendingOfflineRecords();
                     } catch (error) {
                         console.error('Failed to load calendar events:', error);
+                        await this.mergePendingOfflineRecords();
                     }
                 },
 
@@ -2521,12 +2595,15 @@
                                 this.closeCropTimelineModal();
                             }
                         }
+                        await this.mergePendingOfflineRecords();
                     } catch (error) {
                         console.error('Failed to load crop plans:', error);
+                        await this.mergePendingOfflineRecords();
                     }
                 },
 
                 openAddModal(type) {
+                    this.editingOfflineOperation = null;
                     this.modalType = type;
                     this.resetProductionPrediction();
                     this.resetCommunityCropSignal();
@@ -2553,6 +2630,200 @@
 
                 closeModal() {
                     this.showModal = false;
+                    this.editingOfflineOperation = null;
+                },
+
+                queuedPhoto(operation, field) {
+                    const attachment = (operation?.attachments || []).find((item) => item.field === field);
+                    if (!attachment?.blob) return null;
+
+                    if (typeof File === 'function') {
+                        return new File([attachment.blob], attachment.name, {
+                            type: attachment.type,
+                            lastModified: attachment.lastModified,
+                        });
+                    }
+
+                    return attachment.blob;
+                },
+
+                async editOfflineOperation(operation) {
+                    if (!operation || !String(operation.operationType || '').startsWith('farmer.')) return;
+
+                    const fields = operation.fields || {};
+                    if (operation.operationType === 'farmer.crop_plan.create') {
+                        this.openAddModal('crop_plan');
+                        Object.assign(this.eventForm, {
+                            crop: fields.crop || '',
+                            desired_area_sqm: fields.desired_area_sqm || '',
+                            water_source: fields.water_source || '',
+                            planting_material: fields.planting_material || '',
+                            planning_date: fields.event_date || this.todayDate,
+                            description: fields.description || '',
+                        });
+                    } else if (operation.operationType === 'farmer.damage_report.create') {
+                        this.openAddModal('damage_report');
+                        await this.loadCropPlans();
+                        Object.assign(this.eventForm, {
+                            crop_plan_event_id: fields.crop_plan_event_id || '',
+                            damage_cause: 'other',
+                            damage_area_sqm: fields.damage_area_sqm || '',
+                            planning_date: fields.event_date || this.todayDate,
+                            description: fields.description || '',
+                            damage_photo: this.queuedPhoto(operation, 'damage_photo'),
+                        });
+                    } else if (operation.operationType === 'farmer.actual_harvest.record') {
+                        await this.loadCropPlans();
+                        const targetId = String(operation.routeParameters?.id || operation.relatedServerRecordId || '');
+                        const target = this.cropPlans.find((plan) => String(plan.id) === targetId || String(plan.harvest_event_id) === targetId);
+                        if (!target) {
+                            this.showToast('Record unavailable', 'Sync its crop plan first, then edit this harvest.', 'warning');
+                            return;
+                        }
+                        this.openHarvestModal(target);
+                        Object.assign(this.harvestForm, {
+                            actual_harvest_date: fields.actual_harvest_date || this.todayDate,
+                            actual_harvest_amount: fields.actual_harvest_amount || '',
+                            actual_harvest_unit: fields.actual_harvest_unit || 'kg',
+                            actual_harvest_notes: fields.actual_harvest_notes || '',
+                            evidence_photo: this.queuedPhoto(operation, 'evidence_photo'),
+                        });
+                    } else {
+                        return;
+                    }
+
+                    this.editingOfflineOperation = operation;
+                    this.showToast('Edit saved record', 'Update the fields, then save again.', 'warning');
+                },
+
+                async mergePendingOfflineRecords() {
+                    if (!window.HarvianaOffline) return;
+
+                    const operations = await window.HarvianaOffline.list();
+                    const pending = operations.filter((operation) => operation.status !== 'synchronized');
+                    const pendingLocalIds = new Set(pending.map((operation) => String(operation.localRecordId || '')));
+                    const pendingHarvestTargets = new Set(
+                        pending
+                            .filter((operation) => operation.operationType === 'farmer.actual_harvest.record')
+                            .map((operation) => String(operation.routeParameters?.id || '')),
+                    );
+
+                    this.events = this.events.filter((event) => !event.pending_sync || pendingLocalIds.has(String(event.id)));
+                    this.eventsByDay = Object.fromEntries(
+                        Object.entries(this.eventsByDay).map(([date, dayEvents]) => [
+                            date,
+                            dayEvents.filter((event) => !event.pending_sync || pendingLocalIds.has(String(event.id))),
+                        ]),
+                    );
+                    this.cropPlans = this.cropPlans.flatMap((plan) => {
+                        if (!plan.pending_sync) return [plan];
+                        if (pendingLocalIds.has(String(plan.id)) || pendingHarvestTargets.has(String(plan.id))) return [plan];
+                        if (String(plan.id).startsWith('local:')) return [];
+
+                        return [{
+                            ...plan,
+                            actual_harvest_date: null,
+                            actual_harvest_amount: null,
+                            actual_harvest_unit: null,
+                            actual_harvest_production_mt: null,
+                            actual_harvest_notes: null,
+                            actual_harvest_recorded_at: null,
+                            actual_harvest_validation_status: null,
+                            actual_harvest_validation_status_label: null,
+                            is_completed: false,
+                            pending_sync: false,
+                            sync_status: null,
+                            sync_status_label: null,
+                        }];
+                    });
+
+                    pending.forEach((operation) => {
+                        const fields = operation.fields || {};
+
+                        if (operation.operationType === 'farmer.crop_plan.create') {
+                            const localPlan = {
+                                id: operation.localRecordId,
+                                title: fields.title,
+                                crop: fields.crop,
+                                planning_date: fields.event_date,
+                                planted_area_sqm: Number(fields.desired_area_sqm || 0),
+                                desired_area_sqm: Number(fields.desired_area_sqm || 0),
+                                reported_damage_sqm: 0,
+                                remaining_damage_sqm: Number(fields.desired_area_sqm || 0),
+                                water_source: fields.water_source,
+                                planting_material: fields.planting_material,
+                                estimated_harvest_date: null,
+                                predicted_production_mt: null,
+                                prediction_source: 'pending_sync',
+                                estimate_status: 'pending_sync',
+                                lgu_validation_status: 'pending_sync',
+                                lgu_validation_status_label: 'Pending sync',
+                                is_completed: false,
+                                pending_sync: true,
+                                sync_status: operation.status,
+                                sync_status_label: this.offlineQueueStatusLabel(operation.status),
+                            };
+                            const existingIndex = this.cropPlans.findIndex((plan) => plan.id === localPlan.id);
+                            if (existingIndex >= 0) this.cropPlans.splice(existingIndex, 1, localPlan);
+                            else this.cropPlans.unshift(localPlan);
+                        }
+
+                        if (operation.operationType === 'farmer.actual_harvest.record') {
+                            const targetId = operation.routeParameters?.id;
+                            const plan = this.cropPlans.find((item) => item.id === targetId || item.harvest_event_id === targetId);
+                            if (plan) {
+                                Object.assign(plan, {
+                                    actual_harvest_date: fields.actual_harvest_date,
+                                    actual_harvest_amount: Number(fields.actual_harvest_amount || 0),
+                                    actual_harvest_unit: fields.actual_harvest_unit,
+                                    actual_harvest_production_mt: fields.actual_harvest_unit === 'kg'
+                                        ? Number(fields.actual_harvest_amount || 0) / 1000
+                                        : Number(fields.actual_harvest_amount || 0),
+                                    actual_harvest_notes: fields.actual_harvest_notes || '',
+                                    actual_harvest_recorded_at: operation.createdAt,
+                                    actual_harvest_validation_status: 'pending_sync',
+                                    actual_harvest_validation_status_label: 'Pending sync',
+                                    is_completed: true,
+                                    pending_sync: true,
+                                    sync_status: operation.status,
+                                    sync_status_label: this.offlineQueueStatusLabel(operation.status),
+                                });
+                            }
+                        }
+
+                        if (!['farmer.crop_plan.create', 'farmer.damage_report.create'].includes(operation.operationType)) return;
+                        const date = fields.event_date;
+                        if (!date || !date.startsWith(`${this.currentDate.getFullYear()}-${String(this.currentDate.getMonth() + 1).padStart(2, '0')}`)) return;
+
+                        const localEvent = {
+                            id: operation.localRecordId,
+                            date,
+                            day: Number(date.slice(-2)),
+                            type: fields.event_type,
+                            title: fields.title,
+                            description: fields.description,
+                            category: fields.category,
+                            crop: fields.crop || this.cropPlans.find((plan) => plan.id === fields.crop_plan_event_id)?.crop,
+                            desired_area_sqm: Number(fields.desired_area_sqm || 0) || null,
+                            damage_area_sqm: Number(fields.damage_area_sqm || 0) || null,
+                            crop_plan_event_id: fields.crop_plan_event_id || null,
+                            water_source: fields.water_source || null,
+                            planting_material: fields.planting_material || null,
+                            predicted_production_mt: null,
+                            prediction_source: 'pending_sync',
+                            lgu_validation_status: 'pending_sync',
+                            lgu_validation_status_label: 'Pending sync',
+                            is_completed: false,
+                            pending_sync: true,
+                            sync_status: operation.status,
+                            sync_status_label: this.offlineQueueStatusLabel(operation.status),
+                        };
+                        const eventIndex = this.events.findIndex((item) => item.id === localEvent.id);
+                        if (eventIndex >= 0) this.events.splice(eventIndex, 1, localEvent);
+                        else this.events.push(localEvent);
+                        const dayEvents = (this.eventsByDay[date] || []).filter((item) => item.id !== localEvent.id);
+                        this.eventsByDay = { ...this.eventsByDay, [date]: [...dayEvents, localEvent] };
+                    });
                 },
 
                 async saveEvent() {
@@ -2562,6 +2833,7 @@
                     try {
                         const isCropPlan = this.modalType === 'crop_plan';
                         const isDamageReport = this.modalType === 'damage_report';
+                        if (isDamageReport && !this.validateEvidencePhoto(this.eventForm.damage_photo)) return;
                         const eventDate = (isCropPlan || isDamageReport) ? this.eventForm.planning_date : this.selectedDate;
                         const selectedPlan = this.selectedDamageCropPlan;
                         const damageCause = this.formatDamageCause(this.eventForm.damage_cause);
@@ -2591,6 +2863,72 @@
                             reminder_time: this.modalType === 'reminder' ? (this.eventForm.reminder_time || '') : '',
                             ...evidencePayload,
                         };
+
+                        if ((isCropPlan || isDamageReport) && window.HarvianaOffline) {
+                            const editingOperation = this.editingOfflineOperation;
+                            const uuid = editingOperation?.uuid || crypto.randomUUID();
+                            const localRecordId = editingOperation?.localRecordId || `local:${uuid}`;
+                            const parentId = isDamageReport ? String(payload.crop_plan_event_id || '') : '';
+                            let formData = null;
+
+                            if (isDamageReport) {
+                                formData = new FormData();
+                                Object.entries(payload).forEach(([key, value]) => formData.append(key, value ?? ''));
+                                if (this.eventForm.damage_photo) formData.append('damage_photo', this.eventForm.damage_photo);
+                            }
+
+                            const queueInput = {
+                                uuid,
+                                idempotencyKey: uuid,
+                                operationType: isCropPlan ? 'farmer.crop_plan.create' : 'farmer.damage_report.create',
+                                method: 'POST',
+                                endpoint: '{{ route('farmer.calendar.store') }}',
+                                fields: isDamageReport ? undefined : payload,
+                                formData,
+                                payloadType: isDamageReport ? 'formdata' : 'json',
+                                localRecordId,
+                                dependsOn: parentId.startsWith('local:') ? [parentId] : [],
+                                relatedServerRecordId: parentId && !parentId.startsWith('local:') ? Number(parentId) : null,
+                                display: { title: isCropPlan ? `Crop plan: ${payload.crop}` : `Damage report: ${selectedPlan?.crop || 'Crop'}` },
+                            };
+                            const result = editingOperation
+                                ? await window.HarvianaOffline.replaceAndSync(uuid, queueInput)
+                                : await window.HarvianaOffline.queueAndSync(queueInput);
+
+                            if (['needs_attention', 'conflict'].includes(result.operation?.status)) {
+                                await this.mergePendingOfflineRecords();
+                                this.showToast(
+                                    'Could not sync - review required',
+                                    result.operation?.lastError || 'Review this record in Offline records.',
+                                    'error'
+                                );
+                                return;
+                            }
+
+                            this.closeModal();
+                            this.selectedDate = eventDate;
+                            this.currentDate = new Date(eventDate + 'T00:00:00');
+
+                            if (result.synchronized) {
+                                await Promise.all([this.loadEvents(), this.loadCropPlans()]);
+                                this.showToast(
+                                    this.calendarSaveToastTitle(isCropPlan, isDamageReport),
+                                    result.response?.message || this.calendarSaveToastMessage(isCropPlan, isDamageReport)
+                                );
+                            } else {
+                                await this.mergePendingOfflineRecords();
+                                this.showToast(
+                                    result.operation?.status === 'authentication_required' ? 'Sign in to continue syncing' : 'Saved on this device',
+                                    result.operation?.status === 'authentication_required'
+                                        ? 'This record is safe on your device. Sign in with this account to send it.'
+                                        : (isCropPlan
+                                            ? 'Your crop plan will sync online. Its production estimate will be available after sync.'
+                                            : 'Your damage report has not reached Harviana yet. It will sync when you are online.'),
+                                    'warning'
+                                );
+                            }
+                            return;
+                        }
 
                         const requestOptions = {
                             method: 'POST',
@@ -2650,6 +2988,7 @@
                     this.savingHarvest = true;
 
                     try {
+                        if (!this.validateEvidencePhoto(this.harvestForm.evidence_photo)) return;
                         const targetId = this.harvestTarget.harvest_event_id || this.harvestTarget.id;
                         const evidencePayload = await this.captureEvidenceLocation();
                         const formData = new FormData();
@@ -2664,6 +3003,56 @@
 
                         if (this.harvestForm.evidence_photo) {
                             formData.append('evidence_photo', this.harvestForm.evidence_photo);
+                        }
+
+                        if (window.HarvianaOffline) {
+                            const editingOperation = this.editingOfflineOperation;
+                            const uuid = editingOperation?.uuid || crypto.randomUUID();
+                            const targetValue = String(targetId);
+                            const queueInput = {
+                                uuid,
+                                idempotencyKey: uuid,
+                                operationType: 'farmer.actual_harvest.record',
+                                method: 'POST',
+                                routeTemplate: `{{ url('farmer/calendar-events') }}/{id}/harvest`,
+                                routeParameters: { id: targetValue },
+                                formData,
+                                payloadType: 'formdata',
+                                localRecordId: editingOperation?.localRecordId || `local:harvest:${uuid}`,
+                                dependsOn: targetValue.startsWith('local:') ? [targetValue] : [],
+                                relatedServerRecordId: targetValue.startsWith('local:') ? null : Number(targetValue),
+                                display: { title: `Actual harvest: ${this.harvestTarget.crop || 'Crop'}` },
+                            };
+                            const result = editingOperation
+                                ? await window.HarvianaOffline.replaceAndSync(uuid, queueInput)
+                                : await window.HarvianaOffline.queueAndSync(queueInput);
+
+                            if (['needs_attention', 'conflict'].includes(result.operation?.status)) {
+                                await this.mergePendingOfflineRecords();
+                                this.showToast(
+                                    'Could not sync - review required',
+                                    result.operation?.lastError || 'Review this harvest in Offline records.',
+                                    'error'
+                                );
+                                return;
+                            }
+
+                            this.closeHarvestModal();
+                            if (result.synchronized) {
+                                await Promise.all([this.loadEvents(), this.loadCropPlans()]);
+                                this.loadUpcomingReminders();
+                                this.showToast('Harvest saved', result.response?.message || 'Your harvest is waiting for LGU staff validation.');
+                            } else {
+                                await this.mergePendingOfflineRecords();
+                                this.showToast(
+                                    result.operation?.status === 'authentication_required' ? 'Sign in to continue syncing' : 'Saved on this device',
+                                    result.operation?.status === 'authentication_required'
+                                        ? 'Your harvest is safe on this device. Sign in with this account to send it.'
+                                        : 'Your harvest has not reached Harviana yet. It will sync when you are online.',
+                                    'warning'
+                                );
+                            }
+                            return;
                         }
 
                         const response = await fetch(`{{ url('farmer/calendar-events') }}/${targetId}/harvest`, {

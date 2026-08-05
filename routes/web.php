@@ -13,6 +13,7 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\FarmerChatbotController;
 use App\Http\Controllers\LguValidationController;
 use App\Http\Controllers\CalendarEvidenceController;
+use App\Http\Controllers\OfflineSyncController;
 use App\Services\UserActivityFeedService;
 use App\Models\CropProduction;
 use App\Models\Prediction;
@@ -218,6 +219,9 @@ Route::middleware(['auth', 'force-password-change', 'onboarding'])->group(functi
 });
 
 Route::middleware(['auth', 'force-password-change'])->group(function () {
+    Route::get('/offline-sync/context', [OfflineSyncController::class, 'context'])
+        ->middleware('onboarding')
+        ->name('offline-sync.context');
     Route::get('/calendar-events/{event}/damage-photo', [CalendarEvidenceController::class, 'show'])->name('calendar.damage-photo');
     Route::get('/calendar-events/{event}/evidence-photo', [CalendarEvidenceController::class, 'showEvidence'])->name('calendar.evidence-photo');
 });

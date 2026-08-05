@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\FarmerCalendarEvent;
 use App\Services\EventAuthenticityService;
+use App\Services\IdempotentOperationService;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class LguValidationController extends Controller
 {
@@ -122,52 +124,99 @@ class LguValidationController extends Controller
         ]);
     }
 
-    public function approve(Request $request, FarmerCalendarEvent $event): RedirectResponse
+    public function approve(Request $request, FarmerCalendarEvent $event): Response
     {
-        $this->authorizeEvent($event);
-
         $validated = $request->validate([
             'notes' => 'nullable|string|max:1000',
+            'expected_revision' => 'required|integer|min:0',
         ]);
 
-        $event->update([
-            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_APPROVED,
-            'lgu_validated_by' => Auth::id(),
-            'lgu_validated_at' => now(),
-            'lgu_validation_notes' => $validated['notes'] ?? null,
-            'lgu_validation_revision' => (int) $event->lgu_validation_revision + 1,
-        ]);
-
-        app(EventAuthenticityService::class)->audit($event->fresh(), Auth::user(), 'lgu_approved', [
-            'notes' => $validated['notes'] ?? null,
-            'authenticity_status' => $event->authenticity_status,
-        ]);
-
-        return back()->with('success', 'Report approved and marked as LGU verified.');
+        return app(IdempotentOperationService::class)->execute(
+            $request,
+            'lgu.validation.approve',
+            fn () => $this->applyDecision($request, $event->id, FarmerCalendarEvent::VALIDATION_APPROVED, $validated)
+        );
     }
 
-    public function reject(Request $request, FarmerCalendarEvent $event): RedirectResponse
+    public function reject(Request $request, FarmerCalendarEvent $event): Response
     {
-        $this->authorizeEvent($event);
-
         $validated = $request->validate([
             'notes' => 'required|string|max:1000',
+            'expected_revision' => 'required|integer|min:0',
         ]);
 
-        $event->update([
-            'lgu_validation_status' => FarmerCalendarEvent::VALIDATION_REJECTED,
-            'lgu_validated_by' => Auth::id(),
-            'lgu_validated_at' => now(),
-            'lgu_validation_notes' => $validated['notes'],
-            'lgu_validation_revision' => (int) $event->lgu_validation_revision + 1,
-        ]);
+        return app(IdempotentOperationService::class)->execute(
+            $request,
+            'lgu.validation.reject',
+            fn () => $this->applyDecision($request, $event->id, FarmerCalendarEvent::VALIDATION_REJECTED, $validated)
+        );
+    }
 
-        app(EventAuthenticityService::class)->audit($event->fresh(), Auth::user(), 'lgu_rejected', [
-            'notes' => $validated['notes'],
-            'authenticity_status' => $event->authenticity_status,
-        ]);
+    private function applyDecision(Request $request, int $eventId, string $decision, array $validated): Response
+    {
+        return DB::transaction(function () use ($request, $eventId, $decision, $validated) {
+            $event = FarmerCalendarEvent::query()->lockForUpdate()->findOrFail($eventId);
+            $this->authorizeEvent($event);
 
-        return back()->with('success', 'Report returned to the farmer for correction.');
+            $expectedRevision = (int) $validated['expected_revision'];
+            $currentRevision = (int) $event->lgu_validation_revision;
+
+            if ($event->lgu_validation_status !== FarmerCalendarEvent::VALIDATION_PENDING || $currentRevision !== $expectedRevision) {
+                $payload = [
+                    'success' => false,
+                    'message' => 'This report changed on the server. Review the latest status before deciding again.',
+                    'code' => 'lgu_validation_conflict',
+                    'current_server' => [
+                        'id' => $event->id,
+                        'status' => $event->lgu_validation_status,
+                        'revision' => $currentRevision,
+                        'notes' => $event->lgu_validation_notes,
+                        'validated_at' => $event->lgu_validated_at?->toIso8601String(),
+                    ],
+                    'queued_decision' => [
+                        'status' => $decision,
+                        'expected_revision' => $expectedRevision,
+                        'notes' => $validated['notes'] ?? null,
+                    ],
+                ];
+
+                return $request->expectsJson()
+                    ? response()->json($payload, 409)
+                    : back()->withErrors(['validation' => $payload['message']]);
+            }
+
+            $event->update([
+                'lgu_validation_status' => $decision,
+                'lgu_validated_by' => Auth::id(),
+                'lgu_validated_at' => now(),
+                'lgu_validation_notes' => $validated['notes'] ?? null,
+                'lgu_validation_revision' => $currentRevision + 1,
+            ]);
+
+            $action = $decision === FarmerCalendarEvent::VALIDATION_APPROVED ? 'lgu_approved' : 'lgu_rejected';
+            $message = $decision === FarmerCalendarEvent::VALIDATION_APPROVED
+                ? 'Report approved and marked as LGU verified.'
+                : 'Report returned to the farmer for correction.';
+
+            app(EventAuthenticityService::class)->audit($event->fresh(), Auth::user(), $action, [
+                'notes' => $validated['notes'] ?? null,
+                'authenticity_status' => $event->authenticity_status,
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'event' => [
+                        'id' => $event->id,
+                        'lgu_validation_status' => $decision,
+                        'lgu_validation_revision' => $currentRevision + 1,
+                    ],
+                ]);
+            }
+
+            return back()->with('success', $message);
+        });
     }
 
     private function authorizeEvent(FarmerCalendarEvent $event): void
